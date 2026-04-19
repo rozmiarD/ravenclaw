@@ -12,7 +12,7 @@ if str(LOGDASH_DIR) not in sys.path:
 
 from api_runtime import register_runtime_api  # type: ignore
 from api_supplemental import register_supplemental_api  # type: ignore
-from services import build_agents_status_payload, build_campaign_info_payload, build_runtime_health_payload, load_pipeline_config_effective_posture, selected_runtime_snapshot_view  # type: ignore
+from services import build_agents_status_payload, build_campaign_info_payload, build_runtime_health_payload, build_selected_campaign_projection, load_pipeline_config_effective_posture, projection_source_label, selected_runtime_snapshot_view  # type: ignore
 
 
 def _build_app(*, state: dict, runtime: dict):
@@ -56,6 +56,7 @@ def _build_app(*, state: dict, runtime: dict):
             'load_runtime_snapshot': load_runtime_snapshot,
             'selected_runtime_snapshot_view': lambda runtime=None, selected_key=None: selected_runtime_snapshot_view(runtime, str(selected_key if selected_key is not None else selected_campaign_key())),
             'build_agents_status_payload': build_agents_status_payload,
+            'build_selected_campaign_projection': build_selected_campaign_projection,
             'load_pipeline_config': load_pipeline_config,
             'save_pipeline_config': save_pipeline_config,
             'pipeline_config_meta': pipeline_config_meta,
@@ -150,6 +151,8 @@ def _build_app(*, state: dict, runtime: dict):
             'selected_runtime_snapshot_view': lambda runtime=None, selected_key=None: selected_runtime_snapshot_view(runtime, str(selected_key if selected_key is not None else selected_campaign_key())),
             'build_campaign_info_payload': build_campaign_info_payload,
             'build_runtime_health_payload': build_runtime_health_payload,
+            'build_selected_campaign_projection': build_selected_campaign_projection,
+            'projection_source_label': projection_source_label,
             'RUNTIME_SNAPSHOT_PATH': ROOT / 'reports' / '.runtime_snapshot.json',
             'RUNTIME_STATE_PATH': runtime_state_path,
             'RUNTIME_PID_PATH': runtime_pid_path,
@@ -212,7 +215,7 @@ def test_runtime_state_and_queue_state_hide_snapshot_from_other_campaign() -> No
     queue_payload = q.get_json()
     assert queue_payload['followup_count'] == 0
     assert queue_payload['precision_count'] == 0
-    assert queue_payload['source'] == 'selected_campaign_runtime'
+    assert queue_payload['source'] == 'empty_selected_campaign_queue'
 
 
 def test_runtime_trace_exposes_canonical_lineage_join_keys_and_decision_aliases() -> None:

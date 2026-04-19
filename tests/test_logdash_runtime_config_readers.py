@@ -55,6 +55,7 @@ def test_pipeline_config_schema_manifest_tolerates_invalid_json(tmp_path: Path, 
             'pipeline_config_meta': lambda: {},
             'selected_runtime_snapshot_view': lambda runtime=None, selected_key=None: {},
             'build_agents_status_payload': lambda **kwargs: {},
+            'build_selected_campaign_projection': lambda runtime=None, selected_view=None, state=None: {},
             'load_pipeline_config_effective_posture': lambda: {},
         },
     )

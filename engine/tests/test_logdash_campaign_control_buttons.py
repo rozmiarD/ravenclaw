@@ -16,7 +16,7 @@ if str(LOGDASH_DIR) not in sys.path:
 
 import api_supplemental as supplemental  # type: ignore
 from api_supplemental import register_supplemental_api  # type: ignore
-from services import build_campaign_info_payload, build_runtime_health_payload, selected_runtime_snapshot_view  # type: ignore
+from services import build_campaign_info_payload, build_runtime_health_payload, build_selected_campaign_projection, projection_source_label, selected_runtime_snapshot_view  # type: ignore
 
 
 class _Proc:
@@ -147,6 +147,8 @@ def _build_client(tmp_path: Path, state: dict, runtime: dict):
             'selected_runtime_snapshot_view': lambda runtime=None, selected_key=None: selected_runtime_snapshot_view(runtime, str(selected_key if selected_key is not None else selected_campaign_key())),
             'build_campaign_info_payload': build_campaign_info_payload,
             'build_runtime_health_payload': build_runtime_health_payload,
+            'build_selected_campaign_projection': build_selected_campaign_projection,
+            'projection_source_label': projection_source_label,
             'RUNTIME_SNAPSHOT_PATH': tmp_path / '.runtime_snapshot.json',
             'RUNTIME_STATE_PATH': runtime_state_path,
             'RUNTIME_PID_PATH': runtime_pid_path,

@@ -1,6 +1,11 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Completed the final publication pass by adding `PUBLISHING.md`, extending the public snapshot assembly path to carry the new front-door/public-trust docs, and recording a pass-with-cautions publication verdict that recommends publishing from an assembled snapshot rather than directly from the live workspace.
+- Completed Wave D of the priority public-repo elevation plan by improving public product shape and navigation, adding `AUDIENCE.md` and `DOCS_MAP.md`, and updating `README.md` to explain who the repo is for, who it is not for, and how different readers should traverse the documentation.
+- Completed Wave C of the priority public-repo elevation plan by adding explicit public trust and validation surfaces through `QUALITY_SIGNALS.md` and `VALIDATION.md`, and by updating `README.md` and `PUBLIC_STATUS.md` so readers can find concrete CI, test, and contract evidence without inferring repo quality from tone alone.
+- Completed Wave B of the priority public-repo elevation plan by defining an official public-safe local dry-run path, adding `INSTALL.md`, `ENVIRONMENT_SUPPORT.md`, and `DEMO.md`, and refreshing `README.md` to point readers to one honest supported setup/demo route instead of implying a broader public deployment story than the repo currently supports.
+- Started the priority public-repo elevation plan by completing Wave A front-door documentation work: rewrote `README.md` as a clearer public entry surface and added `PUBLIC_STATUS.md`, `ARCHITECTURE_OVERVIEW.md`, and `WHY_RAVENCLAW.md` to separate maturity truth, short architecture orientation, and project thesis from the deeper operator/developer docs.
 - Completed the final public snapshot review with a pass-with-warnings verdict, hardening the assembly path further to exclude `engine/context_summary.json`, `engine/public_targets_plan.json`, `logdash/logdash.out`, and `logdash/.venv` from the assembled public tree.
 - Completed open-source/public-release prep Wave 5 by hardening the public-snapshot assembly path with noise pruning, safe placeholder examples, and explicit `auth-harness/` caution.
 - Completed open-source/public-release prep Wave 4 by adding an applied public-snapshot assembly scaffold (`scripts/assemble_public_snapshot.sh`, `public-snapshot/`) without publishing or scrubbing the live workspace.

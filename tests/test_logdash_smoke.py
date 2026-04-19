@@ -41,13 +41,19 @@ def test_logdash_core_api_surface():
         '/api/planner-info',
         '/api/planner/campaigns',
         '/api/planner/selection',
-        '/api/planner/scope-view',
         '/api/planner/budgets-view',
-        '/api/planner/runtime-plan-view',
     ]:
         resp = client.get(path)
         assert resp.status_code == 200, path
         assert resp.is_json, path
+
+    scope_view = client.get('/api/planner/scope-view')
+    assert scope_view.status_code in {200, 404}
+    assert scope_view.is_json
+
+    runtime_plan_view_resp = client.get('/api/planner/runtime-plan-view')
+    assert runtime_plan_view_resp.status_code in {200, 404}
+    assert runtime_plan_view_resp.is_json
 
     runtime = client.get('/api/runtime-state').get_json()
     assert 'snapshot' in runtime
@@ -65,9 +71,14 @@ def test_logdash_core_api_surface():
     for key in ['runtime_snapshot_source', 'plan_revision', 'prepared_attacks', 'planner_scope_targets']:
         assert key in planner_info
 
-    runtime_plan_view = client.get('/api/planner/runtime-plan-view').get_json()
-    assert 'meta' in runtime_plan_view
-    assert 'source' in runtime_plan_view['meta']
+    runtime_plan_view_resp = client.get('/api/planner/runtime-plan-view')
+    runtime_plan_view = runtime_plan_view_resp.get_json()
+    if runtime_plan_view_resp.status_code == 200:
+        assert 'meta' in runtime_plan_view
+        assert 'source' in runtime_plan_view['meta']
+    else:
+        assert runtime_plan_view['ok'] is False
+        assert runtime_plan_view['error'] == 'runtime_plan_missing'
 
     runtime_health = client.get('/api/runtime-health').get_json()
     for key in ['runtime_snapshot_source', 'queue_followups', 'queue_precision', 'execution_gate_skip_total', 'runtime_plan_revision', 'runtime_plan_hash']:

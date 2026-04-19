@@ -13,7 +13,7 @@ if str(LOGDASH_DIR) not in sys.path:
     sys.path.insert(0, str(LOGDASH_DIR))
 
 from api_supplemental import register_supplemental_api  # type: ignore
-from services import build_campaign_info_payload, build_runtime_health_payload, selected_runtime_snapshot_view  # type: ignore
+from services import build_campaign_info_payload, build_runtime_health_payload, build_selected_campaign_projection, projection_source_label, selected_runtime_snapshot_view  # type: ignore
 
 
 def _build_client(*, state: dict, runtime: dict, campaign_store: dict, planner_ui: dict, orchestrator_state: dict, runtime_plan_meta_path: Path, runtime_plan_delete_paths: list[Path], planner_registry_root: Path, runtime_snapshot_path: Path):
@@ -131,6 +131,8 @@ def _build_client(*, state: dict, runtime: dict, campaign_store: dict, planner_u
             'selected_runtime_snapshot_view': lambda runtime=None, selected_key=None: selected_runtime_snapshot_view(runtime, str(selected_key if selected_key is not None else selected_campaign_key())),
             'build_campaign_info_payload': build_campaign_info_payload,
             'build_runtime_health_payload': build_runtime_health_payload,
+            'build_selected_campaign_projection': build_selected_campaign_projection,
+            'projection_source_label': projection_source_label,
             'RUNTIME_SNAPSHOT_PATH': runtime_snapshot_path,
             'RUNTIME_STATE_PATH': runtime_state_path,
             'RUNTIME_PID_PATH': runtime_pid_path,
