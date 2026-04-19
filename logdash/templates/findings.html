@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ravenclaw · findings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"><link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head><body><div class="dashboard">
+<div class="top-bar"><div class="logo-area"><span class="logo"><i class="fas fa-robot"></i> RAVENCLAW</span><span class="badge">v{{ app_version }}</span></div>
+<div class="nav-menu"><a class="nav-item" href="/"><i class="fas fa-chart-line"></i> Pipeline monitoring</a><a class="nav-item active" href="/findings"><i class="fas fa-bug"></i> Findings</a><a class="nav-item" href="/campaign-setup"><i class="fas fa-bullseye"></i> Campaign Setup</a><a class="nav-item" href="/system-settings"><i class="fas fa-cog"></i> System settings</a><a class="nav-item" href="/owner-actions"><i class="fas fa-user-cog"></i> Owner actions</a><button id="modeBadge" class="mode-value mode-button" type="button"><i class="fas fa-flask"></i> RESEARCH MODE</button></div></div>
+
+<div class="page-content">
+  <div class="layout-2-1">
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-chart-column"></i> Findings Overview</div>
+          <div class="card-subtitle">High-level derived findings telemetry: volume, severity-like scoring, confidence-like scoring and verification state.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">overview</span><span class="mini-badge">triage</span></div>
+      </div>
+      <div class="range-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+        <div class="kv-row"><span><i class="fas fa-list"></i> Displayed items</span><span id="fTotal">0</span></div>
+        <div class="kv-row"><span><i class="fas fa-triangle-exclamation"></i> Derived high severity</span><span id="fCritical">0</span></div>
+        <div class="kv-row"><span><i class="fas fa-gauge-high"></i> Derived confidence</span><span id="fConf">0.00</span></div>
+        <div class="kv-row"><span><i class="fas fa-bolt"></i> Derived CVSS max</span><span id="fCvss">0.0</span></div>
+      </div>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-tags"></i> Session Summary</div>
+          <div class="card-subtitle">Campaign-level derived classification summary for the current run and top signal trends.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">session</span><span class="mini-badge">summary</span></div>
+      </div>
+      <div id="classList" class="kv-list"></div>
+      <div id="runSummaryList" class="kv-list" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <div class="layout-2 mt16">
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-chart-pie"></i> Distributions</div>
+          <div class="card-subtitle">Derived severity, category mix and lifecycle metrics for current findings telemetry.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">metrics</span><span class="mini-badge">distribution</span></div>
+      </div>
+      <div class="kv-list">
+        <div class="kv-row"><span><i class="fas fa-layer-group"></i> Derived severity mix</span><span id="dSeverity">-</span></div>
+        <div class="kv-row"><span><i class="fas fa-diagram-project"></i> Category distribution</span><span id="dCategory">-</span></div>
+        <div class="kv-row"><span><i class="fas fa-wave-square"></i> Raw signals</span><span id="dRaw">0</span></div>
+        <div class="kv-row"><span><i class="fas fa-arrow-trend-up"></i> Promoted findings</span><span id="dPromoted">0</span></div>
+        <div class="kv-row"><span><i class="fas fa-magnifying-glass"></i> Needs review</span><span id="dReview">0</span></div>
+        <div class="kv-row"><span><i class="fas fa-circle-check"></i> Confirmed</span><span id="dConfirmed">0</span></div>
+        <div class="kv-row"><span><i class="fas fa-route"></i> Lifecycle signal/probable</span><span id="lcSignal">0/0</span></div>
+        <div class="kv-row"><span><i class="fas fa-flask"></i> Lifecycle confirm run/ok</span><span id="lcConfirm">0/0</span></div>
+      </div>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-memo-circle-info"></i> Detail Panel</div>
+          <div class="card-subtitle">Focused evidence view for the currently selected finding row.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">detail</span><span class="mini-badge">evidence</span></div>
+      </div>
+      <div id="detailPane" class="kv-list"><div class="empty-state"><strong>No finding selected</strong>Select a row in the workbench to inspect rendered details here.</div></div>
+    </div>
+  </div>
+
+  <div class="layout-2-1 mt16">
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-table-list"></i> Findings Workbench</div>
+          <div class="card-subtitle">Primary findings table for triage. Select any row to update the detail panel.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">table</span><span class="mini-badge">workbench</span></div>
+      </div>
+      <table class="table-lite" id="findingsTbl"><thead><tr><th>Derived severity</th><th>Classification</th><th>Target</th><th>Derived confidence</th><th>Derived CVSS</th><th>Display status</th><th>Priority</th></tr></thead><tbody></tbody></table>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-user-check"></i> Candidate Hosts To Review</div>
+          <div class="card-subtitle">Candidate target hosts awaiting promote / defer / reject operator decisions.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">review</span><span class="mini-badge">hosts</span></div>
+      </div>
+      <div id="candidateHosts" class="kv-list"><div class="kv-row"><span><i class="fas fa-circle-info"></i> Pending</span><span>-</span></div></div>
+    </div>
+  </div>
+
+  <div class="layout-3 mt16">
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-list-ol"></i> Runtime Plan Preview</div>
+          <div class="card-subtitle">Current runtime-plan revision, diff summary and top upcoming preview items.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">plan</span><span class="mini-badge">preview</span></div>
+      </div>
+      <div id="runtimePlanMeta" class="kv-list"><div class="kv-row"><span><i class="fas fa-code-branch"></i> Revision</span><span>-</span></div></div>
+      <div id="runtimePlanDiff" class="kv-list" style="margin-top:10px;"><div class="kv-row"><span><i class="fas fa-code-compare"></i> Exact diff</span><span>-</span></div></div>
+      <div id="runtimePlanPreview" class="kv-list" style="margin-top:10px;"><div class="kv-row"><span><i class="fas fa-circle-info"></i> Preview</span><span>-</span></div></div>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-heart-pulse"></i> Host State Snapshot</div>
+          <div class="card-subtitle">Host promise / noise / evidence posture with quick explain actions.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">hosts</span><span class="mini-badge">state</span></div>
+      </div>
+      <div id="hostStatePane" class="kv-list"><div class="kv-row"><span><i class="fas fa-circle-info"></i> Hosts</span><span>-</span></div></div>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-chart-column"></i> Family Yield</div>
+          <div class="card-subtitle">Yield ranking of task families based on recent runtime outcomes.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">family</span><span class="mini-badge">yield</span></div>
+      </div>
+      <div id="familyYieldPane" class="kv-list"><div class="kv-row"><span><i class="fas fa-circle-info"></i> Families</span><span>-</span></div></div>
+    </div>
+  </div>
+
+  <div class="layout-2 mt16">
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-stairs"></i> Exploit Ladder / Evidence Truth</div>
+          <div class="card-subtitle">Latest runtime ladder stage, prerequisites, signal/evidence status and lineage continuity.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">trace</span><span class="mini-badge">evidence</span></div>
+      </div>
+      <div id="tracePane" class="kv-list"><div class="kv-row"><span><i class="fas fa-circle-info"></i> Trace</span><span>-</span></div></div>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-chart-line"></i> Evaluation / Governance Summary</div>
+          <div class="card-subtitle">Replay-derived yield/governance metrics and top exclusion reasons from Phase-5 evaluation artifacts.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">evaluation</span><span class="mini-badge">governance</span></div>
+      </div>
+      <div id="evaluationSummaryPane" class="kv-list"><div class="kv-row"><span><i class="fas fa-circle-info"></i> Evaluation</span><span>-</span></div></div>
+    </div>
+  </div>
+</div></div>
+<script>
+const $=(id)=>document.getElementById(id); const esc=(v)=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+let cached=[];
+let candidateCache=[];
+function badgeClass(val){
+  const s=String(val||'').toLowerCase();
+  if(['critical','high','failed','error','blocked','invalid'].includes(s)) return 'state-err';
+  if(['warning','warn','needs review','medium'].includes(s)) return 'state-warn';
+  if(['running','active','triaged','info'].includes(s)) return 'state-info';
+  if(['ok','approved','success','low','confirmed','ready'].includes(s)) return 'state-ok';
+  return 'state-neutral';
+}
+function badgeIcon(val){
+  const s=String(val||'').toLowerCase();
+  if(['critical','high','failed','error','blocked','invalid'].some(k=>s.includes(k))) return 'fa-triangle-exclamation';
+  if(['warning','warn','needs review','medium','paused'].some(k=>s.includes(k))) return 'fa-circle-exclamation';
+  if(['running','active','triaged','info','in_progress'].some(k=>s.includes(k))) return 'fa-bolt';
+  if(['ok','approved','success','low','confirmed','ready','valid'].some(k=>s.includes(k))) return 'fa-check';
+  if(s.includes('override')) return 'fa-triangle-exclamation';
+  return 'fa-minus';
+}
+function badgeHTML(val, cls){ const c=cls||badgeClass(val); const icon=badgeIcon(val); return `<span class="state-badge ${c}"><i class="fas ${icon}"></i>${esc(val||'-').toUpperCase()}</span>`; }
+function setBadge(id, val, cls){ const el=$(id); if(!el) return; el.innerHTML=badgeHTML(val, cls); }
+function sevFrom(status,cls){ const s=(status||'').toLowerCase(); const c=(cls||'').toLowerCase(); if(['blocked','failed','error'].includes(s)) return 'high'; if(c.includes('candidate')) return 'medium'; return 'low'; }
+function activeFlags(flags){ return Object.entries(flags||{}).filter(([,v])=>!!v).map(([k])=>k); }
+function asList(v){ return Array.isArray(v)?v.filter(x=>String(x??'').trim()):[]; }
+function shortHash(v,n=16){ const s=String(v||'-'); return s.length>n?s.slice(0,n):s; }
+function flattenMap(obj){ if(!obj || typeof obj!=='object') return '-'; const rows=[]; Object.entries(obj).forEach(([k,v])=>{ if(Array.isArray(v)){ if(v.length) rows.push(`${k}: ${v.join(', ')}`); } else if(v && typeof v==='object'){ const sub=Object.entries(v).map(([a,b])=>`${a}=${b}`).join(', '); if(sub) rows.push(`${k}: ${sub}`); } else if(String(v??'').trim()){ rows.push(`${k}: ${v}`); } }); return rows.join(' | ') || '-'; }
+function decisionDisplayStatus(r){
+  const eff=r.decision_effective_flags||{};
+  if(eff.confirm) return 'confirm queued';
+  if(eff.followup) return 'followup queued';
+  if(eff.precision) return 'precision queued';
+  if(eff.retry) return 'retry queued';
+  const verdict=String(r.verdict||'none').toLowerCase();
+  return verdict==='confirmed'?'confirmed':(verdict==='probable'?'needs review':'triaged');
+}
+function renderTable(items){
+  cached=items;
+  const tb=document.querySelector('#findingsTbl tbody');
+  if(!tb) return;
+  tb.innerHTML=items.map((r,i)=>{
+    const sev=sevFrom(r.status,r.classification);
+    const verdict=String(r.verdict||'none').toLowerCase();
+    const conf=Number(r.confidence ?? (verdict==='confirmed'?0.92:(verdict==='probable'?0.72:0.45)));
+    const pr=Number((r.decision_economics||{}).priority_score ?? 0);
+    const cvss=verdict==='confirmed'?8.4:(verdict==='probable'?6.7:3.5);
+    const st=decisionDisplayStatus(r);
+    return `<tr data-i="${i}"><td>${badgeHTML(sev)}</td><td>${esc(r.classification)}</td><td>${esc(r.target)}</td><td>${conf.toFixed(2)}</td><td>${cvss.toFixed(1)}</td><td>${badgeHTML(st)}</td><td>${esc(pr.toFixed(2))}</td></tr>`;
+  }).join('');
+  tb.querySelectorAll('tr').forEach(tr=>tr.onclick=()=>showDetail(Number(tr.dataset.i||0)));
+}
+function showDetail(i){
+  const r=cached[i]; if(!r) return;
+  const verdict=String(r.verdict||'none').toLowerCase();
+  const conf=Number(r.confidence ?? (verdict==='confirmed'?0.92:(verdict==='probable'?0.72:0.45)));
+  const cvss=verdict==='confirmed'?8.4:(verdict==='probable'?6.7:3.5);
+  const payload=String(r.payload||'-');
+  const sig=r.signal_assessment||{};
+  const econ=r.decision_economics||{};
+  const explain=r.decision_explain||{};
+  const quality=r.decision_quality||{};
+  const utility=r.runtime_utility||{};
+  const intentFlags=activeFlags(r.decision_intent_flags||{});
+  const effectiveFlags=activeFlags(r.decision_effective_flags||{});
+  const effectiveReasons=r.decision_effective_reasons||{};
+  const effectiveBlockers=r.decision_effective_blockers||{};
+  const hostTransition=r.host_transition||{};
+  const executionGate=r.execution_gate||{};
+  const runtimeTask=r.runtime_task||{};
+  const lineage=r.semantic_lineage_summary||{};
+  const successSem=r.success_semantics||{};
+  const signalContract=r.signal_contract||{};
+  const analysisContract=r.analysis_contract||{};
+  const actorReq=runtimeTask.actor_requirements||{};
+  const sessionReq=runtimeTask.session_requirements||{};
+  const contamination=r.run_contamination||{};
+  const blockerText=flattenMap(effectiveBlockers);
+  const reasonText=flattenMap(effectiveReasons);
+  const topWhy = asList(explain.why).slice(0,3).join(', ') || '-';
+  const topBlockers = asList(explain.blockers).slice(0,3).join(', ') || '-';
+  const qualityText = 'quality=' + Number(quality.decision_quality_score ?? 0).toFixed(2) + ' · utility=' + Number(utility.net_utility_score ?? 0).toFixed(2);
+  const economicsText = 'priority=' + Number(econ.priority_score ?? 0).toFixed(2) + ' · value=' + Number(econ.value_estimate ?? 0).toFixed(2) + ' · cost=' + Number(econ.cost_weight ?? 0).toFixed(2);
+  const signalText = flattenMap(sig);
+  const hostTransitionText = hostTransition && Object.keys(hostTransition).length ? `${hostTransition.from_band||'-'} -> ${hostTransition.to_band||'-'}${hostTransition.changed===false?' (steady)':''}` : '-';
+  const hostTransitionReasons = Array.isArray(hostTransition.reasons) ? hostTransition.reasons.join(', ') : '-';
+  const gateBlockers = Array.isArray(executionGate.blockers) ? executionGate.blockers.join(', ') : '-';
+  const gateText = executionGate && Object.keys(executionGate).length ? `${executionGate.reason_code||'-'} · ${executionGate.family||'-'} · state=${executionGate.state_band||'-'}` : '-';
+  const progression = asList((runtimeTask.recommended_progression||[])).join(' → ') || '-';
+  const rationale = asList((lineage.target_surface_rationale||runtimeTask.target_surface_rationale||[])).join(', ') || '-';
+  const acceptance = asList(successSem.acceptance_checks_eval||successSem.acceptance_checks).join(', ') || '-';
+  const evidenceRequired = asList(successSem.required_evidence_hits||successSem.evidence_required_eval||successSem.evidence_required).join(', ') || '-';
+  const prereqText = `actor=${flattenMap(actorReq)} · session=${flattenMap(sessionReq)}`;
+  $('detailPane').innerHTML=`
+    <div class="kv-row"><span><i class="fas fa-align-left"></i> Summary</span><span>${esc(r.reason||r.objective||'-')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-bullseye"></i> Target</span><span class="kv-wrap kv-wrap-block">${esc(r.target||'-')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-tags"></i> Class / Family</span><span>${esc((r.classification||'-') + ' / ' + (r.task_family||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-stairs"></i> Ladder</span><span>${esc((lineage.current_stage||'-')+' → '+(lineage.next_stage||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-route"></i> Progression / rationale</span><span class="kv-wrap kv-wrap-block">${esc(progression+' · '+rationale)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-link"></i> Lineage hash</span><span>${esc(shortHash(lineage.lineage_sha256||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-layer-group"></i> Capability / action type</span><span>${esc((lineage.capability||runtimeTask.capability||'-')+' / '+(lineage.action_type||runtimeTask.action_type||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-key"></i> Prerequisites</span><span class="kv-wrap kv-wrap-block">${esc(prereqText)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-clipboard-check"></i> Success model</span><span>${esc((successSem.success_model||'-')+' · '+(successSem.expected_signal_type||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-list-check"></i> Acceptance / evidence</span><span class="kv-wrap kv-wrap-block">${esc(acceptance+' · '+evidenceRequired)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-wave-square"></i> Signal contract</span><span class="kv-wrap kv-wrap-block">${esc((r.workflow_promotion_status||'-')+' / '+(r.finding_signal_status||'-')+' / '+(r.success_outcome_status||'-')+' / '+(r.adaptation_feedback_status||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-circle-check"></i> Success eval</span><span>${esc(r.success_eval||'-')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-wave-square"></i> Signal assessment</span><span class="kv-wrap kv-wrap-block">${esc(signalText)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-route"></i> Decision intent</span><span class="kv-wrap kv-wrap-block">${esc(intentFlags.join(', ') || 'none')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-list-check"></i> Effective outcome</span><span class="kv-wrap kv-wrap-block">${esc(r.decision_effective_status||'-')} · ${esc(r.decision_effective_summary||'-')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-check-double"></i> Effective actions</span><span class="kv-wrap kv-wrap-block">${esc(effectiveFlags.join(', ') || 'none')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-circle-question"></i> Top why</span><span class="kv-wrap kv-wrap-block">${esc(topWhy)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-ban"></i> Top blockers</span><span class="kv-wrap kv-wrap-block">${esc(topBlockers)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-circle-info"></i> Effective reasons</span><span class="kv-wrap kv-wrap-block">${esc(reasonText)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-filter-circle-xmark"></i> Effective blockers detail</span><span class="kv-wrap kv-wrap-block">${esc(blockerText)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-shield-halved"></i> Execution gate</span><span class="kv-wrap kv-wrap-block">${esc(gateText)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-filter-circle-xmark"></i> Gate blockers</span><span class="kv-wrap kv-wrap-block">${esc(gateBlockers || '-')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-vial-circle-check"></i> Analysis / signal observation</span><span class="kv-wrap kv-wrap-block">${esc((analysisContract.expected_signal_observed||'-')+' · contam='+(contamination.status||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-server"></i> Host state band</span><span>${esc(r.host_state_band||'-')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-right-left"></i> Host transition</span><span class="kv-wrap kv-wrap-block">${esc(hostTransitionText)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-route"></i> Host transition reasons</span><span class="kv-wrap kv-wrap-block">${esc(hostTransitionReasons)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-arrows-rotate"></i> Host regeneration hint</span><span>${esc(r.host_regeneration_reason||'-')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-scale-balanced"></i> Decision summary</span><span class="kv-wrap kv-wrap-block">${esc(explain.summary||'-')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-gauge-high"></i> Quality / utility</span><span class="kv-wrap kv-wrap-block">${esc(qualityText)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-chart-line"></i> Economics</span><span class="kv-wrap kv-wrap-block">${esc(economicsText)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-satellite-dish"></i> Runtime utility detail</span><span class="kv-wrap kv-wrap-block">${esc(flattenMap(utility))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-arrow-right"></i> Suggested next step</span><span>${verdict==='confirmed'?'prepare report':(verdict==='probable'?'promote to confirmed test':'keep as low-signal observation')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-gauge"></i> Derived confidence / CVSS</span><span>${conf.toFixed(2)} / ${cvss.toFixed(1)}</span></div>`;
+}
+
+async function reviewCandidate(host,state){
+  try{
+    const endpoint = state==='promoted' ? '/api/planner/promote-candidate-target' : '/api/planner/review-candidate-target';
+    const payload = state==='promoted' ? {host} : {host,state};
+    const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data=await res.json();
+    if(!data.ok) throw new Error(data.error||'candidate_review_failed');
+    await refresh();
+  }catch(e){ alert('Candidate review failed: '+e.message); }
+}
+
+function renderCandidateHosts(items){
+  candidateCache=items||[];
+  const node=$('candidateHosts'); if(!node) return;
+  if(!items || !items.length){ node.innerHTML='<div class="kv-row"><span><i class="fas fa-circle-check"></i> Pending</span><span>0</span></div><div class="kv-row"><span><i class="fas fa-circle-info"></i> Status</span><span>No candidate hosts waiting.</span></div>'; return; }
+  node.innerHTML=items.map(it=>`<div class="kv-row"><span class="kv-wrap kv-wrap-block"><i class="fas fa-server"></i> ${esc(it.host)}<br><small>${esc((it.type||'host')+' · '+(it.task_family_seeds||[]).join(', '))}${it.review_note?'<br>'+esc(it.review_note):''}</small></span><span style="display:flex;gap:6px;flex-wrap:wrap"><button class="control-btn" onclick="reviewCandidate('${esc(it.host)}','promoted')"><i class="fas fa-user-check"></i> Promote</button><button class="control-btn" onclick="reviewCandidate('${esc(it.host)}','deferred')"><i class="fas fa-clock"></i> Defer</button><button class="control-btn red" onclick="reviewCandidate('${esc(it.host)}','rejected')"><i class="fas fa-ban"></i> Reject</button></span></div>`).join('');
+}
+
+function renderRuntimePlanMeta(meta){
+  const node=$('runtimePlanMeta'); if(!node) return;
+  node.innerHTML=`<div class="kv-row"><span><i class="fas fa-code-branch"></i> Revision</span><span>${esc(meta?.plan_revision ?? '-')}</span></div><div class="kv-row"><span><i class="fas fa-shuffle"></i> Diff</span><span>${esc('+'+(meta?.added_tasks ?? 0)+' / -'+(meta?.deprecated_tasks ?? 0))}</span></div><div class="kv-row"><span><i class="fas fa-wave-square"></i> Material</span><span>${esc(String(meta?.material_change ?? false))}</span></div><div class="kv-row"><span><i class="fas fa-bolt"></i> Reason</span><span>${esc(meta?.regeneration_reason ?? '-')}</span></div><div class="kv-row"><span><i class="fas fa-circle-info"></i> Why changed</span><span>${esc(meta?.diff_reason ?? '-')}</span></div>`;
+}
+
+function renderRuntimePlanDiff(meta){
+  const node=$('runtimePlanDiff'); if(!node) return;
+  const added=meta?.added_examples||[]; const deprecated=meta?.deprecated_examples||[];
+  if(!added.length && !deprecated.length){ node.innerHTML='<div class="kv-row"><span><i class="fas fa-code-compare"></i> Exact diff</span><span>No material task diff.</span></div>'; return; }
+  const rows=[];
+  added.slice(0,4).forEach(it=>rows.push(`<div class="kv-row"><span class="kv-wrap kv-wrap-block"><i class="fas fa-plus"></i> ${esc(it.target||'-')}<br><small>${esc((it.task_family||'generic')+' · '+(it.objective||'-'))}</small></span><span>ADDED</span></div>`));
+  deprecated.slice(0,4).forEach(it=>rows.push(`<div class="kv-row"><span class="kv-wrap kv-wrap-block"><i class="fas fa-minus"></i> ${esc(it.target||'-')}<br><small>${esc((it.task_family||'generic')+' · '+(it.objective||'-'))}</small></span><span>DEPRECATED</span></div>`));
+  node.innerHTML=rows.join('');
+}
+
+function renderRuntimePlanPreview(items){
+  const node=$('runtimePlanPreview'); if(!node) return;
+  if(!items || !items.length){ node.innerHTML='<div class="kv-row"><span><i class="fas fa-circle-info"></i> Preview</span><span>No runtime plan loaded.</span></div>'; return; }
+  node.innerHTML=items.slice(0,8).map(it=>{
+    const rt=it.runtime_task||{};
+    const tools=(rt.recommended_tools||it.recommended_tools||[]).join(', ');
+    const cost=rt.cost_band||it.cost_band||'-';
+    return `<div class="kv-row"><span class="kv-wrap kv-wrap-block"><i class="fas fa-crosshairs"></i> ${esc(it.target||'-')}<br><small>${esc((it.task_family||'generic')+' · score='+(it.target_score??'-')+' · cost='+cost)}</small><br><small>${esc('tools: '+(tools||'-'))}</small></span><span class="kv-wrap kv-wrap-block">${esc(it.objective||'-')}</span></div>`;
+  }).join('');
+}
+
+async function explainHost(host){
+  try{
+    const data=await (await fetch('/api/host-explain?host='+encodeURIComponent(host))).json();
+    if(!data.ok) throw new Error(data.error||'host_explain_failed');
+    alert((data.explanations||[]).join('\n'));
+  }catch(e){ alert('Host explain failed: '+e.message); }
+}
+
+function renderHostState(items){
+  const node=$('hostStatePane'); if(!node) return;
+  if(!items || !items.length){ node.innerHTML='<div class="empty-state"><strong>No host yield data yet</strong>Host ranking appears after enough runtime results accumulate.</div>'; return; }
+  node.innerHTML=items.slice(0,8).map(it=>`<div class="kv-row"><span class="kv-wrap kv-wrap-block"><i class="fas fa-server"></i> ${esc(it.host)}<br><small>${esc('runs='+it.runs+' · promising='+it.promising+' · probable='+it.probable+' · confirmed='+it.confirmed)}</small><br><small>${esc('why: '+(it.explain||'steady sample'))}</small></span><span class="kv-wrap kv-wrap-block">${esc(it.yield_score)}<br><small>${esc('u='+(Number(it.avg_utility||0).toFixed(2))+' · p+='+(Number(it.partial_or_better_rate||0).toFixed(2)))}</small></span></div>`).join('');
+}
+
+function renderFamilyYield(items){
+  const node=$('familyYieldPane'); if(!node) return;
+  if(!items || !items.length){ node.innerHTML='<div class="empty-state"><strong>No family yield data yet</strong>Family ranking appears after enough runtime results accumulate.</div>'; return; }
+  node.innerHTML=items.slice(0,8).map(it=>`<div class="kv-row"><span class="kv-wrap kv-wrap-block"><i class="fas fa-diagram-project"></i> ${esc(it.family)}<br><small>${esc('runs='+it.runs+' · promising='+it.promising+' · probable='+it.probable+' · confirmed='+it.confirmed)}</small><br><small>${esc('why: '+(it.explain||'steady sample'))}</small></span><span>${esc(it.yield_score)}<br><small>${esc('u='+(Number(it.avg_utility||0).toFixed(2)))}</small></span></div>`).join('');
+}
+function renderTracePane(trace){
+  const node=$('tracePane'); if(!node) return;
+  if(!trace || !trace.ok){ node.innerHTML='<div class="empty-state"><strong>No runtime trace yet</strong>Trace/evidence truth appears when a latest runtime artifact is available.</div>'; return; }
+  const run=trace.run_identity||{}; const ladder=trace.ladder||{}; const sig=trace.signal_status||{}; const pre=trace.prerequisites||{}; const dec=trace.decision||{}; const lin=trace.lineage||{}; const gov=trace.governance||{};
+  node.innerHTML=`
+    <div class="kv-row"><span><i class="fas fa-crosshairs"></i> Target / family</span><span>${esc((run.target||'-')+' · '+(run.task_family||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-stairs"></i> Ladder</span><span>${esc((ladder.current_stage||'-')+' → '+(ladder.next_stage||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-compass"></i> Rationale</span><span>${esc((ladder.target_surface_rationale||[]).join(', ')||'-')}</span></div>
+    <div class="kv-row"><span><i class="fas fa-wave-square"></i> Signal / success</span><span>${esc((sig.workflow_status||'-')+' / '+(sig.finding_status||'-')+' / '+(sig.success_status||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-hand-point-right"></i> Action</span><span>${esc((dec.requested_action||'-')+' → '+(dec.effective_action||'-')+' · '+(dec.effective_status||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-key"></i> Missing prereqs</span><span>${esc('auth='+(pre.auth_prereq_missing?'yes':'no')+' · state='+(pre.state_prereq_missing?'yes':'no'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-link"></i> Lineage</span><span>${esc(shortHash(lin.lineage_sha256||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-shield-halved"></i> Governance</span><span>${esc('blocked='+(gov.policy_blocked?'yes':'no')+' · owner='+(gov.owner_gate_pending?'pending':'clear')+' · contam='+(gov.contamination_excluded?'yes':'no'))}</span></div>`;
+}
+function metricRate(group,name,ev){ return Number((((ev||{})[group]||{})[name]||{}).rate||0).toFixed(2); }
+function renderEvaluationSummary(ev){
+  const node=$('evaluationSummaryPane'); if(!node) return;
+  if(!ev || !ev.ok){ node.innerHTML='<div class="empty-state"><strong>No evaluation summary yet</strong>Replay/effectiveness metrics will appear once archived evaluation artifacts exist.</div>'; return; }
+  const sc=ev.status_counts||{}; const top=(ev.top_exclusions||[]).map(x=>`${x.reason}:${x.count}`).join(' | ')||'-';
+  node.innerHTML=`
+    <div class="kv-row"><span><i class="fas fa-boxes-stacked"></i> Replay bundles</span><span>${esc(String(ev.bundle_count||0))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-shuffle"></i> Statuses</span><span>${esc('ok='+(sc.ok||0)+' partial='+(sc.partial||0)+' div='+(sc.divergent||0))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-arrow-up-right-dots"></i> Cand → conf</span><span>${esc(metricRate('yield_metrics','candidate_to_confirmed_conversion',ev))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-vial-circle-check"></i> Conf → proof</span><span>${esc(metricRate('yield_metrics','confirmed_to_exploit_proof_conversion',ev))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-file-circle-check"></i> Proof → report</span><span>${esc(metricRate('yield_metrics','exploit_proof_to_report_quality_conversion',ev))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-shield-halved"></i> Policy / divergence</span><span>${esc(metricRate('governance_metrics','policy_block_rate',ev)+' / '+metricRate('governance_metrics','replay_divergence_rate',ev))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-user-lock"></i> Auth / state success</span><span>${esc(metricRate('auth_state_metrics','auth_required_branch_success_rate',ev)+' / '+metricRate('auth_state_metrics','stateful_branch_success_rate',ev))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-filter-circle-xmark"></i> Top exclusions</span><span>${esc(top)}</span></div>`;
+}
+async function updateMode(){
+  try{
+    const info=await (await fetch('/api/campaign-info')).json();
+    const mode=$('modeBadge'); if(mode){ const owner=!!info.owner_override; mode.className='mode-value mode-button'+(owner?' badge-override':''); mode.innerHTML=owner?'<i class="fas fa-triangle-exclamation"></i> OVERRIDE':'<i class="fas fa-flask"></i> RESEARCH MODE'; }
+  }catch(e){}
+}
+async function refresh(){
+  await updateMode();
+  try{
+    const m=await (await fetch('/api/metrics')).json();
+    const info=await (await fetch('/api/campaign-info')).json();
+    const f=await (await fetch('/api/findings-table')).json();
+    const fq=await (await fetch('/api/finding-quality')).json();
+    const cand=await (await fetch('/api/planner/candidate-targets')).json();
+    const rp=await (await fetch('/api/planner/runtime-plan-view')).json();
+    const hs=await (await fetch('/api/host-yield')).json();
+    const fy=await (await fetch('/api/family-yield')).json();
+    const cy=await (await fetch('/api/capability-yield')).json();
+    const trace=await (await fetch('/api/runtime-trace')).json();
+    const ev=await (await fetch('/api/evaluation-summary')).json();
+    let items=f.items||[];
+    const total=items.length;
+    const crit=items.filter(r=>sevFrom(r.status,r.classification)==='high').length;
+    const probable=items.filter(r=>String(r.verdict||'').toLowerCase()==='probable').length;
+    const confirmed=items.filter(r=>String(r.verdict||'').toLowerCase()==='confirmed').length;
+    $('fTotal').textContent=total;
+    $('fCritical').textContent=crit;
+    $('fConf').textContent=Number(m.avg_confidence||0).toFixed(2);
+    $('fCvss').textContent=Number(m.highest_cvss||0).toFixed(1);
+    const cats={}; items.forEach(x=>{cats[x.classification]=(cats[x.classification]||0)+1});
+    $('dSeverity').textContent=`H:${crit} M:${Math.max(probable+confirmed-crit,0)} L:${Math.max(total-(probable+confirmed),0)}`;
+    $('dCategory').textContent=Object.entries(cats).slice(0,3).map(([k,v])=>`${k}:${v}`).join(' | ')||'-';
+    $('dRaw').textContent=Math.max(total-probable-confirmed,0); $('dPromoted').textContent=probable; $('dReview').textContent=probable; $('dConfirmed').textContent=(fq.quality_telemetry?.confirmed??confirmed);
+    const lc=fq.lifecycle||{}; $('lcSignal').textContent=`${lc.signal??0}/${lc.probable??0}`; $('lcConfirm').textContent=`${lc.confirm_running??0}/${lc.confirmed??0}`;
+
+    const topClass=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0]?.[0]||'-';
+    const runState=(info.state||'unknown').toUpperCase();
+    $('classList').innerHTML=`
+      <div class="kv-row"><span><i class="fas fa-bullseye"></i> Campaign</span><span>${esc(info.campaign_name||'-')}</span></div>
+      <div class="kv-row"><span><i class="fas fa-traffic-light"></i> Run state</span><span>${badgeHTML(runState)}</span></div>
+      <div class="kv-row"><span><i class="fas fa-tags"></i> Top classification</span><span>${esc(topClass)}</span></div>
+      <div class="kv-row"><span><i class="fas fa-arrow-trend-up"></i> Promoted ratio</span><span>${total?(((probable+confirmed)/total)*100).toFixed(1):'0.0'}%</span></div>
+    `;
+    const econ=fq.economics||{};
+    const explain=fq.explainability||{};
+    const intentTotals=fq.decision_intent_totals||{};
+    const effectiveTotals=fq.decision_effective_totals||{};
+    const topWhy=(explain.top_why||[]).slice(0,2).map(x=>`${x.key}:${x.count}`).join(' | ')||'-';
+    const topBlockers=(explain.top_blockers||[]).slice(0,2).map(x=>`${x.key}:${x.count}`).join(' | ')||'-';
+    const topStatus=(explain.effective_status_top||[]).slice(0,2).map(x=>`${x.key}:${x.count}`).join(' | ')||'-';
+    $('runSummaryList').innerHTML=`
+      <div class="kv-row"><span><i class="fas fa-fingerprint"></i> Run ID</span><span>${esc(info.run_id||'-')}</span></div>
+      <div class="kv-row"><span><i class="fas fa-list-check"></i> Executed actions</span><span>${esc(info.executed||0)}</span></div>
+      <div class="kv-row"><span><i class="fas fa-check-double"></i> Verified vs unverified (derived)</span><span>${confirmed}/${Math.max(total-confirmed,0)}</span></div>
+      <div class="kv-row"><span><i class="fas fa-lightbulb"></i> Intent confirm/followup</span><span>${esc((intentTotals.confirm??0)+' / '+(intentTotals.followup??0))}</span></div>
+      <div class="kv-row"><span><i class="fas fa-list-check"></i> Effective confirm/followup</span><span>${esc((effectiveTotals.confirm??0)+' / '+(effectiveTotals.followup??0))}</span></div>
+      <div class="kv-row"><span><i class="fas fa-chart-line"></i> Confirm conversion</span><span>${esc(Number(econ.confirm_conversion_rate||0).toFixed(2))}</span></div>
+      <div class="kv-row"><span><i class="fas fa-arrows-rotate"></i> Reconsult ROI</span><span>${esc(Number(econ.reconsult_roi||0).toFixed(2))}</span></div>
+      <div class="kv-row"><span><i class="fas fa-scale-balanced"></i> Avg quality / utility</span><span>${esc(Number(explain.avg_decision_quality||0).toFixed(2)+' / '+Number(explain.avg_net_utility||0).toFixed(2))}</span></div>
+      <div class="kv-row"><span><i class="fas fa-circle-question"></i> Top why</span><span class="kv-wrap kv-wrap-block">${esc(topWhy)}</span></div>
+      <div class="kv-row"><span><i class="fas fa-ban"></i> Top blockers</span><span class="kv-wrap kv-wrap-block">${esc(topBlockers)}</span></div>
+      <div class="kv-row"><span><i class="fas fa-wave-square"></i> Effective outcomes</span><span class="kv-wrap kv-wrap-block">${esc(topStatus)}</span></div>
+    `;
+
+    renderTable(items); if(items.length) showDetail(0);
+    renderCandidateHosts(cand.items||[]);
+    let rpItems=[];
+    try{ rpItems = rp.items||rp.entries||(rp.content?JSON.parse(rp.content):[]); }catch(_e){ rpItems=[]; }
+    renderRuntimePlanMeta(rp.meta||{});
+    renderRuntimePlanDiff(rp.meta||{});
+    renderRuntimePlanPreview(rpItems);
+    renderHostState(hs.items||[]);
+    renderFamilyYield(fy.items||[]);
+    renderTracePane(trace);
+    renderEvaluationSummary(ev);
+  }catch(e){
+    const tb=document.querySelector('#findingsTbl tbody'); if(tb) tb.innerHTML='<tr><td colspan="7"><div class="empty-state"><strong>Could not load findings</strong>The dashboard could not fetch the current findings payload.</div></td></tr>';
+  }
+}
+refresh(); setInterval(refresh, 1000);
+</script></body></html>

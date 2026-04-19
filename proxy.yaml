@@ -1,0 +1,43 @@
+# RAVEN-CLAW – Proxy / Anonymization Configuration
+
+# === Global Proxy Settings ===
+proxy:
+  enable_proxy: false             # master switch for proxy usage
+  proxy_type: "socks5"            # type of proxy: socks5, http, https
+  proxy_address: "127.0.0.1:9050" # default proxy address (can be tor local)
+  rotate_proxy_per_target: true   # use a different proxy per target
+  rotate_proxy_interval_sec: 600  # rotate proxy every 10 minutes if enabled
+  anonymous_only_for_targets: true # apply proxy only for targets in campaign.md
+  skip_proxy_for_targets:
+    - InternalLab                 # trusted internal lab / private infrastructure
+  force_anonymity: false           # override aggression level if anonymity required
+
+# === Target-Specific Proxy Overrides ===
+targets:
+  ExampleAPI:
+    use_proxy: false
+  WebPortal:
+    use_proxy: false
+  InternalLab:
+    use_proxy: false
+
+# === TOR / Network Anonymization Options ===
+tor:
+  enable: false
+  control_port: 9051
+  socks_port: 9050
+  password: "changeme"            # optional for Tor authentication
+  use_torify_for_tools: false       # wrap tools like curl, wget, nmap with torify
+
+# === Logging & Monitoring ===
+logging:
+  enable: true
+  log_path: "./logs/proxy/"
+  log_proxy_switch: true
+  log_target_proxy_mapping: true
+
+# === Notes / Guidelines ===
+notes:
+  - All proxy / anonymity usage must be compliant with campaign.md.
+  - System will request owner approval if an unlisted target or new configuration requires proxy.
+  - Proxy rotation is optional per target; can be disabled for trusted environments.

@@ -1,0 +1,21 @@
+type: object
+required:
+  - source_fragment
+  - rule_id
+  - decision
+  - description
+  - confidence
+  - trace_id
+properties:
+  source_fragment:
+    type: string
+  rule_id:
+    type: string
+  decision:
+    type: string
+  description:
+    type: string
+  confidence:
+    type: number
+  trace_id:
+    type: string

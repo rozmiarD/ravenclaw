@@ -1,0 +1,63 @@
+# RAVEN-CLAW – Realistic Token & Cost Budgets (Chutes Pricing)
+
+budget:
+  total_funds_usd: 25                    # initial budget in $ (adjustable)
+  daily_limit_usd: 15                    # max spend per day
+  max_tokens_per_cycle: 1000000          # global hard token cap per cycle
+  warning_when_total_remaining_usd: 15   # alert when near daily spend cap
+  stop_when_total_remaining_usd: 10      # stop running additional cycles if reached
+  reset_daily_at: "00:00"                # daily reset (UTC)
+
+models:
+
+  brain:
+    model_name: "Qwen/Qwen3-235B-A22B-Thinking-2507"
+    pricing:
+      input_per_1M_usd: 0.11              # Chutes input price $/1M tokens
+      output_per_1M_usd: 0.60             # Chutes output price $/1M tokens
+    expected_max_tokens_per_use: 150000   # typical upper usage for deep reasoning
+    hard_max_tokens_per_use: 200000
+
+  mid_tier:
+    model_name: "openai/gpt-oss-120b-TEE"
+    pricing:
+      input_per_1M_usd: 0.04             # estimation from Chutes patterns
+      output_per_1M_usd: 0.18
+    expected_max_tokens_per_use: 70000   # typical usage for audit-style tasks
+    hard_max_tokens_per_use: 100000
+
+  analysis:
+    model_name: "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
+    pricing:
+      input_per_1M_usd: 0.03              # Chutes typical rate
+      output_per_1M_usd: 0.11
+    expected_max_tokens_per_use: 45000    # summary parser / filter tasks
+    hard_max_tokens_per_use: 75000
+
+  light:
+    model_name: "NousResearch/Hermes-4-14B"
+    pricing:
+      input_per_1M_usd: 0.01              # similar lightweight model price
+      output_per_1M_usd: 0.05
+    expected_max_tokens_per_use: 12000    # small formatting operations
+    hard_max_tokens_per_use: 20000
+
+monitoring:
+  enable: true
+  log_path: "./logs/budget/"
+  alert_owner_on_threshold: true
+  max_monthly_spend_usd: 25             # soft cap before owner notification
+  track_in_out_tokens: true               # track input vs output usage
+
+priority:
+  high_value_tasks_first: true
+  low_budget_fallback_strategies: true     # switch to cheaper models if low budget
+
+# Notes / Guidelines
+notes:
+  - All model costs are based on Chutes API pricing data as of current known rates
+  - System calculates estimated cost for each API call:
+      cost ≈ (input_tokens/1e6)*input_per_1M_usd + (output_tokens/1e6)*output_per_1M_usd.
+  - RAVEN-CLAW must alert the owner if a planned cycle could exceed daily or total budgets.
+  - Budgets may be adjusted per campaign in campaign.md; default applies if unspecified.
+  - Execution Engine enforces these budgets and logs usage after each cycle.

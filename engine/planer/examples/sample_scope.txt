@@ -1,0 +1,5 @@
+Program scope:
+- app.example.com
+- api.example.com
+Allowed: recon, xss, idor, csrf, ssrf.
+Disallowed: dos, brute force, social engineering.

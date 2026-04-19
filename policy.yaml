@@ -1,0 +1,108 @@
+# RAVEN-CLAW – System Policy Configuration
+
+# === General System Rules ===
+system:
+  enforce_whitelist: true            # only execute commands in whitelist.yaml
+  block_destructive_commands: true   # rm, wipe, dd, etc. are forbidden
+  auto_notify_owner_on_risk: true    # send warnings on uncertain actions
+  max_concurrent_tasks: 1            # prevent overloading execution engine
+  heartbeat_interval_sec: 600        # system periodic checks
+
+# === Aggression Level Guidelines ===
+aggression:
+  min_level: 1
+  max_level: 10
+  default_level: 8
+  level_descriptions:
+    1: "Passive: recon, mapping only"
+    2: "Passive+: scanning, low-risk observation"
+    3: "Low: safe payload tests, non-intrusive scans"
+    4: "Moderate: targeted payloads within campaign scope"
+    5: "Moderate+: limited exploitation under safe conditions"
+    6: "High: more aggressive testing within campaign rules"
+    7: "High+: deeper tests, higher risk targets"
+    8: "Lab Mode: aggressive testing in private infrastructure"
+    9: "Lab Mode+: full penetration tests in lab only"
+    10: "Full Autonomy in lab mode, maximum testing"
+
+# === Proxy / Anonymization Settings ===
+proxy:
+  proxy_policy_enabled: false
+  allow_proxy_rotation: true
+  default_proxy_mode: per_target
+  require_owner_approval_for_proxy_override: true  
+
+# === Logging & Memory ===
+logging:
+  enable: true
+  log_path: "./logs/"
+  max_log_size_mb: 50
+  archive_old_logs: true
+  memory_path: "./memory/"
+
+# === Reporting & GitHub ===
+reporting:
+  enable: true
+  report_path: "./reports/"
+  push_to_github: false        # disabled per 2026-02-22 owner request
+  github_repo: ""              # no remote repo while pushes are disabled
+  github_branch: ""
+  push_only_owner_approved: true
+
+# === Campaign Reload / Config Updates ===
+reload:
+  auto_reload_campaign: true
+  reload_interval_sec: 3600   # check campaign.md updates every hour
+  reload_policy_files: true
+
+# === Safety / Defensive Mechanisms ===
+safety:
+  stop_on_high_risk: true
+  dry_run_on_unknown_commands: true
+  alert_owner_on_rule_violation: true
+  token_monitoring: true
+  stop_on_budget_violation: true
+  alert_owner_on_budget_violation: true
+  sandbox_lab_mode: false
+
+# === Financial Limits ===
+financial_limits:
+  max_unbounded_loss_usd: 24
+
+# === Request Header Requirements ===
+request_headers:
+  enforce: false               # toggle header enforcement on/off
+  required: []                 # list of header names to require when enforce=true
+  expected_values: {}          # optional map header->expected value
+
+# === Account Ownership ===
+account_ownership: owner_only
+
+# === Web Security Rules ===
+web_security:
+  disallow_cookie_tampering: true
+  csrf_only_when_impactful: true
+
+# === Report Requirements ===
+report_requirements:
+  cvss_required: true
+  impact_proof_required: true
+
+# === Data Handling ===
+data_handling:
+  no_storage_of_pii: true
+  must_delete_immediately: true
+
+# === Disallowed Command Patterns ===
+disallowed_patterns:
+  - "--flood"
+  - "--rate"
+  - "slowloris"
+  - "benchmark"
+  - "stress"
+
+# === Misc / Notes ===
+notes:
+  - All actions outside campaign.md scope require explicit owner approval.
+  - System must maintain token efficiency in all operations.
+  - Any suggestion of unsafe or destructive action must be logged and reported.

@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "source": "example_redacted",
+  "campaign": {
+    "campaign_key": "example-campaign",
+    "state": "idle"
+  },
+  "notes": [
+    "This is a redacted example artifact for public documentation.",
+    "Do not publish live runtime/control-plane state files."
+  ]
+}

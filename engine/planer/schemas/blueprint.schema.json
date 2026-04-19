@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RAVEN-CLAW PLANER Blueprint",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "campaign_id",
+    "campaign_name_template",
+    "source_program_hash_sha256",
+    "operator_flags_hash_sha256",
+    "planner_semantics_hash_sha256",
+    "planner_identity_hash_sha256",
+    "planner_provenance_mode",
+    "blueprint_hash_sha256",
+    "version",
+    "operator_approval",
+    "aggression_profile",
+    "credentials_policy",
+    "planner_hints",
+    "variants",
+    "structured_scope",
+    "target_profiles",
+    "task_family_seeds",
+    "attack_taxonomy",
+    "interpretations",
+    "budget_recommendations",
+    "target_taxonomy",
+    "success_criteria",
+    "versioning"
+  ],
+  "properties": {
+    "planner_provenance_mode": {
+      "type": "string",
+      "enum": ["deterministic", "hybrid"]
+    },
+    "versioning": {
+      "type": "object",
+      "required": [
+        "engine",
+        "deterministic",
+        "planner_provenance_mode",
+        "planner_semantics_version",
+        "reconcile_mode",
+        "source_hash",
+        "operator_flags_hash",
+        "planner_semantics_hash",
+        "planner_identity_hash"
+      ]
+    }
+  }
+}

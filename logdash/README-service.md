@@ -1,0 +1,37 @@
+# LogDash Service Notes
+
+This file documents how the Flask/SQLite log dashboard is managed as a user-level systemd service.
+
+## Service location
+- Unit file: `~/.config/systemd/user/logdash.service`
+- Working dir: `<workspace>/logdash`
+- Virtualenv Python: `<workspace>/logdash/.venv/bin/python`
+- Port: `9091` (loopback-only, use SSH tunnel if you need remote access)
+
+If the workspace is not in the historical default location, set `RAVENCLAW_WORKSPACE=/path/to/workspace` in the systemd unit environment.
+
+## Managing the service
+```bash
+systemctl --user status logdash.service   # check current state
+systemctl --user restart logdash.service  # restart after code changes
+journalctl --user -u logdash.service -f   # live logs
+```
+
+The unit is enabled, so it auto-starts when the user session comes up. Service restarts automatically on crash with a 5 second backoff.
+
+## Deployment workflow
+1. Activate the virtual environment to install/update dependencies:
+   ```bash
+   cd <workspace>/logdash
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
+2. Apply code changes and restart the service (`systemctl --user restart logdash.service`).
+
+## Troubleshooting checklist
+- Ensure `curl -I http://127.0.0.1:9091` returns `200 OK`.
+- If the port is busy, check for old processes (`ps -ef | grep app.py`).
+- For permission/logging issues, inspect `journalctl --user -u logdash.service`.
+- If the service fails repeatedly, check the SQLite file `logs.db` for corruption (`sqlite3 logs.db "PRAGMA integrity_check;"`).
+
+Keep this README alongside the Flask app so anyone touching LogDash knows how it's kept alive.

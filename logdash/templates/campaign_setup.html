@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ravenclaw · campaign setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"><link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head><body class="ui-loading"><div class="dashboard">
+<div class="top-bar"><div class="logo-area"><span class="logo"><i class="fas fa-robot"></i> RAVENCLAW</span><span class="badge">v{{ app_version }}</span></div>
+<div class="nav-menu"><a class="nav-item" href="/"><i class="fas fa-chart-line"></i> Pipeline monitoring</a><a class="nav-item" href="/findings"><i class="fas fa-bug"></i> Findings</a><a class="nav-item active" href="/campaign-setup"><i class="fas fa-bullseye"></i> Campaign Setup</a><a class="nav-item" href="/system-settings"><i class="fas fa-cog"></i> System settings</a><a class="nav-item" href="/owner-actions"><i class="fas fa-user-cog"></i> Owner actions</a><button id="modeBadge" class="mode-value mode-button" type="button"><i class="fas fa-flask"></i> RESEARCH MODE</button></div></div>
+
+<div id="campaignHydrationGate" class="hydration-gate"><i class="fas fa-spinner fa-spin"></i><span>Loading campaign state…</span></div>
+<div class="page-content">
+  <div class="layout-1-1">
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-list-check"></i> Campaign Readiness</div>
+          <div class="card-subtitle">Fast preflight view for scope, generated runtime plan, validation state and credentials posture before activation.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">preflight</span><span class="mini-badge">readiness</span><span class="mini-badge" id="campaignSaveStateBadge" data-state="pending">loading</span></div>
+      </div>
+      <div class="kv-list readiness-grid">
+        <div class="kv-row"><span><i class="fas fa-file-lines"></i> Scope loaded</span><span id="chkScope">MISSING</span></div>
+        <div class="kv-row"><span><i class="fas fa-gears"></i> Plan generated</span><span id="chkPlan">PENDING</span></div>
+        <div class="kv-row"><span><i class="fas fa-shield-check"></i> Plan valid</span><span id="chkValid">OK</span></div>
+        <div class="kv-row"><span><i class="fas fa-user-shield"></i> Credentials policy</span><span id="chkCreds">ANONYMOUS</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-2 mt16">
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-folder-open"></i> Prepared Campaigns / Activation</div>
+          <div class="card-subtitle">Choose a prepared campaign artifact, inspect readiness and activate the selected target package.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">selection</span><span class="mini-badge">activation</span></div>
+      </div>
+      <div class="form-row"><label>Prepared campaigns</label><select id="plannerCampaignSelect"></select></div>
+      <div class="kv-list">
+        <div class="kv-row"><span><i class="fas fa-bullseye"></i> Selected campaign</span><span id="selectedCampaignName">-</span></div>
+        <div class="kv-row"><span><i class="fas fa-layer-group"></i> Targets / tasks</span><span id="scopeSize">-</span></div>
+        <div class="kv-row"><span><i class="fas fa-list-check"></i> Planner status</span><span id="plannerStatus">-</span></div>
+        <div class="kv-row"><span><i class="fas fa-traffic-light"></i> Activation readiness</span><span id="readinessState">needs review</span></div>
+        <div class="kv-row"><span><i class="fas fa-gauge-high"></i> Recommended aggression</span><span id="campaignRecLvl">-</span></div>
+      </div>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-pen-nib"></i> Planner Input / Workflow</div>
+          <div class="card-subtitle">Scope path, operator notes and the end-to-end workflow from prepare through activation.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">planner</span><span class="mini-badge">workflow</span></div>
+      </div>
+      <div class="form-row"><label>Scope file path</label><input id="scopeTxtInput" type="text" list="scopeTxtSuggestions" placeholder="scope/scope.txt"><datalist id="scopeTxtSuggestions"></datalist></div>
+      <div class="form-row"><label>Operator intent / notes</label><input id="operatorNotes" type="text" placeholder="optional"></div>
+      <div class="form-row"><label>LLM interpret</label><select id="llmInterpret"><option value="false" selected>disabled</option><option value="true">enabled</option></select></div>
+      <div class="action-bar">
+        <button id="runPlannerBtn" class="control-btn"><i class="fas fa-play"></i> Run planner</button>
+        <button id="approveBlueprintBtn" class="control-btn"><i class="fas fa-check"></i> Approve blueprint</button>
+        <button id="generateRuntimePlanBtn" class="control-btn"><i class="fas fa-list"></i> Generate runtime plan</button>
+        <button id="validateRuntimePlanBtn" class="control-btn"><i class="fas fa-shield-check"></i> Validate plan</button>
+        <button id="activateCampaignBtn" class="control-btn owner"><i class="fas fa-plug"></i> Activate selected</button>
+        <button id="quickPrepareBtn" class="control-btn"><i class="fas fa-bolt"></i> Prepare all-in-one</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-2-1 mt16">
+    <div class="layout-2" style="grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card settings-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title"><i class="fas fa-key"></i> Credentials Policy</div>
+            <div class="card-subtitle">Scoped bug bounty identity fields and policy-allowed auth-like mechanisms for the active campaign.</div>
+          </div>
+          <div class="card-badges"><span class="mini-badge">auth</span><span class="mini-badge">policy</span></div>
+        </div>
+        <div class="form-row" style="margin-top:12px;">
+          <label><i class="fas fa-user"></i> Bug bounty username</label>
+          <input id="bugBountyUser" type="text" value="" placeholder="username">
+        </div>
+        <div class="form-row">
+          <label><i class="fas fa-envelope"></i> Test account email</label>
+          <input id="testAccountEmail" type="text" value="" placeholder="email">
+        </div>
+        <div class="toggle-grid">
+          <button id="credentialsRequiredBtn" data-setting="credentials_required" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-id-badge"></i></span><span class="state">OFF</span><span class="label">Credentials<br>required</span></button>
+          <button id="allowAuthHeaderBtn" data-setting="allow_auth_header" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-key"></i></span><span class="state">OFF</span><span class="label">Auth<br>header</span></button>
+          <button id="allowCookieHeaderBtn" data-setting="allow_cookie_header" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-cookie-bite"></i></span><span class="state">OFF</span><span class="label">Cookie<br>header</span></button>
+          <button id="allowBasicAuthBtn" data-setting="allow_basic_auth" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-user-lock"></i></span><span class="state">OFF</span><span class="label">Basic<br>auth</span></button>
+        </div>
+        <div class="kv-row" style="margin-top:12px;"><span><i class="fas fa-badge-check"></i> Credential status</span><span id="credentialsStatusBadge">-</span></div>
+        <div class="form-row"><label>Status detail</label><div id="credentialsStatusDetail" style="color:var(--muted); font-size:13px; line-height:1.4;">-</div></div>
+        <div class="form-row" style="margin-top:12px;"><label>Request decoration mode</label><select id="requestDecorationMode"><option value="none">none</option><option value="campaign_required">campaign_required</option><option value="operator_supplied">operator_supplied</option><option value="mixed">mixed</option></select></div>
+        <div class="form-row"><label>Request headers</label><textarea id="requestDecorationHeaders" rows="4" style="width:100%; background:#031109; color:var(--text); border:1px solid #0b2a18; border-radius:6px; padding:8px 10px; font-family:inherit; resize:vertical;" placeholder="X-Canary: rc"></textarea></div>
+        <div class="form-row"><label>Request cookies</label><textarea id="requestDecorationCookies" rows="3" style="width:100%; background:#031109; color:var(--text); border:1px solid #0b2a18; border-radius:6px; padding:8px 10px; font-family:inherit; resize:vertical;" placeholder="session=abc123"></textarea></div>
+        <div class="layout-2" style="grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-row"><label>Basic auth username</label><input id="requestDecorationBasicUser" type="text" value="" placeholder="username"></div>
+          <div class="form-row"><label>Basic auth password</label><input id="requestDecorationBasicPass" type="password" value="" placeholder="password"></div>
+        </div>
+        <div class="form-row"><label>Decoration notes</label><textarea id="requestDecorationNotes" rows="3" style="width:100%; background:#031109; color:var(--text); border:1px solid #0b2a18; border-radius:6px; padding:8px 10px; font-family:inherit; resize:vertical;" placeholder="bug bounty header required
+operator cookie allowed"></textarea></div>
+      </div>
+
+      <div class="card settings-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title"><i class="fas fa-gauge-high"></i> Campaign Runtime Limits</div>
+            <div class="card-subtitle">Campaign-scoped limits now live here: max runs, target load, retry policy and time budget.</div>
+          </div>
+          <div class="card-badges"><span class="mini-badge">runtime</span><span class="mini-badge">limits</span></div>
+        </div>
+        <div class="range-grid" style="margin-top:12px;">
+          <div class="range-item">
+            <div class="range-label"><span><i class="fas fa-hashtag"></i> Max runs</span><span id="maxRunsVal">300</span></div>
+            <input id="maxRunsInput" data-setting="max_runs" type="range" min="1" max="500" value="300">
+            <div class="range-meta"><span>1</span><span>500</span></div>
+            <div class="range-desc">Upper runtime action count for the active campaign.</div>
+          </div>
+          <div class="range-item">
+            <div class="range-label"><span><i class="fas fa-crosshairs"></i> Target load limit</span><span id="targetLoadLimitVal">600</span></div>
+            <input id="targetLoadLimitInput" data-setting="target_load_limit" type="range" min="1" max="2000" value="600">
+            <div class="range-meta"><span>1</span><span>2000</span></div>
+            <div class="range-desc">Maximum targets/tasks loaded into the active runtime slice.</div>
+          </div>
+          <div class="range-item">
+            <div class="range-label"><span><i class="fas fa-clock"></i> Time budget (min)</span><span id="timeBudgetVal">60</span></div>
+            <input id="timeBudget" data-setting="time_budget_min" type="range" min="5" max="240" value="60">
+            <div class="range-meta"><span>5</span><span>240</span></div>
+            <div class="range-desc">Maximum wall-clock budget for this campaign activation.</div>
+          </div>
+        </div>
+        <div class="form-row" style="margin-top:12px;"><label>Retry policy</label><select id="retryPolicy" data-setting="retry_policy"><option value="strict">strict</option><option value="balanced">balanced</option><option value="aggressive">aggressive</option></select></div>
+      </div>
+
+      <div class="card settings-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title"><i class="fas fa-sliders"></i> Configuration State</div>
+            <div class="card-subtitle">Planner, runtime-plan and interpretation signals condensed into one status panel.</div>
+          </div>
+          <div class="card-badges"><span class="mini-badge">state</span><span class="mini-badge">validation</span></div>
+        </div>
+        <div class="kv-list">
+          <div class="kv-row"><span><i class="fas fa-circle-check"></i> Planner status</span><span id="plannerStatusPill">UNKNOWN</span></div>
+          <div class="kv-row"><span><i class="fas fa-file-lines"></i> Runtime plan status</span><span id="runtimePlanState">UNKNOWN</span></div>
+          <div class="kv-row"><span><i class="fas fa-triangle-exclamation"></i> Validation notes</span><span id="runtimePlanErrors">-</span></div>
+          <div class="kv-row"><span><i class="fas fa-brain"></i> Interpretation confidence</span><span id="llmConfidence">-</span></div>
+          <div class="kv-row"><span><i class="fas fa-circle-question"></i> Planner conflicts / ambiguities</span><span id="llmSignals">-</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-book"></i> Document Viewer</div>
+          <div class="card-subtitle">Preview the source artifacts driving campaign setup: scope, blueprint, runtime-plan JSON and budgets.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">preview</span><span class="mini-badge">docs</span></div>
+      </div>
+      <div class="action-bar">
+        <button id="viewScopeFileBtn" class="control-btn"><i class="fas fa-file-lines"></i> Scope preview</button>
+        <button id="viewBlueprintBtn" class="control-btn"><i class="fas fa-diagram-project"></i> Blueprint preview</button>
+        <button id="viewRuntimePlanBtn" class="control-btn"><i class="fas fa-list"></i> Runtime plan preview</button>
+        <button id="viewBudgetsBtn" class="control-btn"><i class="fas fa-wallet"></i> Review budget</button>
+      </div>
+      <pre id="docViewer" class="doc-viewer">(preview)</pre>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=(id)=>document.getElementById(id); const esc=(v)=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+let ownerOverride=false, autoTimer=null, hydrated=false; const cred={credentials_required:false,allow_auth_header:false,allow_cookie_header:false,allow_basic_auth:false};
+let state={selected_campaign_key:null};
+function setHydrated(ready){ document.body.classList.toggle('ui-loading', !ready); }
+function badgeClass(val){
+  const s=String(val||'').toLowerCase();
+  if(['failed','error','blocked','invalid','missing'].includes(s)) return 'state-err';
+  if(['warning','needs review','pending'].includes(s)) return 'state-warn';
+  if(['running','active','reviewed'].includes(s)) return 'state-info';
+  if(['ok','approved','success','ready','valid','anonymous'].includes(s)) return 'state-ok';
+  return 'state-neutral';
+}
+function badgeIcon(val){
+  const s=String(val||'').toLowerCase();
+  if(['failed','error','blocked','invalid','missing'].some(k=>s.includes(k))) return 'fa-triangle-exclamation';
+  if(['warning','needs review','pending'].some(k=>s.includes(k))) return 'fa-circle-exclamation';
+  if(['running','active','reviewed'].some(k=>s.includes(k))) return 'fa-bolt';
+  if(['ok','approved','success','ready','valid','anonymous'].some(k=>s.includes(k))) return 'fa-check';
+  if(s.includes('override')) return 'fa-triangle-exclamation';
+  return 'fa-minus';
+}
+function badgeHTML(val, cls){ const c=cls||badgeClass(val); const icon=badgeIcon(val); return `<span class="state-badge ${c}"><i class="fas ${icon}"></i>${esc(val||'-').toUpperCase()}</span>`; }
+function setBadge(id, val, cls){ const el=$(id); if(!el) return; el.innerHTML=badgeHTML(val, cls); }
+function tbtn(id,on){const b=$(id); if(!b) return; b.className=`toggle-btn toggle-tile ${on?'on':'off'}`; const st=b.querySelector('.state'); if(st) st.textContent=on?'ON':'OFF'; }
+function setCampaignSaveState(kind,text){ const el=$('campaignSaveStateBadge'); if(!el) return; el.textContent=text; el.dataset.state=kind; }
+function sched(fn){ if(autoTimer) clearTimeout(autoTimer); autoTimer=setTimeout(fn,320); }
+function setRangeLabel(id){ const el=$(id); const out=$(id==='maxRunsInput'?'maxRunsVal':id==='targetLoadLimitInput'?'targetLoadLimitVal':id==='timeBudget'?'timeBudgetVal':`${id}Val`); if(el && out) out.textContent=el.value; }
+function parseHeaderLines(text){ return String(text||'').split(/\n+/).map(x=>x.trim()).filter(Boolean).map(line=>{ const idx=line.indexOf(':'); return idx>=0 ? {name:line.slice(0,idx).trim(), value:line.slice(idx+1).trim(), source:'operator_supplied'} : {name:line.trim(), value:'', source:'operator_supplied'}; }).filter(x=>x.name); }
+function parseCookieLines(text){ return String(text||'').split(/\n+/).map(x=>x.trim()).filter(Boolean).map(line=>{ const idx=line.indexOf('='); return idx>=0 ? {name:line.slice(0,idx).trim(), value:line.slice(idx+1).trim(), source:'operator_supplied'} : {name:line.trim(), value:'', source:'operator_supplied'}; }).filter(x=>x.name); }
+async function refreshScopeSuggestions(selectedValue=''){
+  const list=$('scopeTxtSuggestions');
+  if(!list) return;
+  try{
+    const r=await fetch('/api/planner/scope-files');
+    const d=await r.json();
+    const items=Array.isArray(d.items)?d.items:[];
+    const merged=[];
+    const seen=new Set();
+    [selectedValue, ...items].forEach(item=>{
+      const val=String(item||'').trim();
+      if(!val || seen.has(val)) return;
+      seen.add(val);
+      merged.push(val);
+    });
+    list.innerHTML=merged.map(item=>`<option value="${esc(item)}"></option>`).join('');
+  }catch(e){}
+}
+function requestDecorationDraft(){ return { mode:$('requestDecorationMode')?.value||'none', headers:parseHeaderLines($('requestDecorationHeaders')?.value||''), cookies:parseCookieLines($('requestDecorationCookies')?.value||''), basic_auth:{ enabled:!!(($('requestDecorationBasicUser')?.value||'').trim() || ($('requestDecorationBasicPass')?.value||'')), username:$('requestDecorationBasicUser')?.value||'', password:$('requestDecorationBasicPass')?.value||'', password_ref:'' }, provenance_notes:String($('requestDecorationNotes')?.value||'').split(/\n+/).map(x=>x.trim()).filter(Boolean) }; }
+async function saveCampaign(payload){ setCampaignSaveState('pending','saving'); const res=await fetch('/api/campaign/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({selected_campaign_key:$('plannerCampaignSelect').value||null, owner_override:ownerOverride, ...payload})}); const d=await res.json(); if(!res.ok||d.ok===false){ console.error(d); setCampaignSaveState('error','save failed'); return; } setCampaignSaveState('ok','saved'); await loadInfo(); }
+async function loadCampaigns(preferredKey=null){
+  const d=await (await fetch('/api/planner/campaigns')).json();
+  const items=d.items||[];
+  const sel=$('plannerCampaignSelect');
+  const current=String(preferredKey||sel?.value||((state&&state.selected_campaign_key)||''));
+  sel.innerHTML='<option value="">(select)</option>'+items.map(i=>`<option value="${esc(i.key)}">${esc(i.campaign_name||i.key)} | v${esc(i.version)} | ${i.approved?'APPROVED':'PENDING'}${i.active?' | ACTIVE':''}</option>`).join('');
+  if(current){ sel.value=current; }
+  if(sel && sel.value) state.selected_campaign_key = sel.value;
+}
+async function loadInfo(){ const p=await (await fetch('/api/planner-info')).json(); const c=await (await fetch('/api/campaign-info')).json(); const rs=await (await fetch('/api/runtime-state')).json(); state.selected_campaign_key=c.selected_campaign_key||null; ownerOverride=!!c.owner_override; const mode=$('modeBadge'); if(mode){ mode.className='mode-value mode-button'+(ownerOverride?' badge-override':''); mode.innerHTML=ownerOverride?'<i class="fas fa-triangle-exclamation"></i> OVERRIDE':'<i class="fas fa-flask"></i> RESEARCH MODE'; }
+  setCampaignSaveState('ok','saved');
+  if($('scopeTxtInput') && document.activeElement !== $('scopeTxtInput')) $('scopeTxtInput').value=p.scope_txt||''; await refreshScopeSuggestions(p.scope_txt||$('scopeTxtInput')?.value||''); if(state.selected_campaign_key && $('plannerCampaignSelect')) $('plannerCampaignSelect').value=state.selected_campaign_key; setBadge('plannerStatus', p.status||'-'); setBadge('plannerStatusPill', (p.status||'idle').toUpperCase()); $('selectedCampaignName').textContent=c.selected_campaign_name||c.campaign_name||'-'; const snapshot=(rs&&rs.snapshot)||{}; const snapPlan=(snapshot&&snapshot.plan)||{}; const plan=rs.runtime_plan||{}; const targets=Number(c.planner_scope_targets ?? p.planner_scope_targets ?? plan.target_count ?? plan.input_total ?? snapPlan.target_count ?? snapPlan.input_total ?? 0); const tasks=Number(c.prepared_attacks ?? p.prepared_attacks ?? plan.prepared_attacks ?? plan.generated ?? snapPlan.prepared_attacks ?? snapPlan.generated ?? 0); $('scopeSize').textContent=`${targets} / ${tasks}`; $('campaignRecLvl').textContent=c.aggression_recommended_default??'-';
+  if($('llmInterpret') && document.activeElement !== $('llmInterpret')) $('llmInterpret').value = p.llm_interpret ? 'true' : 'false';
+  const rpErr = String(c.runtime_plan_error_preview||'').toLowerCase();
+  const rpState = c.runtime_plan_ok ? 'VALID' : (rpErr.includes('missing') || rpErr.includes('empty') ? 'MISSING' : 'INVALID');
+  setBadge('runtimePlanState', rpState);
+  $('runtimePlanErrors').textContent=c.runtime_plan_error_preview||'-'; $('llmConfidence').textContent=p.llm_confidence!=null?Number(p.llm_confidence).toFixed(2):'-'; $('llmSignals').textContent=[...(p.llm_conflicts||[]),...(p.llm_ambiguities||[])].slice(0,2).join(' | ')||'-';
+  cred.credentials_required=!!c.credentials_required; cred.allow_auth_header=!!c.allow_auth_header; cred.allow_cookie_header=!!c.allow_cookie_header; cred.allow_basic_auth=!!c.allow_basic_auth;
+  tbtn('credentialsRequiredBtn',cred.credentials_required); tbtn('allowAuthHeaderBtn',cred.allow_auth_header); tbtn('allowCookieHeaderBtn',cred.allow_cookie_header); tbtn('allowBasicAuthBtn',cred.allow_basic_auth);
+  if($('bugBountyUser') && document.activeElement !== $('bugBountyUser')) $('bugBountyUser').value = c.bug_bounty_username || '';
+  if($('testAccountEmail') && document.activeElement !== $('testAccountEmail')) $('testAccountEmail').value = c.test_account_email || '';
+  if($('maxRunsInput') && document.activeElement !== $('maxRunsInput')) $('maxRunsInput').value = c.max_runs != null ? c.max_runs : 300;
+  if($('targetLoadLimitInput') && document.activeElement !== $('targetLoadLimitInput')) $('targetLoadLimitInput').value = c.target_load_limit != null ? c.target_load_limit : 600;
+  if($('timeBudget') && document.activeElement !== $('timeBudget')) $('timeBudget').value = c.time_budget_min != null ? c.time_budget_min : 60;
+  if($('retryPolicy') && document.activeElement !== $('retryPolicy')) $('retryPolicy').value = c.retry_policy || 'balanced';
+  ['maxRunsInput','targetLoadLimitInput','timeBudget'].forEach(setRangeLabel);
+  const rd = c.request_decoration || {};
+  if($('requestDecorationMode') && document.activeElement !== $('requestDecorationMode')) $('requestDecorationMode').value = rd.mode || 'none';
+  if($('requestDecorationHeaders') && document.activeElement !== $('requestDecorationHeaders')) $('requestDecorationHeaders').value = Array.isArray(rd.headers) ? rd.headers.map(h=>`${h.name||''}: ${h.value||''}`.trim()).join('\n') : '';
+  if($('requestDecorationCookies') && document.activeElement !== $('requestDecorationCookies')) $('requestDecorationCookies').value = Array.isArray(rd.cookies) ? rd.cookies.map(c=>`${c.name||''}${c.value!==undefined&&c.value!==''?'='+c.value:''}`).join('\n') : '';
+  if($('requestDecorationBasicUser') && document.activeElement !== $('requestDecorationBasicUser')) $('requestDecorationBasicUser').value = (rd.basic_auth||{}).username || '';
+  if($('requestDecorationBasicPass') && document.activeElement !== $('requestDecorationBasicPass')) $('requestDecorationBasicPass').value = (rd.basic_auth||{}).password || '';
+  if($('requestDecorationNotes') && document.activeElement !== $('requestDecorationNotes')) $('requestDecorationNotes').value = Array.isArray(rd.provenance_notes) ? rd.provenance_notes.join('\n') : '';
+  const scopeVal = String($('scopeTxtInput').value||'').trim();
+  const plannerStatus = String(p.status||'idle').toLowerCase();
+  const runtimeErr = String(c.runtime_plan_error_preview||'').toLowerCase();
+  const hasPlan = !runtimeErr.includes('missing') && !runtimeErr.includes('empty') && !runtimeErr.includes('invalid') && !!c.runtime_plan_ok;
+
+  const chkScope = scopeVal ? 'OK' : 'MISSING';
+  const chkPlan = hasPlan ? 'OK' : (plannerStatus==='running' || plannerStatus==='in_progress' ? 'PENDING' : 'MISSING');
+  const chkValid = hasPlan ? 'OK' : 'MISSING';
+  const credStatus = String(c.credentials_status || (cred.credentials_required ? 'INCOMPLETE' : 'ANONYMOUS'));
+  const chkCreds = credStatus;
+  const runState = String(c.state||'idle').toLowerCase();
+  const isActive = !!c.selected_campaign_key && ['running','paused','in_progress','active'].includes(runState);
+  const readiness = isActive ? 'ACTIVE' : ((chkScope==='OK' && chkPlan==='OK' && chkValid==='OK') ? 'READY TO ACTIVATE' : (chkPlan==='PENDING' ? 'PREPARING' : 'NEEDS REVIEW'));
+
+  setBadge('chkScope', chkScope);
+  setBadge('chkPlan', chkPlan);
+  setBadge('chkValid', chkValid);
+  setBadge('chkCreds', chkCreds);
+  setBadge('credentialsStatusBadge', credStatus);
+  if($('credentialsStatusDetail')) $('credentialsStatusDetail').textContent = c.credentials_status_detail || '-';
+  setBadge('readinessState', readiness);
+}
+async function loadDoc(url){ const r=await fetch(url); const d=await r.json(); $('docViewer').textContent=(r.ok&&d.ok!==false)?(d.content||''):('ERROR: '+(d.error||'not found')); }
+async function persistScopeSelection(){
+  const payload={scope_txt:$('scopeTxtInput')?.value||undefined, selected_campaign_key:$('plannerCampaignSelect')?.value||null, llm_interpret: $('llmInterpret')?.value === 'true'};
+  setCampaignSaveState('pending','saving');
+  await apiJson('/api/planner/selection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  setCampaignSaveState('ok','saved');
+}
+$('plannerCampaignSelect').onchange=async()=>{ try{ await persistScopeSelection(); await loadInfo(); }catch(e){ setCampaignSaveState('error','save failed'); alert(e.message||'selection save failed'); } };
+async function apiJson(url, opts){
+  const r = await fetch(url, opts||{});
+  let d = {};
+  try{ d = await r.json(); }catch(e){ d = {}; }
+  if(r.status===404) throw new Error(`Backend route missing: ${url}`);
+  if(!r.ok || d.ok===false) throw new Error(d.error || d.output || `${url} failed (HTTP ${r.status})`);
+  return d;
+}
+async function runPlanner(){
+  await persistScopeSelection();
+  const d=await apiJson('/api/planner/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({flags:{homelab:false, llm_interpret:$('llmInterpret')?.value === 'true'}, scope_txt:$('scopeTxtInput').value||undefined})});
+  if(d.selected_campaign_key){
+    state.selected_campaign_key = d.selected_campaign_key;
+    if($('plannerCampaignSelect')) $('plannerCampaignSelect').value=d.selected_campaign_key;
+  }
+  return d;
+}
+async function generatePlan(campaignKeyOverride=null){
+  const campaignKey=campaignKeyOverride||$('plannerCampaignSelect').value||state.selected_campaign_key||null;
+  const d=await apiJson('/api/planner/generate-runtime-plan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({campaign_key:campaignKey})});
+  if(d.selected_campaign_key){
+    state.selected_campaign_key = d.selected_campaign_key;
+    if($('plannerCampaignSelect')) $('plannerCampaignSelect').value=d.selected_campaign_key;
+  }
+  return d;
+}
+async function validatePlan(){
+  const d=await (await fetch('/api/campaign/validate-plan')).json();
+  setBadge('runtimePlanState', d.ok?'VALID':'INVALID');
+  $('runtimePlanErrors').textContent=d.ok?'-':((d.errors||[]).slice(0,2).join('; ')||d.error||'invalid');
+  if(!d.ok) throw new Error('validation failed');
+}
+async function approvePlan(campaignKeyOverride=null){
+  const r=await fetch('/api/planner/approve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({campaign_key:campaignKeyOverride||$('plannerCampaignSelect').value||state.selected_campaign_key||null})});
+  const d=await r.json(); if(!r.ok||d.ok===false) throw new Error(d.error||'approve failed');
+}
+$('runPlannerBtn').onclick=async()=>{ try{ await runPlanner(); await loadCampaigns(); await loadInfo(); }catch(e){ alert(e.message||'planner failed'); } };
+$('quickPrepareBtn').onclick=async()=>{
+  try{
+    const run=await runPlanner();
+    const campaignKey=run.selected_campaign_key||$('plannerCampaignSelect').value||state.selected_campaign_key||null;
+    await loadCampaigns(campaignKey);
+    await approvePlan(campaignKey);
+    await generatePlan(campaignKey);
+    await validatePlan();
+    await loadInfo();
+  }catch(e){ alert(e.message||'quick prepare failed'); }
+};
+$('approveBlueprintBtn').onclick=async()=>{ try{ await approvePlan(); await loadInfo(); }catch(e){ alert(e.message||'approve failed'); } };
+$('generateRuntimePlanBtn').onclick=async()=>{ try{ await generatePlan(); await loadInfo(); }catch(e){ alert(e.message||'generate failed'); } };
+$('validateRuntimePlanBtn').onclick=async()=>{ try{ await validatePlan(); }catch(e){ } };
+$('activateCampaignBtn').onclick=async()=>{ const r=await fetch('/api/campaign/activate-from-blueprint',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({campaign_key:$('plannerCampaignSelect').value||null})}); const d=await r.json(); if(!r.ok||d.ok===false) alert(d.error||'activation failed'); await loadInfo(); };
+$('viewScopeFileBtn').onclick=()=>loadDoc(`/api/planner/scope-view?scope_txt=${encodeURIComponent($('scopeTxtInput').value||'')}`);
+if($('scopeTxtInput')){
+  $('scopeTxtInput').onfocus=async()=>{ await refreshScopeSuggestions($('scopeTxtInput').value||''); };
+  $('scopeTxtInput').onchange=async()=>{ try{ await persistScopeSelection(); await loadInfo(); }catch(e){ setCampaignSaveState('error','save failed'); alert(e.message||'scope path save failed'); } };
+  $('scopeTxtInput').onblur=async()=>{ const val=String($('scopeTxtInput').value||'').trim(); if(!val) return; try{ await persistScopeSelection(); await loadInfo(); }catch(e){ setCampaignSaveState('error','save failed'); } };
+  $('scopeTxtInput').onkeydown=async(e)=>{ if(e.key==='Enter'){ e.preventDefault(); try{ await persistScopeSelection(); await loadInfo(); }catch(err){ setCampaignSaveState('error','save failed'); alert(err.message||'scope path save failed'); } } };
+}
+if($('llmInterpret')) $('llmInterpret').onchange=async()=>{ try{ await persistScopeSelection(); await loadInfo(); }catch(e){ setCampaignSaveState('error','save failed'); alert(e.message||'llm interpret save failed'); } };
+$('viewBlueprintBtn').onclick=()=>loadDoc('/api/planner/blueprint-view?format=json');
+$('viewRuntimePlanBtn').onclick=()=>loadDoc('/api/planner/runtime-plan-view');
+$('viewBudgetsBtn').onclick=()=>loadDoc('/api/planner/budgets-view');
+[['credentialsRequiredBtn','credentials_required'],['allowAuthHeaderBtn','allow_auth_header'],['allowCookieHeaderBtn','allow_cookie_header'],['allowBasicAuthBtn','allow_basic_auth']].forEach(([id,key])=>{ $(id).onclick=()=>{ cred[key]=!cred[key]; tbtn(id,cred[key]); sched(()=>saveCampaign({...cred})); }; });
+if($('bugBountyUser')) $('bugBountyUser').oninput=()=>sched(()=>saveCampaign({bug_bounty_username: $('bugBountyUser').value}));
+if($('testAccountEmail')) $('testAccountEmail').oninput=()=>sched(()=>saveCampaign({test_account_email: $('testAccountEmail').value}));
+['maxRunsInput','targetLoadLimitInput','timeBudget'].forEach(id=>{ const el=$(id); if(el) el.oninput=()=>{ setRangeLabel(id); sched(()=>saveCampaign({max_runs:Number($('maxRunsInput')?.value||300), target_load_limit:Number($('targetLoadLimitInput')?.value||600), time_budget_min:Number($('timeBudget')?.value||60), retry_policy:$('retryPolicy')?.value||'balanced'})); }; });
+if($('retryPolicy')) $('retryPolicy').onchange=()=>sched(()=>saveCampaign({max_runs:Number($('maxRunsInput')?.value||300), target_load_limit:Number($('targetLoadLimitInput')?.value||600), time_budget_min:Number($('timeBudget')?.value||60), retry_policy:$('retryPolicy')?.value||'balanced'}));
+['requestDecorationMode','requestDecorationHeaders','requestDecorationCookies','requestDecorationBasicUser','requestDecorationBasicPass','requestDecorationNotes'].forEach(id=>{ const el=$(id); if(el){ const evt=(id==='requestDecorationMode')?'onchange':'oninput'; el[evt]=()=>sched(()=>saveCampaign({request_decoration: requestDecorationDraft()})); }});
+setCampaignSaveState('pending','loading');
+(async()=>{
+  try{
+    await loadCampaigns();
+    await loadInfo();
+  }catch(e){
+    console.error(e);
+    setCampaignSaveState('error','offline');
+  }finally{
+    if(!hydrated){ hydrated=true; setHydrated(true); }
+  }
+})();
+</script></body></html>

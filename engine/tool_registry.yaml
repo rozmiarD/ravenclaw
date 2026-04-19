@@ -1,0 +1,2388 @@
+version: 1
+defaults:
+  planner_profile: core
+  planner_profiles_env: RAVENCLAW_BRAIN_TOOL_PROFILES
+profiles:
+  core:
+    description: Low-noise web-first offensive baseline for default public-safe campaigns.
+    planner_visible: true
+    inherits: []
+  extended:
+    description: Broader offensive tooling for public extended campaigns and deeper
+      vector preparation.
+    planner_visible: true
+    inherits:
+    - core
+  specialized:
+    description: Specialized protocol/platform tooling for advanced offensive workflows.
+    planner_visible: true
+    inherits:
+    - extended
+  lab:
+    description: High-risk or high-noise tooling for lab/private infrastructure workflows.
+    planner_visible: true
+    inherits:
+    - specialized
+  operator_only:
+    description: Execution-only/operator intervention tools; never exposed to planner
+      prompts.
+    planner_visible: false
+    inherits: []
+capabilities:
+  passive_subdomain_discovery:
+    description: Passive host/subdomain collection.
+  subdomain_permutation:
+    description: Candidate generation via permutations.
+  dns_resolution:
+    description: Resolve candidate names and DNS records.
+  dns_enumeration:
+    description: General DNS reconnaissance and validation.
+  historical_url_collection:
+    description: Collect historical or archived URLs.
+  crawler_route_discovery:
+    description: Discover routes, endpoints, and assets by crawling.
+  content_discovery:
+    description: Enumerate paths, endpoints, and directories.
+  parameter_mining:
+    description: Discover parameters and input surface.
+  http_probe:
+    description: Issue crafted HTTP requests and inspect responses.
+  http_fingerprint:
+    description: Fingerprint HTTP services and exposed technologies.
+  tls_posture_check:
+    description: Assess TLS/HTTPS posture and configuration.
+  transport_tls_handshake:
+    description: Low-level TLS handshake and certificate inspection.
+  web_misconfig_check:
+    description: Check for common web misconfigurations safely.
+  template_detection:
+    description: Template/signature-based detection where fit is strong.
+  injection_validation:
+    description: Validate injection hypotheses with bounded checks.
+  service_enumeration:
+    description: Enumerate exposed services and banners.
+  packet_observation:
+    description: Observe traffic/packet behavior.
+  secret_exposure_scan:
+    description: Scan for exposed secrets or sensitive material.
+  auth_bruteforce:
+    description: Authentication brute force / password auditing.
+  wireless_assessment:
+    description: Wireless/RF assessment workflows.
+  operator_shell:
+    description: Operator/system support tooling, not planner-visible.
+task_families:
+  recon:
+  - passive_subdomain_discovery
+  - dns_enumeration
+  - http_fingerprint
+  - service_enumeration
+  subdomain_expansion:
+  - passive_subdomain_discovery
+  - subdomain_permutation
+  - dns_resolution
+  historical_url_mining:
+  - historical_url_collection
+  content_discovery:
+  - content_discovery
+  - crawler_route_discovery
+  tls_assessment:
+  - tls_posture_check
+  - transport_tls_handshake
+  secret_hunt:
+  - secret_exposure_scan
+  - historical_url_collection
+  - crawler_route_discovery
+  auth:
+  - http_probe
+  - parameter_mining
+  authz:
+  - http_probe
+  logic:
+  - http_probe
+  - parameter_mining
+  auth_flow:
+  - http_probe
+  - parameter_mining
+  - packet_observation
+  client_input:
+  - http_probe
+  - parameter_mining
+  input_tamper:
+  - http_probe
+  - parameter_mining
+  redirect_trust:
+  - http_probe
+  - http_fingerprint
+  dns:
+  - dns_enumeration
+  - dns_resolution
+  network_service:
+  - service_enumeration
+  traffic_capture:
+  - packet_observation
+  wireless:
+  - wireless_assessment
+tools:
+  aircrack-ng:
+    enabled: true
+    execution_allowed: true
+    category: wireless
+    planner_profiles: &id001
+    - lab
+    risk_level: high
+    noise_level: high
+    requires_auth_approval: false
+    supports_chain_role:
+    - capture
+    - analyze
+    capabilities:
+    - wireless_assessment
+    task_families:
+    - wireless
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  aireplay-ng:
+    enabled: true
+    execution_allowed: true
+    category: wireless
+    planner_profiles: *id001
+    risk_level: high
+    noise_level: high
+    requires_auth_approval: false
+    supports_chain_role:
+    - active
+    capabilities:
+    - wireless_assessment
+    task_families:
+    - wireless
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  airmon-ng:
+    enabled: true
+    execution_allowed: true
+    category: wireless
+    planner_profiles: *id001
+    risk_level: high
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - setup
+    capabilities:
+    - wireless_assessment
+    task_families:
+    - wireless
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  airodump-ng:
+    enabled: true
+    execution_allowed: true
+    category: wireless
+    planner_profiles: *id001
+    risk_level: high
+    noise_level: high
+    requires_auth_approval: false
+    supports_chain_role:
+    - capture
+    capabilities:
+    - wireless_assessment
+    task_families:
+    - wireless
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  amass:
+    enabled: true
+    execution_allowed: true
+    category: recon
+    planner_profiles: &id002
+    - core
+    - extended
+    - specialized
+    - lab
+    risk_level: low
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - passive_subdomain_discovery
+    task_families:
+    - recon
+    - subdomain_expansion
+    target_kinds:
+    - host
+    - domain
+    equivalent_tools: []
+    normalization_mode: allow
+  arjun:
+    enabled: true
+    execution_allowed: true
+    category: web_probe
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    - validate
+    capabilities:
+    - parameter_mining
+    task_families:
+    - auth
+    - authz
+    - logic
+    - client_input
+    - input_tamper
+    target_kinds:
+    - url
+    equivalent_tools: []
+    normalization_mode: allow
+  apropos:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  assetfinder:
+    enabled: true
+    execution_allowed: true
+    category: recon
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - passive_subdomain_discovery
+    task_families:
+    - recon
+    - subdomain_expansion
+    target_kinds:
+    - host
+    - domain
+    equivalent_tools: []
+    normalization_mode: allow
+  aria2c:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  arp-scan:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles: &id004
+    - specialized
+    - lab
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  awk:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  base64:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  bash:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  cat:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  curl:
+    enabled: true
+    execution_allowed: true
+    category: web_probe
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - validate
+    capabilities:
+    - http_probe
+    task_families:
+    - auth
+    - authz
+    - logic
+    - auth_flow
+    - client_input
+    - input_tamper
+    - redirect_trust
+    target_kinds:
+    - url
+    equivalent_tools: []
+    normalization_mode: allow
+  cut:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  date:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  df:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  dig:
+    enabled: true
+    execution_allowed: true
+    category: dns
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - validate
+    capabilities:
+    - dns_resolution
+    - dns_enumeration
+    task_families:
+    - dns
+    - recon
+    - subdomain_expansion
+    target_kinds:
+    - host
+    - domain
+    equivalent_tools: []
+    normalization_mode: allow
+  dmesg:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  dnsgen:
+    enabled: true
+    execution_allowed: true
+    category: dns
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - subdomain_permutation
+    task_families:
+    - subdomain_expansion
+    target_kinds:
+    - host
+    - domain
+    equivalent_tools: []
+    normalization_mode: allow
+  dnsx:
+    enabled: true
+    execution_allowed: true
+    category: dns
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - validate
+    capabilities:
+    - dns_resolution
+    - dns_enumeration
+    task_families:
+    - dns
+    - recon
+    - subdomain_expansion
+    target_kinds:
+    - host
+    - domain
+    equivalent_tools: []
+    normalization_mode: allow
+  du:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  echo:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  gau:
+    enabled: true
+    execution_allowed: true
+    category: historical
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - historical_url_collection
+    task_families:
+    - historical_url_mining
+    - secret_hunt
+    - recon
+    target_kinds:
+    - host
+    - domain
+    equivalent_tools: []
+    normalization_mode: allow
+  env:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  ethtool:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  feroxbuster:
+    enabled: true
+    execution_allowed: true
+    category: content_discovery
+    planner_profiles: *id002
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - content_discovery
+    task_families:
+    - content_discovery
+    target_kinds:
+    - url
+    equivalent_tools:
+    - ffuf
+    - gobuster
+    - katana
+    normalization_mode: prefer
+  ffuf:
+    enabled: true
+    execution_allowed: true
+    category: content_discovery
+    planner_profiles: *id002
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    - validate
+    capabilities:
+    - content_discovery
+    task_families:
+    - content_discovery
+    target_kinds:
+    - url
+    equivalent_tools:
+    - feroxbuster
+    - gobuster
+    - katana
+    normalization_mode: allow
+  find:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  free:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  gobuster:
+    enabled: true
+    execution_allowed: true
+    category: content_discovery
+    planner_profiles: *id002
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - content_discovery
+    task_families:
+    - content_discovery
+    target_kinds:
+    - url
+    equivalent_tools:
+    - ffuf
+    - feroxbuster
+    - katana
+    normalization_mode: allow
+  gitleaks:
+    enabled: true
+    execution_allowed: true
+    category: secrets
+    planner_profiles: &id003
+    - extended
+    - specialized
+    - lab
+    risk_level: medium
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - scan
+    - validate
+    capabilities:
+    - secret_exposure_scan
+    task_families:
+    - secret_hunt
+    target_kinds:
+    - repo
+    - url
+    - file
+    equivalent_tools: []
+    normalization_mode: allow
+  grep:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  hcxdumptool:
+    enabled: true
+    execution_allowed: true
+    category: wireless
+    planner_profiles: *id001
+    risk_level: high
+    noise_level: high
+    requires_auth_approval: false
+    supports_chain_role:
+    - capture
+    capabilities:
+    - wireless_assessment
+    task_families:
+    - wireless
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  hcxpcapngtool:
+    enabled: true
+    execution_allowed: true
+    category: wireless
+    planner_profiles: *id001
+    risk_level: medium
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - analyze
+    capabilities:
+    - wireless_assessment
+    task_families:
+    - wireless
+    target_kinds:
+    - file
+    equivalent_tools: []
+    normalization_mode: allow
+  hakrawler:
+    enabled: true
+    execution_allowed: true
+    category: crawler
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - crawler_route_discovery
+    task_families:
+    - content_discovery
+    - secret_hunt
+    target_kinds:
+    - url
+    equivalent_tools:
+    - katana
+    normalization_mode: allow
+  head:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  hostname:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  htop:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  httpx:
+    enabled: true
+    execution_allowed: true
+    category: fingerprint
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - validate
+    capabilities:
+    - http_fingerprint
+    - http_probe
+    task_families:
+    - recon
+    - content_discovery
+    - redirect_trust
+    target_kinds:
+    - host
+    - url
+    equivalent_tools: []
+    normalization_mode: allow
+  httpx-pd:
+    enabled: true
+    execution_allowed: true
+    category: fingerprint
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - validate
+    capabilities:
+    - http_fingerprint
+    - tls_posture_check
+    task_families:
+    - tls_assessment
+    - recon
+    target_kinds:
+    - host
+    - url
+    equivalent_tools:
+    - testssl.sh
+    - httpx
+    normalization_mode: prefer
+  katana:
+    enabled: true
+    execution_allowed: true
+    category: crawler
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - crawler_route_discovery
+    - content_discovery
+    task_families:
+    - content_discovery
+    - secret_hunt
+    target_kinds:
+    - url
+    equivalent_tools:
+    - hakrawler
+    - feroxbuster
+    - ffuf
+    normalization_mode: prefer
+  hydra:
+    enabled: true
+    execution_allowed: true
+    category: auth
+    planner_profiles: *id001
+    risk_level: high
+    noise_level: high
+    requires_auth_approval: true
+    supports_chain_role:
+    - validate
+    capabilities:
+    - auth_bruteforce
+    task_families:
+    - auth
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  id:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  ifconfig:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  iostat:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  ip:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  ipcalc:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  iw:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  iwconfig:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  journalctl:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  jq:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  less:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  locate:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  ls:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  man:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  masscan:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles: *id003
+    risk_level: high
+    noise_level: high
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    - recon
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  mkdir:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  more:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  nc:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles: *id003
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - validate
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  netcat:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles: *id003
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - validate
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    target_kinds:
+    - host
+    equivalent_tools:
+    - nc
+    normalization_mode: allow
+  netstat:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  nikto:
+    enabled: true
+    execution_allowed: true
+    category: web_probe
+    planner_profiles: *id002
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    capabilities:
+    - web_misconfig_check
+    task_families:
+    - recon
+    - content_discovery
+    target_kinds:
+    - url
+    equivalent_tools: []
+    normalization_mode: allow
+  nmap:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles: *id002
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - enumerate
+    capabilities:
+    - service_enumeration
+    task_families:
+    - recon
+    - network_service
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  nmcli:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  nslookup:
+    enabled: true
+    execution_allowed: true
+    category: dns
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - validate
+    capabilities:
+    - dns_resolution
+    - dns_enumeration
+    task_families:
+    - dns
+    - recon
+    - subdomain_expansion
+    target_kinds:
+    - host
+    - domain
+    equivalent_tools: []
+    normalization_mode: allow
+  nuclei:
+    enabled: true
+    execution_allowed: true
+    category: template
+    planner_profiles: *id002
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - validate
+    capabilities:
+    - template_detection
+    task_families:
+    - recon
+    - content_discovery
+    - auth
+    - authz
+    - logic
+    target_kinds:
+    - url
+    equivalent_tools: []
+    normalization_mode: allow
+  openssl:
+    enabled: true
+    execution_allowed: true
+    category: tls
+    planner_profiles:
+    - extended
+    - specialized
+    - lab
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - validate
+    capabilities:
+    - transport_tls_handshake
+    - tls_posture_check
+    task_families:
+    - tls_assessment
+    target_kinds:
+    - host
+    - url
+    equivalent_tools:
+    - testssl.sh
+    - httpx-pd
+    normalization_mode: allow
+  ping:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles: *id003
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    - recon
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  pip:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  printenv:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  ps:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  python3:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  reaver:
+    enabled: true
+    execution_allowed: true
+    category: wireless
+    planner_profiles: *id001
+    risk_level: high
+    noise_level: high
+    requires_auth_approval: false
+    supports_chain_role:
+    - active
+    capabilities:
+    - wireless_assessment
+    task_families:
+    - wireless
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  rsync:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  sar:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  scp:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  sed:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  service:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  sleep:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  sort:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  sqlmap:
+    enabled: true
+    execution_allowed: true
+    category: web_probe
+    planner_profiles: *id002
+    risk_level: high
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - validate
+    capabilities:
+    - injection_validation
+    task_families:
+    - client_input
+    - input_tamper
+    - logic
+    target_kinds:
+    - url
+    equivalent_tools: []
+    normalization_mode: allow
+  ss:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  ssh:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  subfinder:
+    enabled: true
+    execution_allowed: true
+    category: recon
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - passive_subdomain_discovery
+    task_families:
+    - recon
+    - subdomain_expansion
+    target_kinds:
+    - host
+    - domain
+    equivalent_tools: []
+    normalization_mode: allow
+  systemctl:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  testssl.sh:
+    enabled: true
+    execution_allowed: true
+    category: tls
+    planner_profiles: *id002
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - validate
+    capabilities:
+    - tls_posture_check
+    task_families:
+    - tls_assessment
+    target_kinds:
+    - host
+    - url
+    equivalent_tools:
+    - httpx-pd
+    - openssl
+    normalization_mode: allow
+  tail:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  tcpdump:
+    enabled: true
+    execution_allowed: true
+    category: traffic
+    planner_profiles: *id004
+    risk_level: high
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - capture
+    - observe
+    capabilities:
+    - packet_observation
+    task_families:
+    - traffic_capture
+    - auth_flow
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  trufflehog:
+    enabled: true
+    execution_allowed: true
+    category: secrets
+    planner_profiles: *id003
+    risk_level: medium
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - scan
+    - validate
+    capabilities:
+    - secret_exposure_scan
+    task_families:
+    - secret_hunt
+    target_kinds:
+    - repo
+    - url
+    - file
+    equivalent_tools: []
+    normalization_mode: allow
+  telnet:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles: *id003
+    risk_level: medium
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  timeout:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  top:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  touch:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  traceroute:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles: *id003
+    risk_level: medium
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    - recon
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  tshark:
+    enabled: true
+    execution_allowed: true
+    category: traffic
+    planner_profiles: *id004
+    risk_level: medium
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - observe
+    - analyze
+    capabilities:
+    - packet_observation
+    task_families:
+    - traffic_capture
+    - auth_flow
+    target_kinds:
+    - host
+    - file
+    equivalent_tools: []
+    normalization_mode: allow
+  uname:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  uniq:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  updatedb:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  vmstat:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  wash:
+    enabled: true
+    execution_allowed: true
+    category: wireless
+    planner_profiles: *id001
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    capabilities:
+    - wireless_assessment
+    task_families:
+    - wireless
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  wc:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  wget:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  whatis:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  whatweb:
+    enabled: true
+    execution_allowed: true
+    category: fingerprint
+    planner_profiles: *id002
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - fingerprint
+    capabilities:
+    - http_fingerprint
+    task_families:
+    - recon
+    - redirect_trust
+    target_kinds:
+    - url
+    equivalent_tools: []
+    normalization_mode: allow
+  whereis:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  which:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  whoami:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  wifite:
+    enabled: true
+    execution_allowed: true
+    category: wireless
+    planner_profiles: *id001
+    risk_level: high
+    noise_level: high
+    requires_auth_approval: false
+    supports_chain_role:
+    - active
+    capabilities:
+    - wireless_assessment
+    task_families:
+    - wireless
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  xargs:
+    enabled: true
+    execution_allowed: true
+    category: operator_support
+    planner_profiles: []
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - support
+    capabilities:
+    - operator_shell
+    task_families: []
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  git:
+    enabled: true
+    execution_allowed: true
+    category: source
+    planner_profiles:
+    - extended
+    - specialized
+    - lab
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    - fetch
+    - validate
+    capabilities:
+    - secret_exposure_scan
+    task_families:
+    - secret_hunt
+    target_kinds:
+    - repo
+    - url
+    - file
+    equivalent_tools: []
+    normalization_mode: allow
+  rg:
+    enabled: true
+    execution_allowed: true
+    category: source
+    planner_profiles:
+    - extended
+    - specialized
+    - lab
+    risk_level: low
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - scan
+    - validate
+    capabilities:
+    - secret_exposure_scan
+    task_families:
+    - secret_hunt
+    target_kinds:
+    - repo
+    - file
+    - url
+    equivalent_tools:
+    - grep
+    normalization_mode: allow
+  dirsearch:
+    enabled: true
+    execution_allowed: true
+    category: content_discovery
+    planner_profiles:
+    - extended
+    - specialized
+    - lab
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    - validate
+    capabilities:
+    - content_discovery
+    task_families:
+    - content_discovery
+    target_kinds:
+    - url
+    equivalent_tools:
+    - ffuf
+    - feroxbuster
+    - gobuster
+    - katana
+    normalization_mode: allow
+  naabu:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles:
+    - extended
+    - specialized
+    - lab
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - enumerate
+    - probe
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    - recon
+    target_kinds:
+    - host
+    equivalent_tools:
+    - nmap
+    - masscan
+    normalization_mode: allow
+  mitmdump:
+    enabled: true
+    execution_allowed: true
+    category: traffic
+    planner_profiles:
+    - specialized
+    - lab
+    risk_level: high
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - capture
+    - observe
+    - validate
+    capabilities:
+    - packet_observation
+    - http_probe
+    task_families:
+    - traffic_capture
+    - auth_flow
+    target_kinds:
+    - host
+    - url
+    equivalent_tools:
+    - tcpdump
+    - tshark
+    normalization_mode: allow
+  smbclient:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles:
+    - specialized
+    - lab
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - enumerate
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    target_kinds:
+    - host
+    equivalent_tools:
+    - rpcclient
+    normalization_mode: allow
+  rpcclient:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles:
+    - specialized
+    - lab
+    risk_level: medium
+    noise_level: medium
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - enumerate
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    target_kinds:
+    - host
+    equivalent_tools:
+    - smbclient
+    normalization_mode: allow
+  ldapsearch:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles:
+    - specialized
+    - lab
+    risk_level: medium
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - enumerate
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow
+  snmpwalk:
+    enabled: true
+    execution_allowed: true
+    category: network
+    planner_profiles:
+    - specialized
+    - lab
+    risk_level: medium
+    noise_level: low
+    requires_auth_approval: false
+    supports_chain_role:
+    - probe
+    - enumerate
+    capabilities:
+    - service_enumeration
+    task_families:
+    - network_service
+    target_kinds:
+    - host
+    equivalent_tools: []
+    normalization_mode: allow

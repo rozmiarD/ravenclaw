@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ravenclaw · system settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"><link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head><body class="ui-loading"><div class="dashboard">
+<div class="top-bar"><div class="logo-area"><span class="logo"><i class="fas fa-robot"></i> RAVENCLAW</span><span class="badge">v{{ app_version }}</span></div>
+<div class="nav-menu"><a class="nav-item" href="/"><i class="fas fa-chart-line"></i> Pipeline monitoring</a><a class="nav-item" href="/findings"><i class="fas fa-bug"></i> Findings</a><a class="nav-item" href="/campaign-setup"><i class="fas fa-bullseye"></i> Campaign Setup</a><a class="nav-item active" href="/system-settings"><i class="fas fa-cog"></i> System settings</a><a class="nav-item" href="/owner-actions"><i class="fas fa-user-cog"></i> Owner actions</a><button id="modeBadge" class="mode-value mode-button" type="button"><i class="fas fa-flask"></i> RESEARCH MODE</button></div></div>
+
+<div id="systemHydrationGate" class="hydration-gate"><i class="fas fa-spinner fa-spin"></i><span>Loading persisted system settings…</span></div>
+<div class="page-content">
+  <div class="card settings-card">
+    <div class="card-head"><div><div class="card-title"><i class="fas fa-layer-group"></i> System Settings Layout</div><div class="card-subtitle">Core cards stay focused on operator-meaningful controls. Advanced cards keep lower-level runtime knobs available without pretending they are part of the default surface.</div></div><div class="card-badges"><span class="mini-badge">core</span><span class="mini-badge">advanced</span><span class="mini-badge" id="systemSaveStateBadge" data-state="pending">loading</span></div></div>
+  </div>
+  <div class="layout-1-1">
+    <div class="card settings-card">
+      <div class="card-head"><div><div class="card-title"><i class="fas fa-toolbox"></i> Core: Planner Tool Profile</div><div class="card-subtitle">Select the active planner-visible tooling profile. This is a core operator-facing control and applies globally.</div></div><div class="card-badges"><span class="mini-badge">planner</span><span class="mini-badge">tools</span></div></div>
+      <div class="form-row" style="margin-top:12px;">
+        <label for="plannerProfileSelect"><span>Active tool level</span><small>Choose which planner-visible tooling profile Ravenclaw should expose.</small></label>
+        <select id="plannerProfileSelect"></select>
+      </div>
+      <div class="range-desc" id="plannerProfileDesc" style="margin-top:8px;">Default planner tool profile.</div>
+      <div class="card-badges" style="margin-top:10px; justify-content:flex-start; gap:8px;">
+        <span class="mini-badge" id="plannerProfileActiveBadge">active: core</span>
+        <span class="mini-badge" id="plannerProfileSourceBadge">source: default</span>
+      </div>
+    </div>
+    <div class="card settings-card">
+      <div class="card-head"><div><div class="card-title"><i class="fas fa-diagram-project"></i> Core: Runtime Profiles</div><div class="card-subtitle">High-leverage behavior is consolidated into profiles. Raw knobs still exist below under Advanced overrides, but the default operator surface stays compact.</div></div><div class="card-badges"><span class="mini-badge">profiles</span><span class="mini-badge">core</span></div></div>
+      <div class="form-row" style="margin-top:12px;">
+        <label for="pipelinePresetSelect"><span>Campaign run preset</span><small>Apply a named runtime posture. Selecting a preset updates the visible controls below and autosaves through the canonical pipeline-config flow.</small></label>
+        <select id="pipelinePresetSelect">
+          <option value="exploratory_efficient">exploratory-efficient</option>
+          <option value="exploratory_max">exploratory-max</option>
+          <option value="confirmation_heavy">confirmation-heavy</option>
+          <option value="custom">custom</option>
+        </select>
+      </div>
+      <div class="range-desc" id="pipelinePresetDesc" style="margin-top:8px;">Preset descriptions load with the persisted runtime config.</div>
+      <div class="card-badges" style="margin-top:10px; justify-content:flex-start; gap:8px;">
+        <span class="mini-badge" id="pipelinePresetBadge" data-state="info">preset: loading</span>
+        <span class="mini-badge" id="pipelinePresetPersistedBadge" data-state="info">persisted: loading</span>
+      </div>
+      <div class="layout-2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+        <div class="form-row"><label>Plan adaptation mode</label><select id="plan_adaptation_mode"><option value="off">off</option><option value="balanced">balanced</option><option value="aggressive">aggressive</option><option value="frozen">frozen</option></select></div>
+        <div class="form-row"><label>Planner reconsult mode</label><select id="planner_reconsult_mode"><option value="off">off</option><option value="conservative">conservative</option><option value="balanced">balanced</option><option value="aggressive">aggressive</option></select></div>
+        <div class="form-row"><label>Workflow escalation profile</label><select id="workflow_escalation_profile"><option value="off">off</option><option value="conservative">conservative</option><option value="balanced">balanced</option><option value="aggressive">aggressive</option></select></div>
+        <div class="form-row"><label>Confirm jobs profile</label><select id="confirm_jobs_profile"><option value="off">off</option><option value="conservative">conservative</option><option value="standard">standard</option><option value="aggressive">aggressive</option></select></div>
+        <div class="form-row"><label>Family decay mode</label><select id="family_decay_mode"><option value="off">off</option><option value="light">light</option><option value="standard">standard</option><option value="strong">strong</option></select></div>
+        <div class="form-row"><label>Campaign-scoped controls</label><div class="range-desc" style="margin-top:10px;">Budgets, credentials and request decoration now live in <a href="/campaign-setup">Campaign Setup</a>. Owner approval stays in <a href="/owner-actions">Owner Actions</a>.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-2 mt16">
+    <div class="card settings-card">
+      <div class="card-head"><div><div class="card-title"><i class="fas fa-scale-balanced"></i> Core: Execution & Qualification</div><div class="card-subtitle">High-value default controls: execution semantics, deterministic behavior, qualification thresholds and concise runtime shaping.</div></div><div class="card-badges"><span class="mini-badge">policy</span><span class="mini-badge">decision</span></div></div>
+      <div class="toggle-grid">
+        <button id="enable_analysis_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-chart-pie"></i></span><span class="state">OFF</span><span class="label">Analysis<br>stage</span></button>
+        <button id="enable_light_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-feather"></i></span><span class="state">OFF</span><span class="label">Light<br>stage</span></button>
+        <button id="verbose_commands_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-terminal"></i></span><span class="state">OFF</span><span class="label">Verbose<br>preview</span></button>
+        <button id="experimental_payloads_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-flask"></i></span><span class="state">OFF</span><span class="label">Experimental<br>payloads</span></button>
+      </div>
+      <div class="range-grid">
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-file-waveform"></i> Analysis min bytes</span><span id="analysis_min_bytes_v">32</span></div>
+          <input id="analysis_min_bytes" type="range" min="0" max="2048" step="32" value="32">
+          <div class="range-meta"><span>0</span><span>2048</span></div>
+          <div class="range-desc">Minimum output size before analysis is triggered.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-layer-group"></i> Context history turns</span><span id="context_history_v">5</span></div>
+          <input id="context_history" type="range" min="1" max="20" step="1" value="5">
+          <div class="range-meta"><span>1</span><span>20</span></div>
+          <div class="range-desc">Number of context entries sent per cycle.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-code"></i> JSON contract retries</span><span id="json_contract_retries_v">1</span></div>
+          <input id="json_contract_retries" type="range" min="0" max="3" step="1" value="1">
+          <div class="range-meta"><span>0</span><span>3</span></div>
+          <div class="range-desc">Retries to repair schema mismatches.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-coins"></i> Prompt token budget</span><span id="prompt_token_budget_v">350</span></div>
+          <input id="prompt_token_budget" type="range" min="0" max="1250" step="25" value="350">
+          <div class="range-meta"><span>0</span><span>1250</span></div>
+          <div class="range-desc">Prompt budget cap for role prompts and context shaping in the current runtime.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-user-shield"></i> Auditor prompt budget</span><span id="auditor_prompt_token_budget_v">900</span></div>
+          <input id="auditor_prompt_token_budget" type="range" min="0" max="2000" step="25" value="900">
+          <div class="range-meta"><span>0</span><span>2000</span></div>
+          <div class="range-desc">Prompt budget cap reserved for the auditor’s canonical review context.</div>
+        </div>
+      </div>
+      <div class="layout-2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+        <div class="form-row"><label>Execution mode</label><select id="execution_mode"><option value="normalized">normalized</option><option value="faithful">faithful</option></select></div>
+        <div class="form-row"><label>Qualification mode</label><select id="qualification_mode"><option value="shadow">shadow</option><option value="enforce">enforce</option></select></div>
+        <div class="form-row"><label>Qualification threshold</label><select id="qualification_threshold"><option value="none">none</option><option value="weak_signal">weak_signal</option><option value="probable">probable</option><option value="confirmed">confirmed</option><option value="custom">custom</option></select></div>
+      </div>
+      <div class="range-grid" style="margin-top:12px;grid-template-columns:1fr;">
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-shield-halved"></i> OOS aggression cap</span><span id="out_of_scope_aggression_cap_v">1</span></div>
+          <input id="out_of_scope_aggression_cap" type="range" min="1" max="10" step="1" value="1">
+          <div class="range-meta"><span>1</span><span>10</span></div>
+          <div class="range-desc">Single canonical out-of-scope aggression ceiling shared by runtime and policy.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head"><div><div class="card-title"><i class="fas fa-rotate"></i> Advanced: Planner & Runtime Adaptation</div><div class="card-subtitle">Lower-level adaptation knobs, planner reconsult thresholds and runtime steering controls that should stay out of the default mental model.</div></div><div class="card-badges"><span class="mini-badge">advanced</span><span class="mini-badge">runtime</span></div></div>
+      <div class="range-desc" style="margin-top:12px;">Runtime budgets and target-load limits moved to <a href="/campaign-setup">Campaign Setup</a>. This card now contains only expert overrides for the profile-driven behavior above.</div>
+      <div class="toggle-grid" style="margin-top:12px;">
+        <button id="enable_followups_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-forward"></i></span><span class="state">OFF</span><span class="label">Followup<br>probes</span></button>
+        <button id="planner_reconsult_on_high_signal_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-compass"></i></span><span class="state">OFF</span><span class="label">Planner<br>reconsult</span></button>
+        <button id="dynamic_plan_adaptation_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-shuffle"></i></span><span class="state">OFF</span><span class="label">Dynamic plan<br>adaptation</span></button>
+        <button id="freeze_plan_revision_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-snowflake"></i></span><span class="state">OFF</span><span class="label">Freeze plan<br>revision</span></button>
+        <button id="aggressive_adaptation_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-bolt"></i></span><span class="state">OFF</span><span class="label">Aggressive<br>adaptation</span></button>
+      </div>
+      <div class="range-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-repeat"></i> Max follow-ups per target</span><span id="max_followups_per_target_v">2</span></div>
+          <input id="max_followups_per_target" type="range" min="0" max="20" step="1" value="2">
+          <div class="range-meta"><span>0</span><span>20</span></div>
+          <div class="range-desc">Maximum follow-ups per target.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-hourglass-half"></i> Planner reconsult interval</span><span id="planner_reconsult_min_interval_runs_v">12</span></div>
+          <input id="planner_reconsult_min_interval_runs" type="range" min="1" max="200" step="1" value="12">
+          <div class="range-meta"><span>1</span><span>200</span></div>
+          <div class="range-desc">Runs between planner reconsults.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-signal"></i> Reconsult threshold</span><span id="planner_reconsult_signal_threshold_v">15</span></div>
+          <input id="planner_reconsult_signal_threshold" type="range" min="1" max="20" step="1" value="15">
+          <div class="range-meta"><span>1</span><span>20</span></div>
+          <div class="range-desc">Signals required before planner reconsult.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <details class="card settings-card" style="margin-top:16px; padding:12px 14px;"><summary style="cursor:pointer; list-style:none;"><div class="card-head"><div><div class="card-title"><i class="fas fa-wrench"></i> Advanced Controls</div><div class="card-subtitle">Collapsed by default. Open only when you need expert overrides, diagnostics or raw compatibility knobs.</div></div><div class="card-badges"><span class="mini-badge">advanced</span><span class="mini-badge">runtime</span></div></div></summary><div style="margin-top:16px;">
+
+  <div class="layout-2 mt16">
+    <div class="card settings-card">
+      <div class="card-head"><div><div class="card-title"><i class="fas fa-project-diagram"></i> Advanced: Family Steering</div><div class="card-subtitle">Bias, suppress or decay task families globally or per host. Powerful, but intentionally advanced.</div></div><div class="card-badges"><span class="mini-badge">family</span><span class="mini-badge">routing</span></div></div>
+      <div class="toggle-grid" style="grid-template-columns:repeat(2,1fr);">
+        <button id="family_decay_enabled_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-chart-line"></i></span><span class="state">OFF</span><span class="label">Family decay<br>enabled</span></button>
+      </div>
+      <div class="range-grid" style="grid-template-columns:1.2fr 1fr;">
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-calendar-alt"></i> Decay window runs</span><span id="family_decay_window_runs_v">24</span></div>
+          <input id="family_decay_window_runs" type="range" min="6" max="120" step="1" value="24">
+          <div class="range-meta"><span>6</span><span>120</span></div>
+          <div class="range-desc">History window used for family decay scoring.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-percent"></i> Decay penalty</span><span id="family_decay_penalty_v">0.12</span></div>
+          <input id="family_decay_penalty" type="range" min="0" max="0.5" step="0.01" value="0.12">
+          <div class="range-meta"><span>0.00</span><span>0.50</span></div>
+          <div class="range-desc">Penalty intensity applied to overused families.</div>
+        </div>
+      </div>
+      <div class="layout-2 mt16" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-row">
+          <label for="familyLaneBoostInput"><span>Family lane boost</span><small>Comma/newline list of family names to promote.</small></label>
+          <textarea id="familyLaneBoostInput" rows="5" style="width:100%; background:#031109; color:var(--text); border:1px solid #0b2a18; border-radius:6px; padding:8px 10px; font-family:inherit; resize:vertical;"></textarea>
+        </div>
+        <div class="form-row">
+          <label for="familyLaneSuppressInput"><span>Family lane suppress</span><small>Comma/newline list of family names to dampen.</small></label>
+          <textarea id="familyLaneSuppressInput" rows="5" style="width:100%; background:#031109; color:var(--text); border:1px solid #0b2a18; border-radius:6px; padding:8px 10px; font-family:inherit; resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div class="layout-2 mt16" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-row">
+          <label for="hostFamilyLaneBoostInput"><span>Host family boost map</span><small>JSON object: host -> [families]</small></label>
+          <textarea id="hostFamilyLaneBoostInput" rows="6" style="width:100%; background:#031109; color:var(--text); border:1px solid #0b2a18; border-radius:6px; padding:8px 10px; font-family:inherit; resize:vertical;"></textarea>
+        </div>
+        <div class="form-row">
+          <label for="hostFamilyLaneSuppressInput"><span>Host family suppress map</span><small>JSON object: host -> [families]</small></label>
+          <textarea id="hostFamilyLaneSuppressInput" rows="6" style="width:100%; background:#031109; color:var(--text); border:1px solid #0b2a18; border-radius:6px; padding:8px 10px; font-family:inherit; resize:vertical;"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head"><div><div class="card-title"><i class="fas fa-check-double"></i> Advanced: Confirm Job Controls</div><div class="card-subtitle">Confirmation-job caps and cooldowns. These are real runtime controls, but lower-level than the default operator surface.</div></div><div class="card-badges"><span class="mini-badge">quality</span><span class="mini-badge">confirm</span></div></div>
+      <div class="toggle-grid" style="grid-template-columns:repeat(4,1fr);">
+        <button id="enable_confirm_jobs_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-stamp"></i></span><span class="state">OFF</span><span class="label">Confirm jobs<br>enabled</span></button>
+        <button id="strict_deterministic_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-ruler-combined"></i></span><span class="state">OFF</span><span class="label">Strict<br>deterministic</span></button>
+        <button id="qualification_shadow_workflow_bridge_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-ghost"></i></span><span class="state">OFF</span><span class="label">Shadow workflow<br>bridge</span></button>
+        <button id="candidate_partial_followup_bridge_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-code-branch"></i></span><span class="state">OFF</span><span class="label">Candidate partial<br>bridge</span></button>
+        <button id="weak_signal_positive_bridge_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-wave-square"></i></span><span class="state">OFF</span><span class="label">Weak signal<br>positive bridge</span></button>
+        <button id="evidence_bearing_followup_bridge_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-magnifying-glass-chart"></i></span><span class="state">OFF</span><span class="label">Evidence-bearing<br>followup bridge</span></button>
+        <button id="early_precision_for_high_leverage_families_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-bullseye"></i></span><span class="state">OFF</span><span class="label">Early precision<br>high leverage</span></button>
+      </div>
+      <div class="layout-2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div class="form-row"><label>Promising threshold</label><select id="qualification_promising_threshold"><option value="none">none</option><option value="weak_signal">weak_signal</option><option value="probable">probable</option><option value="confirmed">confirmed</option></select></div>
+        <div class="form-row"><label>Follow-up threshold</label><select id="qualification_followup_threshold"><option value="none">none</option><option value="weak_signal">weak_signal</option><option value="probable">probable</option><option value="confirmed">confirmed</option></select></div>
+      </div>
+      <div class="range-desc" style="margin:8px 0 12px 0;">Qualification mode is now owned by the core card above. This advanced panel only exposes expert threshold overrides and bridge behavior. Workflow promotion controls durable queue escalation, follow-up threshold controls queue admission, and confirm jobs require a confirmable workflow signal.</div>
+      <div class="form-row" style="margin-bottom:12px;">
+        <label for="highLeveragePrecisionFamiliesInput"><span>High leverage precision families</span><small>Comma/newline list of task families eligible for earlier precision handling.</small></label>
+        <textarea id="highLeveragePrecisionFamiliesInput" rows="4" style="width:100%; background:#031109; color:var(--text); border:1px solid #0b2a18; border-radius:6px; padding:8px 10px; font-family:inherit; resize:vertical;"></textarea>
+      </div>
+      <div class="range-grid" style="grid-template-columns:repeat(2,1fr);">
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-user-check"></i> Confirm jobs per target</span><span id="max_confirm_jobs_per_target_v">1</span></div>
+          <input id="max_confirm_jobs_per_target" type="range" min="0" max="5" step="1" value="1">
+          <div class="range-meta"><span>0</span><span>5</span></div>
+          <div class="range-desc">Maximum confirmation jobs per target.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-stopwatch"></i> Confirm cooldown (sec)</span><span id="confirm_job_cooldown_sec_v">900</span></div>
+          <input id="confirm_job_cooldown_sec" type="range" min="60" max="7200" step="60" value="900">
+          <div class="range-meta"><span>60</span><span>7200</span></div>
+          <div class="range-desc">Cooldown window before re-confirming the same class.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-layer-group"></i> Confirm jobs total</span><span id="max_confirm_jobs_total_v">20</span></div>
+          <input id="max_confirm_jobs_total" type="range" min="1" max="200" step="1" value="20">
+          <div class="range-meta"><span>1</span><span>200</span></div>
+          <div class="range-desc">Global cap for queued confirmation jobs.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-tags"></i> Confirm jobs per class</span><span id="max_confirm_jobs_per_class_v">8</span></div>
+          <input id="max_confirm_jobs_per_class" type="range" min="1" max="50" step="1" value="8">
+          <div class="range-meta"><span>1</span><span>50</span></div>
+          <div class="range-desc">Per-vulnerability-class confirm cap.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-2 mt16">
+    <div class="card settings-card">
+      <div class="card-head"><div><div class="card-title"><i class="fas fa-share-nodes"></i> Campaign-scoped controls moved</div><div class="card-subtitle">Credentials policy, request decoration, max runs, target load limit and retry policy are no longer duplicated here. Configure them once in Campaign Setup, and use Owner Actions for explicit approval gates.</div></div><div class="card-badges"><span class="mini-badge">deduped</span><span class="mini-badge">campaign</span></div></div>
+      <div class="action-bar" style="margin-top:12px;">
+        <a class="control-btn" href="/campaign-setup"><i class="fas fa-bullseye"></i> Open Campaign Setup</a>
+        <a class="control-btn owner" href="/owner-actions"><i class="fas fa-user-cog"></i> Open Owner Actions</a>
+      </div>
+      <div class="range-desc" style="margin-top:12px;">System Settings now focuses on global runtime and pipeline behavior. Campaign Setup owns campaign-specific limits, credentials, request headers/cookies and operator-supplied auth context.</div>
+      <div style="display:none;" aria-hidden="true">
+        <select id="requestDecorationMode" disabled><option value="none">none</option></select>
+        <textarea id="requestDecorationHeaders" disabled></textarea>
+        <textarea id="requestDecorationCookies" disabled></textarea>
+        <input id="requestDecorationBasicUser" type="text" disabled>
+        <input id="requestDecorationBasicPass" type="password" disabled>
+        <textarea id="requestDecorationNotes" disabled></textarea>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <div class="layout-1 mt16">
+    <div class="card settings-card">
+      <div class="card-head"><div><div class="card-title"><i class="fas fa-shield"></i> Advanced: Scope & Policy Enforcement</div><div class="card-subtitle">Out-of-scope caps, policy diagnostics, queue behavior and transport-failure guardrails.</div></div><div class="card-badges"><span class="mini-badge">scope</span><span class="mini-badge">policy</span></div></div>
+      <div class="toggle-grid" style="grid-template-columns:repeat(3,1fr);">
+        <button id="policy_diag_logging_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-notes-medical"></i></span><span class="state">OFF</span><span class="label">Policy diag<br>logging</span></button>
+        <button id="force_auth_like_weak_on_http_controls_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-traffic-light"></i></span><span class="state">OFF</span><span class="label">Auth-like weak<br>HTTP controls</span></button>
+        <button id="queue_preemption_in_curated_loop_btn" class="toggle-btn toggle-tile off"><span class="icon"><i class="fas fa-list-check"></i></span><span class="state">OFF</span><span class="label">Queue preemption<br>curated loop</span></button>
+      </div>
+      <div class="range-grid">
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-signal"></i> code=000 streak threshold</span><span id="code000_streak_threshold_v">3</span></div>
+          <input id="code000_streak_threshold" type="range" min="1" max="10" value="3">
+          <div class="range-meta"><span>1</span><span>10</span></div>
+          <div class="range-desc">Triggers cooldown after repeated transport fails.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-layer-group"></i> code=000 session cap</span><span id="code000_session_cap_v">5</span></div>
+          <input id="code000_session_cap" type="range" min="1" max="20" value="5">
+          <div class="range-meta"><span>1</span><span>20</span></div>
+          <div class="range-desc">Max code=000 per session.</div>
+        </div>
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-snowflake"></i> code=000 cooldown (sec)</span><span id="code000_cooldown_sec_v">3600</span></div>
+          <input id="code000_cooldown_sec" type="range" min="60" max="86400" value="3600">
+          <div class="range-meta"><span>60</span><span>86400</span></div>
+          <div class="range-desc">Cooldown window after transport failures.</div>
+        </div>
+      </div>
+      <div class="range-desc" style="margin-top:12px;">The canonical out-of-scope aggression cap now lives in the core execution card above. This advanced scope panel keeps only diagnostics and transport-failure guardrails.</div>
+    </div>
+  </div>
+</details>
+<script>
+const $=(id)=>document.getElementById(id);
+let persisted={}, draft={}, dirty=false, hydrated=false, saveTimer=null, objectParseErrors={}, plannerProfileStateCache={options:[],active_profile:'core',source:'default'};
+function setHydrated(ready){ document.body.classList.toggle('ui-loading', !ready); }
+const DEFAULT_HIGH_LEVERAGE_PRECISION_FAMILIES=['authz','idor','logic','workflow','state_transition','input_tamper'];
+const PRESET_COMMON={
+  enable_analysis:true,
+  enable_light:true,
+  verbose_commands:false,
+  analysis_min_bytes:32,
+  execution_mode:'normalized',
+  qualification_promising_threshold:'probable',
+  qualification_followup_threshold:'probable',
+  out_of_scope_aggression_cap:1,
+  strict_deterministic:true,
+  family_lane_boost:[],
+  family_lane_suppress:[],
+  host_family_lane_boost:{},
+  host_family_lane_suppress:{},
+  high_leverage_precision_families:[...DEFAULT_HIGH_LEVERAGE_PRECISION_FAMILIES],
+  autodiscover_deep_skip:true,
+  policy_diag_logging:false,
+  force_auth_like_weak_on_http_controls:true,
+  queue_preemption_in_curated_loop:true,
+  code000_streak_threshold:3,
+  code000_session_cap:5,
+  code000_cooldown_sec:3600,
+};
+const PIPELINE_PRESETS={
+  exploratory_efficient:{
+    label:'exploratory-efficient',
+    description:'Creative search posture with larger prompt budgets, aggressive adaptation, balanced reconsult/escalation, and enough confirmation to keep signal quality high without turning the run into queue spam.',
+    values:{
+      ...PRESET_COMMON,
+      plan_adaptation_mode:'aggressive',
+      planner_reconsult_mode:'balanced',
+      workflow_escalation_profile:'balanced',
+      confirm_jobs_profile:'standard',
+      family_decay_mode:'light',
+      context_history:6,
+      json_contract_retries:2,
+      prompt_token_budget:1200,
+      auditor_prompt_token_budget:1500,
+      qualification_mode:'shadow',
+      qualification_threshold:'probable',
+      experimental_payloads:true,
+      enable_followups:true,
+      planner_reconsult_on_high_signal:true,
+      dynamic_plan_adaptation:true,
+      freeze_plan_revision:false,
+      aggressive_adaptation:true,
+      max_followups_per_target:2,
+      planner_reconsult_min_interval_runs:12,
+      planner_reconsult_signal_threshold:12,
+      family_decay_enabled:true,
+      family_decay_window_runs:36,
+      family_decay_penalty:0.08,
+      enable_confirm_jobs:true,
+      qualification_shadow_workflow_bridge:true,
+      candidate_partial_followup_bridge:true,
+      weak_signal_positive_bridge:false,
+      evidence_bearing_followup_bridge:true,
+      early_precision_for_high_leverage_families:true,
+      max_confirm_jobs_per_target:1,
+      confirm_job_cooldown_sec:900,
+      max_confirm_jobs_total:20,
+      max_confirm_jobs_per_class:8,
+    },
+  },
+  exploratory_max:{
+    label:'exploratory-max',
+    description:'High-pressure exploratory posture: maximum follow-up fanout, faster planner reconsults, aggressive confirm jobs, and experimental vectoring tuned for broad bounded search on live in-scope surfaces.',
+    values:{
+      ...PRESET_COMMON,
+      plan_adaptation_mode:'aggressive',
+      planner_reconsult_mode:'aggressive',
+      workflow_escalation_profile:'aggressive',
+      confirm_jobs_profile:'aggressive',
+      family_decay_mode:'standard',
+      context_history:6,
+      json_contract_retries:2,
+      prompt_token_budget:1250,
+      auditor_prompt_token_budget:1700,
+      qualification_mode:'shadow',
+      qualification_threshold:'probable',
+      experimental_payloads:true,
+      enable_followups:true,
+      planner_reconsult_on_high_signal:true,
+      dynamic_plan_adaptation:true,
+      freeze_plan_revision:false,
+      aggressive_adaptation:true,
+      max_followups_per_target:4,
+      planner_reconsult_min_interval_runs:6,
+      planner_reconsult_signal_threshold:8,
+      family_decay_enabled:true,
+      family_decay_window_runs:24,
+      family_decay_penalty:0.12,
+      enable_confirm_jobs:true,
+      qualification_shadow_workflow_bridge:true,
+      candidate_partial_followup_bridge:true,
+      weak_signal_positive_bridge:true,
+      evidence_bearing_followup_bridge:true,
+      early_precision_for_high_leverage_families:true,
+      max_confirm_jobs_per_target:2,
+      confirm_job_cooldown_sec:300,
+      max_confirm_jobs_total:40,
+      max_confirm_jobs_per_class:12,
+    },
+  },
+  confirmation_heavy:{
+    label:'confirmation-heavy',
+    description:'Proof-oriented posture for tightening already-promising paths: less exploratory churn, fewer bridge shortcuts, enforced qualification, and stronger confirm-job pressure on the most credible lanes.',
+    values:{
+      ...PRESET_COMMON,
+      plan_adaptation_mode:'balanced',
+      planner_reconsult_mode:'conservative',
+      workflow_escalation_profile:'conservative',
+      confirm_jobs_profile:'aggressive',
+      family_decay_mode:'standard',
+      context_history:5,
+      json_contract_retries:2,
+      prompt_token_budget:1100,
+      auditor_prompt_token_budget:1500,
+      qualification_mode:'enforce',
+      qualification_threshold:'probable',
+      experimental_payloads:false,
+      enable_followups:true,
+      planner_reconsult_on_high_signal:true,
+      dynamic_plan_adaptation:true,
+      freeze_plan_revision:false,
+      aggressive_adaptation:false,
+      max_followups_per_target:1,
+      planner_reconsult_min_interval_runs:18,
+      planner_reconsult_signal_threshold:15,
+      family_decay_enabled:true,
+      family_decay_window_runs:24,
+      family_decay_penalty:0.12,
+      enable_confirm_jobs:true,
+      qualification_shadow_workflow_bridge:true,
+      candidate_partial_followup_bridge:false,
+      weak_signal_positive_bridge:false,
+      evidence_bearing_followup_bridge:false,
+      early_precision_for_high_leverage_families:false,
+      max_confirm_jobs_per_target:2,
+      confirm_job_cooldown_sec:300,
+      max_confirm_jobs_total:40,
+      max_confirm_jobs_per_class:12,
+    },
+  },
+};
+
+const pipelineToggleMap={
+  enable_analysis:'enable_analysis_btn', enable_light:'enable_light_btn', verbose_commands:'verbose_commands_btn', experimental_payloads:'experimental_payloads_btn',
+  enable_followups:'enable_followups_btn', planner_reconsult_on_high_signal:'planner_reconsult_on_high_signal_btn',
+  dynamic_plan_adaptation:'dynamic_plan_adaptation_btn', freeze_plan_revision:'freeze_plan_revision_btn', aggressive_adaptation:'aggressive_adaptation_btn',
+  family_decay_enabled:'family_decay_enabled_btn', enable_confirm_jobs:'enable_confirm_jobs_btn', strict_deterministic:'strict_deterministic_btn',
+  qualification_shadow_workflow_bridge:'qualification_shadow_workflow_bridge_btn', candidate_partial_followup_bridge:'candidate_partial_followup_bridge_btn',
+  weak_signal_positive_bridge:'weak_signal_positive_bridge_btn', evidence_bearing_followup_bridge:'evidence_bearing_followup_bridge_btn',
+  early_precision_for_high_leverage_families:'early_precision_for_high_leverage_families_btn', autodiscover_deep_skip:'autodiscover_deep_skip_btn', policy_diag_logging:'policy_diag_logging_btn',
+  force_auth_like_weak_on_http_controls:'force_auth_like_weak_on_http_controls_btn', queue_preemption_in_curated_loop:'queue_preemption_in_curated_loop_btn'
+};
+const numericKeys=['analysis_min_bytes','context_history','json_contract_retries','prompt_token_budget','auditor_prompt_token_budget','max_followups_per_target','planner_reconsult_min_interval_runs','planner_reconsult_signal_threshold','family_decay_window_runs','family_decay_penalty','confirm_job_cooldown_sec','max_confirm_jobs_total','max_confirm_jobs_per_class','max_confirm_jobs_per_target','code000_streak_threshold','code000_session_cap','code000_cooldown_sec','out_of_scope_aggression_cap'];
+const selectKeys=['execution_mode','qualification_mode','qualification_threshold','qualification_promising_threshold','qualification_followup_threshold','plan_adaptation_mode','planner_reconsult_mode','workflow_escalation_profile','confirm_jobs_profile','family_decay_mode'];
+
+function setBtn(id,on){ const b=$(id); if(!b) return; b.className=`toggle-btn toggle-tile ${on?'on':'off'}`; const st=b.querySelector('.state'); if(st) st.textContent=on?'ON':'OFF'; }
+function setRangeLabel(k){ const out=$(k+'_v'); if(out && $(k)) out.textContent=String($(k).value); }
+function parseListText(text){ return String(text||'').split(/[\n,]+/).map(x=>x.trim()).filter(Boolean); }
+function prettyJson(obj){ try { return JSON.stringify(obj||{}, null, 2); } catch { return '{}'; } }
+function safeJsonParse(id){ try { delete objectParseErrors[id]; return JSON.parse($(id).value || '{}'); } catch(e){ objectParseErrors[id]=true; return null; } }
+function setSystemSaveState(kind, text){ const el=$('systemSaveStateBadge'); if(!el) return; el.textContent=text; el.dataset.state=kind; }
+
+function reflectPlannerProfileState(){
+  const sel=$('plannerProfileSelect');
+  const desc=$('plannerProfileDesc');
+  const activeBadge=$('plannerProfileActiveBadge');
+  const sourceBadge=$('plannerProfileSourceBadge');
+  if(!sel) return;
+  const opts=Array.isArray(plannerProfileStateCache.options)?plannerProfileStateCache.options:[];
+  const active=String(plannerProfileStateCache.active_profile||'core');
+  const existing=new Set(Array.from(sel.options).map(o=>o.value));
+  if(sel.options.length!==opts.length || opts.some(o=>!existing.has(String(o.name||'')))){
+    sel.innerHTML='';
+    opts.forEach(opt=>{
+      const el=document.createElement('option');
+      el.value=String(opt.name||'');
+      el.textContent=`${opt.name} (${Number(opt.tool_count||0)} tools)`;
+      sel.appendChild(el);
+    });
+  }
+  if(active) sel.value=active;
+  const current=opts.find(o=>String(o.name||'')===active) || {};
+  if(desc) desc.textContent=String(current.description || 'Planner tool exposure profile.');
+  if(activeBadge) activeBadge.textContent=`active: ${active}`;
+  if(sourceBadge) sourceBadge.textContent=`source: ${String(plannerProfileStateCache.source||'default')}`;
+}
+function deepClone(v){ return JSON.parse(JSON.stringify(v)); }
+function presetMatchesConfig(preset, cfg){
+  return Object.entries(preset||{}).every(([key,value])=>JSON.stringify(cfg?.[key])===JSON.stringify(value));
+}
+function detectMatchingPreset(cfg){
+  for(const [key, meta] of Object.entries(PIPELINE_PRESETS)){
+    if(presetMatchesConfig(meta.values, cfg||{})) return key;
+  }
+  return 'custom';
+}
+function reflectPresetState(){
+  const sel=$('pipelinePresetSelect');
+  const desc=$('pipelinePresetDesc');
+  const badge=$('pipelinePresetBadge');
+  const persistedBadge=$('pipelinePresetPersistedBadge');
+  const key=detectMatchingPreset(draft);
+  const meta=PIPELINE_PRESETS[key] || null;
+  const persistedKey=String((pipelineMeta?.effective_posture||{}).preset_key || '');
+  const persistedCustom=Boolean((pipelineMeta?.effective_posture||{}).is_custom);
+  const persistedLabel=persistedKey ? persistedKey.replaceAll('_','-') : (persistedCustom ? 'custom' : 'unknown');
+  if(sel && document.activeElement !== sel) sel.value=key;
+  if(desc){
+    desc.textContent = meta ? meta.description : 'Current settings no longer exactly match a named preset. Manual edits are preserved as a custom runtime posture.';
+  }
+  if(badge){
+    badge.textContent = `draft: ${meta ? meta.label : 'custom'}`;
+    badge.dataset.state = meta ? 'ok' : 'info';
+  }
+  if(persistedBadge){
+    persistedBadge.textContent = `persisted: ${persistedLabel}`;
+    persistedBadge.dataset.state = persistedCustom ? 'info' : (persistedKey ? 'ok' : 'warn');
+  }
+}
+function applyPreset(key){
+  const preset=PIPELINE_PRESETS[key];
+  if(!preset) return;
+  draft=Object.assign({}, draft, deepClone(preset.values));
+  dirty=true;
+  reflect();
+  setSystemSaveState('pending','saving');
+  savePipelineNow();
+}
+
+function reflect(){
+  Object.entries(pipelineToggleMap).forEach(([k,id])=>setBtn(id, !!draft[k]));
+  numericKeys.forEach(k=>{ if($(k)){ $(k).value=draft[k] ?? $(k).value; setRangeLabel(k); } });
+  selectKeys.forEach(k=>{ if($(k) && draft[k] != null) $(k).value=String(draft[k]); });
+  if($('familyLaneBoostInput') && document.activeElement !== $('familyLaneBoostInput')) $('familyLaneBoostInput').value = Array.isArray(draft.family_lane_boost) ? draft.family_lane_boost.join('\n') : '';
+  if($('familyLaneSuppressInput') && document.activeElement !== $('familyLaneSuppressInput')) $('familyLaneSuppressInput').value = Array.isArray(draft.family_lane_suppress) ? draft.family_lane_suppress.join('\n') : '';
+  if($('highLeveragePrecisionFamiliesInput') && document.activeElement !== $('highLeveragePrecisionFamiliesInput')) $('highLeveragePrecisionFamiliesInput').value = Array.isArray(draft.high_leverage_precision_families) ? draft.high_leverage_precision_families.join('\n') : '';
+  if($('hostFamilyLaneBoostInput') && document.activeElement !== $('hostFamilyLaneBoostInput')) $('hostFamilyLaneBoostInput').value = prettyJson(draft.host_family_lane_boost);
+  if($('hostFamilyLaneSuppressInput') && document.activeElement !== $('hostFamilyLaneSuppressInput')) $('hostFamilyLaneSuppressInput').value = prettyJson(draft.host_family_lane_suppress);
+  reflectPlannerProfileState();
+  reflectPresetState();
+}
+
+async function savePipelineNow(){
+  if(Object.keys(objectParseErrors).length){ setSystemSaveState('error','fix json'); return; }
+  if(saveTimer) clearTimeout(saveTimer);
+  setSystemSaveState('pending','saving');
+  saveTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch('/api/pipeline-config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(draft)});
+      const d=await r.json();
+      if(!r.ok||d.ok===false){ setSystemSaveState('error','save failed'); return; }
+      persisted=d; draft=JSON.parse(JSON.stringify(d)); dirty=false; reflect(); setSystemSaveState('ok','saved');
+    }catch(e){
+      setSystemSaveState('error','offline');
+    }
+  },250);
+}
+
+function bind(){
+  Object.entries(pipelineToggleMap).forEach(([k,id])=>{ const el=$(id); if(el) el.onclick=()=>{ draft[k]=!draft[k]; dirty=true; reflect(); savePipelineNow(); }; });
+  numericKeys.forEach(k=>{ const el=$(k); if(el) el.oninput=()=>{ draft[k]=(k==='family_decay_penalty')?Number(parseFloat(el.value).toFixed(2)):Number(el.value); dirty=true; reflect(); savePipelineNow(); }; });
+  selectKeys.forEach(k=>{ const el=$(k); if(el) el.onchange=()=>{ draft[k]=el.value; dirty=true; reflect(); savePipelineNow(); }; });
+  if($('pipelinePresetSelect')) $('pipelinePresetSelect').onchange=()=>{ const key=String($('pipelinePresetSelect').value||'custom'); if(key==='custom'){ reflectPresetState(); return; } applyPreset(key); };
+
+  if($('familyLaneBoostInput')) $('familyLaneBoostInput').oninput=()=>{ draft.family_lane_boost=parseListText($('familyLaneBoostInput').value).map(x=>x.toLowerCase()); dirty=true; reflect(); savePipelineNow(); };
+  if($('familyLaneSuppressInput')) $('familyLaneSuppressInput').oninput=()=>{ draft.family_lane_suppress=parseListText($('familyLaneSuppressInput').value).map(x=>x.toLowerCase()); dirty=true; reflect(); savePipelineNow(); };
+  if($('highLeveragePrecisionFamiliesInput')) $('highLeveragePrecisionFamiliesInput').oninput=()=>{ draft.high_leverage_precision_families=parseListText($('highLeveragePrecisionFamiliesInput').value).map(x=>x.toLowerCase()); dirty=true; reflect(); savePipelineNow(); };
+  if($('hostFamilyLaneBoostInput')) $('hostFamilyLaneBoostInput').oninput=()=>{ const v=safeJsonParse('hostFamilyLaneBoostInput'); if(v!==null){ draft.host_family_lane_boost=v; dirty=true; reflect(); savePipelineNow(); } else { setSystemSaveState('error','fix json'); } };
+  if($('hostFamilyLaneSuppressInput')) $('hostFamilyLaneSuppressInput').oninput=()=>{ const v=safeJsonParse('hostFamilyLaneSuppressInput'); if(v!==null){ draft.host_family_lane_suppress=v; dirty=true; reflect(); savePipelineNow(); } else { setSystemSaveState('error','fix json'); } };
+  if($('plannerProfileSelect')) $('plannerProfileSelect').onchange=async()=>{ const value=String($('plannerProfileSelect').value||'').trim(); if(!value) return; setSystemSaveState('pending','saving'); const r=await fetch('/api/tool-registry/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({active_profile:value})}); const d=await r.json(); if(!r.ok||d.ok===false){ setSystemSaveState('error','save failed'); return; } plannerProfileStateCache=Object.assign({options:[],active_profile:value,source:'operator'}, d||{}); reflectPlannerProfileState(); setSystemSaveState('ok','saved'); };
+
+}
+
+async function load(){
+  try {
+    try {
+      const info=await (await fetch('/api/campaign-info')).json();
+      const mode=$('modeBadge'); if(mode){ const owner=!!info.owner_override; mode.className='mode-value mode-button'+(owner?' badge-override':''); mode.innerHTML=owner?'<i class="fas fa-triangle-exclamation"></i> OVERRIDE':'<i class="fas fa-flask"></i> RESEARCH MODE'; }
+    } catch(e) {}
+    try {
+      plannerProfileStateCache = await (await fetch('/api/tool-registry/state')).json();
+    } catch(e) {}
+    try {
+      pipelineMeta = await (await fetch('/api/pipeline-config/meta')).json();
+    } catch(e) {
+      pipelineMeta = {};
+    }
+    if(!dirty){ persisted=await (await fetch('/api/pipeline-config')).json(); draft=JSON.parse(JSON.stringify(persisted)); setSystemSaveState('ok','saved'); }
+    reflect();
+  } catch(e) {
+    console.error(e);
+    reflect();
+    setSystemSaveState('error','offline');
+  } finally {
+    if(!hydrated){ hydrated=true; setHydrated(true); }
+  }
+}
+
+setSystemSaveState('pending','loading'); bind(); load(); setInterval(load, 30000);
+</script></body></html>

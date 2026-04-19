@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ravenclaw · pipeline monitoring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"><link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head><body>
+<div class="dashboard">
+  <div class="top-bar">
+    <div class="logo-area"><span class="logo"><i class="fas fa-robot"></i> RAVENCLAW</span><span class="badge">v{{ app_version }}</span></div>
+    <div class="nav-menu">
+      <a class="nav-item active" href="/"><i class="fas fa-chart-line"></i> Pipeline monitoring</a>
+      <a class="nav-item" href="/findings"><i class="fas fa-bug"></i> Findings</a>
+      <a class="nav-item" href="/campaign-setup"><i class="fas fa-bullseye"></i> Campaign Setup</a>
+      <a class="nav-item" href="/system-settings"><i class="fas fa-cog"></i> System settings</a>
+      <a class="nav-item" href="/owner-actions"><i class="fas fa-user-cog"></i> Owner actions</a>
+      <button id="modeBadge" class="mode-value mode-button" type="button"><i class="fas fa-flask"></i> RESEARCH MODE</button>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="layout-1-1">
+      <div class="card settings-card card-hero">
+        <div class="card-head">
+          <div>
+            <div class="card-title"><i class="fas fa-satellite-dish"></i> Operation Snapshot</div>
+            <div class="card-subtitle">Live high-level campaign state, effective aggression and start / pause / stop controls.</div>
+          </div>
+          <div class="card-badges"><span class="mini-badge">live</span><span class="mini-badge">control</span></div>
+        </div>
+        <div class="layout-3" style="grid-template-columns:1.25fr 1fr 1.1fr;align-items:stretch;">
+          <div class="kv-list">
+            <div class="kv-row"><span><i class="fas fa-bullseye"></i> Campaign</span><span id="heroCampaign">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-fingerprint"></i> Run ID</span><span id="heroRun">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-microchip"></i> PID</span><span id="heroPid">-</span></div>
+          </div>
+          <div class="kv-list">
+            <div class="kv-row"><span><i class="fas fa-gauge-high"></i> Effective aggression</span><span id="heroAgg">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-rotate"></i> Runtime state</span><span id="heroState">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-key"></i> Auth policy</span><span id="ctxAuth">-</span></div>
+          </div>
+          <div class="action-grid">
+            <button id="startBtn" class="control-btn control-tile"><i class="fas fa-play"></i><span>Start runtime</span></button>
+            <button id="pauseBtn" class="control-btn control-tile"><i class="fas fa-pause"></i><span>Pause runtime</span></button>
+            <button id="stopBtn" class="control-btn control-tile red"><i class="fas fa-stop"></i><span>Stop runtime</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card settings-card mt16">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-chart-column"></i> Findings Intelligence Snapshot</div>
+          <div class="card-subtitle">Fast triage strip for derived item counts, confidence-like telemetry, promotion flow and recent confirmation quality.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">metrics</span><span class="mini-badge">triage</span></div>
+      </div>
+      <div class="range-grid" style="grid-template-columns:repeat(3,minmax(0,1fr));">
+        <div class="kv-row"><span><i class="fas fa-hashtag"></i> Observed items</span><span id="mTotal">0</span></div>
+        <div class="kv-row"><span><i class="fas fa-triangle-exclamation"></i> Error-class items</span><span id="qCrit">0</span></div>
+        <div class="kv-row"><span><i class="fas fa-gauge-high"></i> Derived confidence</span><span id="qConf">0.00</span></div>
+        <div class="kv-row"><span><i class="fas fa-wave-square"></i> Raw signals</span><span id="mRaw">0</span></div>
+        <div class="kv-row"><span><i class="fas fa-magnifying-glass"></i> Needs review</span><span id="mNeedsReview">0</span></div>
+        <div class="kv-row"><span><i class="fas fa-circle-check"></i> Confirmed</span><span id="mConfirmed">0</span></div>
+      </div>
+    </div>
+
+    <div class="layout-2-1 mt16">
+      <div class="layout-2" style="grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="card settings-card">
+          <div class="card-head">
+            <div>
+              <div class="card-title"><i class="fas fa-layer-group"></i> Campaign Context</div>
+              <div class="card-subtitle">Blueprint lineage, runtime-plan revision and generated task inventory.</div>
+            </div>
+            <div class="card-badges"><span class="mini-badge">context</span></div>
+          </div>
+          <div class="kv-list">
+            <div class="kv-row"><span><i class="fas fa-hashtag"></i> Blueprint hash</span><span id="ctxHash">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-crosshairs"></i> Scope targets</span><span id="ctxTargets">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-bolt"></i> Prepared attacks</span><span id="ctxPrepared">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-award"></i> Plan quality</span><span id="ctxPlanQuality">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-code-branch"></i> Plan revision</span><span id="ctxPlanRevision">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-shuffle"></i> Plan diff summary</span><span id="ctxPlanDiff">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-clock"></i> Started</span><span id="ctxStarted">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-rotate"></i> Last update</span><span id="ctxUpdated">-</span></div>
+          </div>
+        </div>
+
+        <div class="card settings-card">
+          <div class="card-head">
+            <div>
+              <div class="card-title"><i class="fas fa-wave-square"></i> Live Pipeline State</div>
+              <div class="card-subtitle">Current runtime actor/target view plus follow-up and precision queue counters.</div>
+            </div>
+            <div class="card-badges"><span class="mini-badge">live</span><span class="mini-badge">queue</span></div>
+          </div>
+          <div class="kv-list">
+            <div class="kv-row"><span><i class="fas fa-layer-group"></i> Runtime state</span><span id="liveStage">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-bolt"></i> Current action</span><span id="liveAction">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-crosshairs"></i> Current target</span><span id="liveTarget">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-user-astronaut"></i> Current agent</span><span id="liveAgent">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-flag"></i> Last action</span><span id="liveLastAction">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-list"></i> Followup queue</span><span id="liveFollowupQ">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-bullseye"></i> Precision queue</span><span id="livePrecisionQ">-</span></div>
+            <div class="kv-row"><span><i class="fas fa-rotate"></i> Contextual re-evals</span><span id="liveReevals">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card settings-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title"><i class="fas fa-heart-pulse"></i> Runtime Health</div>
+            <div class="card-subtitle">Queue depth, failure counters, fallbacks and runtime file health.</div>
+          </div>
+          <div class="card-badges"><span class="mini-badge">health</span><span class="mini-badge">runtime</span></div>
+        </div>
+        <div class="kv-list">
+          <div class="kv-row"><span><i class="fas fa-list"></i> Remaining run budget</span><span id="hQueue">0</span></div>
+          <div class="kv-row"><span><i class="fas fa-bars-progress"></i> Progress</span><span id="hProgress">0/0</span></div>
+          <div class="kv-row"><span><i class="fas fa-pause"></i> Auto paused</span><span id="hAutoPaused">-</span></div>
+          <div class="kv-row"><span><i class="fas fa-xmark"></i> Failed actions</span><span id="hFail">0</span></div>
+          <div class="kv-row"><span><i class="fas fa-clock"></i> Auto state updated</span><span id="hAutoUpdated">-</span></div>
+          <div class="kv-row"><span><i class="fas fa-wrench"></i> Invalid tool attempts</span><span id="hInvalidTools">0</span></div>
+          <div class="kv-row"><span><i class="fas fa-rotate-left"></i> Brain fallbacks</span><span id="hBrainFallbacks">0</span></div>
+          <div class="kv-row"><span><i class="fas fa-brain"></i> Analysis contract fails</span><span id="hAnalysisFails">0</span></div>
+          <div class="kv-row"><span><i class="fas fa-feather"></i> Light fallbacks</span><span id="hLightFallbacks">0</span></div>
+          <div class="kv-row"><span><i class="fas fa-scale-balanced"></i> Auditor reasons</span><span id="hAuditorReasons">-</span></div>
+          <div class="kv-row"><span><i class="fas fa-file-waveform"></i> Stdout size</span><span id="hStdout">-</span></div>
+          <div class="kv-row"><span><i class="fas fa-file-waveform"></i> Stderr size</span><span id="hStderr">-</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout-2 mt16">
+      <div class="card settings-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title"><i class="fas fa-vial-circle-check"></i> Finding Quality</div>
+            <div class="card-subtitle">Signal lifecycle, category mix and current confirmation efficiency.</div>
+          </div>
+          <div class="card-badges"><span class="mini-badge">quality</span><span class="mini-badge">signal</span></div>
+        </div>
+        <div class="kv-list">
+          <div class="kv-row"><span><i class="fas fa-signal"></i> Derived severity mix</span><span id="mSev">H:0 M:0 L:0</span></div>
+          <div class="kv-row"><span><i class="fas fa-shapes"></i> Category distribution</span><span id="mCat">-</span></div>
+          <div class="kv-row"><span><i class="fas fa-arrow-up-right-dots"></i> Promoted findings</span><span id="mPromoted">0</span></div>
+          <div class="kv-row"><span><i class="fas fa-list-check"></i> Confirm queued</span><span id="qQueued">0</span></div>
+          <div class="kv-row"><span><i class="fas fa-percent"></i> Confirm rate</span><span id="qRate">0.00</span></div>
+          <div class="kv-row"><span><i class="fas fa-arrow-down"></i> Downgraded confirm</span><span id="qDowngraded">0</span></div>
+          <div class="kv-row"><span><i class="fas fa-circle-nodes"></i> Lifecycle signal/probable</span><span id="mLifeSigProb">0/0</span></div>
+          <div class="kv-row"><span><i class="fas fa-circle-nodes"></i> Lifecycle confirm run/ok</span><span id="mLifeRunOk">0/0</span></div>
+          <div class="kv-row"><span><i class="fas fa-stream"></i> Recent classifications</span><span id="mRecentCls">-</span></div>
+        </div>
+      </div>
+
+      <div class="layout-1-1" style="gap:16px;">
+        <div class="card settings-card">
+          <div class="card-head">
+            <div>
+              <div class="card-title"><i class="fas fa-heart-pulse"></i> Top Host States</div>
+              <div class="card-subtitle">Most interesting hosts by promise, noise and preferred family routing.</div>
+            </div>
+            <div class="card-badges"><span class="mini-badge">hosts</span></div>
+          </div>
+          <div id="dashHostState" class="kv-list"><div class="kv-row"><span><i class="fas fa-circle-info"></i> Hosts</span><span>-</span></div></div>
+        </div>
+        <div class="card settings-card">
+          <div class="card-head">
+            <div>
+              <div class="card-title"><i class="fas fa-chart-column"></i> Family Yield</div>
+              <div class="card-subtitle">Current family performance leaderboard based on runtime telemetry.</div>
+            </div>
+            <div class="card-badges"><span class="mini-badge">families</span></div>
+          </div>
+          <div id="dashFamilyYield" class="kv-list"><div class="kv-row"><span><i class="fas fa-circle-info"></i> Families</span><span>-</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout-2 mt16">
+      <div class="card settings-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title"><i class="fas fa-stairs"></i> Exploit Ladder / Evidence Truth</div>
+            <div class="card-subtitle">Current ladder stage, prerequisites, evidence goal and signal/gating interpretation from canonical runtime artifacts.</div>
+          </div>
+          <div class="card-badges"><span class="mini-badge">trace</span><span class="mini-badge">evidence</span></div>
+        </div>
+        <div id="traceTruthPane" class="kv-list"><div class="kv-row"><span><i class="fas fa-circle-info"></i> Runtime trace</span><span>-</span></div></div>
+      </div>
+
+      <div class="card settings-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title"><i class="fas fa-chart-line"></i> Evaluation / Governance Summary</div>
+            <div class="card-subtitle">Phase-5 replay and effectiveness metrics surfaced as operator-visible yield vs governance truth.</div>
+          </div>
+          <div class="card-badges"><span class="mini-badge">evaluation</span><span class="mini-badge">governance</span></div>
+        </div>
+        <div id="evaluationPane" class="kv-list"><div class="kv-row"><span><i class="fas fa-circle-info"></i> Evaluation</span><span>-</span></div></div>
+      </div>
+    </div>
+
+    <div class="card settings-card mt16">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-microchip"></i> Agentic Roles</div>
+          <div class="card-subtitle">Planner / brain / auditor / execution / analysis chain with current role state indicators.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">roles</span><span class="mini-badge">status</span></div>
+      </div>
+      <div class="role-grid" id="roleGrid"></div>
+    </div>
+
+    <div class="layout-2 mt16">
+      <div class="log-panel settings-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title"><i class="fas fa-list-check"></i> Queue Backlog</div>
+            <div class="card-subtitle">Live queued tasks awaiting execution, follow-up or precision processing.</div>
+          </div>
+          <div class="card-badges"><span class="mini-badge">queue</span></div>
+        </div>
+        <div id="queueList"></div>
+        <div class="log-footer">
+          <div class="action-bar">
+            <button id="queuePrev" class="control-btn"><i class="fas fa-chevron-left"></i> Previous</button>
+            <span id="queuePage" class="badge">1 / 1</span>
+            <button id="queueNext" class="control-btn"><i class="fas fa-chevron-right"></i> Next</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="log-panel settings-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title"><i class="fas fa-shield-halved"></i> Policy Gate History</div>
+            <div class="card-subtitle">Recent guardrail and owner-approval related events emitted by deterministic policy checks.</div>
+          </div>
+          <div class="card-badges"><span class="mini-badge">policy</span></div>
+        </div>
+        <div id="policyGateList"></div>
+        <div class="log-footer">
+          <div class="action-bar">
+            <button id="policyPrev" class="control-btn"><i class="fas fa-chevron-left"></i> Previous</button>
+            <span id="policyPage" class="badge">1 / 1</span>
+            <button id="policyNext" class="control-btn"><i class="fas fa-chevron-right"></i> Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="log-panel settings-card mt16">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-terminal"></i> Runtime Event Log</div>
+          <div class="card-subtitle">Recent normalized event stream from the dashboard log database.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">events</span><span class="mini-badge">history</span></div>
+      </div>
+      <div id="logList"></div>
+      <div class="log-footer">
+        <div class="action-bar">
+          <button id="logPrev" class="control-btn"><i class="fas fa-chevron-left"></i> Previous</button>
+          <span id="logPage" class="badge">1 / 1</span>
+          <button id="logNext" class="control-btn"><i class="fas fa-chevron-right"></i> Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const $=(id)=>document.getElementById(id); const esc=(v)=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+const roleMeta={
+  orchestrator:{icon:'fa-sitemap',model:'Governance/Orchestrator'},
+  planner:{icon:'fa-cubes',model:'Planner/Heuristic'},
+  brain:{icon:'fa-brain',model:'Qwen3-235B-A22B'},
+  auditor:{icon:'fa-user-shield',model:'gpt-oss-120b'},
+  execution:{icon:'fa-gears',model:'python-executor'},
+  analysis:{icon:'fa-chart-pie',model:'DeepSeek-R1-70B'},
+  light:{icon:'fa-feather-alt',model:'Hermes-4-14B'}
+};
+let state={owner_override:false,currentPage:1,policyPage:1,queuePage:1,run_state:'idle'};
+const trimN=(v,n=10)=>{ const s=String(v??'-'); return s.length>n ? s.slice(0,n) : s; };
+
+function badgeClass(val){
+  const s=String(val||'').toLowerCase();
+  if(['failed','error','blocked','invalid','stopped'].includes(s)) return 'state-err';
+  if(['warning','warn','paused','needs review'].includes(s)) return 'state-warn';
+  if(['running','in_progress','pending','active'].includes(s)) return 'state-info';
+  if(['ok','approved','success','ready','valid','on','enabled','required'].includes(s)) return 'state-ok';
+  if(['override'].includes(s)) return 'state-override';
+  return 'state-neutral';
+}
+function badgeIcon(val){
+  const s=String(val||'').toLowerCase();
+  if(['failed','error','blocked','invalid','stopped'].some(k=>s.includes(k))) return 'fa-triangle-exclamation';
+  if(['warning','warn','paused','needs review'].some(k=>s.includes(k))) return 'fa-circle-exclamation';
+  if(['running','in_progress','pending','active'].some(k=>s.includes(k))) return 'fa-bolt';
+  if(['ok','approved','success','ready','valid','on','enabled','required'].some(k=>s.includes(k))) return 'fa-check';
+  if(s.includes('override')) return 'fa-triangle-exclamation';
+  return 'fa-minus';
+}
+function badgeHTML(val, cls){
+  const c=cls||badgeClass(val); const label=esc(val||'-').toUpperCase();
+  return `<span class="state-badge ${c}"><i class="fas ${badgeIcon(val)}"></i>${label}</span>`;
+}
+function setBadge(id, val, cls){ const el=$(id); if(!el) return; el.innerHTML=badgeHTML(val, cls); }
+
+function ledClass(st){
+  const s=String(st||'').toLowerCase();
+  if(['failed','error','blocked','off','denied','reject'].includes(s)) return 'led-err';
+  if(['running','in_progress','working','planning','active','processing'].includes(s)) return 'led-ok';
+  if(['ok','approved','success','ready'].includes(s)) return 'led-ok';
+  if(['idle','paused','stopped','standby'].includes(s)) return 'led-idle';
+  return 'led-warn';
+}
+
+function renderRoles(a){
+  const order=['orchestrator','planner','brain','auditor','execution','analysis','light'];
+  const node=$('roleGrid');
+  const run=String(state.run_state||'idle').toLowerCase();
+  const fallback = (run==='running' || run==='in_progress') ? 'working' : (run==='paused' ? 'idle' : run);
+  node.innerHTML=order.map(k=>{
+    const it=a[k]||{}; const raw=String(it.state||it.label||'idle').toLowerCase();
+    const st = (raw==='idle' && fallback && fallback!=='idle') ? fallback : (it.state||it.label||fallback||'idle');
+    const cls=(k==='orchestrator'?'role-card orchestrator':'role-card');
+    return `<div class="${cls}"><span class="role-led ${ledClass(st)}"></span><span class="role-icon"><i class="fas ${roleMeta[k].icon}"></i></span><h4>${esc(it.name||k.toUpperCase())}</h4><div class="meta">model: ${esc(it.model||roleMeta[k].model)}</div><div class="meta">status: ${esc(st)}</div><div class="meta">desc: ${esc(it.description||'-')}</div><div class="meta">last action: ${esc(it.last_action||'-')}</div><div class="meta">items: ${esc(it.items_processed||0)} · fail: ${esc(it.failure_count||0)}</div></div>`;
+  }).join('');
+}
+
+async function fetchInfo(){
+  const d=await (await fetch('/api/campaign-info')).json();
+  state.owner_override=!!d.owner_override;
+  state.run_state=String(d.state||'idle').toLowerCase();
+  $('heroCampaign').textContent=trimN(d.campaign_name||'-',20); $('heroRun').textContent=d.run_id||'-';
+  $('startBtn').querySelector('span').textContent=(d.state==='paused')?'Resume':'Start';
+  $('heroAgg').textContent=String(d.aggression_effective??d.aggression_recommended_default??'-'); $('heroPid').textContent=d.pid||'-';
+  setBadge('heroState', (d.state||'stopped').toUpperCase());
+  $('ctxHash').textContent=(d.blueprint_hash||'-').toString().slice(0,16); $('ctxTargets').textContent=d.planner_scope_targets??0; $('ctxPrepared').textContent=d.prepared_attacks??0;
+  setBadge('ctxAuth', d.credentials_required?'required':'not-required', d.credentials_required?'state-warn':'state-ok');
+  $('ctxStarted').textContent=d.started_at||'-';
+  setBadge('liveStage', (d.state||'stopped').toUpperCase()); $('liveAction').textContent=trimN('pipeline cycle',20); $('liveTarget').textContent=trimN(d.current_target||'-',24); $('liveAgent').textContent=trimN(d.current_agent||'-',16);
+  const done=Number(d.session_executed||0), total=Number(d.session_max_runs||0); $('hProgress').textContent=`${done}/${total}`;
+  $('hQueue').textContent=Math.max(total-done,0);
+  const mode=$('modeBadge'); mode.className='mode-value mode-button'+(state.owner_override?' badge-override':''); mode.innerHTML=state.owner_override?'<i class="fas fa-triangle-exclamation"></i> OVERRIDE':'<i class="fas fa-flask"></i> RESEARCH MODE';
+}
+async function fetchMetrics(){
+  const m=await (await fetch('/api/metrics')).json();
+  const set=(id,val)=>{ const el=$(id); if(el) el.textContent=String(val); };
+  set('mTotal', m.total_findings??0);
+  set('qCrit', m.critical_findings??0);
+  set('qConf', Number(m.avg_confidence||0).toFixed(2));
+  set('qCvss', Number(m.highest_cvss||0).toFixed(1));
+  set('mNew', m.new_since_last_run??0);
+  set('mVerified', `${m.verified??0}/${m.unverified??0}`);
+  const sev=m.severity_distribution||{};
+  set('mSev', `H:${sev.high??0} M:${sev.medium??0} L:${sev.low??0}`);
+  const cat=m.category_distribution||{};
+  const catText=Object.keys(cat).length?Object.entries(cat).slice(0,3).map(([k,v])=>`${k}:${v}`).join(' '):'-';
+  set('mCat', catText);
+  set('mRaw', m.raw_signals??0);
+  set('mPromoted', m.promoted_findings??0);
+  set('mNeedsReview', m.needs_review??0);
+  set('mConfirmed', m.confirmed??0);
+  set('mLifeSigProb', `${m.lifecycle_signal??0}/${m.lifecycle_probable??0}`);
+  set('mLifeRunOk', `${m.lifecycle_confirm_run??0}/${m.lifecycle_confirm_ok??0}`);
+  const rc=Array.isArray(m.recent_classifications)?m.recent_classifications:[];
+  set('mRecentCls', rc.length?rc.slice(0,4).join(', '):'-');
+}
+function renderQueueState(q){
+  const followups=(q.followup_queue||[]); const precision=(q.precision_queue||[]);
+  const fq=Number(q.followup_count ?? followups.length ?? 0); const pq=Number(q.precision_count ?? precision.length ?? 0);
+  $('liveFollowupQ').textContent=String(fq); $('livePrecisionQ').textContent=String(pq);
+  const combined=[...precision, ...followups];
+  const per=20; const totalPages=Math.max(1, Math.ceil(combined.length/per));
+  let page=state.queuePage||1; if(page>totalPages){ state.queuePage=totalPages; page=totalPages; }
+  const start=(page-1)*per; const items=combined.slice(start, start+per);
+  const qp=$('queuePage'); if(qp) qp.textContent=`${page} / ${totalPages}`;
+  const prev=$('queuePrev'), next=$('queueNext'); if(prev) prev.disabled=page<=1; if(next) next.disabled=page>=totalPages;
+  $('queueList').innerHTML = items.length? items.map((i)=>`<div class="log-entry"><span class="log-time">${esc(i.time||'--')}</span><span class="log-agent">${esc(i.family||i.type||'QUEUE')}</span><span class="log-message">${esc(i.target||i.objective||JSON.stringify(i))}</span></div>`).join('') : '<div class="empty-state"><strong>No queued tasks</strong>The runtime backlog is currently empty.</div>';
+}
+async function fetchRuntimeState(){
+  let usedSnapshotQueues=false;
+  try{
+    const d=await (await fetch('/api/runtime-state')).json();
+    const auto=d.auto_campaign||{}; const plan=d.runtime_plan||{}; const quality=plan.quality||{}; const snapshot=d.snapshot||{};
+    const paused=auto.paused; const lastAction=auto.last_action||'-';
+    const grade=quality.grade||'-'; const score=quality.score!=null?quality.score:'-';
+    $('hAutoPaused').textContent = paused===true?'YES':(paused===false?'NO':'-');
+    $('liveLastAction').textContent = trimN(String(lastAction||'-').toUpperCase(),24);
+    $('ctxPlanQuality').textContent = grade && score!=='-' ? `${grade} (${score})` : (grade||'-');
+    const lastUpdate = plan.generated_at || plan.updated_at || plan.last_updated || snapshot?.campaign?.updated_at || '-';
+    $('ctxUpdated').textContent = lastUpdate;
+    $('ctxPlanRevision').textContent = String(plan.plan_revision ?? '-');
+    $('ctxPlanDiff').textContent = `+${plan.added_tasks ?? 0} / -${plan.deprecated_tasks ?? 0}`;
+    if(snapshot && snapshot.queues){ renderQueueState(snapshot.queues); usedSnapshotQueues=true; }
+  }catch(e){ }
+  if(!usedSnapshotQueues){
+    try{
+      const q=await (await fetch('/api/queue-state')).json();
+      renderQueueState(q||{});
+    }catch(e){ }
+  }
+  try{
+    const hs=await (await fetch('/api/host-yield')).json();
+    renderDashHostState(hs.items||[]);
+    const fy=await (await fetch('/api/family-yield')).json();
+    const cy=await (await fetch('/api/capability-yield')).json();
+    renderDashFamilyYield(fy.items||[], cy.items||[]);
+  }catch(e){ }
+  try{
+    const h=await (await fetch('/api/runtime-health')).json();
+    $('hAutoUpdated').textContent=h.auto_state_updated||'-';
+    if($('ctxUpdated') && $('ctxUpdated').textContent==='-') $('ctxUpdated').textContent=h.runtime_plan_updated||'-';
+    $('hInvalidTools').textContent=String(h.brain_invalid_tool_attempts||0);
+    $('hBrainFallbacks').textContent=String(h.brain_fallback_used||0);
+    $('hAnalysisFails').textContent=String(h.analysis_contract_failures||0);
+    $('hLightFallbacks').textContent=String(h.light_fallback_used||0);
+    const rc=h.auditor_reason_codes||{}; $('hAuditorReasons').textContent=Object.keys(rc).length?Object.entries(rc).map(([k,v])=>`${k}:${v}`).join(' '):'-';
+    $('hStdout').textContent=(h.stdout_bytes||0)+' B';
+    $('hStderr').textContent=(h.stderr_bytes||0)+' B';
+  }catch(e){ }
+}
+async function fetchRuntimeLogs(stream){
+  const s=stream||'stdout';
+  const data=await (await fetch(`/api/runtime-logs?stream=${s}&lines=160`)).json();
+  const viewer=$('runtimeLogViewer'); if(viewer) viewer.textContent=data.content||'';
+}
+async function fetchAgents(){ const a=await (await fetch('/api/agents-status')).json(); renderRoles(a); }
+function renderDashHostState(items){
+  const node=$('dashHostState'); if(!node) return;
+  if(!items || !items.length){ node.innerHTML='<div class="empty-state"><strong>No host yield data yet</strong>Host ranking appears here once runtime results accumulate.</div>'; return; }
+  node.innerHTML=items.slice(0,6).map(it=>`<div class="kv-row"><span class="kv-wrap kv-wrap-block"><i class="fas fa-server"></i> ${esc(it.host)}<br><small>${esc('runs='+it.runs+' · confirmed='+it.confirmed+' · u='+(Number(it.avg_utility||0).toFixed(2)))}</small><br><small>${esc(it.explain||'steady sample')}</small></span><span>${esc(it.yield_score)}</span></div>`).join('');
+}
+function renderDashFamilyYield(items, capabilityItems){
+  const node=$('dashFamilyYield'); if(!node) return;
+  const fam=Array.isArray(items)?items:[]; const caps=Array.isArray(capabilityItems)?capabilityItems:[];
+  if(!fam.length && !caps.length){ node.innerHTML='<div class="empty-state"><strong>No yield telemetry yet</strong>Family/capability ranking appears once multiple runtime tasks have been evaluated.</div>'; return; }
+  const rows=[];
+  fam.slice(0,3).forEach(it=>rows.push(`<div class="kv-row"><span><i class="fas fa-diagram-project"></i> ${esc(it.family)}<br><small>${esc(it.explain||'steady sample')}</small></span><span>${esc(it.yield_score)}</span></div>`));
+  caps.slice(0,3).forEach(it=>rows.push(`<div class="kv-row"><span><i class="fas fa-layer-group"></i> ${esc(it.capability)}<br><small>${esc(it.explain||'steady sample')}</small></span><span>${esc(it.yield_score)}</span></div>`));
+  node.innerHTML=rows.join('');
+}
+function renderTraceTruth(trace){
+  const node=$('traceTruthPane'); if(!node) return;
+  if(!trace || !trace.ok){ node.innerHTML='<div class="empty-state"><strong>No runtime trace yet</strong>Exploit ladder and evidence truth will appear once the runtime emits a latest run artifact.</div>'; return; }
+  const run=trace.run_identity||{}; const ladder=trace.ladder||{}; const pre=trace.prerequisites||{}; const sig=trace.signal_status||{}; const dec=trace.decision||{}; const gov=trace.governance||{}; const lin=trace.lineage||{}; const succ=trace.success_semantics||{};
+  const rationale=(ladder.target_surface_rationale||[]).join(', ')||'-';
+  const progression=(ladder.recommended_progression||[]).join(' → ')||'-';
+  const blockers=(dec.blockers||[]).slice(0,2).join(' | ')||'-';
+  const exclusions=(gov.metric_exclusion_reasons||[]).join(', ')||'-';
+  node.innerHTML=`
+    <div class="kv-row"><span><i class="fas fa-crosshairs"></i> Target / family</span><span>${esc((run.target||'-')+' · '+(run.task_family||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-stairs"></i> Ladder stage</span><span>${esc((ladder.current_stage||'-')+' → '+(ladder.next_stage||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-route"></i> Progression</span><span>${esc(progression)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-compass"></i> Surface rationale</span><span>${esc(rationale)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-wave-square"></i> Signal status</span><span>${esc((sig.workflow_status||'-')+' / '+(sig.finding_status||'-')+' / '+(sig.success_status||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-hand-point-right"></i> Effective action</span><span>${esc((dec.requested_action||'-')+' → '+(dec.effective_action||'-')+' · '+(dec.effective_status||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-key"></i> Prereqs</span><span>${esc('auth='+(pre.auth_prereq_missing?'missing':'ok')+' · state='+(pre.state_prereq_missing?'missing':'ok'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-file-shield"></i> Governance</span><span>${esc('blocked='+(gov.policy_blocked?'yes':'no')+' · owner='+(gov.owner_gate_pending?'pending':'clear')+' · contam='+(gov.contamination_excluded?'yes':'no'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-clipboard-check"></i> Evidence goal</span><span>${esc((succ.success_model||'-')+' · '+(succ.expected_signal_type||'-'))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-link"></i> Lineage</span><span>${esc(String(lin.lineage_sha256||'-').slice(0,16))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-ban"></i> Blockers / exclusions</span><span>${esc(blockers!=='-'?blockers:exclusions)}</span></div>`;
+}
+function metricRate(group,name,ev){ return Number((((ev||{})[group]||{})[name]||{}).rate||0).toFixed(2); }
+function renderEvaluationPane(ev){
+  const node=$('evaluationPane'); if(!node) return;
+  if(!ev || !ev.ok){ node.innerHTML='<div class="empty-state"><strong>No evaluation summary yet</strong>Replay/effectiveness metrics appear after an archived campaign summary is available.</div>'; return; }
+  const sc=ev.status_counts||{}; const top=(ev.top_exclusions||[]).map(x=>`${x.reason}:${x.count}`).join(' | ')||'-';
+  const variant=((ev.variant||{}).variant_id)||'baseline';
+  node.innerHTML=`
+    <div class="kv-row"><span><i class="fas fa-fingerprint"></i> Dataset / variant</span><span>${esc(String(ev.dataset_id||'-').slice(0,12)+' · '+variant)}</span></div>
+    <div class="kv-row"><span><i class="fas fa-boxes-stacked"></i> Replay bundles</span><span>${esc(String(ev.bundle_count||0))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-shuffle"></i> Replay statuses</span><span>${esc('ok='+(sc.ok||0)+' partial='+(sc.partial||0)+' div='+(sc.divergent||0))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-arrow-up-right-dots"></i> Candidate → confirmed</span><span>${esc(metricRate('yield_metrics','candidate_to_confirmed_conversion',ev))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-vial-circle-check"></i> Confirmed → proof</span><span>${esc(metricRate('yield_metrics','confirmed_to_exploit_proof_conversion',ev))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-file-circle-check"></i> Proof → report</span><span>${esc(metricRate('yield_metrics','exploit_proof_to_report_quality_conversion',ev))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-shield-halved"></i> Policy / divergence</span><span>${esc(metricRate('governance_metrics','policy_block_rate',ev)+' / '+metricRate('governance_metrics','replay_divergence_rate',ev))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-user-lock"></i> Auth / state realism</span><span>${esc(metricRate('auth_state_metrics','auth_required_branch_success_rate',ev)+' / '+metricRate('auth_state_metrics','stateful_branch_success_rate',ev))}</span></div>
+    <div class="kv-row"><span><i class="fas fa-filter-circle-xmark"></i> Top exclusions</span><span>${esc(top)}</span></div>`;
+}
+
+async function fetchFindingQuality(){
+  try{
+    const q=await (await fetch('/api/finding-quality')).json();
+    const qt=q.quality_telemetry||{};
+    const explain=q.explainability||{};
+    if($('qDowngraded')) $('qDowngraded').textContent=qt.downgraded_confirm??0;
+    if($('qQueued')) $('qQueued').textContent=qt.confirm_queued??0;
+    if($('mConfirmed')) $('mConfirmed').textContent = (qt.confirmed ?? $('mConfirmed').textContent ?? '0');
+    const rate=Number(q.confirm_rate||0);
+    const el=$('qRate');
+    if(el){
+      const why=(explain.top_why||[]).slice(0,1).map(x=>x.key).join('')||'-';
+      const blockers=(explain.top_blockers||[]).slice(0,1).map(x=>x.key).join('')||'-';
+      el.textContent=rate.toFixed(2);
+      el.title=`avg_quality=${Number(explain.avg_decision_quality||0).toFixed(2)} | avg_utility=${Number(explain.avg_net_utility||0).toFixed(2)} | top_why=${why} | top_blocker=${blockers}`;
+      if(rate>=0.60){ el.style.color='lime'; }
+      else if(rate>=0.30){ el.style.color='yellow'; }
+      else { el.style.color='crimson'; }
+      el.style.fontWeight='700';
+      el.style.textShadow='0 0 6px rgba(0,0,0,.35)';
+    }
+  }catch(e){}
+}
+async function fetchPhase7Truth(){
+  try{ renderTraceTruth(await (await fetch('/api/runtime-trace')).json()); }catch(e){ renderTraceTruth(null); }
+  try{ renderEvaluationPane(await (await fetch('/api/evaluation-summary')).json()); }catch(e){ renderEvaluationPane(null); }
+}
+function renderPanelError(id, title, detail){
+  const el=$(id); if(!el) return;
+  el.innerHTML = `<div class="empty-state empty-state-error" role="alert"><strong><i class="fas fa-triangle-exclamation"></i> ${esc(title||'Panel unavailable')}</strong>${detail?`<div class="empty-state-detail">${esc(detail)}</div>`:''}</div>`;
+}
+async function fetchPolicyGateHistory(){
+  try{
+    const per=20;
+    const resp=await fetch(`/api/policy-gate-history?page=${state.policyPage||1}&per_page=${per}`);
+    if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data=await resp.json();
+    const items=data.items||[]; const totalPages=data.total_pages||1; const page=data.page||1;
+    if(page>totalPages){ state.policyPage=totalPages; return fetchPolicyGateHistory(); }
+    const lp=$('policyPage'); if(lp) lp.textContent=`${page} / ${totalPages}`;
+    const prev=$('policyPrev'), next=$('policyNext'); if(prev) prev.disabled=page<=1; if(next) next.disabled=page>=totalPages;
+    $('policyGateList').innerHTML = items.length? items.map(i=>`<div class="log-entry"><span class="log-time">${esc(i.time)}</span><span class="log-agent">${esc(i.agent||i.tor||'-')}</span><span class="log-message">${esc(i.result||i.decision||'-')}</span></div>`).join('') : '<div class="log-entry"><span class="log-time">--:--:--</span><span class="log-agent">POLICY</span><span class="log-message">No policy gate events</span></div>';
+  }catch(e){
+    const msg=(e&&e.message)?e.message:'unknown error';
+    renderPanelError('policyGateList', 'Policy history unavailable', msg);
+  }
+}
+async function fetchLogs(){
+  try{
+    const per=35;
+    const resp=await fetch(`/api/logs?page=${state.currentPage||1}&per_page=${per}`);
+    if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data=await resp.json(); let items=data.items||[];
+    const totalPages=data.total_pages||1; const page=data.page||1;
+    if(page>totalPages){ state.currentPage=totalPages; return fetchLogs(); }
+    const lp=$('logPage'); if(lp) lp.textContent=`${page} / ${totalPages}`;
+    const prev=$('logPrev'), next=$('logNext'); if(prev) prev.disabled=page<=1; if(next) next.disabled=page>=totalPages;
+    const reeval=items.filter(i=>String(i.raw_status||i.status||'').toLowerCase()==='retry_1').length;
+    $('liveReevals').textContent=reeval;
+    $('hFail').textContent=items.filter(i=>['ERR','FAILED','BLOCKED'].includes((i.status||'').toUpperCase())).length;
+    $('logList').innerHTML = items.length? items.map(i=>`<div class="log-entry"><span class="log-time">${esc(i.time)}</span><span class="log-agent">${esc(i.agent||i.tor||'-')}</span><span class="log-message">${esc(i.result||i.decision||'-')}</span></div>`).join('') : '<div class="empty-state"><strong>No runtime events yet</strong>Normalized log events will appear here once the pipeline starts emitting activity.</div>';
+  }catch(e){
+    const msg=(e&&e.message)?e.message:'unknown error';
+    if($('liveReevals')) $('liveReevals').textContent='!';
+    renderPanelError('logList', 'Runtime Event Log unavailable', msg);
+  }
+}
+async function ctl(action){ await fetch('/api/campaign/control',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action, owner_override: state.owner_override})}); await refresh(); }
+async function refresh(){ await Promise.allSettled([fetchInfo(),fetchMetrics(),fetchRuntimeState(),fetchAgents(),fetchFindingQuality(),fetchPhase7Truth(),fetchPolicyGateHistory(),fetchLogs()]); }
+$('startBtn').onclick=()=>ctl('start'); $('pauseBtn').onclick=()=>ctl('pause'); $('stopBtn').onclick=()=>ctl('stop');
+$('logPrev').onclick=()=>{ state.currentPage=Math.max(1,(state.currentPage||1)-1); fetchLogs(); };
+$('logNext').onclick=()=>{ state.currentPage=(state.currentPage||1)+1; fetchLogs(); };
+$('policyPrev').onclick=()=>{ state.policyPage=Math.max(1,(state.policyPage||1)-1); fetchPolicyGateHistory(); };
+$('policyNext').onclick=()=>{ state.policyPage=(state.policyPage||1)+1; fetchPolicyGateHistory(); };
+$('queuePrev').onclick=()=>{ state.queuePage=Math.max(1,(state.queuePage||1)-1); fetchRuntimeState(); };
+$('queueNext').onclick=()=>{ state.queuePage=(state.queuePage||1)+1; fetchRuntimeState(); };
+refresh(); setInterval(refresh, 3000);
+</script></body></html>

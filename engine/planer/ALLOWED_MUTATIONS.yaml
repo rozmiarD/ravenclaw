@@ -1,0 +1,8 @@
+allowed_mutations:
+  - campaign.md: "PLANER:BEGIN campaign ... PLANER:END campaign"
+  - policy.yaml: "planer:"
+  - whitelist.yaml: "planer:"
+  - budgets.yaml: "planer:"
+  - proxy.yaml: "planer:"
+notes:
+  - PLANER must only write overlays/templates and never overwrite full files.

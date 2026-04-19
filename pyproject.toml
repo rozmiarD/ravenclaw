@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ravenclaw"
+version = "1.0.0"
+description = "Governance-first autonomous security research platform"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "PyYAML>=6,<7",
+]
+
+[project.optional-dependencies]
+logdash = [
+  "Flask>=3,<4",
+]
+dev = [
+  "pytest>=8,<9",
+  "Flask>=3,<4",
+  "PyYAML>=6,<7",
+]
+
+[tool.setuptools]
+packages = []
+py-modules = []
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["engine/tests", "engine/planer/tests", "tests"]

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ravenclaw · owner actions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"><link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head><body class="ui-loading"><div class="dashboard">
+<div class="top-bar"><div class="logo-area"><span class="logo"><i class="fas fa-robot"></i> RAVENCLAW</span><span class="badge">v{{ app_version }}</span></div>
+<div class="nav-menu"><a class="nav-item" href="/"><i class="fas fa-chart-line"></i> Pipeline monitoring</a><a class="nav-item" href="/findings"><i class="fas fa-bug"></i> Findings</a><a class="nav-item" href="/campaign-setup"><i class="fas fa-bullseye"></i> Campaign Setup</a><a class="nav-item" href="/system-settings"><i class="fas fa-cog"></i> System settings</a><a class="nav-item active" href="/owner-actions"><i class="fas fa-user-cog"></i> Owner actions</a><button id="modeBadge" class="mode-value mode-button" type="button"><i class="fas fa-flask"></i> RESEARCH MODE</button></div></div>
+
+<div id="ownerHydrationGate" class="hydration-gate"><i class="fas fa-spinner fa-spin"></i><span>Loading privileged state…</span></div>
+<div class="page-content">
+  <div id="overrideBanner" class="status-banner">Override inactive. Policy gates fully enforced.</div>
+
+  <div class="layout-2-1 mt16">
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-user-shield"></i> Privileged Override Controls</div>
+          <div class="card-subtitle">Direct operator controls for override, pause / resume / stop and destructive maintenance actions against the currently selected campaign/runtime.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">privileged</span><span class="mini-badge">control</span><span class="mini-badge" id="ownerActionStateBadge" data-state="pending">loading</span></div>
+      </div>
+      <div class="action-bar" style="display:flex;flex-wrap:wrap;gap:8px;overflow:auto;">
+        <button id="ownerToggle" class="control-btn owner"><i class="fas fa-toggle-on"></i> Toggle owner override</button>
+        <button id="pauseBtn" class="control-btn"><i class="fas fa-pause"></i> Pause runtime</button>
+        <button id="resumeBtn" class="control-btn"><i class="fas fa-play"></i> Resume runtime</button>
+        <button id="stopBtn" class="control-btn red"><i class="fas fa-stop"></i> Stop runtime</button>
+        <button id="emergencyBtn" class="control-btn red"><i class="fas fa-circle-radiation"></i> Emergency halt</button>
+        <button id="deleteCurrentBtn" class="control-btn red"><i class="fas fa-trash"></i> Delete selected campaign</button>
+        <button id="clearLogsBtn" class="control-btn red"><i class="fas fa-broom"></i> Clear event log</button>
+      </div>
+      <div class="kv-list mt16">
+        <div class="kv-row"><span><i class="fas fa-triangle-exclamation"></i> Owner override</span><span id="ownerState">-</span></div>
+        <div class="kv-row"><span><i class="fas fa-clock"></i> Override duration</span><span id="overrideDuration">-</span></div>
+        <div class="kv-row"><span><i class="fas fa-hourglass"></i> Override expiry policy</span><span id="overrideExpiry">manual</span></div>
+        <div class="kv-row"><span><i class="fas fa-signal"></i> Campaign state</span><span id="campState">-</span></div>
+        <div class="kv-row"><span><i class="fas fa-microchip"></i> PID</span><span id="campPid">-</span></div>
+      </div>
+    </div>
+
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-file-lines"></i> Audit Trail</div>
+          <div class="card-subtitle">Recent privileged, owner-facing or override-related log entries recorded in the event stream.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">audit</span><span class="mini-badge">trail</span></div>
+      </div>
+      <table class="table-lite"><thead><tr><th>When</th><th>Who/Agent</th><th>Action</th><th>Status</th></tr></thead><tbody id="auditBody"></tbody></table>
+    </div>
+  </div>
+
+  <div class="layout-2 mt16">
+    <div class="card settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-gauge-high"></i> Aggression Control</div>
+          <div class="card-subtitle">Immediate aggression override for the selected campaign with simplified impact hinting.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">aggression</span><span class="mini-badge">override</span></div>
+      </div>
+      <div class="range-grid" style="grid-template-columns:1fr;">
+        <div class="range-item">
+          <div class="range-label"><span><i class="fas fa-gauge-high"></i> Aggression override</span><span id="aggressionValue">6</span></div>
+          <input id="aggressionSlider" type="range" min="1" max="10" value="6">
+          <div class="range-meta"><span>1</span><span>10</span></div>
+          <div class="range-desc">Changes apply immediately to the selected campaign runtime profile.</div>
+        </div>
+      </div>
+      <div class="kv-list"><div class="kv-row"><span><i class="fas fa-sliders"></i> Current override</span><span id="aggCurrent">-</span></div><div class="kv-row"><span><i class="fas fa-compass"></i> Campaign recommended</span><span id="aggRecommended">-</span></div><div class="kv-row"><span><i class="fas fa-gauge-high"></i> Effective aggression</span><span id="aggEffective">-</span></div><div class="kv-row"><span><i class="fas fa-circle-info"></i> Simplified impact hint</span><span id="aggHint">balanced</span></div></div>
+    </div>
+
+    <div class="log-panel settings-card">
+      <div class="card-head">
+        <div>
+          <div class="card-title"><i class="fas fa-user-check"></i> Owner Approval Queue</div>
+          <div class="card-subtitle">Pending owner approval items emitted by policy gates and waiting for privileged review.</div>
+        </div>
+        <div class="card-badges"><span class="mini-badge">approval</span><span class="mini-badge">queue</span></div>
+      </div>
+      <div class="log-header">
+        <span class="log-title"><i class="fas fa-list-check"></i> Pending approvals</span>
+        <div class="action-bar">
+          <button id="approveAllBtn" class="control-btn"><i class="fas fa-check-double"></i> Approve visible items</button>
+          <button id="deleteAllBtn" class="control-btn red"><i class="fas fa-trash"></i> Delete visible items</button>
+        </div>
+      </div>
+      <div id="ownerQueueList"></div>
+    </div>
+  </div>
+</div></div>
+<script>
+const $=(id)=>document.getElementById(id); const esc=(v)=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+let owner=false, selectedCampaignKey=null, timer=null, overrideSince=null, hydrated=false;
+function setHydrated(ready){ document.body.classList.toggle('ui-loading', !ready); }
+function badgeClass(val){
+  const s=String(val||'').toLowerCase();
+  if(['failed','error','blocked','stopped','off'].includes(s)) return 'state-err';
+  if(['warning','paused'].includes(s)) return 'state-warn';
+  if(['running','active','override'].includes(s)) return 'state-info';
+  if(['ok','approved','success','on'].includes(s)) return 'state-ok';
+  return 'state-neutral';
+}
+function badgeIcon(val){
+  const s=String(val||'').toLowerCase();
+  if(['failed','error','blocked','stopped','off'].some(k=>s.includes(k))) return 'fa-triangle-exclamation';
+  if(['warning','paused'].some(k=>s.includes(k))) return 'fa-circle-exclamation';
+  if(['running','active','override'].some(k=>s.includes(k))) return 'fa-bolt';
+  if(['ok','approved','success','on'].some(k=>s.includes(k))) return 'fa-check';
+  return 'fa-minus';
+}
+function badgeHTML(val, cls){ const c=cls||badgeClass(val); return `<span class="state-badge ${c}"><i class="fas ${badgeIcon(val)}"></i>${esc(val||'-').toUpperCase()}</span>`; }
+function setBadge(id, val, cls){ const el=$(id); if(!el) return; el.innerHTML=badgeHTML(val, cls); }
+function setOwnerActionState(kind,text){ const el=$('ownerActionStateBadge'); if(!el) return; el.textContent=text; el.dataset.state=kind; }
+function hint(v){ v=Number(v||0); if(v<=3) return 'passive'; if(v<=6) return 'balanced'; if(v<=8) return 'active'; return 'aggressive'; }
+async function ctl(action){ setOwnerActionState('pending','applying'); await fetch('/api/campaign/control',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action, owner_override: owner})}); await refresh(); }
+async function fetchOwnerQueue(){
+  const data=await (await fetch('/api/owner-approvals?page=1&per_page=10')).json();
+  const items=data.items||[];
+  $('ownerQueueList').innerHTML = items.length? items.map(i=>`<div class="log-entry"><span class="log-time">${esc(i.time)}</span><span class="log-agent">${esc(i.agent||i.tor||'-')}</span><span class="log-message">${esc(i.result||i.decision||'-')}</span></div>`).join('') : '<div class="empty-state"><strong>No pending approvals</strong>Owner-gated actions will appear here when policy requires review.</div>';
+}
+async function refresh(){
+  try{
+    const d=await (await fetch('/api/campaign-info')).json(); owner=!!d.owner_override; selectedCampaignKey=d.selected_campaign_key||null; const mode=$('modeBadge'); if(mode){ mode.className='mode-value mode-button'+(owner?' badge-override':''); mode.innerHTML=owner?'<i class="fas fa-triangle-exclamation"></i> OVERRIDE':'<i class="fas fa-flask"></i> RESEARCH MODE'; }
+    const toggle=$('ownerToggle'); if(toggle){ toggle.innerHTML=owner?'<i class="fas fa-toggle-on"></i> Owner override':'<i class="fas fa-toggle-off"></i> Owner override'; toggle.classList.toggle('red', !owner); }
+    setBadge('campState', (d.state||'-').toUpperCase()); $('campPid').textContent=d.pid||'-'; setBadge('ownerState', owner?'on':'off', owner?'state-override':'state-neutral');
+    const b=$('overrideBanner'); if(owner){ b.className='status-banner'; b.textContent='OVERRIDE ACTIVE — policy gates may be bypassed. Use only for controlled privileged operations.'; if(!overrideSince) overrideSince=Date.now(); } else { b.className='status-banner ok'; b.textContent='Override inactive. Policy gates fully enforced.'; overrideSince=null; }
+    $('overrideDuration').textContent = overrideSince? Math.floor((Date.now()-overrideSince)/1000)+'s':'-';
+    const rec=Number(d.aggression_recommended_default||6); const cur=(d.aggression_override==null?rec:Number(d.aggression_override)); const slider=$('aggressionSlider');
+    if(!(slider && document.activeElement===slider)){
+      $('aggressionSlider').value=String(cur); $('aggressionValue').textContent=String(cur); $('aggHint').textContent=hint(d.aggression_effective??cur);
+    }
+    $('aggCurrent').textContent=String(d.aggression_override??'-'); $('aggRecommended').textContent=String(rec); $('aggEffective').textContent=String(d.aggression_effective??cur);
+    const logs=await (await fetch('/api/logs?page=1&per_page=12')).json(); const rows=(logs.items||[]).filter(i=>['owner','auditor','orchestrator','system'].includes(String(i.agent||'').toLowerCase())||String(i.decision||'').includes('override')).slice(0,8);
+    $('auditBody').innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(r.time)}</td><td>${esc(r.agent||'-')}</td><td>${esc(r.decision||'-')}</td><td>${badgeHTML(r.raw_status||'-')}</td></tr>`).join(''):'<tr><td colspan="4">No privileged changes recorded</td></tr>';
+    await fetchOwnerQueue();
+    setOwnerActionState('ok','live');
+  }catch(e){
+    console.error(e);
+    setOwnerActionState('error','offline');
+  }finally{
+    if(!hydrated){ hydrated=true; setHydrated(true); }
+  }
+}
+$('ownerToggle').onclick=async()=>{ setOwnerActionState('pending','applying'); await fetch('/api/campaign/owner-override',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({enabled:!owner})}); await refresh(); };
+$('pauseBtn').onclick=()=>ctl('pause'); $('resumeBtn').onclick=()=>ctl('resume'); $('stopBtn').onclick=()=>ctl('stop'); $('emergencyBtn').onclick=()=>ctl('stop');
+$('deleteCurrentBtn').onclick=async()=>{ setOwnerActionState('pending','applying'); const r=await fetch('/api/campaign/delete-current',{method:'POST'}); const d=await r.json(); if(!r.ok||d.ok===false){ setOwnerActionState('error','failed'); return alert(d.error||'delete failed'); } await refresh(); };
+$('clearLogsBtn').onclick=async()=>{ setOwnerActionState('pending','applying'); await fetch('/api/logs/clear',{method:'POST'}); await refresh(); };
+$('approveAllBtn').onclick=async()=>{ setOwnerActionState('pending','applying'); await fetch('/api/owner-approvals/approve-all',{method:'POST'}); await refresh(); };
+$('deleteAllBtn').onclick=async()=>{ setOwnerActionState('pending','applying'); await fetch('/api/owner-approvals/delete-all',{method:'POST'}); await refresh(); };
+$('aggressionSlider').oninput=()=>{ $('aggressionValue').textContent=$('aggressionSlider').value; $('aggHint').textContent=hint($('aggressionSlider').value); if(timer) clearTimeout(timer); setOwnerActionState('pending','saving'); timer=setTimeout(async()=>{ const r=await fetch('/api/campaign/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({selected_campaign_key:selectedCampaignKey, aggression_override:Number($('aggressionSlider').value), owner_override:owner})}); const d=await r.json(); if(!r.ok||d.ok===false){ setOwnerActionState('error','save failed'); return; } await refresh(); },350); };
+setOwnerActionState('pending','loading'); refresh(); setInterval(refresh,4000);
+</script></body></html>
