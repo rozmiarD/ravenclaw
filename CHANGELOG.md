@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added the exact Security Contract proof fixture validation command to `VALIDATION.md` for public readers.
 - Included public demo container/compose/bootstrap scaffolding in the assembled public snapshot so snapshot-local validation exercises advertised demo surfaces.
 - Added public snapshot residue audit tooling and remediated discovered public residue blockers in snapshot-pruned source/test surfaces.
 - Included Security Contract Layer proof fixtures and validator in the assembled public snapshot, with a snapshot smoke test that validates copied fixtures from inside the snapshot.

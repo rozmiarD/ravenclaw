@@ -58,6 +58,28 @@ That gives a reader:
 - a repo-wide automated validation path
 - a short explanation of what the proof surfaces do and do not mean
 
+## Security Contract proof fixture validation
+
+To validate the committed public-safe Security Contract proof fixture directly, run:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python scripts/validate_security_contract_fixtures.py examples/security-contract-proof
+```
+
+Expected result:
+
+```text
+security_contract_fixtures_ok:...
+```
+
+This checks the schema-backed proof trace, public-safety invariants, and fixture sanitization. The fixture is dry-run/local/example-only evidence; it does not claim live vulnerability evidence.
+
+For the generated public demo bundle path, run:
+
+```bash
+bin/demo-bundle --print-summary
+```
+
 ## What not to assume
 
 Passing tests does **not** mean:
