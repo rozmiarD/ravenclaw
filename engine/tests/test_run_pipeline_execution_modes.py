@@ -71,6 +71,88 @@ def test_fallback_brain_action_derives_capability_from_action_type_when_needed()
     assert out['intent'] == 'capability_http_probe_fallback'
 
 
+def test_fallback_brain_action_normalizes_bare_host_to_url_for_url_only_tool() -> None:
+    out = fallback_brain_action(
+        objective='generic probe',
+        target='example.com',
+        aggression=2,
+        task_family='recon',
+        recent_context=[],
+        intent_context={
+            'capability_candidates': ['content_discovery'],
+            'recommended_action_types': ['enumeration_probe'],
+        },
+    )
+    assert out['tool'] == 'katana'
+    assert out['args'][:2] == ['-u', 'https://example.com']
+
+
+def test_fallback_brain_action_capability_first_normalizes_url_to_host_for_host_only_tool() -> None:
+    out = fallback_brain_action(
+        objective='subdomain collection',
+        target='https://example.com/app',
+        aggression=2,
+        task_family='subdomain_expansion',
+        recent_context=[],
+        intent_context={
+            'capability_candidates': ['passive_subdomain_discovery'],
+            'recommended_action_types': ['enumeration_probe'],
+        },
+    )
+    assert out['tool'] == 'subfinder'
+    assert out['args'] == ['example.com']
+
+
+def test_fallback_brain_action_uses_nslookup_host_only_shape(monkeypatch) -> None:
+    monkeypatch.setattr('run_pipeline.contextual_brain_tooling', lambda *a, **k: {'profiles': ['core'], 'tools': ['nslookup']})
+    out = fallback_brain_action(
+        objective='dns recon',
+        target='https://example.com/path',
+        aggression=2,
+        task_family='dns',
+        recent_context=[],
+        intent_context={},
+    )
+    assert out['tool'] == 'nslookup'
+    assert out['args'] == ['example.com']
+
+
+def test_fallback_brain_action_uses_bounded_hakrawler_stdin_adapter(monkeypatch) -> None:
+    monkeypatch.setattr('run_pipeline.contextual_brain_tooling', lambda *a, **k: {'profiles': ['core'], 'tools': ['hakrawler']})
+    out = fallback_brain_action(
+        objective='crawl recon',
+        target='https://example.com/app',
+        aggression=2,
+        task_family='recon',
+        recent_context=[{'summary': 'crawl spider route discovery'}],
+        intent_context={},
+    )
+    assert out['tool'] == 'hakrawler'
+    assert out['args'] == ['-d', '2', '-u']
+    assert out['stdin'] == 'https://example.com/app\n'
+    assert '-url' not in out['args']
+    assert '-depth' not in out['args']
+    assert '-plain' not in out['args']
+
+
+def test_fallback_brain_action_capability_first_uses_hakrawler_adapter(monkeypatch) -> None:
+    monkeypatch.setattr('run_pipeline.contextual_brain_tooling', lambda *a, **k: {'profiles': ['core'], 'tools': ['hakrawler']})
+    out = fallback_brain_action(
+        objective='crawler route discovery',
+        target='https://example.com/app',
+        aggression=2,
+        task_family='content_discovery',
+        recent_context=[],
+        intent_context={
+            'capability_candidates': ['crawler_route_discovery'],
+            'recommended_action_types': ['enumeration_probe'],
+        },
+    )
+    assert out['tool'] == 'hakrawler'
+    assert out['args'] == ['-d', '2', '-u']
+    assert out['stdin'] == 'https://example.com/app\n'
+
+
 def test_preferred_tools_for_task_family_derives_capability_from_action_type_when_candidates_are_noncanonical() -> None:
     tools = preferred_tools_for_task_family(
         'authz',
@@ -124,6 +206,27 @@ def test_prepare_action_spec_for_execution_faithful_mode_preserves_curl_shape() 
     assert '-o' not in args
     assert '-w' not in args
     assert '--connect-timeout' not in args
+
+
+def test_prepare_action_spec_for_execution_preserves_stdin_target_shape() -> None:
+    action_spec, compiled = prepare_action_spec_for_execution(
+        {
+            'action_type': 'enumeration_probe',
+            'capability': 'crawler_route_discovery',
+            'task_family': 'content_discovery',
+            'tool': 'hakrawler',
+            'args': ['-d', '2', '-u'],
+            'stdin': 'https://example.com/app\n',
+        },
+        target='https://example.com/app',
+        creds={},
+        execution_mode='normalized',
+    )
+    assert compiled['compiler_tool_choice'] == 'hakrawler'
+    assert action_spec['tool_chain'][0]['args'] == ['-d', '2', '-u']
+    assert action_spec['tool_chain'][0]['stdin'] == 'https://example.com/app\n'
+    assert action_spec['args'] == ['-d', '2', '-u']
+    assert action_spec['stdin'] == 'https://example.com/app\n'
 
 
 def test_execution_engine_expands_prev_stdout_path_handoff(tmp_path: Path) -> None:

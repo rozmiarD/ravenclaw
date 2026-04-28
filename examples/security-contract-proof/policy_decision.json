@@ -1,0 +1,26 @@
+{
+  "schema_version": "2026-04-27.policy-decision.v0.1",
+  "decision": "allow_prepare",
+  "reason_code": "demo_scope_target_override",
+  "reasons": [
+    "demo_scope_target_override"
+  ],
+  "scope_facts": {
+    "target": "https://example.com",
+    "target_host": "example.com",
+    "target_in_scope": true
+  },
+  "tool_facts": {
+    "resolved_tool": "curl",
+    "action_type": "single_probe"
+  },
+  "approval_required": false,
+  "constraints": {
+    "aggression": 6
+  },
+  "redaction_required": true,
+  "compatibility": {
+    "pass": true,
+    "reason": "demo_scope_target_override"
+  }
+}

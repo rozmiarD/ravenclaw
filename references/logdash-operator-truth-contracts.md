@@ -1,6 +1,6 @@
 # Logdash operator truth contracts
 
-This is the short operator-facing reference for how Logdash runtime/control-plane truth should be interpreted in the current `1.0.0` hardening line.
+This is the short operator-facing reference for how Logdash runtime/control-plane truth should be interpreted after the hardening work historically associated with the earlier `1.0.0` line.
 
 ## Scope
 This document describes:
@@ -41,7 +41,7 @@ Current hardening expectations:
 ## 3. Source and ownership labels
 Operator-visible payloads should distinguish snapshot-backed truth from normalized persisted-file truth and from explicit empty fallbacks.
 
-Important labels in the current hardening line:
+Important labels in the current hardened truth surface:
 - `runtime_snapshot_source`
   - `snapshot` when selected-campaign snapshot data is present and applicable
   - `legacy` when the UI is using fallback/runtime-derived projections instead of matching selected snapshot truth

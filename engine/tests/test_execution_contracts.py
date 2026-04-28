@@ -9,6 +9,8 @@ if ENGINE_DIR not in sys.path:
 
 from execution_contracts import (  # type: ignore
     apply_request_decoration_to_args,
+    build_execution_input_summaries_from_execution_spec,
+    build_execution_input_summary_from_execution_spec,
     build_approved_execution_spec,
     build_prepared_execution_spec,
     redact_prepared_execution_spec_for_auditor,
@@ -94,7 +96,8 @@ def test_apply_request_decoration_to_args_adds_campaign_headers_for_runtime_tool
 def test_redact_prepared_execution_spec_for_auditor_masks_cookie_and_basic_auth() -> None:
     prepared = {
         'normalized_args': ['-b', 'session=abc', '-u', 'user:pass', '-H', 'X-Canary: rc'],
-        'execution_plan': [{'tool': 'curl', 'args': ['-b', 'session=abc', '-u', 'user:pass', '-H', 'X-Canary: rc']}],
+        'stdin': 'https://example.com/secret?token=abc\n',
+        'execution_plan': [{'tool': 'curl', 'args': ['-b', 'session=abc', '-u', 'user:pass', '-H', 'X-Canary: rc'], 'stdin': 'https://example.com/secret?token=abc\n'}],
         'request_decoration': {
             'cookies': [{'name': 'session', 'value': 'abc', 'source': 'operator_supplied'}],
             'basic_auth': {'enabled': True, 'username': 'user', 'password_ref': ''},
@@ -103,6 +106,12 @@ def test_redact_prepared_execution_spec_for_auditor_masks_cookie_and_basic_auth(
     redacted = redact_prepared_execution_spec_for_auditor(prepared)
     assert '<cookie_redacted>' in redacted['normalized_args']
     assert 'user:<redacted>' in redacted['normalized_args']
+    assert 'stdin' not in redacted
+    assert redacted['stdin_present'] is True
+    assert redacted['stdin_line_count'] == 1
+    assert 'token=abc' in redacted['stdin_preview']
+    assert 'stdin' not in redacted['execution_plan'][0]
+    assert redacted['execution_plan'][0]['stdin_present'] is True
     assert redacted['request_decoration']['cookies'][0]['value'] == '<redacted>'
     assert redacted['request_decoration']['basic_auth']['password_ref'] == '<redacted>'
 
@@ -176,6 +185,42 @@ def test_summarize_request_shape_hygiene_keeps_same_host_variants_clean() -> Non
     assert out['request_shape_hygiene_status'] == 'clean'
 
 
+def test_summarize_request_shape_hygiene_detects_stdin_target_hosts() -> None:
+    out = summarize_request_shape_hygiene(
+        target='https://api.example.com/',
+        normalized_args=['-d', '2', '-u'],
+        execution_plan=[{'tool': 'hakrawler', 'args': ['-d', '2', '-u'], 'stdin': 'https://api.example.com/app\n'}],
+    )
+    assert out['arg_hosts_detected'] == []
+    assert out['execution_plan_hosts_detected'] == ['api.example.com']
+    assert out['mismatched_hosts_detected'] == []
+    assert out['target_host_match_status'] == 'exact'
+    assert out['request_shape_hygiene_status'] == 'clean'
+
+
+def test_build_execution_input_summary_detects_stdin_delivery_mode() -> None:
+    summary = build_execution_input_summary_from_execution_spec({
+        'resolved_tool': 'hakrawler',
+        'execution_plan': [{'tool': 'hakrawler', 'role': 'probe', 'args': ['-d', '2', '-u'], 'stdin': 'https://example.com/app\n'}],
+    })
+    assert summary['preview_source'] == 'execution_plan_first_step'
+    assert summary['target_delivery_mode'] == 'stdin'
+    assert summary['tool'] == 'hakrawler'
+    assert summary['stdin_present'] is True
+    assert summary['stdin_line_count'] == 1
+
+
+def test_build_execution_input_summaries_marks_mixed_delivery_modes() -> None:
+    summaries = build_execution_input_summaries_from_execution_spec({
+        'execution_plan': [
+            {'tool': 'hakrawler', 'role': 'probe', 'args': ['-d', '2', '-u'], 'stdin': 'https://example.com/app\n'},
+            {'tool': 'curl', 'role': 'validate', 'args': ['https://example.com/robots.txt']},
+        ],
+    })
+    assert summaries[0]['target_delivery_mode'] == 'stdin'
+    assert summaries[1]['target_delivery_mode'] == 'argv'
+
+
 def test_build_prepared_and_approved_execution_spec_capture_core_contract() -> None:
     raw_action = {
         'action_type': 'single_probe',
@@ -228,6 +273,7 @@ def test_build_prepared_and_approved_execution_spec_capture_core_contract() -> N
     )
     assert prepared['resolved_tool'] == 'curl'
     assert prepared['target_in_scope'] is True
+    assert prepared['stdin'] == ''
     assert prepared['credentials_policy_snapshot']['resolved_campaign_key'] == 'camp1'
     assert prepared['compiler']['semantic_loss_detected'] is False
     assert prepared['compiler']['semantic_loss_policy']['loss_class'] == 'none'
@@ -246,5 +292,55 @@ def test_build_prepared_and_approved_execution_spec_capture_core_contract() -> N
     assert approved['approval']['reason_code'] == 'approve_in_scope'
     assert approved['approval']['approval_source'] == 'auditor'
     assert approved['resolved_tool'] == 'curl'
+    assert approved['execution_truth']['command_input_summary']['target_delivery_mode'] == 'argv'
+    assert approved['execution_truth']['execution_input_summaries'][0]['target_delivery_mode'] == 'argv'
     assert approved['execution_truth']['target_host_match_status'] == 'exact'
     assert approved['execution_truth']['request_shape_hygiene_status'] == 'clean'
+
+
+def test_build_approved_execution_spec_carries_stdin_input_summary() -> None:
+    prepared = {
+        'resolved_tool': 'hakrawler',
+        'normalized_args': ['-d', '2', '-u'],
+        'execution_plan': [{'tool': 'hakrawler', 'role': 'probe', 'args': ['-d', '2', '-u'], 'stdin': 'https://example.com/app\n'}],
+        'arg_hosts_detected': [],
+        'execution_plan_hosts_detected': ['example.com'],
+        'all_hosts_detected': ['example.com'],
+        'mismatched_hosts_detected': [],
+        'target_host_match_status': 'exact',
+        'request_shape_hygiene_status': 'clean',
+        'request_shape_hygiene_reason': 'all_detected_hosts_match_target',
+        'request_shape_hygiene_source': 'execution_plan',
+        'compiler': {'semantic_loss_policy': {'policy_response': 'proceed'}},
+    }
+    approved = build_approved_execution_spec(
+        prepared,
+        auditor={'decision': 'approve', 'reason': 'ok', 'reason_code': 'approve_in_scope', 'constraints': {}},
+        approval_source='auditor',
+        approval_transform_chain=[],
+        owner_override_applied=False,
+    )
+    assert approved['execution_truth']['command_input_summary']['target_delivery_mode'] == 'stdin'
+    assert approved['execution_truth']['command_input_summary']['stdin_present'] is True
+    assert approved['execution_truth']['execution_input_summaries'][0]['tool'] == 'hakrawler'
+
+
+def test_build_approved_execution_spec_does_not_fallback_preview_without_execution_plan() -> None:
+    prepared = {
+        'resolved_tool': 'hakrawler',
+        'normalized_args': ['-d', '2', '-u'],
+        'stdin': 'https://example.com/app\n',
+        'execution_plan': [],
+        'compiler': {'semantic_loss_policy': {'policy_response': 'proceed'}},
+    }
+    approved = build_approved_execution_spec(
+        prepared,
+        auditor={'decision': 'approve', 'reason': 'ok', 'reason_code': 'approve_in_scope', 'constraints': {}},
+        approval_source='auditor',
+        approval_transform_chain=[],
+        owner_override_applied=False,
+    )
+    assert approved['execution_truth']['command_preview'] == []
+    assert approved['execution_truth']['command_input_summary']['preview_source'] == 'none'
+    assert approved['execution_truth']['command_input_summary']['stdin_present'] is False
+    assert approved['execution_truth']['execution_input_summaries'] == []

@@ -254,6 +254,22 @@ def _validate_args(args: Any, prefix: str = '') -> List[str]:
     return errors
 
 
+def _validate_stdin(value: Any, prefix: str = '') -> List[str]:
+    errors: List[str] = []
+    label = prefix or ''
+    if value is None:
+        return errors
+    if not isinstance(value, str):
+        return [f'{label}stdin_must_be_string']
+    if '\x00' in value:
+        errors.append(f'{label}stdin_contains_nul')
+    if len(value) > 4096:
+        errors.append(f'{label}stdin_too_long')
+    if len(value.splitlines()) > 32:
+        errors.append(f'{label}stdin_too_many_lines')
+    return errors
+
+
 def get_contract_allowed_tools(requested_profiles: Iterable[str] | str | None = None) -> set[str]:
     return {str(x).strip().lower() for x in get_runtime_brain_allowed_tools(requested_profiles) if str(x).strip()}
 
@@ -295,6 +311,7 @@ def validate_action_spec(spec: Dict[str, Any]) -> Tuple[bool, List[str]]:
         errors.append(f'invalid_tool:{tool}')
 
     errors.extend(_validate_args(spec.get('args', [])))
+    errors.extend(_validate_stdin(spec.get('stdin')))
 
     constraints = spec.get('constraints', {})
     if constraints is not None and not isinstance(constraints, dict):
@@ -331,6 +348,7 @@ def validate_action_spec(spec: Dict[str, Any]) -> Tuple[bool, List[str]]:
                 errors.append(f'invalid_tool_chain_tool:{idx}:{step_tool}')
             if 'args' in step:
                 errors.extend(_validate_args(step.get('args', []), prefix=f'tool_chain_{idx}_'))
+            errors.extend(_validate_stdin(step.get('stdin'), prefix=f'tool_chain_{idx}_'))
     elif tool_chain is not None:
         errors.append('tool_chain_must_be_array')
 

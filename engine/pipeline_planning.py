@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from typing import Any, Callable, Dict, List
+from urllib.parse import urlparse
 
 from action_schema import ACTION_TYPE_TO_CAPABILITY, ACTION_TYPE_TO_EXPERIMENT_SHAPE, ALLOWED_EXPERIMENT_SHAPES  # type: ignore
 from capability_recipes import (  # type: ignore
@@ -11,8 +12,11 @@ from capability_recipes import (  # type: ignore
 )
 from campaign_utils import extract_host_from_url  # type: ignore
 from policy_core import get_runtime_allowed_tools, get_runtime_brain_allowed_tools  # type: ignore
-from tool_registry import get_capability_catalog  # type: ignore
+from tool_registry import get_capability_catalog, get_tool_catalog  # type: ignore
 
+
+
+TOOL_CATALOG = get_tool_catalog()
 
 
 def _ordered_intent_capabilities(capability_candidates: List[str] | None = None, recommended_action_types: List[str] | None = None) -> List[str]:
@@ -30,6 +34,49 @@ def _ordered_intent_capabilities(capability_candidates: List[str] | None = None,
     return ordered
 
 
+def _normalized_target_forms(target: Any) -> tuple[str, str, str]:
+    raw = str(target or '').strip()
+    parsed = urlparse(raw if '://' in raw else f'//{raw}')
+    host = str(parsed.hostname or extract_host_from_url(raw) or raw).strip().lower()
+    if host.startswith('*.'):
+        host = host[2:]
+    if '/' in host:
+        host = host.split('/', 1)[0]
+    url_target = raw if raw.lower().startswith(('http://', 'https://')) else (f'https://{host}' if host else raw)
+    return raw, url_target, host
+
+
+def _target_arg_for_tool(tool: str, raw_target: str, url_target: str, host_target: str) -> str:
+    info = TOOL_CATALOG.get(str(tool or '').strip().lower()) or {}
+    target_kinds = {str(x).strip().lower() for x in (info.get('target_kinds') or []) if str(x).strip()}
+    if target_kinds == {'url'}:
+        return url_target or raw_target
+    if target_kinds and target_kinds <= {'host', 'domain'}:
+        return host_target or raw_target
+    return raw_target
+
+
+def _lookup_args(tool: str, host_target: str) -> List[str]:
+    tool_norm = str(tool or '').strip().lower()
+    if tool_norm == 'dig':
+        return ['+short', host_target]
+    return [host_target]
+
+
+def _planner_invocation_mode(tool: str) -> str:
+    info = TOOL_CATALOG.get(str(tool or '').strip().lower()) or {}
+    return str(info.get('planner_invocation_mode') or 'direct_args').strip().lower() or 'direct_args'
+
+
+def _supports_bounded_planner_fallback(tool: str) -> bool:
+    return _planner_invocation_mode(tool) in {'direct_args', 'stdin_target'}
+
+
+def _planner_stdin_args(tool: str) -> List[str]:
+    info = TOOL_CATALOG.get(str(tool or '').strip().lower()) or {}
+    return [str(x) for x in (info.get('planner_stdin_args') or []) if str(x).strip()]
+
+
 def fallback_brain_action(
     objective: str,
     target: str,
@@ -42,20 +89,19 @@ def fallback_brain_action(
 ) -> Dict[str, Any]:
     obj = str(objective or '').lower()
     fam = str(task_family or '').lower()
-    t = str(target or '').strip()
+    t, url_target, host = _normalized_target_forms(target)
     recent = (recent_context or [])[-5:]
     recent_blob = json.dumps(recent, ensure_ascii=False).lower()
-    host = extract_host_from_url(t) or t
     intent_ctx = intent_context if isinstance(intent_context, dict) else {}
     intent_capabilities = [str(x).strip().lower() for x in (intent_ctx.get('capability_candidates') or []) if str(x).strip()]
     intent_action_types = [str(x).strip().lower() for x in (intent_ctx.get('recommended_action_types') or []) if str(x).strip()]
     effective_intent_capabilities = _ordered_intent_capabilities(intent_capabilities, intent_action_types)
     live_brain_tools = set(contextual_brain_tooling_fn(task_family).get('tools') or [])
 
-    def _mk(tool: str, args: List[str], intent: str, aggr_cap: int = 3, action_type: str = 'single_probe', probe_recipe: Dict[str, Any] | None = None, capability: str = '') -> Dict[str, Any]:
+    def _mk(tool: str, args: List[str], intent: str, aggr_cap: int = 3, action_type: str = 'single_probe', probe_recipe: Dict[str, Any] | None = None, capability: str = '', stdin: str = '') -> Dict[str, Any]:
         chosen_action = str(action_type or (intent_action_types[0] if intent_action_types else 'single_probe')).strip().lower() or 'single_probe'
         chosen_capability = str(capability or (effective_intent_capabilities[0] if effective_intent_capabilities else '')).strip().lower()
-        return {
+        out = {
             'intent': intent,
             'target': t,
             'tool': tool,
@@ -66,35 +112,46 @@ def fallback_brain_action(
             'constraints': {'aggression': max(1, min(aggression, aggr_cap))},
             'planner_alignment': 'aligned',
         }
+        if stdin:
+            out['stdin'] = stdin
+        return out
+
+    def _tool_target(tool: str) -> str:
+        return _target_arg_for_tool(tool, t, url_target, host)
+
+    def _mk_tool_probe(tool: str, args: List[str], intent: str, aggr_cap: int = 3, action_type: str = 'single_probe', probe_recipe: Dict[str, Any] | None = None, capability: str = '') -> Dict[str, Any]:
+        if _planner_invocation_mode(tool) == 'stdin_target':
+            return _mk(tool, _planner_stdin_args(tool), intent, aggr_cap=aggr_cap, action_type=action_type, probe_recipe=probe_recipe, capability=capability, stdin=_tool_target(tool) + '\n')
+        return _mk(tool, args, intent, aggr_cap=aggr_cap, action_type=action_type, probe_recipe=probe_recipe, capability=capability)
 
     def _capability_first_fallback() -> Dict[str, Any] | None:
         action_type = intent_action_types[0] if intent_action_types else 'single_probe'
         for cap in effective_intent_capabilities:
             candidates = [
                 tool for tool in list_candidate_tools_for_capability(cap, action_type=action_type, task_family=task_family)
-                if tool in live_brain_tools
+                if tool in live_brain_tools and _supports_bounded_planner_fallback(tool)
             ]
             if not candidates:
                 continue
             tool = candidates[0]
             if cap == 'tls_posture_check':
                 if tool == 'httpx-pd':
-                    return _mk(tool, ['-silent', '-tls-probe', '-status-code', '-title', '-u', t], 'capability_tls_posture_fallback', aggr_cap=2, action_type='fingerprint_probe', capability=cap)
+                    return _mk_tool_probe(tool, ['-silent', '-tls-probe', '-status-code', '-title', '-u', _tool_target(tool)], 'capability_tls_posture_fallback', aggr_cap=2, action_type='fingerprint_probe', capability=cap)
                 if tool == 'testssl.sh':
-                    return _mk(tool, ['--warnings', 'off', '--openssl', 'openssl', host], 'capability_tls_posture_fallback', aggr_cap=2, action_type='fingerprint_probe', capability=cap)
-                return _mk('curl', ['-sS', '-I', '-k', '--max-time', '15', t], 'capability_tls_posture_fallback', aggr_cap=2, action_type='fingerprint_probe', capability=cap)
+                    return _mk_tool_probe(tool, ['--warnings', 'off', '--openssl', 'openssl', host], 'capability_tls_posture_fallback', aggr_cap=2, action_type='fingerprint_probe', capability=cap)
+                return _mk_tool_probe('curl', ['-sS', '-I', '-k', '--max-time', '15', _tool_target('curl')], 'capability_tls_posture_fallback', aggr_cap=2, action_type='fingerprint_probe', capability=cap)
             if cap == 'content_discovery':
                 if tool == 'katana':
-                    return _mk(tool, ['-u', t, '-jc', '-kf', '-silent'], 'capability_content_discovery_fallback', aggr_cap=2, action_type='enumeration_probe', capability=cap)
+                    return _mk_tool_probe(tool, ['-u', _tool_target(tool), '-jc', '-kf', '-silent'], 'capability_content_discovery_fallback', aggr_cap=2, action_type='enumeration_probe', capability=cap)
                 if tool == 'ffuf':
-                    return _mk(tool, ['-u', f"{t.rstrip('/')}/FUZZ", '-mc', 'all'], 'capability_content_discovery_fallback', aggr_cap=2, action_type='enumeration_probe', capability=cap)
+                    return _mk_tool_probe(tool, ['-u', f"{_tool_target(tool).rstrip('/')}/FUZZ", '-mc', 'all'], 'capability_content_discovery_fallback', aggr_cap=2, action_type='enumeration_probe', capability=cap)
                 if tool in {'feroxbuster', 'gobuster', 'dirsearch'}:
-                    return _mk(tool, ['-u', t], 'capability_content_discovery_fallback', aggr_cap=2, action_type='enumeration_probe', capability=cap)
+                    return _mk_tool_probe(tool, ['-u', _tool_target(tool)], 'capability_content_discovery_fallback', aggr_cap=2, action_type='enumeration_probe', capability=cap)
             if cap == 'http_probe':
                 if tool == 'httpx':
-                    return _mk(tool, ['-silent', '-title', '-tech-detect', '-status-code', '-follow-redirects', '-u', t], 'capability_http_probe_fallback', aggr_cap=2, action_type=action_type, capability=cap)
-                return _mk(tool, ['-s', '-X', 'GET', t], 'capability_http_probe_fallback', aggr_cap=2, action_type=action_type, capability=cap)
-            return _mk(tool, [t], 'capability_first_fallback', aggr_cap=2, action_type=action_type, capability=cap)
+                    return _mk_tool_probe(tool, ['-silent', '-title', '-tech-detect', '-status-code', '-follow-redirects', '-u', _tool_target(tool)], 'capability_http_probe_fallback', aggr_cap=2, action_type=action_type, capability=cap)
+                return _mk_tool_probe(tool, ['-s', '-X', 'GET', _tool_target(tool)], 'capability_http_probe_fallback', aggr_cap=2, action_type=action_type, capability=cap)
+            return _mk_tool_probe(tool, [_tool_target(tool)], 'capability_first_fallback', aggr_cap=2, action_type=action_type, capability=cap)
         return None
 
     capability_first = _capability_first_fallback()
@@ -106,70 +163,71 @@ def fallback_brain_action(
             return _mk('assetfinder', ['--subs-only', host], 'assetfinder_dns_fallback', aggr_cap=2)
         if 'subfinder' in live_brain_tools and any(k in recent_blob for k in ['passive', 'enumeration', 'asset']):
             return _mk('subfinder', ['-silent', '-d', host], 'subfinder_dns_fallback', aggr_cap=2, action_type='enumeration_probe')
-        return _mk('dig' if 'dig' in live_brain_tools else 'nslookup', ['+short', host], 'dns_fallback', action_type='enumeration_probe')
+        lookup_tool = 'dig' if 'dig' in live_brain_tools else 'nslookup'
+        return _mk(lookup_tool, _lookup_args(lookup_tool, host), 'dns_fallback', action_type='enumeration_probe')
 
     if any(k in fam for k in ['tls_assessment']) or any(k in obj for k in ['tls', 'ssl', 'cipher', 'certificate', 'hsts']):
         if 'httpx-pd' in live_brain_tools:
-            return _mk('httpx-pd', ['-silent', '-tls-probe', '-status-code', '-title', '-u', t], 'tls_httpxpd_fallback', aggr_cap=2, action_type='fingerprint_probe')
+            return _mk('httpx-pd', ['-silent', '-tls-probe', '-status-code', '-title', '-u', _tool_target('httpx-pd')], 'tls_httpxpd_fallback', aggr_cap=2, action_type='fingerprint_probe')
         if 'testssl.sh' in live_brain_tools:
             return _mk('testssl.sh', ['--warnings', 'off', '--openssl', 'openssl', host], 'tls_fallback', aggr_cap=2, action_type='fingerprint_probe')
-        return _mk('curl', ['-sS', '-I', '-k', '--max-time', '15', t], 'tls_header_fallback', aggr_cap=2, action_type='fingerprint_probe')
+        return _mk('curl', ['-sS', '-I', '-k', '--max-time', '15', _tool_target('curl')], 'tls_header_fallback', aggr_cap=2, action_type='fingerprint_probe')
 
     if any(k in fam for k in ['historical_url_mining']):
         if 'gau' in live_brain_tools:
             return _mk('gau', ['--subs', host], 'historical_url_fallback', aggr_cap=2, action_type='enumeration_probe')
-        return _mk('katana', ['-u', t, '-known-files', 'all', '-silent'], 'historical_katana_fallback', aggr_cap=2, action_type='enumeration_probe')
+        return _mk('katana', ['-u', _tool_target('katana'), '-known-files', 'all', '-silent'], 'historical_katana_fallback', aggr_cap=2, action_type='enumeration_probe')
 
     if any(k in fam for k in ['content_discovery']):
         if 'katana' in live_brain_tools:
-            return _mk('katana', ['-u', t, '-jc', '-kf', '-silent'], 'content_discovery_katana_fallback', aggr_cap=2, action_type='enumeration_probe')
+            return _mk('katana', ['-u', _tool_target('katana'), '-jc', '-kf', '-silent'], 'content_discovery_katana_fallback', aggr_cap=2, action_type='enumeration_probe')
         if 'gau' in live_brain_tools:
             return _mk('gau', ['--subs', host], 'content_discovery_gau_fallback', aggr_cap=2)
         if 'ffuf' in live_brain_tools:
-            return _mk('ffuf', ['-u', f"{t.rstrip('/')}/FUZZ", '-mc', 'all'], 'ffuf_content_fallback', aggr_cap=2, action_type='enumeration_probe')
+            return _mk('ffuf', ['-u', f"{_tool_target('ffuf').rstrip('/')}/FUZZ", '-mc', 'all'], 'ffuf_content_fallback', aggr_cap=2, action_type='enumeration_probe')
         if 'feroxbuster' in live_brain_tools:
-            return _mk('feroxbuster', ['-u', t, '-k', '-q', '-d', '1'], 'content_discovery_fallback', aggr_cap=2)
+            return _mk('feroxbuster', ['-u', _tool_target('feroxbuster'), '-k', '-q', '-d', '1'], 'content_discovery_fallback', aggr_cap=2)
 
     if any(k in fam for k in ['secret_hunt']):
         if 'katana' in live_brain_tools:
-            return _mk('katana', ['-u', t, '-jc', '-kf', '-silent'], 'secret_hunt_katana_fallback', aggr_cap=2)
+            return _mk('katana', ['-u', _tool_target('katana'), '-jc', '-kf', '-silent'], 'secret_hunt_katana_fallback', aggr_cap=2)
         return _mk('gau', ['--subs', host], 'secret_hunt_historical_fallback', aggr_cap=2)
 
     if any(k in fam for k in ['recon']) or any(k in obj for k in ['recon', 'discovery', 'endpoint']):
         if any(k in recent_blob for k in ['directory', 'path brute', 'content discovery', 'wordlist']) and 'feroxbuster' in live_brain_tools:
-            return _mk('feroxbuster', ['-u', t, '-k', '-q', '-d', '1'], 'feroxbuster_recon_fallback', aggr_cap=2)
+            return _mk('feroxbuster', ['-u', _tool_target('feroxbuster'), '-k', '-q', '-d', '1'], 'feroxbuster_recon_fallback', aggr_cap=2)
         if any(k in recent_blob for k in ['javascript', 'script', 'route', 'bundle']) and 'katana' in live_brain_tools:
-            return _mk('katana', ['-u', t, '-jc', '-kf', '-silent'], 'katana_recon_fallback')
+            return _mk('katana', ['-u', _tool_target('katana'), '-jc', '-kf', '-silent'], 'katana_recon_fallback')
         if any(k in recent_blob for k in ['crawl', 'crawl-depth', 'spider']) and 'hakrawler' in live_brain_tools:
-            return _mk('hakrawler', ['-url', t, '-depth', '2', '-plain'], 'hakrawler_recon_fallback', aggr_cap=2)
+            return _mk_tool_probe('hakrawler', ['-d', '2', '-u'], 'hakrawler_recon_fallback', aggr_cap=2)
         if any(k in recent_blob for k in ['wayback', 'archive', 'historical', 'legacy']) and 'gau' in live_brain_tools:
             return _mk('gau', ['--subs', host], 'historical_url_fallback')
         if any(k in recent_blob for k in ['robots.txt', 'sitemap.xml', 'security.txt']) and 'httpx' in live_brain_tools:
-            return _mk('httpx', ['-silent', '-title', '-tech-detect', '-status-code', '-follow-redirects', '-u', t], 'fingerprint_fallback')
-        return _mk('curl', ['-s', '-X', 'GET', f"{t.rstrip('/')}/robots.txt", f"{t.rstrip('/')}/.well-known/security.txt", f"{t.rstrip('/')}/sitemap.xml"], 'safe_recon_fallback')
+            return _mk('httpx', ['-silent', '-title', '-tech-detect', '-status-code', '-follow-redirects', '-u', _tool_target('httpx')], 'fingerprint_fallback')
+        return _mk('curl', ['-s', '-X', 'GET', f"{url_target.rstrip('/')}/robots.txt", f"{url_target.rstrip('/')}/.well-known/security.txt", f"{url_target.rstrip('/')}/sitemap.xml"], 'safe_recon_fallback')
 
     if any(k in fam for k in ['auth', 'authz', 'logic']) or any(k in obj for k in ['auth', 'authz', 'token', 'csrf', 'input', 'redirect']):
         if any(k in recent_blob for k in ['parameter', 'query', 'input', 'missing param']) and 'arjun' in live_brain_tools:
-            return _mk('arjun', ['-u', t, '-m', 'GET', '--stable'], 'parameter_mining_fallback', aggr_cap=2)
+            return _mk('arjun', ['-u', _tool_target('arjun'), '-m', 'GET', '--stable'], 'parameter_mining_fallback', aggr_cap=2)
         path = '/api/v1/user/profile'
         if any(k in recent_blob for k in ['403', '401', 'unauthorized', 'forbidden']):
-            path = '/account' if '/account' not in t else '/profile'
-        return _mk('curl', ['-s', '-X', 'GET', f"{t.rstrip('/')}{path}"], 'boundary_probe_fallback')
+            path = '/account' if '/account' not in url_target else '/profile'
+        return _mk('curl', ['-s', '-X', 'GET', f"{url_target.rstrip('/')}{path}"], 'boundary_probe_fallback')
 
     if any(k in fam for k in ['client_input', 'input_tamper', 'redirect_trust']):
         if 'arjun' in live_brain_tools and any(k in recent_blob for k in ['form', 'input', 'parameter', 'query']):
-            return _mk('arjun', ['-u', t, '-m', 'GET', '--stable'], 'input_param_fallback', aggr_cap=2)
-        return _mk('curl', ['-s', '-X', 'GET', f"{t.rstrip('/')}?next=%2Fdashboard&probe=rc_canary"], 'input_probe_fallback')
+            return _mk('arjun', ['-u', _tool_target('arjun'), '-m', 'GET', '--stable'], 'input_param_fallback', aggr_cap=2)
+        return _mk('curl', ['-s', '-X', 'GET', f"{url_target.rstrip('/')}?next=%2Fdashboard&probe=rc_canary"], 'input_probe_fallback')
 
     if any(k in recent_blob for k in ['directory', 'path brute', 'content discovery']) and 'feroxbuster' in live_brain_tools:
-        return _mk('feroxbuster', ['-u', t, '-k', '-q', '-d', '1'], 'generic_ferox_fallback', aggr_cap=2)
+        return _mk('feroxbuster', ['-u', _tool_target('feroxbuster'), '-k', '-q', '-d', '1'], 'generic_ferox_fallback', aggr_cap=2)
     if any(k in recent_blob for k in ['javascript', 'route', 'endpoint']) and 'katana' in live_brain_tools:
-        return _mk('katana', ['-u', t, '-jc', '-silent'], 'generic_katana_fallback')
+        return _mk('katana', ['-u', _tool_target('katana'), '-jc', '-silent'], 'generic_katana_fallback')
     if any(k in recent_blob for k in ['crawl', 'spider']) and 'hakrawler' in live_brain_tools:
-        return _mk('hakrawler', ['-url', t, '-depth', '2', '-plain'], 'generic_hakrawler_fallback', aggr_cap=2)
+        return _mk_tool_probe('hakrawler', ['-d', '2', '-u'], 'generic_hakrawler_fallback', aggr_cap=2)
     if any(k in recent_blob for k in ['historical', 'archive', 'legacy']) and 'gau' in live_brain_tools:
         return _mk('gau', ['--subs', host], 'generic_historical_fallback')
-    return _mk('curl', ['-s', '-X', 'GET', t], 'safe_probe_fallback')
+    return _mk('curl', ['-s', '-X', 'GET', _tool_target('curl')], 'safe_probe_fallback')
 
 
 
@@ -290,15 +348,17 @@ def enforce_brain_tool_whitelist(
 
     if execution_mode != 'faithful' and fam == 'tls_assessment' and tool == 'testssl.sh' and 'httpx-pd' in allowed_tools:
         fb = dict(brain or {})
+        _raw_target, normalized_url_target, _normalized_host_target = _normalized_target_forms(target)
         fb['tool'] = 'httpx-pd'
         fb['intent'] = str(fb.get('intent') or 'tls_httpxpd_normalized')
-        fb['args'] = ['-silent', '-tls-probe', '-status-code', '-title', '-u', target]
+        fb['args'] = ['-silent', '-tls-probe', '-status-code', '-title', '-u', normalized_url_target]
         return fb, {'original_tool': tool, 'normalized_tool': 'httpx-pd', 'reason': 'tls_first_pass_httpxpd_enforced', 'confidence': 'high'}
     if execution_mode != 'faithful' and fam == 'content_discovery' and tool == 'feroxbuster' and 'katana' in allowed_tools:
+        _raw_target, normalized_url_target, _normalized_host_target = _normalized_target_forms(target)
         fb = dict(brain or {})
         fb['tool'] = 'katana'
         fb['intent'] = str(fb.get('intent') or 'content_discovery_katana_normalized')
-        fb['args'] = ['-u', target, '-jc', '-kf', '-silent']
+        fb['args'] = ['-u', normalized_url_target, '-jc', '-kf', '-silent']
         return fb, {'original_tool': tool, 'normalized_tool': 'katana', 'reason': 'content_discovery_first_pass_katana_enforced', 'confidence': 'high'}
 
     if tool in allowed_tools:

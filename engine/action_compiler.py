@@ -10,11 +10,15 @@ from semantic_loss_policy import classify_semantic_loss  # type: ignore
 
 def _normalize_chain_step(step: Dict[str, Any], fallback_tool: str) -> Dict[str, Any]:
     tool = normalize_tool(step.get('tool')) or fallback_tool
-    return {
+    out = {
         'tool': tool,
         'args': [str(a) for a in (step.get('args', []) or [])],
         'role': str(step.get('role') or 'probe').strip().lower() or 'probe',
     }
+    stdin_text = str(step.get('stdin') or '')
+    if stdin_text:
+        out['stdin'] = stdin_text
+    return out
 
 
 def _finalize_semantic_policy(compiled: Dict[str, Any]) -> Dict[str, Any]:
@@ -30,6 +34,7 @@ def compile_action_spec(action_spec: Dict[str, Any]) -> Dict[str, Any]:
     recipe_name = str(spec.get('recipe_name') or recipe.get('recipe_name') or '').strip().lower()
     execution_mode = str(spec.get('execution_mode') or 'normalized').strip().lower() or 'normalized'
     args = [str(a) for a in (spec.get('args', []) or [])]
+    stdin_text = str(spec.get('stdin') or '')
     preferred_tool = normalize_tool(((spec.get('tool_preferences') or {}) if isinstance(spec.get('tool_preferences'), dict) else {}).get('prefer_tool'))
     tool_candidates = [normalize_tool(x) for x in (spec.get('tool_candidates', []) or []) if normalize_tool(x)]
     resolution = resolve_action_tooling(spec)
@@ -50,7 +55,10 @@ def compile_action_spec(action_spec: Dict[str, Any]) -> Dict[str, Any]:
     else:
         if not tool:
             raise ValueError(f'missing_tool_for_action_type:{action_type}')
-        execution_plan = [{'tool': tool, 'args': args, 'role': 'probe'}]
+        probe_step: Dict[str, Any] = {'tool': tool, 'args': args, 'role': 'probe'}
+        if stdin_text:
+            probe_step['stdin'] = stdin_text
+        execution_plan = [probe_step]
 
     if not tool:
         raise ValueError(f'missing_tool_for_action_type:{action_type}')
@@ -76,6 +84,7 @@ def compile_action_spec(action_spec: Dict[str, Any]) -> Dict[str, Any]:
         'tool_chain': execution_plan,
         'execution_plan': execution_plan,
         'args': args,
+        'stdin': stdin_text,
         'target': str(spec.get('target') or ''),
         'task_family': str(spec.get('task_family') or ''),
     }

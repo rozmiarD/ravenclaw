@@ -29,3 +29,13 @@ def test_runtime_tool_policy_supports_profile_specific_reads() -> None:
     assert isinstance(policy['planner_allowed_tools'], tuple)
     assert 'extended' in policy['profiles']
     assert len(policy['planner_allowed_tools']) >= len(tuple(get_runtime_brain_allowed_tools('core')))
+
+
+def test_runtime_allowed_tools_exclude_operator_and_high_risk_public_boundary_tools() -> None:
+    allowed = get_runtime_allowed_tools()
+    assert 'bash' not in allowed
+    assert 'python3' not in allowed
+    assert 'ssh' not in allowed
+    assert 'masscan' not in allowed
+    assert 'curl' in allowed
+    assert 'httpx' in allowed

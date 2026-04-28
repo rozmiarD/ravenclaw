@@ -167,8 +167,8 @@ def test_campaign_settings_seed_program_specific_credentials_and_report_ready_st
     campaign_store = {
         'global': {
             'credentials_owner_approved': True,
-            'bug_bounty_username': '0x505badc0de',
-            'test_account_email': '0x505badc0de@proton.me',
+            'bug_bounty_username': 'researcher-example',
+            'test_account_email': 'researcher-example@example.invalid',
             'request_decoration': {'mode': 'operator_supplied', 'headers': [], 'cookies': [], 'basic_auth': {'enabled': False, 'username': '', 'password': '', 'password_ref': ''}, 'provenance_notes': []},
         },
         'by_campaign': {},
@@ -182,9 +182,9 @@ def test_campaign_settings_seed_program_specific_credentials_and_report_ready_st
     assert payload['allow_cookie_header'] is True
     assert payload['allow_auth_header'] is False
     assert payload['credentials_status'] == 'READY'
-    assert payload['bug_bounty_username'] == '0x505badc0de'
+    assert payload['bug_bounty_username'] == 'researcher-example'
     headers = payload['request_decoration']['headers']
-    assert any(h['name'] == 'X-HackerOne-Research' and h['value'] == '0x505badc0de' for h in headers)
+    assert any(h['name'] == 'X-HackerOne-Research' and h['value'] == 'researcher-example' for h in headers)
     assert any('X-HackerOne-Research' in note for note in payload['request_decoration']['provenance_notes'])
 
     info = client.get('/api/campaign-info')

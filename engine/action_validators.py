@@ -17,6 +17,24 @@ from tool_registry import get_capability_catalog  # type: ignore
 
 
 CAPABILITIES = set(get_capability_catalog())
+STDIN_MAX_CHARS = 4096
+STDIN_MAX_LINES = 32
+
+
+def _validate_stdin_value(value: Any, *, prefix: str = '') -> List[str]:
+    if value is None:
+        return []
+    label = prefix or ''
+    if not isinstance(value, str):
+        return [f'{label}stdin_must_be_string']
+    if '\x00' in value:
+        return [f'{label}stdin_contains_nul']
+    errors: List[str] = []
+    if len(value) > STDIN_MAX_CHARS:
+        errors.append(f'{label}stdin_too_long')
+    if len(value.splitlines()) > STDIN_MAX_LINES:
+        errors.append(f'{label}stdin_too_many_lines')
+    return errors
 
 
 def validate_probe_recipe(spec: Dict[str, Any]) -> List[str]:
@@ -89,6 +107,8 @@ def validate_action_contract_v2(spec: Dict[str, Any]) -> List[str]:
             if not isinstance(candidate, str) or not str(candidate).strip():
                 errors.append(f'invalid_tool_candidate:{idx}')
 
+    errors.extend(_validate_stdin_value(spec.get('stdin'), prefix=''))
+
     tool_chain = spec.get('tool_chain', [])
     if tool_chain is not None and not isinstance(tool_chain, list):
         errors.append('tool_chain_must_be_array')
@@ -107,6 +127,7 @@ def validate_action_contract_v2(spec: Dict[str, Any]) -> List[str]:
                 errors.append(f'tool_chain_args_must_be_array:{idx}')
             elif isinstance(args, list) and len(args) > 32:
                 errors.append(f'tool_chain_args_too_long:{idx}')
+            errors.extend(_validate_stdin_value(step.get('stdin'), prefix=f'tool_chain_{idx}_'))
 
     for key in ['capability', 'experiment_shape', 'rationale', 'expected_artifacts']:
         value = spec.get(key)

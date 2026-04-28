@@ -52,6 +52,8 @@ The exact count will evolve, but the important signal is structural: this repo a
 
 Ravenclaw documents several important runtime and operator contracts directly in `references/`.
 Examples include:
+- `SECURITY_CONTRACT_LAYER.md`
+- `references/approved-execution-spec-v0.1.md`
 - `references/runtime-task-contract-v2.md`
 - `references/planner-runtime-contract-map.md`
 - `references/logdash-operator-truth-contracts.md`
@@ -91,6 +93,7 @@ Taken together, these signals support the following public claims:
 - important runtime and UI truth surfaces are tested
 - the public repo is being shaped deliberately rather than dumped casually
 - governance and operator-visibility behavior are treated as real correctness concerns
+- the emerging Security Contract Layer is grounded in Ravenclaw Runtime artifacts, not protocol-first marketing
 
 ## What these signals do not prove
 
@@ -99,6 +102,7 @@ These signals do **not** prove:
 - broad deployment simplicity
 - exhaustive security assurance
 - complete absence of architectural churn
+- a finished OpenClaw/MCP/A2A adapter ecosystem
 - superior real-world outcomes by themselves
 
 In other words, the trust surface is meaningful, but it is not magic.
@@ -110,9 +114,11 @@ If you want the shortest serious verification path, read these in order:
 2. `DEMO.md`
 3. `.github/workflows/pytest.yml`
 4. `tests/test_logdash_smoke.py`
-5. `references/runtime-task-contract-v2.md`
-6. `references/logdash-operator-truth-contracts.md`
-7. `ARCHITECTURE.md`
+5. `SECURITY_CONTRACT_LAYER.md`
+6. `references/approved-execution-spec-v0.1.md`
+7. `references/runtime-task-contract-v2.md`
+8. `references/logdash-operator-truth-contracts.md`
+9. `ARCHITECTURE.md`
 
 ## Validation posture summary
 

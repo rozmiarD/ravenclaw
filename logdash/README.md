@@ -139,7 +139,7 @@ Recent capability-architecture work also means operator-visible state now includ
 
 Recent state-ownership cleanup also centralized selected-campaign snapshot filtering/projection into shared helpers so API endpoints do not each carry their own mismatch logic.
 
-Current `1.0.0` hardening work also tightened operator-visible truth contracts around:
+Earlier hardening work associated with the historical `1.0.0` line also tightened operator-visible truth contracts around:
 - lifecycle control semantics for `start` / `resume` / `pause` / `stop` / `activate-from-blueprint`
 - restart/recovery truth around stale PID cleanup and paused/stopped persistence
 - source/provenance labels such as `runtime_snapshot_source`, `normalized_runtime_plan_meta`, `normalized_host_state_file`, and `empty_selected_campaign_queue`

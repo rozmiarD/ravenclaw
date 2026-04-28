@@ -54,4 +54,6 @@ The point is to make it more dependable.
 Ravenclaw is not trying to prove that unconstrained autonomy can do the most dramatic thing.
 It is trying to prove that bounded autonomy can still be genuinely useful while remaining easier to trust, audit, and recover.
 
+In public form, Ravenclaw should be read as a governance-first runtime core with an explicit private/operator overlay boundary, not as a claim that every deployment-specific integration is bundled in this repository.
+
 That is the reason the project exists.

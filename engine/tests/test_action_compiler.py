@@ -83,3 +83,16 @@ def test_compile_action_spec_marks_unknown_action_as_required_replan() -> None:
     assert compiled['semantic_loss_detected'] is True
     assert compiled['semantic_loss_policy']['loss_class'] == 'unacceptable_flattening'
     assert compiled['semantic_loss_policy']['policy_response'] == 'required_replan'
+
+
+def test_compile_action_spec_preserves_single_step_stdin_target() -> None:
+    compiled = compile_action_spec({
+        'action_type': 'enumeration_probe',
+        'capability': 'crawler_route_discovery',
+        'task_family': 'content_discovery',
+        'tool': 'hakrawler',
+        'args': ['-d', '2', '-u'],
+        'stdin': 'https://example.com\n',
+    })
+    assert compiled['stdin'] == 'https://example.com\n'
+    assert compiled['execution_plan'][0]['stdin'] == 'https://example.com\n'

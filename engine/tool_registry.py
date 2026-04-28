@@ -59,6 +59,8 @@ def _tool_meta(name: str, meta: Any) -> Dict[str, Any]:
     equivalents = [str(x).strip().lower() for x in (info.get('equivalent_tools') or []) if str(x).strip()]
     chain_roles = [str(x).strip().lower() for x in (info.get('supports_chain_role') or []) if str(x).strip()]
     target_kinds = [str(x).strip().lower() for x in (info.get('target_kinds') or []) if str(x).strip()]
+    planner_stdin_args = [str(x) for x in (info.get('planner_stdin_args') or []) if str(x).strip()]
+    target_validation_mode = str(info.get('target_validation_mode') or 'none').strip().lower() or 'none'
     resolved_bin = _find_tool_binary(str(name).strip())
     return {
         'name': str(name).strip().lower(),
@@ -75,6 +77,9 @@ def _tool_meta(name: str, meta: Any) -> Dict[str, Any]:
         'target_kinds': target_kinds,
         'equivalent_tools': equivalents,
         'normalization_mode': str(info.get('normalization_mode') or 'allow').strip().lower(),
+        'target_validation_mode': target_validation_mode,
+        'planner_invocation_mode': str(info.get('planner_invocation_mode') or 'direct_args').strip().lower() or 'direct_args',
+        'planner_stdin_args': planner_stdin_args,
         'installed': resolved_bin is not None,
         'resolved_path': resolved_bin or '',
     }

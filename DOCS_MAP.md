@@ -32,19 +32,23 @@ Start with:
 ## If you want governance and contract depth
 
 Start with:
-1. `references/runtime-task-contract-v2.md`
-2. `references/planner-runtime-contract-map.md`
-3. `references/logdash-operator-truth-contracts.md`
-4. `references/evaluation-replay-contract.md`
-5. `references/effectiveness-metrics-contract.md`
+1. `THREAT_MODEL.md`
+2. `SECURITY_CONTRACT_LAYER.md`
+3. `references/approved-execution-spec-v0.1.md`
+4. `references/runtime-task-contract-v2.md`
+5. `references/planner-runtime-contract-map.md`
+6. `references/logdash-operator-truth-contracts.md`
+7. `references/evaluation-replay-contract.md`
+8. `references/effectiveness-metrics-contract.md`
 
 ## If you want public-release context
 
 Start with:
-1. `OPEN_SOURCE_1_0_PLAN.md`
-2. `references/public-release-boundary.md`
-3. `references/public-release-review-matrix.md`
-4. `references/public-snapshot-plan.md`
+1. `references/public-core-private-overlay-boundary.md`
+2. `OPEN_SOURCE_1_0_PLAN.md`
+3. `references/public-release-boundary.md`
+4. `references/public-release-review-matrix.md`
+5. `references/public-snapshot-plan.md`
 
 ## If you want to understand fit and expectations
 
@@ -52,6 +56,18 @@ Start with:
 1. `AUDIENCE.md`
 2. `PUBLIC_STATUS.md`
 3. `WHY_RAVENCLAW.md`
+4. `references/public-core-private-overlay-boundary.md`
+
+## If you want the contract proof direction
+
+Start with:
+1. `implementation-plans/contract-proof-sprint.md`
+2. `SECURITY_CONTRACT_LAYER.md`
+3. `schemas/approved_execution_spec.v0.1.schema.json`
+4. `references/approved-execution-spec-v0.1.md`
+5. `DEMO.md`
+
+This direction keeps Ravenclaw Runtime as the proof/reference implementation and treats OpenClaw, MCP, and A2A as later carriers, not new protocols.
 
 ## Short rule
 

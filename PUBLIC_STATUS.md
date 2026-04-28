@@ -12,6 +12,8 @@ These areas are currently the strongest public reference surfaces:
 - major architecture and state-file documentation
 - substantial regression and contract-test coverage
 - bounded public snapshot assembly path
+- the explicit public-core/private-overlay boundary model
+- the emerging Security Contract Layer direction, as a contract/schema layer backed by Ravenclaw Runtime rather than a new protocol
 
 These are the parts of the repo most ready to be read as intentional system design rather than rough experimentation.
 
@@ -23,6 +25,7 @@ These areas are real and important, but should still be treated as actively evol
 - some planner-to-runtime semantics that have recently been hardened but are still being refined
 - public onboarding, quickstart, and demo ergonomics
 - public proof presentation and broader trust storytelling, even though the underlying validation surfaces are now more explicit
+- adapter/carrier ideas such as an OpenClaw Skill, MCP Policy Gateway, and A2A security metadata profile; these should follow stable contract proof rather than lead it
 
 In other words, the system is real, but not every surface should be read as frozen.
 
@@ -44,12 +47,15 @@ Ravenclaw does **not** currently promise:
 - a zero-friction consumer install experience
 - a fully stable package/distribution shape
 - that every internal subsystem is final
+- that the public checkout equals the operator's full live environment
 - that public docs already cover every advanced runtime seam equally well
+- a new general agent protocol or near-term A2A/MCP implementation
 - that autonomy removes the need for operator judgment, legal authorization, or organizational accountability
 
 The strongest honest claim today is:
-Ravenclaw is a serious governance-first security research runtime with a stronger technical core than its current public ergonomics, and the repo is being deliberately elevated to close that gap.
+Ravenclaw is a serious governance-first security research runtime with a publishable public core, a separate private/operator overlay reality, and a stronger technical core than its current public ergonomics.
 
 For the current public validation and trust layer, start with:
 - `VALIDATION.md`
 - `QUALITY_SIGNALS.md`
+- `references/public-core-private-overlay-boundary.md`

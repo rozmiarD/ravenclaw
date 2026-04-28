@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ravenclaw.local/schemas/execution_receipt.v0.1.schema.json",
+  "title": "Ravenclaw ExecutionReceipt v0.1",
+  "description": "Public-safe compact execution receipt emitted by the demo proof bundle. Captures dry-run/execution truth without raw stdout/stderr or private paths.",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "runtime_mode",
+    "status",
+    "returncode",
+    "reason",
+    "execution_source",
+    "dry_run",
+    "compiled_action",
+    "command_input_summary",
+    "planned_command_count",
+    "executed_command_count",
+    "stdout_present",
+    "stderr_present"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "execution_receipt"
+    },
+    "runtime_mode": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "returncode": {
+      "type": "integer"
+    },
+    "reason": {
+      "type": "string"
+    },
+    "execution_source": {
+      "type": "string"
+    },
+    "dry_run": {
+      "type": "boolean"
+    },
+    "compiled_action": {
+      "type": "object",
+      "properties": {
+        "action_type": {
+          "type": "string"
+        },
+        "compiler_tool_choice": {
+          "type": "string"
+        },
+        "execution_mode": {
+          "type": "string"
+        },
+        "recipe_name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "command_input_summary": {
+      "type": "object",
+      "required": ["target_delivery_mode", "tool", "stdin_present"],
+      "properties": {
+        "preview_source": {
+          "type": "string"
+        },
+        "target_delivery_mode": {
+          "type": "string"
+        },
+        "tool": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "stdin_present": {
+          "type": "boolean"
+        },
+        "stdin_char_count": {
+          "type": "integer"
+        },
+        "stdin_line_count": {
+          "type": "integer"
+        },
+        "stdin_preview": {
+          "type": "string"
+        },
+        "stdin_preview_truncated": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "planned_command_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "executed_command_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "stdout_present": {
+      "type": "boolean"
+    },
+    "stderr_present": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

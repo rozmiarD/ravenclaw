@@ -88,3 +88,36 @@ def test_policy_gateway_accepts_capability_first_when_compiler_can_resolve_tool(
     )
     assert res['pass'] is True
     assert res['reason'] == 'ok'
+
+
+def test_validate_action_spec_accepts_bounded_stdin_target_shape() -> None:
+    ok, errors = validate_action_spec({
+        'action_type': 'enumeration_probe',
+        'capability': 'crawler_route_discovery',
+        'tool': 'hakrawler',
+        'args': ['-d', '2', '-u'],
+        'stdin': 'https://example.com/app\n',
+    })
+    assert ok is True, errors
+
+
+def test_validate_action_spec_rejects_non_string_or_oversized_stdin() -> None:
+    ok1, errors1 = validate_action_spec({
+        'action_type': 'enumeration_probe',
+        'capability': 'crawler_route_discovery',
+        'tool': 'hakrawler',
+        'args': ['-d', '2', '-u'],
+        'stdin': ['https://example.com/app'],
+    })
+    assert ok1 is False
+    assert 'stdin_must_be_string' in errors1
+
+    ok2, errors2 = validate_action_spec({
+        'action_type': 'enumeration_probe',
+        'capability': 'crawler_route_discovery',
+        'tool': 'hakrawler',
+        'args': ['-d', '2', '-u'],
+        'tool_chain': [{'tool': 'hakrawler', 'role': 'probe', 'args': ['-d', '2', '-u'], 'stdin': ('https://example.com/app\n' * 40)}],
+    })
+    assert ok2 is False
+    assert 'tool_chain_0_stdin_too_many_lines' in errors2

@@ -29,8 +29,9 @@ from runtime_signal_eval import high_signal, interesting_http_signal, evaluate_s
 from action_schema import ACTION_TYPE_TO_CAPABILITY, ACTION_TYPE_TO_EXPERIMENT_SHAPE  # type: ignore
 from policy_core import get_runtime_brain_allowed_tools  # type: ignore
 from capability_recipes import can_resolve_tool_from_capability  # type: ignore
-from execution_contracts import build_prepared_execution_spec, build_approved_execution_spec, build_command_preview_from_execution_spec, redact_prepared_execution_spec_for_auditor  # type: ignore
+from execution_contracts import build_prepared_execution_spec, build_approved_execution_spec, redact_prepared_execution_spec_for_auditor  # type: ignore
 from semantic_loss_policy import semantic_loss_runtime_gate  # type: ignore
+from public_delivery import apply_delivery_profile_to_pipeline, resolve_delivery_profile, run_auditor_adapter, run_brain_adapter, run_execution_adapter  # type: ignore
 
 
 def _selected_scope_path() -> Path:
@@ -105,6 +106,84 @@ def _clone_namespace(args: argparse.Namespace) -> argparse.Namespace:
     return argparse.Namespace(**vars(args))
 
 
+def _mock_brain_action(objective: str, target: str, aggression: int, *, task_family: str = '') -> Dict[str, Any]:
+    return {
+        'intent': 'mock_demo_brain_action',
+        'target': str(target or ''),
+        'tool': 'curl',
+        'tool_candidates': ['curl'],
+        'tool_preferences': {'prefer_tool': 'curl'},
+        'args': ['-sS', '-I', str(target or '')],
+        'action_type': 'single_probe',
+        'experiment_shape': 'single_step',
+        'capability': ACTION_TYPE_TO_CAPABILITY.get('single_probe', 'http_probe'),
+        'probe_recipe': {},
+        'constraints': {'aggression': max(1, min(int(aggression or 1), 2))},
+        'planner_alignment': 'aligned',
+        'task_family': str(task_family or ''),
+        'why_now': 'mock adapter path for public demo delivery',
+        'expected_signal': 'bounded demo-safe HTTP preview',
+        'redundancy_risk': 'low',
+    }
+
+
+
+def _local_auditor_decision(*, aggression: int, delivery_profile: Dict[str, Any], semantic_loss_rereview_required: bool) -> Dict[str, Any]:
+    demo_mode = bool(delivery_profile.get('demo_mode'))
+    if semantic_loss_rereview_required:
+        return {
+            'decision': 'approve',
+            'reason': 'local_delivery_adapter_approved_bounded_semantic_rereview' if not demo_mode else 'demo_mode_local_adapter_approved_bounded_semantic_rereview',
+            'reason_code': 'approve_in_scope',
+            'risk_band': 'low',
+            'owner_gate': False,
+            'constraints': {'aggression': int(aggression or 1)},
+        }
+    return {
+        'decision': 'approve',
+        'reason': 'local_delivery_adapter_approved_bounded_flow' if not demo_mode else 'demo_mode_local_adapter_approved_bounded_flow',
+        'reason_code': 'approve_in_scope',
+        'risk_band': 'low',
+        'owner_gate': False,
+        'constraints': {'aggression': int(aggression or 1)},
+    }
+
+
+
+def _mock_auditor_decision(*, aggression: int) -> Dict[str, Any]:
+    return {
+        'decision': 'approve',
+        'reason': 'mock_delivery_adapter_approved_bounded_flow',
+        'reason_code': 'approve_in_scope',
+        'risk_band': 'low',
+        'owner_gate': False,
+        'constraints': {'aggression': int(aggression or 1)},
+    }
+
+
+
+def _mock_execution_result(approved_execution_spec: Dict[str, Any], *, effective_dry_run: bool) -> Dict[str, Any]:
+    execution_truth = approved_execution_spec.get('execution_truth') if isinstance(approved_execution_spec.get('execution_truth'), dict) else {}
+    preview = list(execution_truth.get('command_preview') or [])
+    return {
+        'status': 'dry-run' if effective_dry_run else 'mocked',
+        'returncode': 0,
+        'stdout': '',
+        'stderr': '',
+        'reason': 'mock_execution_adapter',
+        'compiled_action': {
+            'action_type': str(approved_execution_spec.get('action_type') or 'single_probe'),
+            'compiler_tool_choice': str(approved_execution_spec.get('resolved_tool') or (preview[0] if preview else '')),
+            'execution_mode': str(approved_execution_spec.get('execution_mode') or 'normalized'),
+            'recipe_name': '',
+        },
+        'planned_commands': [preview] if preview else [],
+        'executed_commands': [] if effective_dry_run or not preview else [preview],
+        'execution_source': 'mock_adapter',
+        'command_input_summary': dict(execution_truth.get('command_input_summary') or {}),
+    }
+
+
 def _append_aggression_normalization_step(
     chain: List[Dict[str, Any]],
     *,
@@ -159,7 +238,8 @@ def normalize_runtime_aggression(
         current = clamped
 
     target_host = extract_host_from_url(target)
-    target_in_scope = host_in_scope(target_host, load_scope_domains()) if target_host else False
+    force_target_in_scope = bool(cfg.get('force_target_in_scope', False))
+    target_in_scope = force_target_in_scope or (host_in_scope(target_host, load_scope_domains()) if target_host else False)
     out_scope_cap = int(cfg.get('out_of_scope_aggression_cap', cfg.get('out_of_scope_max_aggression', 1)) or 1)
     out_scope_allowed = int(cfg.get('out_of_scope_allowed_aggression', out_scope_cap) or out_scope_cap)
     effective_out_scope_cap = min(out_scope_cap, out_scope_allowed)
@@ -229,12 +309,19 @@ def _compact_prepared_execution_spec_for_auditor(spec: Dict[str, Any]) -> Dict[s
         if not isinstance(step, dict):
             continue
         step_args = [str(x) for x in list(step.get('args') or [])[:12]]
-        compact_plan.append({
+        step_out = {
             'tool': str(step.get('tool') or ''),
             'role': str(step.get('role') or ''),
             'args': step_args,
             'args_truncated': len(list(step.get('args') or [])) > len(step_args),
-        })
+        }
+        if 'stdin_present' in step:
+            step_out['stdin_present'] = bool(step.get('stdin_present', False))
+            step_out['stdin_line_count'] = int(step.get('stdin_line_count', 0) or 0)
+            step_out['stdin_char_count'] = int(step.get('stdin_char_count', 0) or 0)
+            step_out['stdin_preview'] = str(step.get('stdin_preview') or '')
+            step_out['stdin_preview_truncated'] = bool(step.get('stdin_preview_truncated', False))
+        compact_plan.append(step_out)
     normalized_args = [str(x) for x in list(spec.get('normalized_args') or [])[:16]]
     return {
         'spec_version': str(spec.get('spec_version') or ''),
@@ -250,6 +337,11 @@ def _compact_prepared_execution_spec_for_auditor(spec: Dict[str, Any]) -> Dict[s
         'tool_candidates': list(spec.get('tool_candidates') or []),
         'normalized_args': normalized_args,
         'normalized_args_truncated': len(list(spec.get('normalized_args') or [])) > len(normalized_args),
+        'stdin_present': bool(spec.get('stdin_present', False)),
+        'stdin_line_count': int(spec.get('stdin_line_count', 0) or 0),
+        'stdin_char_count': int(spec.get('stdin_char_count', 0) or 0),
+        'stdin_preview': str(spec.get('stdin_preview') or ''),
+        'stdin_preview_truncated': bool(spec.get('stdin_preview_truncated', False)),
         'execution_plan_total': len(execution_plan),
         'execution_plan': compact_plan,
         'request_decoration': dict(spec.get('request_decoration') or {}) if isinstance(spec.get('request_decoration'), dict) else {},
@@ -922,6 +1014,8 @@ def _build_initial_output(
     prepared_execution_spec: Dict[str, Any],
     action_spec: Dict[str, Any],
     intent_runtime_context: Dict[str, Any],
+    delivery_profile: Dict[str, Any],
+    delivery_notes: Dict[str, Any],
 ) -> Dict[str, Any]:
     output: Dict[str, Any] = {
         'correlation_id': correlation_id,
@@ -951,6 +1045,8 @@ def _build_initial_output(
             'experimental_payloads': experimental_mode,
             'execution_mode': execution_mode,
             'analysis_min_bytes': int(cfg.get('analysis_min_bytes', 0) or 0),
+            'runtime_mode': str(delivery_profile.get('runtime_mode') or 'local'),
+            'forced_dry_run': bool(delivery_profile.get('forced_dry_run', False)),
         },
         'planner_hints': planner_hints,
         'brain': brain,
@@ -966,6 +1062,14 @@ def _build_initial_output(
         'semantic_loss_rereview_completed': False,
         'semantic_loss_rereview_decision': '',
         'request_shape_hygiene': _request_shape_hygiene_record(prepared_execution_spec),
+        'delivery_profile': dict(delivery_profile or {}),
+        'delivery_notes': dict(delivery_notes or {}),
+        'integration_adapters': {
+            'runtime_mode': str(delivery_profile.get('runtime_mode') or 'local'),
+            'brain': dict((((delivery_profile.get('adapters') or {}) if isinstance(delivery_profile.get('adapters'), dict) else {}).get('brain') or {})),
+            'auditor': dict((((delivery_profile.get('adapters') or {}) if isinstance(delivery_profile.get('adapters'), dict) else {}).get('auditor') or {})),
+            'execution': dict((((delivery_profile.get('adapters') or {}) if isinstance(delivery_profile.get('adapters'), dict) else {}).get('execution') or {})),
+        },
         'auditor': None,
         'auditor_raw_decision': None,
         'approval_transform_chain': [],
@@ -1031,10 +1135,12 @@ def execute_flow(
     recent_context: List[Dict[str, Any]],
     context_limit: int,
 ) -> tuple[Dict[str, Any], str, str]:
+    delivery_profile = resolve_delivery_profile(explicit_mode=str(getattr(args, 'runtime_mode', '') or cfg.get('runtime_mode') or ''))
+    seed_args, cfg, delivery_notes = apply_delivery_profile_to_pipeline(args, cfg, delivery_profile=delivery_profile)
     prebrain_args, prebrain_aggression_state = normalize_runtime_aggression(
-        args,
+        seed_args,
         cfg=cfg,
-        target=str(getattr(args, 'target', '') or ''),
+        target=str(getattr(seed_args, 'target', '') or ''),
         log_stage_fn=log_stage,
     )
     task_family = str(getattr(prebrain_args, 'task_family', '') or '')
@@ -1052,6 +1158,7 @@ def execute_flow(
     prompt_token_budget = max(0, int(cfg.get("prompt_token_budget", 900) or 0))
     auditor_prompt_token_budget = max(0, int(cfg.get("auditor_prompt_token_budget", max(prompt_token_budget, 900)) or 0))
     contextual_tooling = contextual_brain_tooling(task_family)
+    brain_adapter_meta: Dict[str, Any] = {}
     try:
         log_stage('BRAIN', 'brain_wait', 'in_progress', 'waiting_for_brain_response timeout=60s')
         _t0 = time.perf_counter()
@@ -1063,27 +1170,63 @@ def execute_flow(
             capability_candidates=list(intent_runtime_context.get('capability_candidates') or []),
             recommended_action_types=list(intent_runtime_context.get('recommended_action_types') or []),
         )
-        brain = ask_json(
-            'brain',
-            base_prompt=build_brain_base_prompt(
-                args=prebrain_args,
-                task_family=task_family,
-                contextual_profiles=list(contextual_tooling.get('profiles') or []),
-                allowed_tools_sorted=allowed_tools_sorted,
-                preferred_tools=preferred_tools,
-                planner_hints=planner_hints,
-                intent_runtime_context=intent_runtime_context,
-                experimental_mode=experimental_mode,
-            ),
-            contract_hint=build_brain_contract_hint(),
-            retries=json_retries,
-            timeout=60,
-            prompt_token_budget=prompt_token_budget
+
+        def _external_brain_runner() -> Dict[str, Any]:
+            return ask_json(
+                'brain',
+                base_prompt=build_brain_base_prompt(
+                    args=prebrain_args,
+                    task_family=task_family,
+                    contextual_profiles=list(contextual_tooling.get('profiles') or []),
+                    allowed_tools_sorted=allowed_tools_sorted,
+                    preferred_tools=preferred_tools,
+                    planner_hints=planner_hints,
+                    intent_runtime_context=intent_runtime_context,
+                    experimental_mode=experimental_mode,
+                ),
+                contract_hint=build_brain_contract_hint(),
+                retries=json_retries,
+                timeout=60,
+                prompt_token_budget=prompt_token_budget
+            )
+
+        def _local_brain_runner() -> Dict[str, Any]:
+            if bool(delivery_profile.get('demo_mode')):
+                return _mock_brain_action(
+                    prebrain_args.objective,
+                    prebrain_args.target,
+                    int(prebrain_args.aggression),
+                    task_family=getattr(prebrain_args, 'task_family', '') or '',
+                )
+            return fallback_brain_action(
+                prebrain_args.objective,
+                prebrain_args.target,
+                int(prebrain_args.aggression),
+                task_family=getattr(prebrain_args, 'task_family', '') or '',
+                recent_context=host_bound_recent_context,
+                intent_context=intent_runtime_context,
+            )
+
+        def _mock_brain_runner() -> Dict[str, Any]:
+            return _mock_brain_action(
+                prebrain_args.objective,
+                prebrain_args.target,
+                int(prebrain_args.aggression),
+                task_family=getattr(prebrain_args, 'task_family', '') or '',
+            )
+
+        brain, brain_adapter_meta = run_brain_adapter(
+            delivery_profile=delivery_profile,
+            external_runner=_external_brain_runner,
+            local_runner=_local_brain_runner,
+            mock_runner=_mock_brain_runner,
         )
         stage_timers['brain_sec'] = round(time.perf_counter() - _t0, 4)
+        log_stage('BRAIN', 'brain_adapter_selected', 'success', f"mode={brain_adapter_meta.get('mode','unknown')};source={brain_adapter_meta.get('source','unknown')}")
     except Exception as exc:
         log_stage('BRAIN', 'propose_action', 'failed', str(exc))
         brain = fallback_brain_action(prebrain_args.objective, prebrain_args.target, int(prebrain_args.aggression), task_family=getattr(prebrain_args, 'task_family', '') or '', recent_context=host_bound_recent_context, intent_context=intent_runtime_context)
+        brain_adapter_meta = {'mode': 'local', 'source': 'fallback_after_adapter_error'}
         log_stage('BRAIN', 'fallback_action', 'warning', json.dumps(brain, ensure_ascii=False)[:240])
         log_stage('BRAIN', 'brain_fallback_used', 'warning', f"task_family={str(getattr(prebrain_args, 'task_family', '') or 'generic')[:48]}; tool={str(brain.get('tool') or '')}")
 
@@ -1159,7 +1302,7 @@ def execute_flow(
     aggression_remap_note = dict(aggression_state.get('policy_aggression_remap') or {}) if isinstance(aggression_state.get('policy_aggression_remap'), dict) else None
     action_spec, _prepared_compiled = prepare_action_spec_for_execution(raw_action_spec, target=prebrain_args.target, creds=creds_runtime, execution_mode=execution_mode)
     target_host = extract_host_from_url(prebrain_args.target)
-    target_in_scope = host_in_scope(target_host, load_scope_domains()) if target_host else False
+    target_in_scope = bool(cfg.get('force_target_in_scope', False)) or (host_in_scope(target_host, load_scope_domains()) if target_host else False)
     prepared_execution_spec = build_prepared_execution_spec(
         raw_action_spec=raw_action_spec,
         prepared_action_spec=action_spec,
@@ -1173,6 +1316,15 @@ def execute_flow(
     semantic_loss_rereview_required = str(semantic_loss_policy.get('policy_response') or '') == 'auditor_rereview'
     effective_owner_approved_auth = bool(prebrain_args.owner_approved_auth or creds_runtime.get('credentials_owner_approved', False))
     gate = evaluate_action_spec(action_spec, prebrain_args.target, effective_owner_approved_auth, creds=creds_runtime)
+    if bool(cfg.get('force_target_in_scope', False)) and not gate.get('pass') and 'out_of_scope_target' in str(gate.get('reason') or ''):
+        gate = {
+            **dict(gate or {}),
+            'pass': True,
+            'reason': 'demo_scope_target_override',
+            'override_source': 'delivery_profile_demo_scope',
+        }
+        if isinstance(delivery_notes, dict):
+            delivery_notes['policy_gate_override'] = 'demo_scope_target_override'
 
     correlation_id = str(uuid.uuid4())
     output = _build_initial_output(
@@ -1189,7 +1341,14 @@ def execute_flow(
         prepared_execution_spec=prepared_execution_spec,
         action_spec=action_spec,
         intent_runtime_context=intent_runtime_context,
+        delivery_profile=delivery_profile,
+        delivery_notes=delivery_notes,
     )
+
+    if isinstance(output.get('integration_adapters'), dict):
+        brain_adapter_out = output['integration_adapters'].get('brain') if isinstance(output['integration_adapters'].get('brain'), dict) else {}
+        brain_adapter_out.update(brain_adapter_meta)
+        output['integration_adapters']['brain'] = brain_adapter_out
 
     output['aggression_normalization'] = aggression_state
     if aggression_remap_note:
@@ -1285,21 +1444,42 @@ def execute_flow(
         output['reason_code'] = 'policy_gate_block'
         return output, 'blocked', f"policy_gate:{reason}"
 
+    auditor_adapter_meta: Dict[str, Any] = {}
     try:
         log_stage('AUDITOR', 'auditor_wait', 'in_progress', f'waiting_for_auditor_response timeout={auditor_timeout}s')
         _t0 = time.perf_counter()
-        auditor = ask_json(
-            'auditor',
-            base_prompt=_build_auditor_prompt(
-                prepared_execution_spec=auditor_compact_spec,
-                context_summary=context_payload,
-            ),
-            contract_hint='{"decision":"approve|reject|owner_approval_required","reason_code":"approve_in_scope|reject_invalid_contract|reject_policy_gate|reject_out_of_scope|owner_approval_required_risk|owner_approval_required_auth|owner_approval_required_uncertain|owner_approval_required_policy","reason":"compact_detail","risk_band":"low|medium|high","owner_gate":true,"constraints":{"aggression":1}}',
-            retries=json_retries,
-            timeout=auditor_timeout,
-            prompt_token_budget=auditor_prompt_token_budget
+
+        def _external_auditor_runner() -> Dict[str, Any]:
+            return ask_json(
+                'auditor',
+                base_prompt=_build_auditor_prompt(
+                    prepared_execution_spec=auditor_compact_spec,
+                    context_summary=context_payload,
+                ),
+                contract_hint='{"decision":"approve|reject|owner_approval_required","reason_code":"approve_in_scope|reject_invalid_contract|reject_policy_gate|reject_out_of_scope|owner_approval_required_risk|owner_approval_required_auth|owner_approval_required_uncertain|owner_approval_required_policy","reason":"compact_detail","risk_band":"low|medium|high","owner_gate":true,"constraints":{"aggression":1}}',
+                retries=json_retries,
+                timeout=auditor_timeout,
+                prompt_token_budget=auditor_prompt_token_budget
+            )
+
+        def _local_auditor_runner() -> Dict[str, Any]:
+            return _local_auditor_decision(
+                aggression=effective_args.aggression,
+                delivery_profile=delivery_profile,
+                semantic_loss_rereview_required=semantic_loss_rereview_required,
+            )
+
+        def _mock_auditor_runner() -> Dict[str, Any]:
+            return _mock_auditor_decision(aggression=effective_args.aggression)
+
+        auditor, auditor_adapter_meta = run_auditor_adapter(
+            delivery_profile=delivery_profile,
+            external_runner=_external_auditor_runner,
+            local_runner=_local_auditor_runner,
+            mock_runner=_mock_auditor_runner,
         )
         stage_timers['auditor_sec'] = round(time.perf_counter() - _t0, 4)
+        log_stage('AUDITOR', 'auditor_adapter_selected', 'success', f"mode={auditor_adapter_meta.get('mode','unknown')};source={auditor_adapter_meta.get('source','unknown')}")
     except Exception as exc:
         log_stage('AUDITOR', 'audit', 'failed', str(exc))
         output['auditor'] = {
@@ -1313,6 +1493,10 @@ def execute_flow(
         output['approval_source'] = 'auditor_error'
         output['final_approval_decision'] = 'owner_approval_required'
         output['reason_code'] = 'auditor_timeout'
+        if isinstance(output.get('integration_adapters'), dict):
+            auditor_adapter_out = output['integration_adapters'].get('auditor') if isinstance(output['integration_adapters'].get('auditor'), dict) else {}
+            auditor_adapter_out.update({'mode': 'error', 'source': 'auditor_adapter_error'})
+            output['integration_adapters']['auditor'] = auditor_adapter_out
         return output, 'blocked', 'auditor_timeout_or_failure'
 
     if isinstance(auditor, dict):
@@ -1402,6 +1586,11 @@ def execute_flow(
         record_approval_transform(approval_transform_chain, 'auditor_contract_validation', before, auditor)
         log_stage('AUDITOR', 'contract_validation', 'failed', ','.join(aud_errors)[:240])
 
+    if isinstance(output.get('integration_adapters'), dict):
+        auditor_adapter_out = output['integration_adapters'].get('auditor') if isinstance(output['integration_adapters'].get('auditor'), dict) else {}
+        auditor_adapter_out.update(auditor_adapter_meta)
+        output['integration_adapters']['auditor'] = auditor_adapter_out
+
     output['auditor_raw_decision'] = raw_auditor
     output['approval_transform_chain'] = approval_transform_chain
     output['approval_source'] = approval_transform_chain[-1]['source'] if approval_transform_chain else ('auditor_rereview' if semantic_loss_rereview_required else 'auditor')
@@ -1445,21 +1634,58 @@ def execute_flow(
         approval_transform_chain=approval_transform_chain,
         owner_override_applied=owner_override_applied,
     )
-    built_cmd = build_command_preview_from_execution_spec(output['approved_execution_spec'])
+    built_cmd = list((output.get('approved_execution_spec') or {}).get('execution_truth', {}).get('command_preview') or [])
     if cfg.get('verbose_commands', True):
         output['planned_command'] = built_cmd or None
 
-    _t0 = time.perf_counter()
-    if hasattr(engine, 'execute_approved_spec'):
-        engine_res = engine.execute_approved_spec(output['approved_execution_spec'], dry_run=args.dry_run)
-    else:
-        engine_res = engine.execute(action_spec, dry_run=args.dry_run)
-    stage_timers['engine_sec'] = round(time.perf_counter() - _t0, 4)
+    execution_adapter_meta: Dict[str, Any] = {}
+    try:
+        _t0 = time.perf_counter()
+
+        def _local_execution_runner(effective_dry_run: bool) -> Dict[str, Any]:
+            if not hasattr(engine, 'execute_approved_spec'):
+                raise RuntimeError('execution_engine_missing_approved_spec_path')
+            return engine.execute_approved_spec(output['approved_execution_spec'], dry_run=effective_dry_run)
+
+        def _mock_execution_runner(effective_dry_run: bool) -> Dict[str, Any]:
+            return _mock_execution_result(output['approved_execution_spec'], effective_dry_run=effective_dry_run)
+
+        engine_res, execution_adapter_meta = run_execution_adapter(
+            delivery_profile=delivery_profile,
+            dry_run=bool(effective_args.dry_run),
+            local_runner=_local_execution_runner,
+            mock_runner=_mock_execution_runner,
+        )
+        stage_timers['engine_sec'] = round(time.perf_counter() - _t0, 4)
+        log_stage('ENGINE', 'execution_adapter_selected', 'success', f"mode={execution_adapter_meta.get('mode','unknown')};source={execution_adapter_meta.get('source','unknown')};dry_run={execution_adapter_meta.get('effective_dry_run')}")
+    except Exception as exc:
+        log_stage('ENGINE', 'execute', 'failed', str(exc))
+        output['engine'] = {
+            'status': 'blocked',
+            'returncode': None,
+            'stdout': '',
+            'stderr': str(exc),
+            'reason': 'execution_adapter_error',
+        }
+        if isinstance(output.get('integration_adapters'), dict):
+            execution_adapter_out = output['integration_adapters'].get('execution') if isinstance(output['integration_adapters'].get('execution'), dict) else {}
+            execution_adapter_out.update({'mode': 'error', 'source': 'execution_adapter_error'})
+            output['integration_adapters']['execution'] = execution_adapter_out
+        output['reason_code'] = 'execution_adapter_error'
+        return output, 'blocked', 'execution_adapter_error'
+
     output['engine'] = engine_res
+    if isinstance(output.get('integration_adapters'), dict):
+        execution_adapter_out = output['integration_adapters'].get('execution') if isinstance(output['integration_adapters'].get('execution'), dict) else {}
+        execution_adapter_out.update(execution_adapter_meta)
+        output['integration_adapters']['execution'] = execution_adapter_out
+
     output['execution_lineage'] = {
         'approved_execution_spec_version': str((output.get('approved_execution_spec') or {}).get('spec_version') or ''),
         'approved_command_preview': list((output.get('approved_execution_spec') or {}).get('execution_truth', {}).get('command_preview') or []),
+        'approved_command_input_summary': dict((output.get('approved_execution_spec') or {}).get('execution_truth', {}).get('command_input_summary') or {}),
         'approved_execution_plan': list((output.get('approved_execution_spec') or {}).get('execution_truth', {}).get('execution_plan') or []),
+        'approved_execution_input_summaries': list((output.get('approved_execution_spec') or {}).get('execution_truth', {}).get('execution_input_summaries') or []),
         'engine_planned_commands': list(engine_res.get('planned_commands') or []),
         'engine_executed_commands': list(engine_res.get('executed_commands') or []),
     }
@@ -1493,7 +1719,13 @@ def execute_flow(
         'task_family': str(getattr(args, 'task_family', '') or ''),
         'action_type': str(brain.get('action_type') or 'single_probe'),
         'tool': str((engine_res.get('compiled_action') or {}).get('compiler_tool_choice') or brain.get('tool') or ''),
-        'mode': 'dry-run' if args.dry_run else 'live',
+        'mode': 'dry-run' if effective_args.dry_run else 'live',
+        'runtime_mode': str(delivery_profile.get('runtime_mode') or 'local'),
+        'integration_adapters': {
+            'brain': dict((output.get('integration_adapters') or {}).get('brain') or {}),
+            'auditor': dict((output.get('integration_adapters') or {}).get('auditor') or {}),
+            'execution': dict((output.get('integration_adapters') or {}).get('execution') or {}),
+        },
         'status': engine_res.get('status'),
         'returncode': engine_res.get('returncode'),
         'auditor_decision': auditor.get('decision'),
@@ -1628,6 +1860,7 @@ def main() -> None:
     ap.add_argument('--semantic-lineage-json', default='')
     ap.add_argument('--semantic-lineage-summary-json', default='')
     ap.add_argument('--dry-run', action='store_true')
+    ap.add_argument('--runtime-mode', default='', help='delivery/runtime mode override (demo/local/external)')
     ap.add_argument('--owner-approved-auth', action='store_true', help='allow Authorization header actions after explicit owner approval')
     ap.add_argument('--owner-override', action='store_true', help='owner-approved elevated tests (convert owner_approval_required to approve)')
     ap.add_argument('--verbose-commands', choices=['on', 'off'], help='toggle command preview output (persistent)')

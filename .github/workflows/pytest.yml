@@ -11,6 +11,13 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.11"]
+        slice:
+          - contracts_policy
+          - auto_campaign
+          - runtime_core
+          - runtime_runner
+          - logdash
+          - misc_public
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -20,7 +27,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest Flask PyYAML
-      - name: Run test suite
+      - name: Run pytest slice
         env:
           RAVENCLAW_WORKSPACE: ${{ github.workspace }}
-        run: pytest -q
+        run: python scripts/run_pytest_slice.py ${{ matrix.slice }}

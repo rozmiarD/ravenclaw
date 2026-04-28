@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ravenclaw.local/schemas/evidence_bundle.v0.1.schema.json",
+  "title": "Ravenclaw EvidenceBundle v0.1",
+  "description": "Public-safe dry-run evidence bundle for the Security Contract Layer proof trace. Captures criteria and non-claims without publishing raw live-target evidence.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "proof_mode",
+    "status",
+    "met",
+    "gap",
+    "evidence_items",
+    "criteria",
+    "non_claims",
+    "source_artifacts",
+    "public_safety"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "2026-04-28.evidence-bundle.v0.1"
+    },
+    "artifact_type": {
+      "const": "evidence_bundle"
+    },
+    "proof_mode": {
+      "type": "string",
+      "enum": ["dry_run_contract_proof"]
+    },
+    "status": {
+      "type": "string"
+    },
+    "met": {
+      "type": "boolean"
+    },
+    "gap": {
+      "type": "string"
+    },
+    "evidence_items": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "claim", "source", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claim": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["met", "not_met", "unknown"]
+          },
+          "observed": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "non_claims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_artifacts": {
+      "type": "object",
+      "required": [
+        "policy_decision",
+        "prepared_execution_spec",
+        "approved_execution_spec",
+        "execution_receipt",
+        "evidence_summary"
+      ],
+      "properties": {
+        "policy_decision": {
+          "type": "string"
+        },
+        "prepared_execution_spec": {
+          "type": "string"
+        },
+        "approved_execution_spec": {
+          "type": "string"
+        },
+        "execution_receipt": {
+          "type": "string"
+        },
+        "evidence_summary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "public_safety": {
+      "type": "object",
+      "required": [
+        "runtime_mode",
+        "target_host",
+        "dry_run",
+        "raw_live_evidence_included",
+        "raw_stdout_stderr_included"
+      ],
+      "properties": {
+        "runtime_mode": {
+          "type": "string"
+        },
+        "target_host": {
+          "type": "string"
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "raw_live_evidence_included": {
+          "const": false
+        },
+        "raw_stdout_stderr_included": {
+          "const": false
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -12,6 +12,18 @@ pytest -q
 
 This is the primary repo-wide validation command exposed publicly today.
 
+## Stable sliced validation path
+
+For CI or lower-wall-time local validation, use the slice runner:
+
+```bash
+python scripts/run_pytest_slice.py --list
+python scripts/run_pytest_slice.py contracts_policy
+python scripts/run_pytest_slice.py runtime_runner
+```
+
+The slices are coverage-preserving partitions of the current suite, intended to keep broad validation reproducible even when one giant batch is more fragile than the underlying tests.
+
 ## What this validates
 
 Running the suite exercises public-visible correctness signals across areas such as:
@@ -26,6 +38,7 @@ Running the suite exercises public-visible correctness signals across areas such
 
 If you want to inspect representative trust anchors before or after running tests, start here:
 - `.github/workflows/pytest.yml`
+- `scripts/run_pytest_slice.py`
 - `tests/test_logdash_smoke.py`
 - `tests/test_logdash_operator_truth_contracts.py`
 - `engine/tests/test_execution_contracts.py`

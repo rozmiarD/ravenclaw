@@ -13,9 +13,14 @@ It is intentionally narrow:
 Show that Ravenclaw is structured around:
 - planning
 - policy/gating
-- approved execution shape
-- dry-run execution
+- prepared and approved execution specs
+- dry-run execution receipts
+- evidence-oriented summaries
 - operator-facing visibility
+
+The current maturity target is a public-safe contract proof trace:
+
+`scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary`
 
 ## Official demo path
 
@@ -27,40 +32,103 @@ source .venv/bin/activate
 pip install -e .[dev]
 ```
 
-### 2. Generate a planner artifact from the sample scope
+### 2. Run the official demo entrypoint
+
+Fastest supported local path:
+
+```bash
+./scripts/bootstrap_public_demo.sh demo
+```
+
+This uses the shared public bootstrap contract and then runs:
+- sample scope planning
+- governed dry-run pipeline execution
+
+Equivalent direct entry:
+
+```bash
+bin/demo
+```
+
+If you only want to inspect the commands first:
+
+```bash
+./scripts/bootstrap_public_demo.sh demo-print
+```
+
+If you want reusable generated artifacts for review/demo sharing:
+
+```bash
+./scripts/bootstrap_public_demo.sh bundle
+```
+
+That writes the public demo bundle into `demo-output/`.
+
+The bundle includes compact proof-trace artifacts such as policy decision, redacted prepared spec, approved execution spec, dry-run execution receipt, evidence summary, and bundle summary files. These artifacts are generated from the same demo-mode runtime path and are intended to stay sanitized and deterministic.
+
+## Under the hood
+
+The wrapper currently runs these bounded commands:
+
+### Sample scope planning
 
 ```bash
 python3 engine/plan_campaign.py \
   --scope-txt engine/planer/examples/sample_scope.txt \
-  --flags-json '{"homelab": false}'
+  --flags-json '{"homelab": false}' \
+  --runtime-mode demo
 ```
 
-This demonstrates the planner entry surface and campaign-shaping path.
-
-### 3. Run the governed pipeline in dry-run mode
+### Governed dry-run pipeline
 
 ```bash
 python3 engine/run_pipeline.py \
-  --task "Fetch the homepage and summarize visible technologies" \
+  --objective "Fetch the homepage and summarize visible technologies" \
   --target "https://example.com" \
+  --runtime-mode demo \
   --dry-run
 ```
 
-This demonstrates the governed single-task flow without claiming live execution.
-
 What to look for:
 - the task is shaped into a governed flow
+- demo mode is explicit in output (`settings.runtime_mode`, `delivery_profile`, `integration_adapters`)
 - the runtime stays in dry-run mode
 - output includes approval/execution structure rather than blind command execution
 
-### 4. Start Logdash locally
+In the current public demo contract:
+- planner delivery is local/demo-safe
+- auditor delivery is local/demo-safe
+- execution delivery is explicit `mock` dry-run, surfaced in output rather than implied
+- generated demo bundle artifacts come from that same contract, not from a separate canned fixture path
+
+### Optional: start Logdash locally
 
 ```bash
-cd logdash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python app.py --port 9091
+./scripts/bootstrap_public_demo.sh logdash
+```
+
+### Optional: devcontainer / compose path
+
+Devcontainer/Codespaces-style bring-up:
+- open the repo with `.devcontainer/devcontainer.json`
+- the post-create step runs `./scripts/bootstrap_public_demo.sh install`
+
+Compose-based demo startup:
+
+```bash
+docker compose -f compose.demo.yaml run --rm demo
+```
+
+Compose-based generated bundle:
+
+```bash
+docker compose -f compose.demo.yaml run --rm demo-bundle
+```
+
+Compose-based Logdash:
+
+```bash
+docker compose -f compose.demo.yaml up logdash
 ```
 
 Then open:
@@ -71,7 +139,7 @@ This demonstrates the operator-facing control plane locally.
 ## Why this demo is the official one
 
 This path is the smallest public-safe slice that is already real in the repo today.
-It avoids pretending there is already a polished one-command deployment when that would be overstating current maturity.
+The wrapper now drives a real `RAVENCLAW_MODE=demo` path instead of only wrapping normal local commands, and the repo now includes bootstrap/devcontainer/compose convenience surfaces around that same contract. It still does not pretend Ravenclaw already has a polished production deployment story.
 
 ## What this demo does not prove
 
@@ -85,4 +153,4 @@ It is a safe orientation/demo path, not the whole product story.
 
 ## Next maturity target
 
-The next public-demo improvements should make this path easier and more cohesive, but without weakening its honesty or safety posture.
+The next public-demo improvements should keep making the contract proof trace more legible, schema-validated, and public-safe. Adapter promotion comes later: OpenClaw Skill first after contract proof, MCP later, and A2A security metadata/profile later as an example-first carrier. Ravenclaw should not present this as a new protocol.

@@ -220,6 +220,7 @@ tools:
     target_kinds:
     - host
     - domain
+    target_validation_mode: strict_host_domain
     equivalent_tools: []
     normalization_mode: allow
   arjun:
@@ -280,6 +281,7 @@ tools:
     target_kinds:
     - host
     - domain
+    target_validation_mode: strict_host_domain
     equivalent_tools: []
     normalization_mode: allow
   aria2c:
@@ -410,6 +412,7 @@ tools:
     - redirect_trust
     target_kinds:
     - url
+    target_validation_mode: strict_url
     equivalent_tools: []
     normalization_mode: allow
   cut:
@@ -484,6 +487,7 @@ tools:
     target_kinds:
     - host
     - domain
+    target_validation_mode: strict_host_domain
     equivalent_tools: []
     normalization_mode: allow
   dmesg:
@@ -543,6 +547,7 @@ tools:
     target_kinds:
     - host
     - domain
+    target_validation_mode: strict_host_domain
     equivalent_tools: []
     normalization_mode: allow
   du:
@@ -598,6 +603,7 @@ tools:
     target_kinds:
     - host
     - domain
+    target_validation_mode: strict_host_domain
     equivalent_tools: []
     normalization_mode: allow
   env:
@@ -826,9 +832,15 @@ tools:
     - secret_hunt
     target_kinds:
     - url
+    target_validation_mode: strict_url
     equivalent_tools:
     - katana
     normalization_mode: allow
+    planner_invocation_mode: stdin_target
+    planner_stdin_args:
+    - -d
+    - '2'
+    - -u
   head:
     enabled: true
     execution_allowed: true
@@ -945,6 +957,7 @@ tools:
     - secret_hunt
     target_kinds:
     - url
+    target_validation_mode: strict_url
     equivalent_tools:
     - hakrawler
     - feroxbuster
@@ -1375,6 +1388,7 @@ tools:
     target_kinds:
     - host
     - domain
+    target_validation_mode: strict_host_domain
     equivalent_tools: []
     normalization_mode: allow
   nuclei:
@@ -1721,6 +1735,7 @@ tools:
     target_kinds:
     - host
     - domain
+    target_validation_mode: strict_host_domain
     equivalent_tools: []
     normalization_mode: allow
   systemctl:
@@ -2084,6 +2099,7 @@ tools:
     - redirect_trust
     target_kinds:
     - url
+    target_validation_mode: strict_url
     equivalent_tools: []
     normalization_mode: allow
   whereis:

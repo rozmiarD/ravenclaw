@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import subprocess
 import uuid
 from pathlib import Path
@@ -7,14 +8,17 @@ from typing import Any, Dict, List
 
 from action_compiler import compile_action_spec  # type: ignore
 from campaign_utils import extract_host_from_url, host_in_scope, load_scope_domains  # type: ignore
-from execution_contracts import build_command_preview_from_execution_spec  # type: ignore
-from policy_core import get_approved_spec_allowed_tools, get_runtime_allowed_tools, normalize_tool  # type: ignore
+from policy_core import get_approved_spec_allowed_tools, get_runtime_allowed_tools, contains_tool_restricted_patterns, normalize_tool  # type: ignore
+from tool_registry import get_tool_catalog  # type: ignore
+
+HOST_TOKEN_RE = re.compile(r"(https?://[^\s\"'<>]+)|\b((?:[a-z0-9-]+\.)+[a-z]{2,})\b", re.IGNORECASE)
 
 
 class ExecutionEngine:
     def __init__(self) -> None:
         self.scope_domains = load_scope_domains()
         self.artifacts_root = Path.cwd() / 'tmp' / 'engine-handoffs'
+        self.tool_catalog = get_tool_catalog()
 
     def _normalize_argv(self, tool: str, args: List[Any], *, approved_spec: bool = False) -> List[str]:
         norm_tool = normalize_tool(tool)
@@ -27,13 +31,99 @@ class ExecutionEngine:
         normalized_args = [str(a) for a in (args or [])]
         if norm_tool == 'curl' and '-q' not in normalized_args and '--disable' not in normalized_args:
             normalized_args = ['-q'] + normalized_args
+        restricted, restricted_pattern = contains_tool_restricted_patterns(norm_tool, normalized_args)
+        if restricted:
+            raise ValueError(f'tool_restricted_pattern:{norm_tool}:{restricted_pattern}')
         return [norm_tool] + normalized_args
 
-    def _enforce_scope(self, argv: List[str]) -> None:
+    def _extract_hosts_from_text(self, text: Any) -> List[str]:
+        raw = str(text or '').strip()
+        if not raw:
+            return []
+        raw_lower = raw.lower()
+        if raw_lower.startswith('file://'):
+            return []
+        hosts: List[str] = []
+        seen: set[str] = set()
+        direct = str(extract_host_from_url(raw) or '').strip().lower()
+        if direct:
+            seen.add(direct)
+            hosts.append(direct)
+        allow_bare_domain_match = ('/' not in raw and '\\' not in raw) or 'host:' in raw_lower
+        for match in HOST_TOKEN_RE.finditer(raw):
+            if match.group(1):
+                token = str(match.group(1) or '').strip().lower()
+            else:
+                if not allow_bare_domain_match:
+                    continue
+                token = str(match.group(2) or '').strip().lower()
+            host = str(extract_host_from_url(token) or token).strip().lower()
+            if host and host not in seen:
+                seen.add(host)
+                hosts.append(host)
+        return hosts
+
+    def _arg_target_observations(self, argv: List[str], stdin_text: Any = '') -> Dict[str, List[str]]:
+        out: Dict[str, List[str]] = {'urls': [], 'hosts': [], 'files': []}
+        seen: Dict[str, set[str]] = {'urls': set(), 'hosts': set(), 'files': set()}
+
+        def _observe(raw_value: Any) -> None:
+            raw = str(raw_value or '').strip()
+            if not raw or raw.startswith('-'):
+                return
+            lowered = raw.lower()
+            if lowered.startswith(('http://', 'https://')):
+                if lowered not in seen['urls']:
+                    seen['urls'].add(lowered)
+                    out['urls'].append(raw)
+                return
+            if lowered.startswith('file://'):
+                if lowered not in seen['files']:
+                    seen['files'].add(lowered)
+                    out['files'].append(raw)
+                return
+            if any(ch.isspace() for ch in raw) or '/' in raw or '\\' in raw:
+                return
+            host = str(extract_host_from_url(raw) or raw).strip().lower()
+            if not host or '.' not in host:
+                return
+            if host not in seen['hosts']:
+                seen['hosts'].add(host)
+                out['hosts'].append(host)
+
         for token in argv[1:]:
-            host = extract_host_from_url(str(token))
-            if host and not host_in_scope(host, self.scope_domains):
-                raise ValueError(f'out_of_scope_target:{host}')
+            _observe(token)
+        for line in str(stdin_text or '').splitlines():
+            _observe(line)
+        return out
+
+    def _enforce_target_semantics(self, argv: List[str], stdin_text: Any = '') -> None:
+        tool = normalize_tool(argv[0] if argv else '')
+        if not tool:
+            return
+        info = self.tool_catalog.get(tool) or {}
+        target_validation_mode = str(info.get('target_validation_mode') or 'none').strip().lower() or 'none'
+        observed = self._arg_target_observations(argv, stdin_text=stdin_text)
+
+        if target_validation_mode == 'strict_url':
+            if observed['files'] and not observed['urls']:
+                return
+            if not observed['urls']:
+                raise ValueError(f'missing_target_kind:{tool}:url')
+            return
+
+        if target_validation_mode == 'strict_host_domain':
+            if observed['urls']:
+                raise ValueError(f'invalid_target_kind:{tool}:url')
+            if not observed['hosts']:
+                raise ValueError(f'missing_target_kind:{tool}:host_or_domain')
+
+    def _enforce_scope(self, argv: List[str], stdin_text: Any = '') -> None:
+        self._enforce_target_semantics(argv, stdin_text=stdin_text)
+        for token in [*argv[1:], *str(stdin_text or '').splitlines()]:
+            for host in self._extract_hosts_from_text(token):
+                if not host_in_scope(host, self.scope_domains):
+                    raise ValueError(f'out_of_scope_target:{host}')
 
     def _artifact_run_dir(self) -> Path:
         run_dir = self.artifacts_root / str(uuid.uuid4())
@@ -89,23 +179,38 @@ class ExecutionEngine:
         plan = self.build_execution_plan(action_spec)
         return plan[0]
 
-    def _approved_execution_steps(self, approved_execution_spec: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _validate_approved_execution_spec(self, approved_execution_spec: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(approved_execution_spec, dict):
             raise ValueError('invalid_approved_execution_spec')
+        spec_version = str(approved_execution_spec.get('spec_version') or '').strip()
+        if spec_version != '2026-03-18.approved.v1':
+            raise ValueError(f'invalid_approved_execution_spec_version:{spec_version or "missing"}')
+        approval = approved_execution_spec.get('approval') if isinstance(approved_execution_spec.get('approval'), dict) else {}
+        decision = str(approval.get('decision') or '').strip().lower()
+        if decision != 'approve':
+            raise ValueError(f'invalid_approved_execution_decision:{decision or "missing"}')
         execution_truth = approved_execution_spec.get('execution_truth') if isinstance(approved_execution_spec.get('execution_truth'), dict) else {}
+        artifact_type = str(execution_truth.get('artifact_type') or '').strip()
+        if artifact_type != 'approved_execution_spec':
+            raise ValueError(f'invalid_approved_execution_truth_artifact:{artifact_type or "missing"}')
+        return execution_truth
+
+    def _approved_execution_steps(self, approved_execution_spec: Dict[str, Any]) -> List[Dict[str, Any]]:
+        execution_truth = self._validate_approved_execution_spec(approved_execution_spec)
         execution_plan = execution_truth.get('execution_plan') if isinstance(execution_truth, dict) else approved_execution_spec.get('execution_plan')
-        if isinstance(execution_plan, list) and execution_plan:
-            out: List[Dict[str, Any]] = []
-            for step in execution_plan:
-                if not isinstance(step, dict):
-                    continue
-                out.append({'tool': str(step.get('tool') or ''), 'args': list(step.get('args') or [])})
-            if out:
-                return out
-        preview = build_command_preview_from_execution_spec(approved_execution_spec)
-        if not preview:
+        if not isinstance(execution_plan, list) or not execution_plan:
             raise ValueError('missing_execution_plan')
-        return [{'tool': str(preview[0] or ''), 'args': list(preview[1:])}]
+        out: List[Dict[str, Any]] = []
+        for step in execution_plan:
+            if not isinstance(step, dict):
+                continue
+            normalized_step = {'tool': str(step.get('tool') or ''), 'args': list(step.get('args') or [])}
+            if step.get('stdin'):
+                normalized_step['stdin'] = str(step.get('stdin') or '')
+            out.append(normalized_step)
+        if not out:
+            raise ValueError('missing_execution_plan')
+        return out
 
     def build_execution_plan_from_approved_spec(self, approved_execution_spec: Dict[str, Any]) -> List[List[str]]:
         out: List[List[str]] = []
@@ -127,8 +232,8 @@ class ExecutionEngine:
             'semantic_loss_policy': dict((approved_execution_spec.get('compiler') or {}).get('semantic_loss_policy') or {}) if isinstance(approved_execution_spec.get('compiler'), dict) else {},
         }
         if dry_run:
-            for argv in plan:
-                self._enforce_scope(argv)
+            for step, argv in zip(raw_steps, plan):
+                self._enforce_scope(argv, stdin_text=step.get('stdin') or '')
             return {
                 'status': 'dry-run',
                 'returncode': 0,
@@ -148,9 +253,10 @@ class ExecutionEngine:
         last_rc = 0
         for idx, step in enumerate(raw_steps, 1):
             argv = self._normalize_argv(str(step.get('tool') or ''), self._expand_step_args(list(step.get('args') or []), step_artifacts), approved_spec=True)
-            self._enforce_scope(argv)
+            stdin_text = str(step.get('stdin') or '')
+            self._enforce_scope(argv, stdin_text=stdin_text)
             executed_commands.append(argv)
-            proc = subprocess.run(argv, capture_output=True, text=True)
+            proc = subprocess.run(argv, input=stdin_text or None, capture_output=True, text=True)
             last_rc = int(proc.returncode)
             artifacts = self._write_step_artifacts(run_dir, idx, proc.stdout or '', proc.stderr or '')
             step_artifacts.append(artifacts)
@@ -188,9 +294,12 @@ class ExecutionEngine:
     def execute(self, action_spec: Dict[str, Any], dry_run: bool = False) -> Dict[str, Any]:
         compiled = compile_action_spec(action_spec)
         plan = self.build_execution_plan(action_spec)
+        raw_plan = compiled.get('execution_plan') if isinstance(compiled.get('execution_plan'), list) else []
         if dry_run:
-            for argv in plan:
-                self._enforce_scope(argv)
+            for step, argv in zip(raw_plan, plan):
+                if not isinstance(step, dict):
+                    continue
+                self._enforce_scope(argv, stdin_text=step.get('stdin') or '')
             return {
                 'status': 'dry-run',
                 'returncode': 0,
@@ -199,6 +308,7 @@ class ExecutionEngine:
                 'reason': 'dry_run_requested',
                 'compiled_action': compiled,
                 'planned_commands': plan,
+                'execution_source': 'legacy_direct_action_spec',
             }
 
         combined_stdout: List[str] = []
@@ -207,14 +317,14 @@ class ExecutionEngine:
         step_artifacts: List[Dict[str, str]] = []
         run_dir = self._artifact_run_dir()
         last_rc = 0
-        raw_plan = compiled.get('execution_plan') if isinstance(compiled.get('execution_plan'), list) else []
         for idx, step in enumerate(raw_plan, 1):
             if not isinstance(step, dict):
                 continue
             argv = self._normalize_argv(str(step.get('tool') or ''), self._expand_step_args(list(step.get('args') or []), step_artifacts))
-            self._enforce_scope(argv)
+            stdin_text = str(step.get('stdin') or '')
+            self._enforce_scope(argv, stdin_text=stdin_text)
             executed_commands.append(argv)
-            proc = subprocess.run(argv, capture_output=True, text=True)
+            proc = subprocess.run(argv, input=stdin_text or None, capture_output=True, text=True)
             last_rc = int(proc.returncode)
             artifacts = self._write_step_artifacts(run_dir, idx, proc.stdout or '', proc.stderr or '')
             step_artifacts.append(artifacts)
@@ -234,6 +344,7 @@ class ExecutionEngine:
                     'planned_commands': plan,
                     'executed_commands': executed_commands,
                     'step_artifacts': step_artifacts,
+                    'execution_source': 'legacy_direct_action_spec',
                 }
 
         return {
@@ -246,6 +357,7 @@ class ExecutionEngine:
             'planned_commands': plan,
             'executed_commands': executed_commands,
             'step_artifacts': step_artifacts,
+            'execution_source': 'legacy_direct_action_spec',
         }
 
 

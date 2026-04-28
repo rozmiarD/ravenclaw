@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ravenclaw.local/schemas/policy_decision.v0.1.schema.json",
+  "title": "Ravenclaw PolicyDecision v0.1",
+  "description": "Public-stable compatibility shape for policy decisions emitted by normalize_policy_decision_v0(...).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "decision",
+    "reason_code",
+    "reasons",
+    "scope_facts",
+    "tool_facts",
+    "approval_required",
+    "constraints",
+    "redaction_required",
+    "compatibility"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "2026-04-27.policy-decision.v0.1"
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["allow_prepare", "owner_approval_required", "deny"]
+    },
+    "reason_code": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scope_facts": {
+      "type": "object",
+      "required": ["target", "target_host", "target_in_scope"],
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "target_host": {
+          "type": "string"
+        },
+        "target_in_scope": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "tool_facts": {
+      "type": "object",
+      "required": ["resolved_tool", "action_type"],
+      "properties": {
+        "resolved_tool": {
+          "type": "string"
+        },
+        "action_type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "approval_required": {
+      "type": "boolean"
+    },
+    "constraints": {
+      "type": "object"
+    },
+    "redaction_required": {
+      "type": "boolean"
+    },
+    "compatibility": {
+      "type": "object",
+      "required": ["pass", "reason"],
+      "properties": {
+        "pass": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

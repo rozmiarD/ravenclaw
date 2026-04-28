@@ -56,6 +56,11 @@ def _append_target_if_missing(args: List[str], target: str) -> List[str]:
     return out
 
 
+def _sanitize_stdin_text(value: Any) -> str:
+    text = str(value or '')
+    return text if text.endswith('\n') or not text else (text + '\n')
+
+
 
 def _normalize_curl_execution_args(args: List[str], *, target: str, output_stub: str, execution_mode: str) -> List[str]:
     spec_args = list(args or [])
@@ -104,16 +109,20 @@ def prepare_action_spec_for_execution(raw_action_spec: Dict[str, Any], *, target
             continue
         step_tool = str(step.get('tool') or '').strip().lower()
         step_args = _sanitize_action_args(list(step.get('args') or []))
+        step_stdin = _sanitize_stdin_text(step.get('stdin'))
         step_args = _apply_required_headers_to_args(step_tool, step_args, creds)
         if step_tool == 'curl':
             step_args = _normalize_curl_execution_args(step_args, target=target if idx == 1 else '', output_stub=f"{safe_host}_probe_{idx}", execution_mode=execution_mode)
-        elif idx == 1:
+        elif idx == 1 and not step_stdin:
             step_args = _append_target_if_missing(step_args, target)
-        normalized_chain.append({
+        normalized_step = {
             'tool': step_tool,
             'role': str(step.get('role') or 'probe'),
             'args': step_args,
-        })
+        }
+        if step_stdin:
+            normalized_step['stdin'] = step_stdin
+        normalized_chain.append(normalized_step)
     final_spec = dict(raw_action_spec)
     final_spec['execution_mode'] = execution_mode
     final_spec['resolved_planner_profiles'] = list(compiled.get('resolved_planner_profiles') or raw_action_spec.get('resolved_planner_profiles') or [])
@@ -124,4 +133,6 @@ def prepare_action_spec_for_execution(raw_action_spec: Dict[str, Any], *, target
     if normalized_chain:
         final_spec['tool_chain'] = normalized_chain
         final_spec['args'] = list(normalized_chain[0].get('args') or [])
+        if normalized_chain[0].get('stdin'):
+            final_spec['stdin'] = str(normalized_chain[0].get('stdin') or '')
     return final_spec, compiled

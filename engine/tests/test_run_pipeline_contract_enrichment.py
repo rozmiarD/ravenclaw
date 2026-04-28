@@ -400,6 +400,48 @@ def test_compact_prepared_execution_spec_preserves_execution_plan_only_mismatch_
     assert compact['request_shape_hygiene_source'] == 'execution_plan'
 
 
+def test_compact_prepared_execution_spec_surfaces_stdin_metadata() -> None:
+    prepared = {
+        'target': 'https://example.com/app',
+        'target_host': 'example.com',
+        'target_in_scope': True,
+        'resolved_tool': 'hakrawler',
+        'normalized_args': ['-d', '2', '-u'],
+        'stdin_present': True,
+        'stdin_line_count': 1,
+        'stdin_char_count': 24,
+        'stdin_preview': 'https://example.com/app\n',
+        'stdin_preview_truncated': False,
+        'execution_plan': [{
+            'tool': 'hakrawler',
+            'role': 'probe',
+            'args': ['-d', '2', '-u'],
+            'stdin_present': True,
+            'stdin_line_count': 1,
+            'stdin_char_count': 24,
+            'stdin_preview': 'https://example.com/app\n',
+            'stdin_preview_truncated': False,
+        }],
+        'request_decoration': {},
+        'scope_facts': {'target_in_scope': True},
+        'credentials_policy_snapshot': {},
+        'arg_hosts_detected': [],
+        'execution_plan_hosts_detected': ['example.com'],
+        'all_hosts_detected': ['example.com'],
+        'mismatched_hosts_detected': [],
+        'target_host_match_status': 'exact',
+        'request_shape_hygiene_status': 'clean',
+        'request_shape_hygiene_reason': 'all_detected_hosts_match_target',
+        'request_shape_hygiene_source': 'execution_plan',
+        'compiler': {},
+    }
+    compact = rp._compact_prepared_execution_spec_for_auditor(prepared)
+    assert compact['stdin_present'] is True
+    assert compact['stdin_line_count'] == 1
+    assert compact['execution_plan'][0]['stdin_present'] is True
+    assert compact['execution_plan'][0]['stdin_preview'] == 'https://example.com/app\n'
+
+
 def test_request_shape_hygiene_record_and_context_summary_are_deterministic() -> None:
     prepared = {
         'target_host': 'www.bitstamp.net',

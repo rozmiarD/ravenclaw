@@ -90,11 +90,11 @@ def test_sanitize_action_spec_auth_modes_strips_basic_auth_flags_when_policy_for
         {
             'action_type': 'enumeration_probe',
             'tool': 'curl',
-            'args': ['-u', 'user:pass', '-H', 'X-HackerOne-Research: 0x505badc0de', 'https://target.example/'],
+            'args': ['-u', 'user:pass', '-H', 'X-HackerOne-Research: researcher-example', 'https://target.example/'],
         },
         {'allow_basic_auth': False},
     )
-    assert sanitized['args'] == ['-H', 'X-HackerOne-Research: 0x505badc0de', 'https://target.example/']
+    assert sanitized['args'] == ['-H', 'X-HackerOne-Research: researcher-example', 'https://target.example/']
     assert any(note['action'] == 'dropped_basic_auth_flag' for note in notes)
 
 
@@ -105,12 +105,12 @@ def test_sanitize_action_spec_auth_modes_strips_basic_auth_from_tool_chain_when_
             'tool': 'curl',
             'args': ['https://target.example/'],
             'tool_chain': [
-                {'tool': 'httpx', 'args': ['--auth', 'user', 'pass', '-H', 'X-HackerOne-Research: 0x505badc0de', 'https://target.example/']},
+                {'tool': 'httpx', 'args': ['--auth', 'user', 'pass', '-H', 'X-HackerOne-Research: researcher-example', 'https://target.example/']},
             ],
         },
         {'allow_basic_auth': False},
     )
-    assert sanitized['tool_chain'][0]['args'] == ['-H', 'X-HackerOne-Research: 0x505badc0de', 'https://target.example/']
+    assert sanitized['tool_chain'][0]['args'] == ['-H', 'X-HackerOne-Research: researcher-example', 'https://target.example/']
     assert any(note['path'] == 'tool_chain[0].args[0]' for note in notes)
 
 
@@ -135,7 +135,7 @@ def test_remap_aggression_for_policy_caps_credentialed_crawler_enumeration() -> 
         {
             'request_decoration': {
                 'mode': 'campaign_required',
-                'headers': [{'name': 'X-HackerOne-Research', 'value': '0x505badc0de'}],
+                'headers': [{'name': 'X-HackerOne-Research', 'value': 'researcher-example'}],
                 'cookies': [],
                 'basic_auth': {'enabled': False, 'username': '', 'password': ''},
             },

@@ -1,4 +1,4 @@
-from engine.policy_core import contains_banned_patterns, check_credentials_policy, parse_auth_usage
+from engine.policy_core import contains_banned_patterns, contains_tool_restricted_patterns, check_credentials_policy, parse_auth_usage
 
 
 def test_contains_banned_patterns_detects_pattern():
@@ -49,3 +49,33 @@ def test_check_credentials_policy_allows_httpx_url_flag_without_basic_auth():
     )
     assert ok is True
     assert reason == 'ok'
+
+
+def test_contains_tool_restricted_patterns_blocks_katana_proxy_flag():
+    blocked, pattern = contains_tool_restricted_patterns('katana', ['-u', 'https://example.com', '-proxy', 'http://127.0.0.1:8080'])
+    assert blocked is True
+    assert pattern == '-proxy'
+
+
+def test_contains_tool_restricted_patterns_blocks_case_insensitive_whatweb_log_flag():
+    blocked, pattern = contains_tool_restricted_patterns('whatweb', ['--LOG-JSON=out.json', 'https://example.com'])
+    assert blocked is True
+    assert pattern == '--LOG-JSON=out.json'
+
+
+def test_contains_tool_restricted_patterns_blocks_gau_proxy_flag():
+    blocked, pattern = contains_tool_restricted_patterns('gau', ['--proxy', 'http://127.0.0.1:8080', '--subs', 'example.com'])
+    assert blocked is True
+    assert pattern == '--proxy'
+
+
+def test_contains_tool_restricted_patterns_blocks_subfinder_config_flag_case_insensitive():
+    blocked, pattern = contains_tool_restricted_patterns('subfinder', ['-CONFIG=/tmp/subfinder.yaml', '-d', 'example.com'])
+    assert blocked is True
+    assert pattern == '-CONFIG=/tmp/subfinder.yaml'
+
+
+def test_contains_tool_restricted_patterns_blocks_dnsx_list_input_flag():
+    blocked, pattern = contains_tool_restricted_patterns('dnsx', ['-list', 'targets.txt'])
+    assert blocked is True
+    assert pattern == '-list'

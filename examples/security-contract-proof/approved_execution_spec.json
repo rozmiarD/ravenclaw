@@ -1,0 +1,286 @@
+{
+  "spec_version": "2026-03-18.approved.v1",
+  "target": "https://example.com",
+  "target_host": "example.com",
+  "target_in_scope": true,
+  "action_type": "single_probe",
+  "capability": "http_probe",
+  "task_family": "",
+  "execution_mode": "normalized",
+  "resolved_planner_profiles": [
+    "core"
+  ],
+  "resolved_tool": "curl",
+  "tool_candidates": [
+    "curl",
+    "httpx"
+  ],
+  "normalized_args": [
+    "--connect-timeout",
+    "10",
+    "--max-time",
+    "25",
+    "-sS",
+    "-I",
+    "https://example.com",
+    "-H",
+    "X-Bug-Bounty: <redacted>",
+    "-H",
+    "X-Test-Account-Email: <redacted>",
+    "-H",
+    "X-Canary: <redacted>",
+    "-b",
+    "session=<redacted>",
+    "-o",
+    "<workspace_path_redacted>/workspace-brain/outputs/example_com_probe_1.txt",
+    "-w",
+    "\n__RC_METRICS__ code=%{http_code} ip=%{remote_ip} dns=%{time_namelookup} connect=%{time_connect} tls=%{time_appconnect} ttfb=%{time_starttransfer} total=%{time_total} size=%{size_download} redirects=%{num_redirects}"
+  ],
+  "stdin": "",
+  "execution_plan": [
+    {
+      "tool": "curl",
+      "role": "probe",
+      "args": [
+        "--connect-timeout",
+        "10",
+        "--max-time",
+        "25",
+        "-sS",
+        "-I",
+        "https://example.com",
+        "-H",
+        "X-Bug-Bounty: <redacted>",
+        "-H",
+        "X-Test-Account-Email: <redacted>",
+        "-H",
+        "X-Canary: <redacted>",
+        "-b",
+        "session=<redacted>",
+        "-o",
+        "<workspace_path_redacted>/workspace-brain/outputs/example_com_probe_1.txt",
+        "-w",
+        "\n__RC_METRICS__ code=%{http_code} ip=%{remote_ip} dns=%{time_namelookup} connect=%{time_connect} tls=%{time_appconnect} ttfb=%{time_starttransfer} total=%{time_total} size=%{size_download} redirects=%{num_redirects}"
+      ]
+    }
+  ],
+  "request_decoration": {
+    "mode": "mixed",
+    "headers": [
+      {
+        "name": "X-Bug-Bounty",
+        "value": "<redacted>",
+        "raw": "X-Bug-Bounty: <redacted>",
+        "source": "campaign_required"
+      },
+      {
+        "name": "X-Test-Account-Email",
+        "value": "<redacted>",
+        "raw": "X-Test-Account-Email: <redacted>",
+        "source": "campaign_required"
+      },
+      {
+        "name": "X-Canary",
+        "value": "<redacted>",
+        "raw": "X-Canary: <redacted>",
+        "source": "operator_supplied"
+      }
+    ],
+    "cookies": [
+      {
+        "name": "session",
+        "value": "<redacted>",
+        "source": "operator_supplied"
+      }
+    ],
+    "basic_auth": {
+      "enabled": false,
+      "username": "",
+      "password_ref": ""
+    },
+    "uses_auth_header": false,
+    "uses_cookie_header": false,
+    "owner_approval_required": false,
+    "provenance_notes": [
+      "test"
+    ],
+    "policy_snapshot": {
+      "mode": "operator_supplied",
+      "header_count": 3,
+      "cookie_count": 1,
+      "basic_auth_enabled": false
+    }
+  },
+  "arg_hosts_detected": [
+    "example.com"
+  ],
+  "execution_plan_hosts_detected": [
+    "example.com"
+  ],
+  "all_hosts_detected": [
+    "example.com"
+  ],
+  "mismatched_hosts_detected": [],
+  "target_host_match_status": "exact",
+  "request_shape_hygiene_status": "clean",
+  "request_shape_hygiene_reason": "all_detected_hosts_match_target",
+  "request_shape_hygiene_source": "normalized_args+execution_plan",
+  "scope_facts": {
+    "target": "https://example.com",
+    "target_host": "example.com",
+    "target_in_scope": true
+  },
+  "credentials_policy_snapshot": {
+    "credentials_required": false,
+    "allow_auth_header": false,
+    "allow_cookie_header": false,
+    "allow_basic_auth": false,
+    "credentials_owner_approved": true,
+    "resolved_campaign_key": "test-campaign"
+  },
+  "compiler": {
+    "compiler_strategy": "passthrough",
+    "compiler_tool_choice": "curl",
+    "compiler_tool_choice_source": "preferred_tool",
+    "compiler_variant_count": 1,
+    "recipe_name": "",
+    "semantic_loss_detected": false,
+    "normalization_reason": "",
+    "semantic_loss_policy": {
+      "loss_class": "none",
+      "severity": "none",
+      "policy_response": "proceed",
+      "approved_under_degradation": false,
+      "operator_visibility": "none",
+      "reason_code": "semantic_loss_none",
+      "normalization_reason": ""
+    }
+  },
+  "approval": {
+    "decision": "approve",
+    "reason": "demo_mode_local_adapter_approved_bounded_flow",
+    "reason_code": "approve_in_scope",
+    "constraints": {
+      "aggression": 6
+    },
+    "approval_source": "auditor",
+    "owner_override_applied": false,
+    "approval_transform_chain": [],
+    "approved_under_degradation": false,
+    "semantic_loss_rereview_required": false,
+    "semantic_loss_rereview_completed": false,
+    "semantic_loss_rereview_decision": ""
+  },
+  "execution_truth": {
+    "artifact_type": "approved_execution_spec",
+    "resolved_tool": "curl",
+    "normalized_args": [
+      "--connect-timeout",
+      "10",
+      "--max-time",
+      "25",
+      "-sS",
+      "-I",
+      "https://example.com",
+      "-H",
+      "X-Bug-Bounty: <redacted>",
+      "-H",
+      "X-Test-Account-Email: <redacted>",
+      "-H",
+      "X-Canary: <redacted>",
+      "-b",
+      "session=<redacted>",
+      "-o",
+      "<workspace_path_redacted>/workspace-brain/outputs/example_com_probe_1.txt",
+      "-w",
+      "\n__RC_METRICS__ code=%{http_code} ip=%{remote_ip} dns=%{time_namelookup} connect=%{time_connect} tls=%{time_appconnect} ttfb=%{time_starttransfer} total=%{time_total} size=%{size_download} redirects=%{num_redirects}"
+    ],
+    "execution_plan": [
+      {
+        "tool": "curl",
+        "role": "probe",
+        "args": [
+          "--connect-timeout",
+          "10",
+          "--max-time",
+          "25",
+          "-sS",
+          "-I",
+          "https://example.com",
+          "-H",
+          "X-Bug-Bounty: <redacted>",
+          "-H",
+          "X-Test-Account-Email: <redacted>",
+          "-H",
+          "X-Canary: <redacted>",
+          "-b",
+          "session=<redacted>",
+          "-o",
+          "<workspace_path_redacted>/workspace-brain/outputs/example_com_probe_1.txt",
+          "-w",
+          "\n__RC_METRICS__ code=%{http_code} ip=%{remote_ip} dns=%{time_namelookup} connect=%{time_connect} tls=%{time_appconnect} ttfb=%{time_starttransfer} total=%{time_total} size=%{size_download} redirects=%{num_redirects}"
+        ]
+      }
+    ],
+    "command_preview": [
+      "curl",
+      "--connect-timeout",
+      "10",
+      "--max-time",
+      "25",
+      "-sS",
+      "-I",
+      "https://example.com",
+      "-H",
+      "X-Bug-Bounty: <redacted>",
+      "-H",
+      "X-Test-Account-Email: <redacted>",
+      "-H",
+      "X-Canary: <redacted>",
+      "-b",
+      "session=<redacted>",
+      "-o",
+      "<workspace_path_redacted>/workspace-brain/outputs/example_com_probe_1.txt",
+      "-w",
+      "\n__RC_METRICS__ code=%{http_code} ip=%{remote_ip} dns=%{time_namelookup} connect=%{time_connect} tls=%{time_appconnect} ttfb=%{time_starttransfer} total=%{time_total} size=%{size_download} redirects=%{num_redirects}"
+    ],
+    "command_input_summary": {
+      "preview_source": "execution_plan_first_step",
+      "target_delivery_mode": "argv",
+      "tool": "curl",
+      "role": "probe",
+      "stdin_present": false,
+      "stdin_char_count": 0,
+      "stdin_line_count": 0,
+      "stdin_preview": "",
+      "stdin_preview_truncated": false
+    },
+    "execution_input_summaries": [
+      {
+        "step_index": 1,
+        "tool": "curl",
+        "role": "probe",
+        "target_delivery_mode": "argv",
+        "stdin_present": false,
+        "stdin_char_count": 0,
+        "stdin_line_count": 0,
+        "stdin_preview": "",
+        "stdin_preview_truncated": false
+      }
+    ],
+    "arg_hosts_detected": [
+      "example.com"
+    ],
+    "execution_plan_hosts_detected": [
+      "example.com"
+    ],
+    "all_hosts_detected": [
+      "example.com"
+    ],
+    "mismatched_hosts_detected": [],
+    "target_host_match_status": "exact",
+    "request_shape_hygiene_status": "clean",
+    "request_shape_hygiene_reason": "all_detected_hosts_match_target",
+    "request_shape_hygiene_source": "normalized_args+execution_plan"
+  }
+}

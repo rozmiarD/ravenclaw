@@ -74,6 +74,21 @@ def _collect_hosts_from_args(args: List[Any]) -> List[str]:
     return hosts
 
 
+def _collect_hosts_from_step(step: Dict[str, Any]) -> List[str]:
+    hosts: List[str] = []
+    seen: set[str] = set()
+    for host in _collect_hosts_from_args(list(step.get('args') or [])):
+        if host not in seen:
+            seen.add(host)
+            hosts.append(host)
+    for line in _safe_str(step.get('stdin') or '').splitlines():
+        host = _candidate_host_from_scalar(line)
+        if host and host not in seen:
+            seen.add(host)
+            hosts.append(host)
+    return hosts
+
+
 def summarize_request_shape_hygiene(*, target: str, normalized_args: List[Any], execution_plan: List[Dict[str, Any]]) -> Dict[str, Any]:
     target_host = _safe_str(extract_host_from_url(target)).strip().lower()
     arg_hosts = _collect_hosts_from_args(normalized_args)
@@ -82,7 +97,7 @@ def summarize_request_shape_hygiene(*, target: str, normalized_args: List[Any], 
     for step in list(execution_plan or []):
         if not isinstance(step, dict):
             continue
-        for host in _collect_hosts_from_args(list(step.get('args') or [])):
+        for host in _collect_hosts_from_step(step):
             if host not in seen_plan:
                 seen_plan.add(host)
                 plan_hosts.append(host)
@@ -415,6 +430,20 @@ def summarize_request_decoration(action_spec: Dict[str, Any], creds: Dict[str, A
     }
 
 
+def _stdin_preview_summary(value: Any) -> Dict[str, Any]:
+    text = _safe_str(value)
+    lines = text.splitlines()
+    preview = text[:160]
+    return {
+        'stdin_present': bool(text),
+        'stdin_char_count': len(text),
+        'stdin_line_count': len(lines),
+        'stdin_preview': preview if len(text) <= 160 else (preview + '...<truncated>'),
+        'stdin_preview_truncated': len(text) > 160,
+    }
+
+
+
 def redact_prepared_execution_spec_for_auditor(spec: Dict[str, Any]) -> Dict[str, Any]:
     redacted = _deepcopy_jsonish(spec)
     if not isinstance(redacted, dict):
@@ -444,6 +473,11 @@ def redact_prepared_execution_spec_for_auditor(spec: Dict[str, Any]) -> Dict[str
             i += 1
         redacted['normalized_args'] = norm_args
 
+    if 'stdin' in redacted:
+        stdin_summary = _stdin_preview_summary(redacted.get('stdin'))
+        redacted.pop('stdin', None)
+        redacted.update(stdin_summary)
+
     plan = redacted.get('execution_plan') if isinstance(redacted.get('execution_plan'), list) else []
     safe_plan = []
     for step in plan:
@@ -468,6 +502,10 @@ def redact_prepared_execution_spec_for_auditor(spec: Dict[str, Any]) -> Dict[str
             step_args.append(_truncate_arg(tok))
             i += 1
         step_out['args'] = step_args
+        if 'stdin' in step_out:
+            stdin_summary = _stdin_preview_summary(step_out.get('stdin'))
+            step_out.pop('stdin', None)
+            step_out.update(stdin_summary)
         safe_plan.append(step_out)
     redacted['execution_plan'] = safe_plan
 
@@ -518,6 +556,7 @@ def build_prepared_execution_spec(
         'resolved_tool': _safe_str(compiled_action.get('compiler_tool_choice') or compiled_action.get('tool') or prepared_action_spec.get('tool') or ''),
         'tool_candidates': list(prepared_action_spec.get('tool_candidates') or compiled_action.get('tool_candidates') or []),
         'normalized_args': normalized_args,
+        'stdin': _safe_str(prepared_action_spec.get('stdin') or ''),
         'execution_plan': _deepcopy_jsonish(execution_plan),
         'request_decoration': summarize_request_decoration(prepared_action_spec, creds_policy),
         'arg_hosts_detected': list(request_shape_hygiene.get('arg_hosts_detected') or []),
@@ -568,6 +607,100 @@ def build_command_preview_from_execution_spec(spec: Dict[str, Any]) -> List[str]
     return [tool, *[_safe_str(a) for a in args]] if tool else [_safe_str(a) for a in args]
 
 
+def build_execution_input_summary_from_execution_spec(spec: Dict[str, Any]) -> Dict[str, Any]:
+    if not isinstance(spec, dict):
+        return {
+            'preview_source': 'none',
+            'target_delivery_mode': 'argv',
+            'tool': '',
+            'role': '',
+            **_stdin_preview_summary(''),
+        }
+
+    execution_plan = spec.get('execution_plan') if isinstance(spec.get('execution_plan'), list) else []
+    if execution_plan:
+        first = execution_plan[0] if isinstance(execution_plan[0], dict) else {}
+        stdin_summary = _stdin_preview_summary(first.get('stdin') if isinstance(first, dict) else '')
+        return {
+            'preview_source': 'execution_plan_first_step',
+            'target_delivery_mode': 'stdin' if stdin_summary['stdin_present'] else 'argv',
+            'tool': _safe_str(first.get('tool') or spec.get('resolved_tool') or '') if isinstance(first, dict) else _safe_str(spec.get('resolved_tool') or ''),
+            'role': _safe_str(first.get('role') or '') if isinstance(first, dict) else '',
+            **stdin_summary,
+        }
+
+    stdin_summary = _stdin_preview_summary(spec.get('stdin'))
+    return {
+        'preview_source': 'normalized_args',
+        'target_delivery_mode': 'stdin' if stdin_summary['stdin_present'] else 'argv',
+        'tool': _safe_str(spec.get('resolved_tool') or ''),
+        'role': '',
+        **stdin_summary,
+    }
+
+
+def build_execution_input_summaries_from_execution_spec(spec: Dict[str, Any]) -> List[Dict[str, Any]]:
+    if not isinstance(spec, dict):
+        return []
+    execution_plan = spec.get('execution_plan') if isinstance(spec.get('execution_plan'), list) else []
+    summaries: List[Dict[str, Any]] = []
+    for idx, step in enumerate(execution_plan, 1):
+        if not isinstance(step, dict):
+            continue
+        stdin_summary = _stdin_preview_summary(step.get('stdin'))
+        summaries.append({
+            'step_index': idx,
+            'tool': _safe_str(step.get('tool') or ''),
+            'role': _safe_str(step.get('role') or ''),
+            'target_delivery_mode': 'stdin' if stdin_summary['stdin_present'] else 'argv',
+            **stdin_summary,
+        })
+    return summaries
+
+
+
+def build_command_preview_from_execution_plan(spec: Dict[str, Any]) -> List[str]:
+    if not isinstance(spec, dict):
+        return []
+    execution_plan = spec.get('execution_plan') if isinstance(spec.get('execution_plan'), list) else []
+    if not execution_plan:
+        return []
+    first = execution_plan[0] if isinstance(execution_plan[0], dict) else {}
+    tool = _safe_str(first.get('tool') or spec.get('resolved_tool') or '')
+    args = list(first.get('args') or []) if isinstance(first, dict) else []
+    return [tool, *[_safe_str(a) for a in args]] if tool else [_safe_str(a) for a in args]
+
+
+
+def build_execution_input_summary_from_execution_plan(spec: Dict[str, Any]) -> Dict[str, Any]:
+    if not isinstance(spec, dict):
+        return {
+            'preview_source': 'none',
+            'target_delivery_mode': 'argv',
+            'tool': '',
+            'role': '',
+            **_stdin_preview_summary(''),
+        }
+    execution_plan = spec.get('execution_plan') if isinstance(spec.get('execution_plan'), list) else []
+    if not execution_plan:
+        return {
+            'preview_source': 'none',
+            'target_delivery_mode': 'argv',
+            'tool': '',
+            'role': '',
+            **_stdin_preview_summary(''),
+        }
+    first = execution_plan[0] if isinstance(execution_plan[0], dict) else {}
+    stdin_summary = _stdin_preview_summary(first.get('stdin') if isinstance(first, dict) else '')
+    return {
+        'preview_source': 'execution_plan_first_step',
+        'target_delivery_mode': 'stdin' if stdin_summary['stdin_present'] else 'argv',
+        'tool': _safe_str(first.get('tool') or spec.get('resolved_tool') or '') if isinstance(first, dict) else _safe_str(spec.get('resolved_tool') or ''),
+        'role': _safe_str(first.get('role') or '') if isinstance(first, dict) else '',
+        **stdin_summary,
+    }
+
+
 
 def build_approved_execution_spec(
     prepared_execution_spec: Dict[str, Any],
@@ -599,7 +732,9 @@ def build_approved_execution_spec(
         'resolved_tool': _safe_str(approved.get('resolved_tool') or ''),
         'normalized_args': _deepcopy_jsonish(approved.get('normalized_args') or []),
         'execution_plan': _deepcopy_jsonish(approved.get('execution_plan') or []),
-        'command_preview': build_command_preview_from_execution_spec(approved),
+        'command_preview': build_command_preview_from_execution_plan(approved),
+        'command_input_summary': build_execution_input_summary_from_execution_plan(approved),
+        'execution_input_summaries': build_execution_input_summaries_from_execution_spec(approved),
         'arg_hosts_detected': _deepcopy_jsonish(approved.get('arg_hosts_detected') or []),
         'execution_plan_hosts_detected': _deepcopy_jsonish(approved.get('execution_plan_hosts_detected') or []),
         'all_hosts_detected': _deepcopy_jsonish(approved.get('all_hosts_detected') or []),

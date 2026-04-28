@@ -21,6 +21,12 @@ Recommended for the current public path:
 - ability to run Flask locally for Logdash
 - ability to run local pytest slices
 
+Equivalent supported convenience paths now include:
+- `./scripts/bootstrap_public_demo.sh install`
+- `./scripts/bootstrap_public_demo.sh bundle`
+- `.devcontainer/` for devcontainer/Codespaces-style bring-up
+- `compose.demo.yaml` for reproducible public demo startup
+
 ## Optional tooling
 
 Some parts of the repository refer to broader runtime/offensive toolchains.
@@ -31,7 +37,7 @@ Treat such tooling as optional or advanced until explicit public guidance says o
 ## Unsupported or not-yet-first-class public combinations
 
 The following should not currently be assumed as first-class public support:
-- one-command Docker deployment
+- full production Docker deployment
 - full public autonomous runtime deployment
 - public cloud deployment story
 - zero-config offensive toolchain setup
@@ -43,6 +49,8 @@ Public readers should assume:
 - local inspection is supported
 - local dry-run flow is supported
 - local Logdash bring-up is supported
+- generated public demo artifacts are supported via the same demo contract
+- devcontainer/compose demo bootstrap is supported for the public-safe path
 - broader live-operation ergonomics remain a later maturity target
 
 ## Why this file exists

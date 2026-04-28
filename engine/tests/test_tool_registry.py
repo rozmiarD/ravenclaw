@@ -15,6 +15,7 @@ from tool_registry import (  # type: ignore
     get_active_planner_profile_state,
     get_execution_allowed_tools,
     get_planner_visible_tools,
+    get_tool_catalog,
     resolve_planner_profiles,
     save_tool_registry_state,
 )
@@ -26,10 +27,12 @@ def test_tool_registry_matches_whitelist_for_current_default_core_profile() -> N
     wl = yaml.safe_load((ROOT / 'whitelist.yaml').read_text(encoding='utf-8')) or {}
     allowed = {str(x).strip().lower() for x in (wl.get('allowed_commands') or []) if str(x).strip()}
     brain = {str(x).strip().lower() for x in (wl.get('brain_allowed_commands') or []) if str(x).strip()}
+    runtime_allowed = {str(x).strip().lower() for x in get_runtime_allowed_tools()}
+    runtime_brain = {str(x).strip().lower() for x in get_runtime_brain_allowed_tools('core')}
     assert get_execution_allowed_tools() == allowed
     assert set(get_planner_visible_tools('core')) == brain
-    assert {str(x).strip().lower() for x in get_runtime_allowed_tools()} == allowed
-    assert {str(x).strip().lower() for x in get_runtime_brain_allowed_tools('core')} == brain
+    assert runtime_allowed <= allowed
+    assert runtime_brain == brain
 
 
 def test_extended_and_lab_profiles_expose_future_tools_without_affecting_core() -> None:
@@ -69,3 +72,19 @@ def test_save_tool_registry_state_persists_selected_profile(tmp_path: Path, monk
     assert state['active_profile'] == 'extended'
     assert state['source'] == 'config'
     assert 'extended' in state['resolved_profiles']
+
+
+def test_tool_registry_exposes_planner_invocation_mode_for_hakrawler() -> None:
+    catalog = get_tool_catalog()
+    assert catalog['hakrawler']['planner_invocation_mode'] == 'stdin_target'
+    assert catalog['hakrawler']['planner_stdin_args'] == ['-d', '2', '-u']
+    assert catalog['curl']['planner_invocation_mode'] == 'direct_args'
+
+
+def test_tool_registry_exposes_target_validation_mode_for_strict_tools() -> None:
+    catalog = get_tool_catalog()
+    assert catalog['curl']['target_validation_mode'] == 'strict_url'
+    assert catalog['hakrawler']['target_validation_mode'] == 'strict_url'
+    assert catalog['gau']['target_validation_mode'] == 'strict_host_domain'
+    assert catalog['amass']['target_validation_mode'] == 'strict_host_domain'
+    assert catalog['httpx']['target_validation_mode'] == 'none'

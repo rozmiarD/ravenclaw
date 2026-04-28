@@ -1,0 +1,46 @@
+services:
+  demo:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - public-demo-venv:/workspace/.venv
+    environment:
+      RAVENCLAW_MODE: demo
+      PYTHONUNBUFFERED: "1"
+    command: ["bash", "-lc", "./scripts/bootstrap_public_demo.sh demo"]
+
+  demo-bundle:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - public-demo-venv:/workspace/.venv
+    environment:
+      RAVENCLAW_MODE: demo
+      PYTHONUNBUFFERED: "1"
+      DEMO_OUTPUT_DIR: "demo-output"
+    command: ["bash", "-lc", "./scripts/bootstrap_public_demo.sh bundle"]
+
+  logdash:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - public-demo-venv:/workspace/.venv
+    environment:
+      RAVENCLAW_MODE: demo
+      LOGDASH_PORT: "9091"
+      PYTHONUNBUFFERED: "1"
+    command: ["bash", "-lc", "./scripts/bootstrap_public_demo.sh logdash"]
+    ports:
+      - "9091:9091"
+
+volumes:
+  public-demo-venv:

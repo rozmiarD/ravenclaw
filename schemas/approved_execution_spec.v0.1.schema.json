@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ravenclaw.local/schemas/approved_execution_spec.v0.1.schema.json",
+  "title": "Ravenclaw ApprovedExecutionSpec v0.1",
+  "description": "Public-stable subset of the approved execution spec produced by build_approved_execution_spec(...) and consumed by ExecutionEngine.execute_approved_spec(...).",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "target",
+    "target_host",
+    "target_in_scope",
+    "resolved_tool",
+    "normalized_args",
+    "execution_plan",
+    "scope_facts",
+    "approval",
+    "execution_truth"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "2026-03-18.approved.v1"
+    },
+    "target": {
+      "type": "string"
+    },
+    "target_host": {
+      "type": "string"
+    },
+    "target_in_scope": {
+      "type": "boolean"
+    },
+    "action_type": {
+      "type": "string"
+    },
+    "capability": {
+      "type": "string"
+    },
+    "task_family": {
+      "type": "string"
+    },
+    "execution_mode": {
+      "type": "string"
+    },
+    "resolved_planner_profiles": {
+      "type": "array"
+    },
+    "resolved_tool": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tool_candidates": {
+      "type": "array"
+    },
+    "normalized_args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stdin": {
+      "type": "string"
+    },
+    "execution_plan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tool", "args"],
+        "properties": {
+          "tool": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stdin": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "arg_hosts_detected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "execution_plan_hosts_detected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "all_hosts_detected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "mismatched_hosts_detected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "target_host_match_status": {
+      "type": "string"
+    },
+    "request_shape_hygiene_status": {
+      "type": "string"
+    },
+    "request_shape_hygiene_reason": {
+      "type": "string"
+    },
+    "request_shape_hygiene_source": {
+      "type": "string"
+    },
+    "scope_facts": {
+      "type": "object",
+      "required": ["target", "target_host", "target_in_scope"],
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "target_host": {
+          "type": "string"
+        },
+        "target_in_scope": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "approval": {
+      "type": "object",
+      "required": [
+        "decision",
+        "reason",
+        "reason_code",
+        "constraints",
+        "approval_source",
+        "owner_override_applied",
+        "approval_transform_chain"
+      ],
+      "properties": {
+        "decision": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "reason_code": {
+          "type": "string"
+        },
+        "constraints": {
+          "type": "object"
+        },
+        "approval_source": {
+          "type": "string"
+        },
+        "owner_override_applied": {
+          "type": "boolean"
+        },
+        "approval_transform_chain": {
+          "type": "array"
+        },
+        "approved_under_degradation": {
+          "type": "boolean"
+        },
+        "semantic_loss_rereview_required": {
+          "type": "boolean"
+        },
+        "semantic_loss_rereview_completed": {
+          "type": "boolean"
+        },
+        "semantic_loss_rereview_decision": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "execution_truth": {
+      "type": "object",
+      "required": [
+        "artifact_type",
+        "resolved_tool",
+        "normalized_args",
+        "execution_plan",
+        "command_preview",
+        "command_input_summary",
+        "execution_input_summaries",
+        "target_host_match_status",
+        "request_shape_hygiene_status"
+      ],
+      "properties": {
+        "artifact_type": {
+          "const": "approved_execution_spec"
+        },
+        "resolved_tool": {
+          "type": "string"
+        },
+        "normalized_args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "execution_plan": {
+          "type": "array"
+        },
+        "command_preview": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "command_input_summary": {
+          "type": "object",
+          "required": ["preview_source", "target_delivery_mode", "tool", "stdin_present"],
+          "properties": {
+            "preview_source": {
+              "type": "string"
+            },
+            "target_delivery_mode": {
+              "type": "string"
+            },
+            "tool": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string"
+            },
+            "stdin_present": {
+              "type": "boolean"
+            },
+            "stdin_char_count": {
+              "type": "integer"
+            },
+            "stdin_line_count": {
+              "type": "integer"
+            },
+            "stdin_preview": {
+              "type": "string"
+            },
+            "stdin_preview_truncated": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true
+        },
+        "execution_input_summaries": {
+          "type": "array"
+        },
+        "arg_hosts_detected": {
+          "type": "array"
+        },
+        "execution_plan_hosts_detected": {
+          "type": "array"
+        },
+        "all_hosts_detected": {
+          "type": "array"
+        },
+        "mismatched_hosts_detected": {
+          "type": "array"
+        },
+        "target_host_match_status": {
+          "type": "string"
+        },
+        "request_shape_hygiene_status": {
+          "type": "string"
+        },
+        "request_shape_hygiene_reason": {
+          "type": "string"
+        },
+        "request_shape_hygiene_source": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

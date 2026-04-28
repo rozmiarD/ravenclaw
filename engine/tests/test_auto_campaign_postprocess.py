@@ -110,6 +110,59 @@ def test_post_result_common_preserves_request_shape_hygiene() -> None:
     assert post['run_info']['request_shape_hygiene']['target_host_match_status'] == 'mixed'
 
 
+def test_post_result_common_surfaces_stdin_input_summary() -> None:
+    post = post_result_common(
+        task_ctx={'task_family': 'content_discovery'},
+        result={
+            'reason_code': 'interesting_signal',
+            'planned_command': ['hakrawler', '-d', '2', '-u'],
+            'engine': {'stdout': '', 'stderr': ''},
+            'success_criteria': {'status': 'partial'},
+            'execution_lineage': {
+                'approved_command_input_summary': {
+                    'target_delivery_mode': 'stdin',
+                    'stdin_present': True,
+                    'stdin_preview': 'https://example.com/app\n',
+                    'stdin_line_count': 1,
+                    'stdin_char_count': 24,
+                    'stdin_preview_truncated': False,
+                },
+            },
+        },
+        objective='Crawl target',
+        target='https://example.com/app',
+        mode='fast',
+        summary_text='Crawler summary',
+        classification='low',
+        auditor='approved',
+        engine_status='ok',
+        run_index=4,
+        plan_name='Plan D',
+        owner_override=False,
+        owner_auth=False,
+        aggression=2,
+        inspect_json_signal_from_command=lambda _cmd: {'info': [], 'findings': [], 'signal': False},
+        parse_rc_metrics=lambda _txt: {'code': 0},
+        run_control_comparison=lambda _cmd, _timeout: {'performed': False, 'control_delta_observed': False, 'reason': 'n/a'},
+        attack_family_fn=lambda objective, target, family: family or 'generic',
+        host_family_owner_gate={},
+        host_cooldown_until={},
+        host_code000_streak={},
+        host_code000_total={},
+        host_403_streak={},
+        host_fail_streak={},
+        host_fail_count={},
+        host_success_count={},
+        code000_streak_threshold=3,
+        code000_cooldown_sec=600,
+        code000_session_cap=10,
+    )
+    assert 'CMD: hakrawler -d 2 -u' in post['summary_text']
+    assert 'INPUT: stdin:https://example.com/app\\n' in post['summary_text']
+    assert post['run_info']['command_preview'] == 'hakrawler -d 2 -u'
+    assert post['run_info']['command_input_summary']['target_delivery_mode'] == 'stdin'
+
+
 def test_post_result_common_updates_owner_gate_and_403_cooldown() -> None:
     host_family_owner_gate = {}
     host_cooldown_until = {}

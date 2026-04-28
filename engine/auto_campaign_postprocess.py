@@ -55,6 +55,14 @@ def post_result_common(
     else:
         host_family_owner_gate[hfg] = 0
     planned_cmd = result.get('planned_command') if isinstance(result, dict) else None
+    execution_lineage = result.get('execution_lineage') if isinstance(result.get('execution_lineage'), dict) else {}
+    approved_execution_spec = result.get('approved_execution_spec') if isinstance(result.get('approved_execution_spec'), dict) else {}
+    execution_truth = approved_execution_spec.get('execution_truth') if isinstance(approved_execution_spec.get('execution_truth'), dict) else {}
+    command_input_summary = {}
+    if isinstance(execution_lineage.get('approved_command_input_summary'), dict):
+        command_input_summary = dict(execution_lineage.get('approved_command_input_summary') or {})
+    elif isinstance(execution_truth.get('command_input_summary'), dict):
+        command_input_summary = dict(execution_truth.get('command_input_summary') or {})
     json_sig = inspect_json_signal_from_command(planned_cmd)
     if json_sig.get('info'):
         summary_text = f"{summary_text} | Signals: {', '.join(i.get('code','info') for i in json_sig.get('info',[])[:2])}"
@@ -91,6 +99,9 @@ def post_result_common(
     if planned_cmd:
         cmd_txt = ' '.join(str(x) for x in planned_cmd) if isinstance(planned_cmd, list) else str(planned_cmd)
         summary_text = f'{summary_text} | CMD: {cmd_txt}'
+    if command_input_summary.get('target_delivery_mode') == 'stdin':
+        stdin_preview = str(command_input_summary.get('stdin_preview') or '').replace('\n', '\\n')[:120]
+        summary_text = f'{summary_text} | INPUT: stdin:{stdin_preview or "<present>"}'
     signal_codes = [str(f.get('code') or '') for f in (json_sig.get('findings') or []) if isinstance(f, dict)]
     metrics_obj = parse_rc_metrics(str(((result.get('engine') or {}).get('stdout') if isinstance(result, dict) else '') or '') + '\n' + str(((result.get('engine') or {}).get('stderr') if isinstance(result, dict) else '') or ''))
     control_cmp = run_control_comparison(planned_cmd, 20)
@@ -149,6 +160,7 @@ def post_result_common(
             'engine_stdout_preview': summary_text,
             'reason_code': reason_code,
             'command_preview': (' '.join(str(x) for x in planned_cmd) if isinstance(planned_cmd, list) else (str(planned_cmd) if planned_cmd else '')),
+            'command_input_summary': dict(command_input_summary),
             'metrics': metrics_obj,
             'signals': json_sig,
             'control_comparison': control_cmp,

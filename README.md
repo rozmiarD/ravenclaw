@@ -18,6 +18,9 @@ It combines:
 The goal is not maximum automation.
 The goal is reliable autonomy under governance.
 
+The public repository should be read as a **public core** of that system:
+a publishable runtime/control-plane artifact with explicit governance and validation surfaces, not a claim that every private operator integration is bundled here.
+
 ## What makes it different
 
 Ravenclaw is not positioned as an unconstrained "AI hacker".
@@ -28,6 +31,8 @@ Its core design claim is different:
 - evidence quality and replayability matter as much as action generation
 
 In short, Ravenclaw optimizes for bounded usefulness rather than raw autonomy theater.
+
+The current reusable direction is a small **Security Contract Layer** backed by Ravenclaw Runtime artifacts: scope binding, policy decisions, approved execution specs, execution receipts, evidence summaries, and runtime truth. OpenClaw, MCP, and A2A are potential later carriers for these contracts, not new protocols Ravenclaw is trying to own.
 
 ## Safe quickstart
 
@@ -46,7 +51,7 @@ Recommended order:
 10. `ARCHITECTURE_OVERVIEW.md`
 
 This path is intentionally narrow and honest.
-It shows the governed flow without pretending the repo already has a polished one-command public deployment story.
+It shows the governed flow with a small one-command demo entrypoint (`bin/demo`), a shared bootstrap path (`scripts/bootstrap_public_demo.sh`), and an explicit `RAVENCLAW_MODE=demo` delivery profile, without pretending the repo already has a polished one-command public deployment story.
 
 ## Architecture at a glance
 
@@ -70,9 +75,27 @@ Some parts are stable enough to be treated as strong public reference surfaces, 
 
 Use `PUBLIC_STATUS.md` as the canonical public maturity guide.
 For public proof and trust surfaces, use `VALIDATION.md` and `QUALITY_SIGNALS.md`.
+For the public-core/private-overlay split, read `references/public-core-private-overlay-boundary.md`.
+For trusted-core authority boundaries, failure modes, and non-guarantees, read `THREAT_MODEL.md`.
+For the emerging contract layer, read `SECURITY_CONTRACT_LAYER.md` and `references/approved-execution-spec-v0.1.md`.
 For Logdash operator-facing control/recovery semantics, see `references/logdash-operator-truth-contracts.md`.
 
 ## Install and run posture
+
+Fastest public-safe start:
+
+```bash
+./scripts/bootstrap_public_demo.sh demo
+```
+
+Reusable public demo bundle:
+
+```bash
+./scripts/bootstrap_public_demo.sh bundle
+```
+
+For containerized public-demo bring-up, see `.devcontainer/` and `compose.demo.yaml`.
+
 
 Today, the repo is strongest as:
 - a governance-first runtime architecture
@@ -133,8 +156,9 @@ High-level open-source/public-release direction is tracked in `OPEN_SOURCE_1_0_P
 
 Current public truth:
 - the technical core is strong and serious
+- the public repo is best understood as a governance-first public core, not a full private operator environment
 - the public repo shape is improving, but still being deliberately elevated
-- public clarity, official demoability, and proof surfaces are now materially better than before, but still part of the active elevation track
+- public clarity, official demoability, and proof surfaces are materially better than before, but still part of the active elevation track
 
 ## Documentation map
 

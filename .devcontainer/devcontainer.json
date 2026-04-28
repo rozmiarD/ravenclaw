@@ -1,0 +1,31 @@
+{
+  "name": "Ravenclaw Public Demo",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspace",
+  "postCreateCommand": "./scripts/bootstrap_public_demo.sh install",
+  "postAttachCommand": "./scripts/bootstrap_public_demo.sh doctor",
+  "remoteEnv": {
+    "RAVENCLAW_MODE": "demo"
+  },
+  "forwardPorts": [9091],
+  "portsAttributes": {
+    "9091": {
+      "label": "Logdash",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/workspace/.venv/bin/python"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  }
+}

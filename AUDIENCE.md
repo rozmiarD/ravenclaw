@@ -33,9 +33,10 @@ If someone wants instant spectacle or zero-context usability, this repo is curre
 
 Today, the public repo is strongest as:
 - a serious architecture and runtime design artifact
+- a publishable governance-first public core
 - a testable governance-first research codebase
 - a controlled local dry-run demo surface
-- a public record of how the system thinks about policy, contracts, and operator truth
+- a public record of how the system thinks about policy, contracts, operator truth, and the boundary between public core and private overlay
 
 ## What it is still improving
 
@@ -48,7 +49,7 @@ The repo is still improving in areas such as:
 ## Best-fit expectation
 
 The best current expectation is:
-Ravenclaw is a serious technical repo for readers who value governance, runtime correctness, and inspectability more than flashy demo theatrics.
+Ravenclaw is a serious technical repo for readers who value governance, runtime correctness, inspectability, and honest public-boundary signaling more than flashy demo theatrics.
 
 ## Short version
 

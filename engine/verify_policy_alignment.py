@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import yaml
 
-from policy_core import get_runtime_allowed_tools, get_runtime_brain_allowed_tools  # type: ignore
+from policy_core import ALLOWED_TOOLS, get_runtime_allowed_tools, get_runtime_brain_allowed_tools  # type: ignore
 from contracts import get_contract_allowed_tools  # type: ignore
 from paths import WORKSPACE
 from tool_registry import get_execution_allowed_tools, get_planner_visible_tools, get_active_planner_profile_state  # type: ignore
@@ -32,7 +32,8 @@ def main() -> int:
     reg_core = {str(x).strip().lower() for x in get_planner_visible_tools('core')}
     active_profile = get_active_planner_profile_state()
     reg_active = {str(x).strip().lower() for x in get_planner_visible_tools(active_profile.get('active_profile') or 'core')}
-    pc = {str(x).strip().lower() for x in get_runtime_allowed_tools()}
+    pc = {str(x).strip().lower() for x in ALLOWED_TOOLS}
+    runtime_pc = {str(x).strip().lower() for x in get_runtime_allowed_tools()}
     pct = {str(x).strip().lower() for x in get_runtime_brain_allowed_tools(active_profile.get('active_profile') or 'core')}
     ctb = {str(x).strip().lower() for x in get_contract_allowed_tools(active_profile.get('active_profile') or 'core')}
 
@@ -71,7 +72,11 @@ def main() -> int:
     if not ok:
         return 2
 
-    print(f"OK: allowed={len(wl)} brain_allowed_core={len(reg_core)} active_profile={active_profile.get('active_profile')} brain_allowed_active={len(reg_active)}")
+    print(
+        f"OK: allowed={len(wl)} runtime_allowed={len(runtime_pc)} "
+        f"brain_allowed_core={len(reg_core)} active_profile={active_profile.get('active_profile')} "
+        f"brain_allowed_active={len(reg_active)}"
+    )
     return 0
 
 

@@ -2,110 +2,95 @@
 
 ## Purpose
 
-This document captures a high-level roadmap for moving Ravenclaw toward `1.0.0` and preparing an eventual public GitHub release.
-It is intentionally broad and strategic rather than implementation-heavy.
+This document captures the high-level release-truth transition for Ravenclaw after the public truth reset.
+It is intentionally strategic rather than implementation-heavy.
+
+The key distinction is:
+- the repository may already contain technically serious `1.0.0`-line hardening work in its history
+- the **current public package/release signal** is intentionally restaged lower until the public story, boundary, and delivery posture are coherent enough to defend cleanly
 
 ---
 
-## Overall direction
+## Current release-truth stance
+
+The public package signal is currently restaged at **`0.10.0`**.
+That is not a claim that the technical work regressed.
+It is a claim that the **public artifact and release framing** should be more conservative than the strongest internal milestone language that appeared earlier.
+
+Why:
+- the public repo is strongest as a governance-first runtime core
+- the public/private boundary needed to be made explicit
+- the public delivery/demo path is still being elevated deliberately
+- some readers were likely to overread `1.0.0` as a broader product/readiness claim than the public artifact can honestly support today
+
+In other words:
+this is a **truth-restaging move**, not a denial of prior hardening work.
+
+---
+
+## Recommended direction
 
 The recommended direction is:
 
-1. continue shaping Ravenclaw into a stable governance-first runtime,
-2. reach a credible `1.0.0` milestone,
-3. prepare a public-facing open-source release only after the system is structurally clean and publication boundaries are deliberate.
+1. continue shaping Ravenclaw Runtime into the credible governance-first reference implementation,
+2. harden the trusted execution/control anchor further,
+3. improve public-safe delivery and demoability,
+4. make the reusable direction explicit as a small Security Contract Layer backed by real runtime artifacts,
+5. add stronger public proof-of-value through schema-validated demo traces,
+6. treat OpenClaw, MCP, and A2A as later adapters/carriers rather than new protocols,
+7. only then reconsider whether a public `1.0.x` signal is worth reasserting.
 
 The goal is not simply to publish code.
-The goal is to publish something coherent, trustworthy, and useful.
+The goal is to publish something coherent, trustworthy, and legible, where public proof comes before adapter promotion.
 
 ---
 
-## Phase 1 — reach `0.9.0`
+## Interpreting the earlier `1.0.0` line
 
-### Objective
-Move from active bounded refactor work to a runtime architecture that feels intentionally shaped and maintainable.
+The earlier `1.0.0` milestone language should now be read as evidence of a technically serious hardening tranche, especially around:
+- operator control semantics
+- restart/recovery truth
+- provenance/source labeling
+- release-quality operator truth docs
 
-### Broad focus
-- finish the current runtime/runner cleanup work
-- reduce remaining architectural hotspots
-- keep contracts and state ownership clear
-- maintain strong regression coverage
-- keep documentation aligned with reality
-
-### Desired outcome
-By `0.9.0`, Ravenclaw should look like a mature runtime architecture rather than an active decomposition project.
+That historical work still matters.
+But after the audit-driven truth reset, it should not automatically dictate the strongest current public package signal.
 
 ---
 
-## Phase 2 — reach `1.0.0`
+## What must be true before reasserting a public `1.0.x` signal
 
-### Objective
-Turn the shaped runtime into a stable production-grade governance runtime.
+Before Ravenclaw should publicly signal `1.0.x` again, the repo should have all of the following in a cleaner, more defensible form:
+- public positioning that does not overstate the product boundary
+- an explicit and stable public-core/private-overlay boundary
+- a stronger trusted-core / execution-safety story
+- a public-safe delivery path that is easier to reproduce and explain
+- a schema-validated contract proof trace showing scope/input -> policy -> approved execution -> dry-run receipt -> evidence summary
+- proof-of-value and benchmark surfaces that are legible to skeptical external readers
+- public credibility signals broad enough to support the maturity claim
 
-### Broad focus
-- harden policy and control behavior
-- validate operator-facing runtime control paths
-- improve recovery, restart, and partial-failure handling
-- ensure state, artifacts, and reporting are predictable
-- strengthen release-quality documentation
-
-### Desired outcome
-By `1.0.0`, the system should feel stable, inspectable, and trustworthy under normal operator use.
-
-Current posture after the 2026-04-18 hardening pass:
-- operator control semantics have direct regression coverage
-- restart/recovery truth has focused regression coverage around stale PID, paused persistence, and stopped-state precedence
-- operator-visible source/provenance labels have been tightened in key fallback payloads
-- release-quality operator truth docs now exist for these semantics
-
----
-
-## Phase 3 — prepare open-source release
-
-### Objective
-Prepare a public GitHub release in a deliberate way.
-
-### Broad focus
-- define what belongs in the public repository
-- remove or isolate anything too sensitive, too private, or too environment-specific
-- improve public-facing docs and onboarding
-- ensure licensing, contribution, conduct, and security reporting surfaces are clear
-- present the project as a governance-first research platform, not an uncontrolled offensive tool
-
-Current public-release prep posture:
-- a short publication-boundary reference now exists in `references/public-release-boundary.md`
-- licensing, conduct, contribution, and security surfaces now exist at the repo root
-- the next publication-prep waves should review mixed local artifact areas such as `reports/`, `memory/`, `logs/`, `pending/`, `tmp/`, and `state/` rather than assuming the working tree is publishable as-is
-
-### Desired outcome
-The public repository should be understandable, safe to inspect, and aligned with the intended public story of the project.
+Until then, the lower public release signal is more honest.
 
 ---
 
 ## Publication stance
 
-The recommended default is to publish a serious open-core or public research shell, not necessarily every high-leverage internal capability.
+The recommended default is to publish a serious public core or research shell, not necessarily every high-leverage internal capability.
 
 That means:
-- public release should maximize clarity, credibility, and long-term value,
-- private components may remain private if they are too sensitive, too environment-specific, or strategically premature to release.
+- public release should maximize clarity, credibility, and long-term value
+- private components may remain private if they are too sensitive, too environment-specific, or strategically premature to release
+- package/release signaling should follow public-truth discipline, not just internal technical pride
 
 ---
 
-## Milestone summary
+## Short rule
 
-### `0.9.0`
-Runtime architecture maturity milestone.
+Do not let the strongest historical milestone language become a permanent public claim if the public artifact no longer cleanly supports that reading.
 
-### `1.0.0`
-Stable governance-first production milestone.
-
-### public GitHub release
-A deliberate open-source release built on top of `1.0.0` readiness, with clear publication boundaries.
-
----
-
-## Guiding rule
-
-Do not rush public release just because the code works.
-Release publicly when the architecture, documentation, safety posture, and publication boundary are all coherent enough to represent Ravenclaw well.
+Ravenclaw should earn any future `1.0.x` public signal by aligning:
+- repo truth
+- public boundary
+- delivery reality
+- trusted-core defensibility
+- public proof surfaces

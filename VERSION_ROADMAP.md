@@ -2,8 +2,11 @@
 
 ## Purpose
 
-This file defines the recommended versioning roadmap for Ravenclaw from the current `0.8.x` line through `2.0.0`.
+This file defines the recommended versioning roadmap for Ravenclaw from the historical `0.8.x` line through a future `2.0.0` line.
 It is intended to keep release numbers tied to meaningful architectural and operational milestones rather than incidental commit volume.
+
+Current public package/release truth is separately restaged at `0.10.0`.
+Use this file as a milestone map, not as the canonical statement of the currently asserted public package version.
 
 ---
 
@@ -68,10 +71,10 @@ The honest bar is lower and stronger:
 
 ---
 
-## `1.0.0` — production-grade governance runtime
+## Future `1.0.x` line — production-grade governance runtime
 
 ### Intent
-Declare the first release that can honestly be treated as a stable production-grade Ravenclaw runtime.
+Describe the conditions under which Ravenclaw could honestly be treated again as a stable production-grade runtime in a future public `1.0.x` line.
 
 ### Required characteristics
 - major architectural risk in the orchestration path is retired
@@ -94,6 +97,7 @@ Declare the first release that can honestly be treated as a stable production-gr
 - execution-engine hardening
 - stronger policy and admission explanations
 - tighter evaluation and replay contracts
+- Security Contract Layer v0.1 artifacts validated against live runtime output
 - reduced documentation drift
 
 ### `1.2.x`
@@ -146,6 +150,16 @@ Expand reliability, visibility, and operational trust at larger runtime scope.
 
 ---
 
+## Contract proof track — public-core maturation bridge
+
+Before any future public `1.x` reassertion, Ravenclaw should complete a contract-proof track:
+- Ravenclaw Runtime remains the reference implementation.
+- The reusable asset direction is a Security Contract Layer, not a new protocol.
+- The public demo bundle should show a schema-validated trace from scope/input through policy decision, approved execution spec, dry-run receipt, and evidence summary.
+- OpenClaw Skill integration is the first practical later adapter after contract proof.
+- MCP Policy Gateway is later.
+- A2A security metadata/profile work is later and example-first.
+
 ## `2.0.0` — second-generation Ravenclaw platform
 
 ### Intent
@@ -171,7 +185,7 @@ Declare a second-generation platform release where the architecture, governance 
 
 - `0.8.x` = bounded refactor and stabilization
 - `0.9.0` = runtime architecture maturity
-- `1.0.0` = production-grade governance runtime
+- future `1.0.x` = production-grade governance runtime (not the current public package signal)
 - `1.1.x` to `1.4.x` = hardening and operator ergonomics
 - `1.5.0` = adaptive platform milestone
 - `1.6.x` to `1.9.x` = scale, trust, and operational depth

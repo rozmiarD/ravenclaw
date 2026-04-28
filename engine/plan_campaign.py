@@ -7,6 +7,7 @@ from pathlib import Path
 
 from paths import REPORTS_DIR  # type: ignore
 from planer import build_or_load_campaign_plan
+from public_delivery import resolve_delivery_profile  # type: ignore
 
 
 def parse_args() -> argparse.Namespace:
@@ -20,6 +21,7 @@ def parse_args() -> argparse.Namespace:
         default=str(REPORTS_DIR / "campaign_registry"),
         help="Campaign registry directory",
     )
+    p.add_argument("--runtime-mode", default="", help="Delivery/runtime mode override (demo/local/external)")
     return p.parse_args()
 
 
@@ -36,6 +38,8 @@ def main() -> None:
         registry_root=Path(args.registry),
         force_new_blueprint=bool(args.force_new_blueprint),
     )
+    if isinstance(result, dict):
+        result['delivery_profile'] = resolve_delivery_profile(explicit_mode=args.runtime_mode)
 
     print(json.dumps(result, ensure_ascii=False, indent=2))
 

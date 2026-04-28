@@ -9,7 +9,11 @@ Ravenclaw is a governance-first runtime where planning, authorization, execution
 
 ## Core flow
 
-`scope / operator input -> planner -> policy gate / auditor -> approved execution spec -> execution engine -> analysis / qualification -> operator visibility`
+`scope / operator input -> planner -> policy gate / auditor -> prepared execution spec -> approved execution spec -> execution engine -> analysis / qualification -> operator visibility`
+
+The emerging contract proof trace makes that flow explicit as artifacts:
+
+`scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary`
 
 ## Major components
 
@@ -54,6 +58,7 @@ It shows up in:
 - approval semantics for sensitive actions
 - execution-engine constraints
 - artifact-oriented review and replay surfaces
+- the draft Security Contract Layer, which names the reusable contract artifacts without claiming to be a new protocol
 
 ## Where operator approval enters
 
@@ -72,3 +77,4 @@ For the deeper production map, read:
 ## Short public takeaway
 
 Ravenclaw is best understood as a bounded security-research runtime that tries to make autonomy more trustworthy by putting real structure between idea generation, approval, execution, and evidence interpretation.
+In public form, this should be read as a governance-first runtime core and reference implementation for a small Security Contract Layer, with some deployment-specific operator reality intentionally left in a private overlay rather than bundled into the repository. OpenClaw, MCP, and A2A are potential later carriers for those contracts, not replacement protocols.
