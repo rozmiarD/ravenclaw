@@ -43,7 +43,7 @@ Ravenclaw Runtime remains the reference/proof implementation. Its Replayable Tru
 
 The contract layer should be extracted only from real artifacts already produced or consumed by runtime code. The current proof path is intentionally narrow and public-safe: demo mode, safe demo targets, mock/dry-run execution, sanitized output, and deterministic replay fixtures.
 
-The current internal boundary module is `engine/security_contract_layer.py`. It centralizes public-safe proof-trace artifact builders, manifest metadata, and deterministic public-safety invariant checks while `engine/public_demo_bundle.py` remains the demo bundle orchestration/CLI surface.
+The current internal boundary module is `engine/security_contract_layer.py`. It centralizes public-safe proof-trace artifact builders, manifest metadata, deterministic public-safety invariant checks, and the lightweight JSON Schema subset validator used by public contract fixtures/receipts while `engine/public_demo_bundle.py` remains the demo bundle orchestration/CLI surface.
 
 A committed public-safe fixture lives at `examples/security-contract-proof/` and can be validated with `scripts/validate_security_contract_fixtures.py`. A replay fixture lives at `examples/replayable-truth-runtime/` and can be validated with `scripts/validate_replayable_truth_fixture.py`. The broader local/public-safe validation path is `scripts/run_security_contract_validation.py`, which emits a schema-backed `security_contract_validation_receipt` covering fixtures, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, replay fixture validation, and optional focused pytest.
 

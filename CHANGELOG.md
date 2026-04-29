@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Moved public contract schema validation helpers behind `engine/security_contract_layer.py` so fixture and receipt validation share the SCL boundary.
 - Added a public-safe Replayable Truth Runtime proof fixture plus deterministic fixture validation and documentation.
 - Added schema/reference documentation for `security_contract_validation_receipt` v0.1 and made `scripts/run_security_contract_validation.py` validate receipts before emitting them.
 - Fixed public snapshot CI packaging by including `scripts/run_pytest_slice.py`, which the GitHub Actions pytest matrix invokes for every validation slice.

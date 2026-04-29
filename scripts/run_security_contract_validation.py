@@ -14,6 +14,12 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping, Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
+ENGINE_DIR = ROOT / 'engine'
+if str(ENGINE_DIR) not in sys.path:
+    sys.path.insert(0, str(ENGINE_DIR))
+
+import security_contract_layer as scl  # type: ignore
+
 RECEIPT_ARTIFACT_TYPE = 'security_contract_validation_receipt'
 RECEIPT_SCHEMA_VERSION = 'v0.1'
 RECEIPT_SCHEMA_REF = 'schemas/security_contract_validation_receipt.v0.1.schema.json'
@@ -175,80 +181,11 @@ def _focused_pytest_check(pytest_repo: Path) -> ValidationCheck:
     )
 
 
-class ReceiptSchemaValidationError(AssertionError):
-    pass
-
-
-def _json_type_name(value: Any) -> str:
-    if isinstance(value, bool):
-        return 'boolean'
-    if isinstance(value, dict):
-        return 'object'
-    if isinstance(value, list):
-        return 'array'
-    if isinstance(value, int) and not isinstance(value, bool):
-        return 'integer'
-    if isinstance(value, float):
-        return 'number'
-    if isinstance(value, str):
-        return 'string'
-    if value is None:
-        return 'null'
-    return type(value).__name__
-
-
-def _assert_schema_type(value: Any, expected: Any, path: str) -> None:
-    expected_types = expected if isinstance(expected, list) else [expected]
-    actual = _json_type_name(value)
-    if actual == 'integer' and 'number' in expected_types:
-        return
-    if actual not in expected_types:
-        raise ReceiptSchemaValidationError(f'{path}: expected {expected_types}, got {actual}')
-
-
-def _validate_schema_value(schema: Mapping[str, Any], value: Any, path: str = '$') -> None:
-    if 'const' in schema and value != schema['const']:
-        raise ReceiptSchemaValidationError(f'{path}: expected const {schema["const"]!r}, got {value!r}')
-    if 'enum' in schema and value not in schema['enum']:
-        raise ReceiptSchemaValidationError(f'{path}: expected one of {schema["enum"]!r}, got {value!r}')
-    if 'type' in schema:
-        _assert_schema_type(value, schema['type'], path)
-    if isinstance(value, str) and 'minLength' in schema and len(value) < int(schema['minLength']):
-        raise ReceiptSchemaValidationError(f'{path}: expected minLength {schema["minLength"]}')
-    if isinstance(value, (int, float)) and not isinstance(value, bool) and 'minimum' in schema and value < float(schema['minimum']):
-        raise ReceiptSchemaValidationError(f'{path}: expected minimum {schema["minimum"]}')
-    if schema.get('type') == 'object':
-        if not isinstance(value, dict):
-            raise ReceiptSchemaValidationError(f'{path}: expected object')
-        for key in schema.get('required', []):
-            if key not in value:
-                raise ReceiptSchemaValidationError(f'{path}: missing required field {key!r}')
-        properties = schema.get('properties') if isinstance(schema.get('properties'), dict) else {}
-        for key, subschema in properties.items():
-            if key in value and isinstance(subschema, dict):
-                _validate_schema_value(subschema, value[key], f'{path}.{key}')
-        if schema.get('additionalProperties') is False:
-            extra = sorted(set(value) - set(properties))
-            if extra:
-                raise ReceiptSchemaValidationError(f'{path}: unexpected fields {extra!r}')
-    if schema.get('type') == 'array':
-        if not isinstance(value, list):
-            raise ReceiptSchemaValidationError(f'{path}: expected array')
-        item_schema = schema.get('items')
-        if isinstance(item_schema, dict):
-            for idx, item in enumerate(value):
-                _validate_schema_value(item_schema, item, f'{path}[{idx}]')
-
-
-def _load_receipt_schema() -> Dict[str, Any]:
-    value = json.loads((ROOT / RECEIPT_SCHEMA_REF).read_text(encoding='utf-8'))
-    if not isinstance(value, dict):
-        raise ReceiptSchemaValidationError('receipt schema root is not an object')
-    return value
+ReceiptSchemaValidationError = scl.JsonSchemaValidationError
 
 
 def validate_receipt_schema(receipt: Mapping[str, Any]) -> None:
-    _validate_schema_value(_load_receipt_schema(), receipt)
+    scl.validate_schema_ref(RECEIPT_SCHEMA_REF, receipt, root=ROOT)
 
 
 def list_check_ids(include_pytest: bool) -> List[str]:

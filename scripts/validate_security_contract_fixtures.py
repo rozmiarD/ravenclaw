@@ -15,70 +15,11 @@ if str(ENGINE_DIR) not in sys.path:
 import security_contract_layer as scl  # type: ignore
 
 
-class SchemaValidationError(AssertionError):
-    pass
-
-
-def _type_name(value: Any) -> str:
-    if isinstance(value, bool):
-        return 'boolean'
-    if isinstance(value, dict):
-        return 'object'
-    if isinstance(value, list):
-        return 'array'
-    if isinstance(value, int) and not isinstance(value, bool):
-        return 'integer'
-    if isinstance(value, str):
-        return 'string'
-    if value is None:
-        return 'null'
-    return type(value).__name__
-
-
-def _assert_type(value: Any, expected: Any, path: str) -> None:
-    expected_types = expected if isinstance(expected, list) else [expected]
-    actual = _type_name(value)
-    if actual not in expected_types:
-        raise SchemaValidationError(f'{path}: expected {expected_types}, got {actual}')
-
-
-def _validate(schema: Dict[str, Any], value: Any, path: str = '$') -> None:
-    if 'const' in schema and value != schema['const']:
-        raise SchemaValidationError(f'{path}: expected const {schema["const"]!r}, got {value!r}')
-    if 'enum' in schema and value not in schema['enum']:
-        raise SchemaValidationError(f'{path}: expected one of {schema["enum"]!r}, got {value!r}')
-    if 'type' in schema:
-        _assert_type(value, schema['type'], path)
-    if isinstance(value, str) and 'minLength' in schema and len(value) < int(schema['minLength']):
-        raise SchemaValidationError(f'{path}: expected minLength {schema["minLength"]}')
-    if isinstance(value, int) and 'minimum' in schema and value < int(schema['minimum']):
-        raise SchemaValidationError(f'{path}: expected minimum {schema["minimum"]}')
-    if schema.get('type') == 'object':
-        assert isinstance(value, dict)
-        for key in schema.get('required', []):
-            if key not in value:
-                raise SchemaValidationError(f'{path}: missing required field {key!r}')
-        properties = schema.get('properties') if isinstance(schema.get('properties'), dict) else {}
-        for key, subschema in properties.items():
-            if key in value and isinstance(subschema, dict):
-                _validate(subschema, value[key], f'{path}.{key}')
-    if schema.get('type') == 'array':
-        assert isinstance(value, list)
-        item_schema = schema.get('items')
-        if isinstance(item_schema, dict):
-            for idx, item in enumerate(value):
-                _validate(item_schema, item, f'{path}[{idx}]')
-
-
 def _load_json(path: Path) -> Dict[str, Any]:
     value = json.loads(path.read_text(encoding='utf-8'))
     if not isinstance(value, dict):
-        raise SchemaValidationError(f'{path}: JSON root is not an object')
+        raise scl.JsonSchemaValidationError(f'{path}: JSON root is not an object')
     return value
-
-
-def _load_schema(schema_ref: str) -> Dict[str, Any]:
-    return _load_json(ROOT / schema_ref)
 
 
 def load_fixture_artifacts(fixture_dir: Path) -> Dict[str, Any]:
@@ -110,7 +51,7 @@ def validate_fixture_dir(fixture_dir: Path) -> List[str]:
         if not schema_ref:
             continue
         try:
-            _validate(_load_schema(schema_ref), artifacts[filename])
+            scl.validate_schema_ref(schema_ref, artifacts[filename], root=ROOT)
         except Exception as exc:
             errors.append(f'{filename}:schema_validation:{exc}')
 

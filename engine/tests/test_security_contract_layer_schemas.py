@@ -14,63 +14,12 @@ import public_demo_bundle as pdb  # type: ignore
 import security_contract_layer as scl  # type: ignore
 
 
-class SchemaValidationError(AssertionError):
-    pass
-
-
-def _type_name(value: Any) -> str:
-    if isinstance(value, bool):
-        return 'boolean'
-    if isinstance(value, dict):
-        return 'object'
-    if isinstance(value, list):
-        return 'array'
-    if isinstance(value, int) and not isinstance(value, bool):
-        return 'integer'
-    if isinstance(value, str):
-        return 'string'
-    if value is None:
-        return 'null'
-    return type(value).__name__
-
-
-def _assert_type(value: Any, expected: Any, path: str) -> None:
-    expected_types = expected if isinstance(expected, list) else [expected]
-    actual = _type_name(value)
-    if actual not in expected_types:
-        raise SchemaValidationError(f'{path}: expected {expected_types}, got {actual}')
-
-
-def _validate(schema: Dict[str, Any], value: Any, path: str = '$') -> None:
-    if 'const' in schema and value != schema['const']:
-        raise SchemaValidationError(f'{path}: expected const {schema["const"]!r}, got {value!r}')
-    if 'enum' in schema and value not in schema['enum']:
-        raise SchemaValidationError(f'{path}: expected one of {schema["enum"]!r}, got {value!r}')
-    if 'type' in schema:
-        _assert_type(value, schema['type'], path)
-    if isinstance(value, str) and 'minLength' in schema and len(value) < int(schema['minLength']):
-        raise SchemaValidationError(f'{path}: expected minLength {schema["minLength"]}')
-    if isinstance(value, int) and 'minimum' in schema and value < int(schema['minimum']):
-        raise SchemaValidationError(f'{path}: expected minimum {schema["minimum"]}')
-    if schema.get('type') == 'object':
-        assert isinstance(value, dict)
-        for key in schema.get('required', []):
-            if key not in value:
-                raise SchemaValidationError(f'{path}: missing required field {key!r}')
-        properties = schema.get('properties') if isinstance(schema.get('properties'), dict) else {}
-        for key, subschema in properties.items():
-            if key in value and isinstance(subschema, dict):
-                _validate(subschema, value[key], f'{path}.{key}')
-    if schema.get('type') == 'array':
-        assert isinstance(value, list)
-        item_schema = schema.get('items')
-        if isinstance(item_schema, dict):
-            for idx, item in enumerate(value):
-                _validate(item_schema, item, f'{path}[{idx}]')
-
-
 def _load_schema(name: str) -> Dict[str, Any]:
     return json.loads((ROOT / 'schemas' / name).read_text(encoding='utf-8'))
+
+
+def _validate_schema(name: str, value: Any) -> None:
+    scl.validate_json_schema_value(_load_schema(name), value)
 
 
 def _demo_pipeline_data() -> Dict[str, Any]:
@@ -120,25 +69,25 @@ def _demo_pipeline_data() -> Dict[str, Any]:
 
 def test_policy_decision_artifact_matches_schema() -> None:
     artifacts = pdb.build_proof_trace_artifacts(_demo_pipeline_data())
-    _validate(_load_schema('policy_decision.v0.1.schema.json'), artifacts['policy_decision.json'])
+    _validate_schema('policy_decision.v0.1.schema.json', artifacts['policy_decision.json'])
 
 
 def test_execution_receipt_artifact_matches_schema() -> None:
     artifacts = pdb.build_proof_trace_artifacts(_demo_pipeline_data())
-    _validate(_load_schema('execution_receipt.v0.1.schema.json'), artifacts['execution_receipt.json'])
+    _validate_schema('execution_receipt.v0.1.schema.json', artifacts['execution_receipt.json'])
 
 
 def test_evidence_bundle_artifact_matches_schema() -> None:
     artifacts = pdb.build_proof_trace_artifacts(_demo_pipeline_data())
-    _validate(_load_schema('evidence_bundle.v0.1.schema.json'), artifacts['evidence_bundle.json'])
+    _validate_schema('evidence_bundle.v0.1.schema.json', artifacts['evidence_bundle.json'])
 
 
 def test_policy_decision_schema_rejects_unknown_decision() -> None:
     artifact = pdb.build_proof_trace_artifacts(_demo_pipeline_data())['policy_decision.json']
     artifact['decision'] = 'maybe'
     try:
-        _validate(_load_schema('policy_decision.v0.1.schema.json'), artifact)
-    except SchemaValidationError as exc:
+        _validate_schema('policy_decision.v0.1.schema.json', artifact)
+    except scl.JsonSchemaValidationError as exc:
         assert 'expected one of' in str(exc)
     else:  # pragma: no cover - assertion guard
         raise AssertionError('unknown policy decision should fail schema validation')
@@ -148,8 +97,8 @@ def test_execution_receipt_schema_rejects_raw_receipt_without_artifact_type() ->
     artifact = pdb.build_proof_trace_artifacts(_demo_pipeline_data())['execution_receipt.json']
     artifact.pop('artifact_type')
     try:
-        _validate(_load_schema('execution_receipt.v0.1.schema.json'), artifact)
-    except SchemaValidationError as exc:
+        _validate_schema('execution_receipt.v0.1.schema.json', artifact)
+    except scl.JsonSchemaValidationError as exc:
         assert 'artifact_type' in str(exc)
     else:  # pragma: no cover - assertion guard
         raise AssertionError('missing artifact_type should fail schema validation')
@@ -159,8 +108,8 @@ def test_evidence_bundle_schema_requires_public_safety_non_claims() -> None:
     artifact = pdb.build_proof_trace_artifacts(_demo_pipeline_data())['evidence_bundle.json']
     artifact['public_safety']['raw_live_evidence_included'] = True
     try:
-        _validate(_load_schema('evidence_bundle.v0.1.schema.json'), artifact)
-    except SchemaValidationError as exc:
+        _validate_schema('evidence_bundle.v0.1.schema.json', artifact)
+    except scl.JsonSchemaValidationError as exc:
         assert 'expected const False' in str(exc)
     else:  # pragma: no cover - assertion guard
         raise AssertionError('public demo evidence bundle must not include raw live evidence')

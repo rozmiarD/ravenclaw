@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Mapping
 
 from execution_contracts import redact_prepared_execution_spec_for_auditor  # type: ignore
 from policy_gateway import normalize_policy_decision_v0  # type: ignore
@@ -42,8 +43,90 @@ class ProofTraceInvariantError(ValueError):
     pass
 
 
+class JsonSchemaValidationError(AssertionError):
+    pass
+
+
 def repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
+
+
+def _json_type_name(value: Any) -> str:
+    if isinstance(value, bool):
+        return 'boolean'
+    if isinstance(value, dict):
+        return 'object'
+    if isinstance(value, list):
+        return 'array'
+    if isinstance(value, int) and not isinstance(value, bool):
+        return 'integer'
+    if isinstance(value, float):
+        return 'number'
+    if isinstance(value, str):
+        return 'string'
+    if value is None:
+        return 'null'
+    return type(value).__name__
+
+
+def _assert_json_schema_type(value: Any, expected: Any, path: str) -> None:
+    expected_types = expected if isinstance(expected, list) else [expected]
+    actual = _json_type_name(value)
+    if actual == 'integer' and 'number' in expected_types:
+        return
+    if actual not in expected_types:
+        raise JsonSchemaValidationError(f'{path}: expected {expected_types}, got {actual}')
+
+
+def validate_json_schema_value(schema: Mapping[str, Any], value: Any, path: str = '$') -> None:
+    """Validate the JSON Schema subset used by Ravenclaw public contracts.
+
+    This intentionally small validator avoids adding a runtime dependency while
+    keeping fixture, receipt, and demo artifact checks behind one SCL boundary.
+    It supports the subset currently used by `schemas/*.v0.1.schema.json`.
+    """
+    if 'const' in schema and value != schema['const']:
+        raise JsonSchemaValidationError(f'{path}: expected const {schema["const"]!r}, got {value!r}')
+    if 'enum' in schema and value not in schema['enum']:
+        raise JsonSchemaValidationError(f'{path}: expected one of {schema["enum"]!r}, got {value!r}')
+    if 'type' in schema:
+        _assert_json_schema_type(value, schema['type'], path)
+    if isinstance(value, str) and 'minLength' in schema and len(value) < int(schema['minLength']):
+        raise JsonSchemaValidationError(f'{path}: expected minLength {schema["minLength"]}')
+    if isinstance(value, (int, float)) and not isinstance(value, bool) and 'minimum' in schema and value < float(schema['minimum']):
+        raise JsonSchemaValidationError(f'{path}: expected minimum {schema["minimum"]}')
+    if schema.get('type') == 'object':
+        if not isinstance(value, dict):
+            raise JsonSchemaValidationError(f'{path}: expected object')
+        for key in schema.get('required', []):
+            if key not in value:
+                raise JsonSchemaValidationError(f'{path}: missing required field {key!r}')
+        properties = schema.get('properties') if isinstance(schema.get('properties'), dict) else {}
+        for key, subschema in properties.items():
+            if key in value and isinstance(subschema, dict):
+                validate_json_schema_value(subschema, value[key], f'{path}.{key}')
+        if schema.get('additionalProperties') is False:
+            extra = sorted(set(value) - set(properties))
+            if extra:
+                raise JsonSchemaValidationError(f'{path}: unexpected fields {extra!r}')
+    if schema.get('type') == 'array':
+        if not isinstance(value, list):
+            raise JsonSchemaValidationError(f'{path}: expected array')
+        item_schema = schema.get('items')
+        if isinstance(item_schema, dict):
+            for idx, item in enumerate(value):
+                validate_json_schema_value(item_schema, item, f'{path}[{idx}]')
+
+
+def load_json_schema(schema_ref: str, *, root: Path | None = None) -> Dict[str, Any]:
+    value = json.loads(((root or repo_root()) / schema_ref).read_text(encoding='utf-8'))
+    if not isinstance(value, dict):
+        raise JsonSchemaValidationError(f'{schema_ref}: schema root is not an object')
+    return value
+
+
+def validate_schema_ref(schema_ref: str, value: Any, *, root: Path | None = None, path: str = '$') -> None:
+    validate_json_schema_value(load_json_schema(schema_ref, root=root), value, path=path)
 
 
 def _sanitize_string(value: Any) -> str:
