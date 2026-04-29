@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Fixed public snapshot CI packaging by including `scripts/run_pytest_slice.py`, which the GitHub Actions pytest matrix invokes for every validation slice.
 - Added `scripts/run_security_contract_validation.py` as a local/public-safe Security Contract validation runner that emits a `security_contract_validation_receipt` across fixture validation, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, and optional focused pytest checks.
 - Hardened the Ravenclaw Security Contract OpenClaw Skill with workspace workflow, risk-based validation, clean publish-tree, source-of-truth, and stop-condition guardrails.
 - Added a workspace OpenClaw Skill for Ravenclaw Security Contract proof validation, demo-bundle review, snapshot residue audit, and publish-safety checks.

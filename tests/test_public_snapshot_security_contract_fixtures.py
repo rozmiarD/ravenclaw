@@ -45,6 +45,7 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         'scripts/bootstrap_public_demo.sh',
         'scripts/validate_security_contract_fixtures.py',
         'scripts/run_security_contract_validation.py',
+        'scripts/run_pytest_slice.py',
     ]
     for rel in expected_paths:
         assert (out / rel).exists(), rel

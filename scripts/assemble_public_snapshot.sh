@@ -91,6 +91,7 @@ cp "$ROOT/scripts/prepare_public_examples.md" "$OUT/scripts/prepare_public_examp
 copy_path scripts/audit_public_snapshot_residue.py
 copy_path scripts/validate_security_contract_fixtures.py
 copy_path scripts/run_security_contract_validation.py
+copy_path scripts/run_pytest_slice.py
 copy_path examples/security-contract-proof
 
 cat > "$OUT/examples/campaign_registry/example-registry-entry.md" <<'EOF'
