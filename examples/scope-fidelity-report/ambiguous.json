@@ -1,0 +1,26 @@
+{
+  "all_hosts_detected": [],
+  "arg_hosts_detected": [],
+  "artifact_type": "scope_fidelity_report",
+  "evaluated_inputs": {
+    "execution_plan_steps": 1,
+    "normalized_args_count": 4,
+    "stdin_present": false
+  },
+  "execution_plan_hosts_detected": [],
+  "mismatched_hosts_detected": [],
+  "public_safety": {
+    "live_target_execution": false,
+    "protocol_adapter_work": false,
+    "raw_stdout_stderr_included": false
+  },
+  "request_shape_hygiene_reason": "no_hosts_detected_in_prepared_shape",
+  "request_shape_hygiene_source": "none",
+  "request_shape_hygiene_status": "ambiguous",
+  "schema_version": "2026-04-29.scope-fidelity.v0.1",
+  "target": "https://api.example.com/",
+  "target_host": "api.example.com",
+  "target_host_match_status": "none_detected",
+  "target_in_scope": true,
+  "verdict": "review"
+}

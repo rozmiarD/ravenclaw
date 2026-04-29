@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added public-safe Scope Fidelity report fixtures and validation coverage for exact, mismatch, and ambiguous target binding.
 - Added a schema-backed Scope Fidelity report for local target-binding/request-shape hygiene checks.
 - Moved public contract schema validation helpers behind `engine/security_contract_layer.py` so fixture and receipt validation share the SCL boundary.
 - Added a public-safe Replayable Truth Runtime proof fixture plus deterministic fixture validation and documentation.

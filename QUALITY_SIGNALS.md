@@ -87,7 +87,7 @@ The repo also includes publication-boundary and public-snapshot planning surface
 - `scripts/assemble_public_snapshot.sh`
 - `scripts/run_security_contract_validation.py`
 
-That is a useful trust signal because it shows the project is trying to separate a public artifact from a messy live workspace, instead of pretending they are the same thing. The Security Contract validation runner adds a repeatable schema-backed receipt surface for fixture validation, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, Replayable Truth Runtime fixture validation, and optional focused pytest.
+That is a useful trust signal because it shows the project is trying to separate a public artifact from a messy live workspace, instead of pretending they are the same thing. The Security Contract validation runner adds a repeatable schema-backed receipt surface for fixture validation, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, Replayable Truth Runtime fixture validation, Scope Fidelity fixture validation, and optional focused pytest.
 
 ## What these signals support
 

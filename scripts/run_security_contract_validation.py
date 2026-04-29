@@ -33,6 +33,7 @@ FOCUSED_PYTEST_TARGETS = [
     'tests/test_public_snapshot_security_contract_fixtures.py',
     'tests/test_public_snapshot_residue_audit.py',
     'tests/test_replayable_truth_fixture.py',
+    'tests/test_scope_fidelity_fixtures.py',
 ]
 
 
@@ -166,6 +167,15 @@ def _snapshot_replayable_truth_fixture_check(snapshot_dir: Path) -> ValidationCh
     )
 
 
+def _snapshot_scope_fidelity_fixture_check(snapshot_dir: Path) -> ValidationCheck:
+    return ValidationCheck(
+        check_id='snapshot_scope_fidelity_fixture',
+        description='Validate public-safe Scope Fidelity report fixtures copied into the assembled public snapshot.',
+        command=[sys.executable, 'scripts/validate_scope_fidelity_fixtures.py', 'examples/scope-fidelity-report'],
+        cwd=snapshot_dir,
+    )
+
+
 def _focused_pytest_check(pytest_repo: Path) -> ValidationCheck:
     return ValidationCheck(
         check_id='focused_pytest',
@@ -197,6 +207,7 @@ def list_check_ids(include_pytest: bool) -> List[str]:
         'snapshot_fixture_validation',
         'snapshot_residue_audit',
         'snapshot_replayable_truth_fixture',
+    'snapshot_scope_fidelity_fixture',
     ]
     if include_pytest:
         ids.append('focused_pytest')
@@ -273,6 +284,7 @@ def run_validation(include_pytest: bool) -> Dict[str, Any]:
             _snapshot_fixture_check(snapshot_dir),
             _snapshot_residue_check(snapshot_dir),
             _snapshot_replayable_truth_fixture_check(snapshot_dir),
+            _snapshot_scope_fidelity_fixture_check(snapshot_dir),
         ]
         if include_pytest:
             checks.append(_focused_pytest_check(tmp_path / 'pytest-repo'))

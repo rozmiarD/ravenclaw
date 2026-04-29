@@ -93,9 +93,11 @@ copy_path scripts/audit_public_snapshot_residue.py
 copy_path scripts/validate_security_contract_fixtures.py
 copy_path scripts/run_security_contract_validation.py
 copy_path scripts/validate_replayable_truth_fixture.py
+copy_path scripts/validate_scope_fidelity_fixtures.py
 copy_path scripts/run_pytest_slice.py
 copy_path examples/security-contract-proof
 copy_path examples/replayable-truth-runtime
+copy_path examples/scope-fidelity-report
 
 cat > "$OUT/examples/campaign_registry/example-registry-entry.md" <<'EOF'
 # Example campaign registry entry
