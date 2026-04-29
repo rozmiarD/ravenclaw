@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ravenclaw.local/schemas/security_contract_validation_receipt.v0.1.schema.json",
+  "title": "Ravenclaw SecurityContractValidationReceipt v0.1",
+  "description": "Local/public-safe validation receipt emitted by scripts/run_security_contract_validation.py. Captures which Security Contract proof checks ran and whether they passed without authorizing live target execution, protocol adapter work, or public push.",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "schema_ref",
+    "generated_at",
+    "status",
+    "scope",
+    "validated_trace",
+    "checks_requested",
+    "checks_passed",
+    "checks_failed",
+    "checks",
+    "summary"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "security_contract_validation_receipt"
+    },
+    "schema_version": {
+      "const": "v0.1"
+    },
+    "schema_ref": {
+      "const": "schemas/security_contract_validation_receipt.v0.1.schema.json"
+    },
+    "generated_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": ["passed", "failed"]
+    },
+    "scope": {
+      "type": "object",
+      "required": ["mode", "live_target_execution", "protocol_adapter_work", "public_push"],
+      "properties": {
+        "mode": {
+          "const": "local_public_safe_validation"
+        },
+        "live_target_execution": {
+          "const": false
+        },
+        "protocol_adapter_work": {
+          "const": false
+        },
+        "public_push": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "validated_trace": {
+      "const": "scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary"
+    },
+    "checks_requested": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "checks_passed": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "checks_failed": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "check_id",
+          "description",
+          "status",
+          "command",
+          "cwd_label",
+          "returncode",
+          "duration_seconds",
+          "stdout_excerpt",
+          "stderr_excerpt"
+        ],
+        "properties": {
+          "check_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": ["passed", "failed"]
+          },
+          "command": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cwd_label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "returncode": {
+            "type": "integer"
+          },
+          "duration_seconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "stdout_excerpt": {
+            "type": "string"
+          },
+          "stderr_excerpt": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total", "passed", "failed"],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

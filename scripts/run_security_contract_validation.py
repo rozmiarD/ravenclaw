@@ -14,6 +14,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping, Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
+RECEIPT_ARTIFACT_TYPE = 'security_contract_validation_receipt'
+RECEIPT_SCHEMA_VERSION = 'v0.1'
+RECEIPT_SCHEMA_REF = 'schemas/security_contract_validation_receipt.v0.1.schema.json'
+VALIDATED_TRACE = 'scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary'
 
 FOCUSED_PYTEST_TARGETS = [
     'engine/tests/test_security_contract_fixtures.py',
@@ -21,6 +25,7 @@ FOCUSED_PYTEST_TARGETS = [
     'engine/tests/test_security_contract_layer_schemas.py',
     'tests/test_public_snapshot_security_contract_fixtures.py',
     'tests/test_public_snapshot_residue_audit.py',
+    'tests/test_replayable_truth_fixture.py',
 ]
 
 
@@ -145,6 +150,15 @@ def _snapshot_residue_check(snapshot_dir: Path) -> ValidationCheck:
     )
 
 
+def _snapshot_replayable_truth_fixture_check(snapshot_dir: Path) -> ValidationCheck:
+    return ValidationCheck(
+        check_id='snapshot_replayable_truth_fixture',
+        description='Validate the public-safe Replayable Truth Runtime fixture copied into the assembled public snapshot.',
+        command=[sys.executable, 'scripts/validate_replayable_truth_fixture.py', 'examples/replayable-truth-runtime'],
+        cwd=snapshot_dir,
+    )
+
+
 def _focused_pytest_check(pytest_repo: Path) -> ValidationCheck:
     return ValidationCheck(
         check_id='focused_pytest',
@@ -161,6 +175,82 @@ def _focused_pytest_check(pytest_repo: Path) -> ValidationCheck:
     )
 
 
+class ReceiptSchemaValidationError(AssertionError):
+    pass
+
+
+def _json_type_name(value: Any) -> str:
+    if isinstance(value, bool):
+        return 'boolean'
+    if isinstance(value, dict):
+        return 'object'
+    if isinstance(value, list):
+        return 'array'
+    if isinstance(value, int) and not isinstance(value, bool):
+        return 'integer'
+    if isinstance(value, float):
+        return 'number'
+    if isinstance(value, str):
+        return 'string'
+    if value is None:
+        return 'null'
+    return type(value).__name__
+
+
+def _assert_schema_type(value: Any, expected: Any, path: str) -> None:
+    expected_types = expected if isinstance(expected, list) else [expected]
+    actual = _json_type_name(value)
+    if actual == 'integer' and 'number' in expected_types:
+        return
+    if actual not in expected_types:
+        raise ReceiptSchemaValidationError(f'{path}: expected {expected_types}, got {actual}')
+
+
+def _validate_schema_value(schema: Mapping[str, Any], value: Any, path: str = '$') -> None:
+    if 'const' in schema and value != schema['const']:
+        raise ReceiptSchemaValidationError(f'{path}: expected const {schema["const"]!r}, got {value!r}')
+    if 'enum' in schema and value not in schema['enum']:
+        raise ReceiptSchemaValidationError(f'{path}: expected one of {schema["enum"]!r}, got {value!r}')
+    if 'type' in schema:
+        _assert_schema_type(value, schema['type'], path)
+    if isinstance(value, str) and 'minLength' in schema and len(value) < int(schema['minLength']):
+        raise ReceiptSchemaValidationError(f'{path}: expected minLength {schema["minLength"]}')
+    if isinstance(value, (int, float)) and not isinstance(value, bool) and 'minimum' in schema and value < float(schema['minimum']):
+        raise ReceiptSchemaValidationError(f'{path}: expected minimum {schema["minimum"]}')
+    if schema.get('type') == 'object':
+        if not isinstance(value, dict):
+            raise ReceiptSchemaValidationError(f'{path}: expected object')
+        for key in schema.get('required', []):
+            if key not in value:
+                raise ReceiptSchemaValidationError(f'{path}: missing required field {key!r}')
+        properties = schema.get('properties') if isinstance(schema.get('properties'), dict) else {}
+        for key, subschema in properties.items():
+            if key in value and isinstance(subschema, dict):
+                _validate_schema_value(subschema, value[key], f'{path}.{key}')
+        if schema.get('additionalProperties') is False:
+            extra = sorted(set(value) - set(properties))
+            if extra:
+                raise ReceiptSchemaValidationError(f'{path}: unexpected fields {extra!r}')
+    if schema.get('type') == 'array':
+        if not isinstance(value, list):
+            raise ReceiptSchemaValidationError(f'{path}: expected array')
+        item_schema = schema.get('items')
+        if isinstance(item_schema, dict):
+            for idx, item in enumerate(value):
+                _validate_schema_value(item_schema, item, f'{path}[{idx}]')
+
+
+def _load_receipt_schema() -> Dict[str, Any]:
+    value = json.loads((ROOT / RECEIPT_SCHEMA_REF).read_text(encoding='utf-8'))
+    if not isinstance(value, dict):
+        raise ReceiptSchemaValidationError('receipt schema root is not an object')
+    return value
+
+
+def validate_receipt_schema(receipt: Mapping[str, Any]) -> None:
+    _validate_schema_value(_load_receipt_schema(), receipt)
+
+
 def list_check_ids(include_pytest: bool) -> List[str]:
     ids = [
         'fixture_validation',
@@ -168,6 +258,7 @@ def list_check_ids(include_pytest: bool) -> List[str]:
         'assemble_public_snapshot',
         'snapshot_fixture_validation',
         'snapshot_residue_audit',
+        'snapshot_replayable_truth_fixture',
     ]
     if include_pytest:
         ids.append('focused_pytest')
@@ -176,9 +267,10 @@ def list_check_ids(include_pytest: bool) -> List[str]:
 
 def _build_receipt(checks: Sequence[CheckReceipt], include_pytest: bool) -> Dict[str, Any]:
     failed = [check for check in checks if check.status != 'passed']
-    return {
-        'artifact_type': 'security_contract_validation_receipt',
-        'schema_version': 'v0.1',
+    receipt = {
+        'artifact_type': RECEIPT_ARTIFACT_TYPE,
+        'schema_version': RECEIPT_SCHEMA_VERSION,
+        'schema_ref': RECEIPT_SCHEMA_REF,
         'generated_at': _utc_now(),
         'status': 'passed' if not failed else 'failed',
         'scope': {
@@ -187,7 +279,7 @@ def _build_receipt(checks: Sequence[CheckReceipt], include_pytest: bool) -> Dict
             'protocol_adapter_work': False,
             'public_push': False,
         },
-        'validated_trace': 'scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary',
+        'validated_trace': VALIDATED_TRACE,
         'checks_requested': list_check_ids(include_pytest),
         'checks_passed': [check.check_id for check in checks if check.status == 'passed'],
         'checks_failed': [check.check_id for check in failed],
@@ -198,6 +290,8 @@ def _build_receipt(checks: Sequence[CheckReceipt], include_pytest: bool) -> Dict
             'failed': len(failed),
         },
     }
+    validate_receipt_schema(receipt)
+    return receipt
 
 
 def _print_markdown(receipt: Mapping[str, Any]) -> None:
@@ -240,6 +334,7 @@ def run_validation(include_pytest: bool) -> Dict[str, Any]:
             _assemble_snapshot_check(snapshot_dir),
             _snapshot_fixture_check(snapshot_dir),
             _snapshot_residue_check(snapshot_dir),
+            _snapshot_replayable_truth_fixture_check(snapshot_dir),
         ]
         if include_pytest:
             checks.append(_focused_pytest_check(tmp_path / 'pytest-repo'))

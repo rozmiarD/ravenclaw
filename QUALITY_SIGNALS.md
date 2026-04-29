@@ -34,6 +34,7 @@ Ravenclaw includes substantial automated coverage across:
 - Logdash control and projection behavior
 - runtime recovery and state truth
 - evaluation and replay contracts
+- Replayable Truth Runtime fixtures
 - qualification and signal semantics
 
 Publicly visible examples:
@@ -57,6 +58,7 @@ Examples include:
 - `references/runtime-task-contract-v2.md`
 - `references/planner-runtime-contract-map.md`
 - `references/logdash-operator-truth-contracts.md`
+- `REPLAYABLE_TRUTH_RUNTIME.md`
 - `references/evaluation-replay-contract.md`
 - `references/effectiveness-metrics-contract.md`
 - `references/runtime-artifact-ownership.md`
@@ -84,7 +86,7 @@ The repo also includes publication-boundary and public-snapshot planning surface
 - `scripts/assemble_public_snapshot.sh`
 - `scripts/run_security_contract_validation.py`
 
-That is a useful trust signal because it shows the project is trying to separate a public artifact from a messy live workspace, instead of pretending they are the same thing. The Security Contract validation runner adds a repeatable receipt surface for fixture validation, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, and residue audit.
+That is a useful trust signal because it shows the project is trying to separate a public artifact from a messy live workspace, instead of pretending they are the same thing. The Security Contract validation runner adds a repeatable schema-backed receipt surface for fixture validation, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, Replayable Truth Runtime fixture validation, and optional focused pytest.
 
 ## What these signals support
 
@@ -95,6 +97,7 @@ Taken together, these signals support the following public claims:
 - the public repo is being shaped deliberately rather than dumped casually
 - governance and operator-visibility behavior are treated as real correctness concerns
 - the emerging Security Contract Layer is grounded in Ravenclaw Runtime artifacts, not protocol-first marketing
+- the Replayable Truth Runtime proof path can evaluate preserved decisions without live target execution by default
 
 ## What these signals do not prove
 
@@ -116,10 +119,11 @@ If you want the shortest serious verification path, read these in order:
 3. `.github/workflows/pytest.yml`
 4. `tests/test_logdash_smoke.py`
 5. `SECURITY_CONTRACT_LAYER.md`
-6. `references/approved-execution-spec-v0.1.md`
-7. `references/runtime-task-contract-v2.md`
-8. `references/logdash-operator-truth-contracts.md`
-9. `ARCHITECTURE.md`
+6. `REPLAYABLE_TRUTH_RUNTIME.md`
+7. `references/approved-execution-spec-v0.1.md`
+8. `references/runtime-task-contract-v2.md`
+9. `references/logdash-operator-truth-contracts.md`
+10. `ARCHITECTURE.md`
 
 ## Validation posture summary
 

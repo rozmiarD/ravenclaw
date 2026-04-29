@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -20,6 +21,7 @@ def test_security_contract_validation_runner_lists_core_checks() -> None:
         'assemble_public_snapshot',
         'snapshot_fixture_validation',
         'snapshot_residue_audit',
+        'snapshot_replayable_truth_fixture',
     ]
 
 
@@ -28,6 +30,7 @@ def test_security_contract_validation_runner_can_include_focused_pytest() -> Non
     assert ids[-1] == 'focused_pytest'
     assert 'engine/tests/test_security_contract_fixtures.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_public_snapshot_residue_audit.py' in runner.FOCUSED_PYTEST_TARGETS
+    assert 'tests/test_replayable_truth_fixture.py' in runner.FOCUSED_PYTEST_TARGETS
 
 
 def test_security_contract_validation_receipt_marks_public_safe_scope() -> None:
@@ -44,6 +47,8 @@ def test_security_contract_validation_receipt_marks_public_safe_scope() -> None:
     )
     receipt = runner._build_receipt([check], include_pytest=False)
     assert receipt['artifact_type'] == 'security_contract_validation_receipt'
+    assert receipt['schema_version'] == 'v0.1'
+    assert receipt['schema_ref'] == 'schemas/security_contract_validation_receipt.v0.1.schema.json'
     assert receipt['status'] == 'passed'
     assert receipt['scope'] == {
         'mode': 'local_public_safe_validation',
@@ -53,6 +58,39 @@ def test_security_contract_validation_receipt_marks_public_safe_scope() -> None:
     }
     assert receipt['checks_passed'] == ['fixture_validation']
     assert receipt['checks_failed'] == []
+    runner.validate_receipt_schema(receipt)
+
+
+
+def test_security_contract_validation_receipt_schema_rejects_live_target_claim() -> None:
+    check = runner.CheckReceipt(
+        check_id='fixture_validation',
+        description='fixture check',
+        status='passed',
+        command=['python', 'scripts/validate_security_contract_fixtures.py'],
+        cwd_label='.',
+        returncode=0,
+        duration_seconds=0.01,
+        stdout_excerpt='',
+        stderr_excerpt='',
+    )
+    receipt = runner._build_receipt([check], include_pytest=False)
+    receipt['scope']['live_target_execution'] = True
+    try:
+        runner.validate_receipt_schema(receipt)
+    except runner.ReceiptSchemaValidationError as exc:
+        assert 'live_target_execution' in str(exc)
+    else:  # pragma: no cover - assertion guard
+        raise AssertionError('receipt schema should reject live target execution claims')
+
+
+
+def test_security_contract_validation_receipt_schema_file_is_loadable() -> None:
+    schema = json.loads((ROOT / runner.RECEIPT_SCHEMA_REF).read_text(encoding='utf-8'))
+    assert schema['properties']['artifact_type']['const'] == runner.RECEIPT_ARTIFACT_TYPE
+    assert schema['properties']['schema_version']['const'] == runner.RECEIPT_SCHEMA_VERSION
+    assert schema['properties']['schema_ref']['const'] == runner.RECEIPT_SCHEMA_REF
+
 
 
 def test_security_contract_validation_runner_list_checks_cli() -> None:

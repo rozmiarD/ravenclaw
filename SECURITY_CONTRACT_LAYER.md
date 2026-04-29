@@ -39,13 +39,13 @@ A named contract layer lets the project expose that value without pretending eve
 
 ## Relation to Ravenclaw Runtime
 
-Ravenclaw Runtime remains the reference/proof implementation.
+Ravenclaw Runtime remains the reference/proof implementation. Its Replayable Truth Runtime capability is the proof/evaluation engine behind the contract layer: preserved runtime artifacts can be replayed offline without live target execution by default.
 
-The contract layer should be extracted only from real artifacts already produced or consumed by runtime code. The current proof path is intentionally narrow and public-safe: demo mode, safe demo targets, mock/dry-run execution, and sanitized output.
+The contract layer should be extracted only from real artifacts already produced or consumed by runtime code. The current proof path is intentionally narrow and public-safe: demo mode, safe demo targets, mock/dry-run execution, sanitized output, and deterministic replay fixtures.
 
 The current internal boundary module is `engine/security_contract_layer.py`. It centralizes public-safe proof-trace artifact builders, manifest metadata, and deterministic public-safety invariant checks while `engine/public_demo_bundle.py` remains the demo bundle orchestration/CLI surface.
 
-A committed public-safe fixture lives at `examples/security-contract-proof/` and can be validated with `scripts/validate_security_contract_fixtures.py`. The broader local/public-safe validation path is `scripts/run_security_contract_validation.py`, which emits a `security_contract_validation_receipt` covering fixtures, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, and residue audit.
+A committed public-safe fixture lives at `examples/security-contract-proof/` and can be validated with `scripts/validate_security_contract_fixtures.py`. A replay fixture lives at `examples/replayable-truth-runtime/` and can be validated with `scripts/validate_replayable_truth_fixture.py`. The broader local/public-safe validation path is `scripts/run_security_contract_validation.py`, which emits a schema-backed `security_contract_validation_receipt` covering fixtures, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, replay fixture validation, and optional focused pytest.
 
 ## Relation to OpenClaw, MCP, and A2A
 
@@ -66,6 +66,7 @@ No adapter should be promoted before the public proof bundle and schema validati
 | `ApprovedExecutionSpec` | Implemented; schema v0.1 introduced | `build_approved_execution_spec(...)` in `engine/execution_contracts.py` | `ExecutionEngine.execute_approved_spec(...)` in `engine/executor.py` | Schema: `schemas/approved_execution_spec.v0.1.schema.json`; reference: `references/approved-execution-spec-v0.1.md`. |
 | `ExecutionReceipt` | Implemented in executor output; public-safe demo receipt schema-backed in v0.1 | `ExecutionEngine.execute_approved_spec(...)`; public artifact via `engine/security_contract_layer.py` | pipeline/demo/reporting | Schema: `schemas/execution_receipt.v0.1.schema.json`; reference: `references/execution-receipt-v0.1.md`; compact/sanitized, no raw stdout/stderr. |
 | `EvidenceBundle` | Public-safe demo evidence bundle schema-backed in v0.1; broader qualification schema later | evidence and qualification modules such as `engine/vuln_qualification.py`, `engine/evidence_policy.py`; public artifact via `engine/security_contract_layer.py` | reporting/follow-up/public proof | Schema: `schemas/evidence_bundle.v0.1.schema.json`; reference: `references/evidence-bundle-v0.1.md`; states dry-run proof criteria and non-claims. |
+| `SecurityContractValidationReceipt` | Implemented as local/public-safe validation receipt schema-backed in v0.1 | `scripts/run_security_contract_validation.py` | publication prep, CI/reviewer validation, later adapter surfaces | Schema: `schemas/security_contract_validation_receipt.v0.1.schema.json`; reference: `references/security-contract-validation-receipt-v0.1.md`; records validation checks and explicit non-authorizations. |
 | `RuntimeTruth` | Implemented for demo/delivery truth | `engine/public_delivery.py`, pipeline output, Logdash truth docs | public bundle/operator UI | Includes demo/local/external mode, adapter mode, dry-run/mock truth, provenance/source labels. |
 
 ## Public safety and redaction requirements
@@ -85,11 +86,12 @@ Public contract examples must:
 2. Maintain schema-backed v0.1 artifacts for `ApprovedExecutionSpec`, `PolicyDecision`, public-safe `ExecutionReceipt`, and public-safe `EvidenceBundle`.
 3. Keep `engine/security_contract_layer.py` as the internal helper/invariant boundary and avoid growing `engine/public_demo_bundle.py` back into contract logic.
 4. Keep `examples/security-contract-proof/` synchronized with schemas and boundary invariants when the public proof trace changes.
-5. Keep `scripts/run_security_contract_validation.py` as the repeatable contract-validation receipt surface for local/public-safe proof checks.
-6. Keep Ravenclaw Runtime as proof/reference while sharpening the internal contract boundary.
-7. Build OpenClaw Skill later as the first adapter.
-8. Build MCP Policy Gateway later after schemas/examples are stable.
-9. Add A2A security metadata/profile later as an example-first carrier.
+5. Keep `scripts/run_security_contract_validation.py` as the repeatable schema-backed contract-validation receipt surface for local/public-safe proof checks.
+6. Keep Replayable Truth Runtime visible as the proof/evaluation engine for offline governance-aware replay.
+7. Keep Ravenclaw Runtime as proof/reference while sharpening the internal contract boundary.
+8. Build OpenClaw Skill later as the first adapter.
+9. Build MCP Policy Gateway later after schemas/examples are stable.
+10. Add A2A security metadata/profile later as an example-first carrier.
 
 ## Explicit non-goal
 

@@ -63,6 +63,7 @@ for f in \
   VERSION_ROADMAP.md \
   OPEN_SOURCE_1_0_PLAN.md \
   SECURITY_CONTRACT_LAYER.md \
+  REPLAYABLE_TRUTH_RUNTIME.md \
   SECURITY.md \
   CONTRIBUTING.md \
   LICENSE \
@@ -91,8 +92,10 @@ cp "$ROOT/scripts/prepare_public_examples.md" "$OUT/scripts/prepare_public_examp
 copy_path scripts/audit_public_snapshot_residue.py
 copy_path scripts/validate_security_contract_fixtures.py
 copy_path scripts/run_security_contract_validation.py
+copy_path scripts/validate_replayable_truth_fixture.py
 copy_path scripts/run_pytest_slice.py
 copy_path examples/security-contract-proof
+copy_path examples/replayable-truth-runtime
 
 cat > "$OUT/examples/campaign_registry/example-registry-entry.md" <<'EOF'
 # Example campaign registry entry

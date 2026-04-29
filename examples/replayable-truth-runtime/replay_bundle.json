@@ -1,0 +1,187 @@
+{
+  "analysis": {
+    "analysis_contract": {
+      "semantic_loss_class": "none"
+    },
+    "success_semantics": {}
+  },
+  "bundle_id": "38725068e30e848dfb3f170f3398cdef9863eab79ff3ada33c7d01fd1843db27",
+  "execution": {
+    "aggression": 0,
+    "auditor_decision": "approve",
+    "classification": "public_safe_replay_fixture",
+    "engine_status": "dry-run",
+    "execution_gate": {},
+    "mode": "demo",
+    "owner_approved_auth": false,
+    "owner_override": false,
+    "semantic_loss_class": "none"
+  },
+  "governance": {
+    "request_count_estimate": 1,
+    "run_contamination": {
+      "learning_excluded": false,
+      "status": "clean",
+      "tags": []
+    }
+  },
+  "run_identity": {
+    "campaign_key": "public-safe-demo",
+    "index": 1,
+    "objective": "Replay a governed authorization-branch decision without live execution",
+    "plan_name": "public-safe replay demo",
+    "run_id": "public-safe-replay-demo-001",
+    "target": "https://api.example.com/v1/users",
+    "task_family": "authz"
+  },
+  "runtime_decision": {
+    "economics": {},
+    "effective_action": "confirm",
+    "effective_blockers": {},
+    "effective_flags": {
+      "confirm": true
+    },
+    "effective_reasons": {},
+    "effective_secondary_action": "",
+    "effective_status": "applied",
+    "effective_summary": "",
+    "eligibility": {},
+    "explain": {},
+    "intent_flags": {
+      "confirm": true
+    },
+    "requested_action": "confirm",
+    "requested_reason": "",
+    "secondary_selection_reason": "",
+    "selected_primary_action": "confirm",
+    "selected_secondary_action": "",
+    "selection_reason": ""
+  },
+  "runtime_task": {
+    "action_type": "differential_probe",
+    "actor_requirements": {
+      "requires_auth": false
+    },
+    "branch_action": "confirm",
+    "branch_evidence_score": 0.37,
+    "branch_reason": "actor_asymmetry_public_safe_demo",
+    "branch_state": "branch_candidate",
+    "capability": "http_probe",
+    "planning_ladder": {
+      "current_stage": "bounded_exploit_proof",
+      "next_stage": "report_artifact_capture"
+    },
+    "session_requirements": {
+      "requires_auth": false,
+      "requires_state": false
+    },
+    "task_family": "authz"
+  },
+  "schema_version": "phase5-replay-bundle-v1",
+  "semantic_lineage": {
+    "artifact_boundaries": {
+      "lineage_sha256": "1fc0110e53ef33f60b7d88734dc4a890ae8e46018c4614a2c2439e8ce5329be3",
+      "planner_contract_locked": false,
+      "planner_contract_sha256": "765bd6ca27762313739df2c5218ce36b0b0a0d2280995422a06b77501621fab2",
+      "runtime_contract_locked": true,
+      "runtime_contract_sha256": "6b3851ac2aca71c9df8c5493a589daebd677b5fdead445b0d8bbb18b5209b5d2"
+    },
+    "lineage_version": 1,
+    "objective": "Replay a governed authorization-branch decision without live execution",
+    "planner_contract": {
+      "experiment_intent_id": "",
+      "planner_field_ownership": {},
+      "planner_input_source": "",
+      "planning_ladder": {
+        "current_stage": "bounded_exploit_proof",
+        "next_stage": "report_artifact_capture"
+      },
+      "recommended_progression": [],
+      "target_profile_summary": {
+        "target_type": "demo_api"
+      },
+      "target_surface_rationale": [
+        "actor_asymmetry"
+      ]
+    },
+    "runtime_contract": {
+      "action_type": "differential_probe",
+      "actor_requirements": {
+        "requires_auth": false
+      },
+      "capability": "http_probe",
+      "session_requirements": {
+        "requires_auth": false,
+        "requires_state": false
+      }
+    },
+    "source": "evaluation_bundle",
+    "summary": {
+      "action_type": "differential_probe",
+      "capability": "http_probe",
+      "current_stage": "bounded_exploit_proof",
+      "evidence_goal": "",
+      "experiment_intent_id": "",
+      "lineage_sha256": "1fc0110e53ef33f60b7d88734dc4a890ae8e46018c4614a2c2439e8ce5329be3",
+      "next_stage": "report_artifact_capture",
+      "planner_contract_sha256": "765bd6ca27762313739df2c5218ce36b0b0a0d2280995422a06b77501621fab2",
+      "planner_input_source": "",
+      "recommended_progression": [],
+      "runtime_contract_sha256": "6b3851ac2aca71c9df8c5493a589daebd677b5fdead445b0d8bbb18b5209b5d2",
+      "target": "https://api.example.com/v1/users",
+      "target_surface_rationale": [
+        "actor_asymmetry"
+      ],
+      "task_family": "authz"
+    },
+    "target": "https://api.example.com/v1/users",
+    "task_family": "authz"
+  },
+  "semantic_lineage_summary": {
+    "action_type": "differential_probe",
+    "capability": "http_probe",
+    "current_stage": "bounded_exploit_proof",
+    "evidence_goal": "",
+    "experiment_intent_id": "",
+    "lineage_sha256": "1fc0110e53ef33f60b7d88734dc4a890ae8e46018c4614a2c2439e8ce5329be3",
+    "next_stage": "report_artifact_capture",
+    "planner_contract_sha256": "765bd6ca27762313739df2c5218ce36b0b0a0d2280995422a06b77501621fab2",
+    "planner_input_source": "",
+    "recommended_progression": [],
+    "runtime_contract_sha256": "6b3851ac2aca71c9df8c5493a589daebd677b5fdead445b0d8bbb18b5209b5d2",
+    "target": "https://api.example.com/v1/users",
+    "target_surface_rationale": [
+      "actor_asymmetry"
+    ],
+    "task_family": "authz"
+  },
+  "signal_contract": {
+    "adaptation_feedback": {
+      "status": "positive"
+    },
+    "execution_anomaly": {
+      "status": "none"
+    },
+    "finding_signal": {
+      "evidence_class": "evidence_bearing",
+      "status": "strong"
+    },
+    "success_outcome": {
+      "status": "partial"
+    },
+    "workflow_promotion": {
+      "status": "confirmable",
+      "verdict": "confirmed"
+    }
+  },
+  "source_artifact": "public_replay_fixture",
+  "variant": {
+    "description": "Deterministic decision replay over a sanitized synthetic Ravenclaw runtime artifact.",
+    "family": "runtime_evaluation",
+    "label": "Baseline public-safe replay",
+    "metric_version": "phase5-metrics-v1",
+    "overrides": {},
+    "replay_version": "phase5-replay-v1",
+    "variant_id": "baseline-public-safe"
+  }
+}
