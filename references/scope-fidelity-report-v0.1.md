@@ -35,6 +35,8 @@ python scripts/build_scope_fidelity_report.py --spec examples/security-contract-
 
 The CLI reads only local JSON and emits a schema-validated `scope_fidelity_report`. It accepts prepared/approved-spec-like objects containing `target`, `normalized_args` or `args`, and `execution_plan` or `tool_chain`.
 
+For CI/preflight use, add `--fail-on fail` to return exit code `2` only for cross-host mismatch, or `--fail-on review` to return exit code `2` for ambiguous or failed binding.
+
 ## Public-safety boundary
 
 The report is deterministic and local-only:

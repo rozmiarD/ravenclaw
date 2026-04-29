@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added `--fail-on` preflight exit-code support to the Scope Fidelity report CLI.
 - Added a local Scope Fidelity report CLI for generating schema-validated reports from prepared/approved spec JSON.
 - Added public-safe Scope Fidelity report fixtures and validation coverage for exact, mismatch, and ambiguous target binding.
 - Added a schema-backed Scope Fidelity report for local target-binding/request-shape hygiene checks.

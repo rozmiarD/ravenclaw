@@ -74,6 +74,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument('--execution-plan', help='JSON array execution_plan when not using --spec')
     parser.add_argument('--target-in-scope', action='store_true', default=None, help='mark target_in_scope true for manual mode')
     parser.add_argument('--compact', action='store_true', help='emit compact JSON')
+    parser.add_argument(
+        '--fail-on',
+        choices=['never', 'fail', 'review'],
+        default='never',
+        help='exit with code 2 when the verdict reaches the selected threshold: fail only, review/fail, or never',
+    )
     args = parser.parse_args(argv)
 
     if bool(args.spec) == bool(args.target):
@@ -84,6 +90,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps(report, sort_keys=True, separators=(',', ':')))
     else:
         print(json.dumps(report, indent=2, sort_keys=True))
+
+    verdict = str(report.get('verdict') or '')
+    if args.fail_on == 'fail' and verdict == 'fail':
+        return 2
+    if args.fail_on == 'review' and verdict in {'review', 'fail'}:
+        return 2
     return 0
 
 

@@ -71,3 +71,70 @@ def test_scope_fidelity_cli_builds_report_from_manual_args() -> None:
     report = json.loads(proc.stdout)
     assert report['verdict'] == 'fail'
     assert report['target_host'] == 'api.example.com'
+
+
+def test_scope_fidelity_cli_fail_on_fail_returns_nonzero() -> None:
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPTS_DIR / 'build_scope_fidelity_report.py'),
+            '--target',
+            'https://api.example.com/',
+            '--arg',
+            'https://other.example.net/',
+            '--fail-on',
+            'fail',
+        ],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 2
+    report = json.loads(proc.stdout)
+    assert report['verdict'] == 'fail'
+
+
+def test_scope_fidelity_cli_fail_on_review_returns_nonzero_for_ambiguous() -> None:
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPTS_DIR / 'build_scope_fidelity_report.py'),
+            '--target',
+            'https://api.example.com/',
+            '--arg',
+            'max-time',
+            '--arg',
+            '5',
+            '--fail-on',
+            'review',
+        ],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 2
+    report = json.loads(proc.stdout)
+    assert report['verdict'] == 'review'
+
+
+def test_scope_fidelity_cli_fail_on_fail_allows_review_by_default_threshold() -> None:
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPTS_DIR / 'build_scope_fidelity_report.py'),
+            '--target',
+            'https://api.example.com/',
+            '--arg',
+            'max-time',
+            '--arg',
+            '5',
+            '--fail-on',
+            'fail',
+        ],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    report = json.loads(proc.stdout)
+    assert report['verdict'] == 'review'

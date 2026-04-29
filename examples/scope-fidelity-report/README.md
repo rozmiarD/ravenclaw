@@ -19,6 +19,12 @@ Build a report from a local prepared/approved spec JSON:
 python scripts/build_scope_fidelity_report.py --spec examples/security-contract-proof/approved_execution_spec.json
 ```
 
+Use it as a local preflight gate:
+
+```bash
+python scripts/build_scope_fidelity_report.py --spec examples/security-contract-proof/approved_execution_spec.json --fail-on fail
+```
+
 Public-safety boundary:
 - no live target execution;
 - no protocol adapter work;
