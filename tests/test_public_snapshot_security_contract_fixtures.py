@@ -59,6 +59,7 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         'scripts/run_security_contract_validation.py',
         'scripts/validate_replayable_truth_fixture.py',
         'scripts/validate_scope_fidelity_fixtures.py',
+        'scripts/build_scope_fidelity_report.py',
         'scripts/run_pytest_slice.py',
     ]
     for rel in expected_paths:

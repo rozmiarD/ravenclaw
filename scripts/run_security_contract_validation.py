@@ -34,6 +34,7 @@ FOCUSED_PYTEST_TARGETS = [
     'tests/test_public_snapshot_residue_audit.py',
     'tests/test_replayable_truth_fixture.py',
     'tests/test_scope_fidelity_fixtures.py',
+    'tests/test_scope_fidelity_cli.py',
 ]
 
 

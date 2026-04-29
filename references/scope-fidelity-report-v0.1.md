@@ -10,8 +10,9 @@ It does **not** execute against live targets and does **not** claim vulnerabilit
 
 ## Producer
 
-Current producer:
+Current producers:
 - `build_scope_fidelity_report(...)` in `engine/security_contract_layer.py`
+- `scripts/build_scope_fidelity_report.py` for local JSON specs or manual CLI args
 
 The producer wraps Ravenclaw's existing request-shape host extraction logic and emits a public-safe JSON artifact.
 
@@ -25,6 +26,14 @@ Schema file:
 - `pass` — detected hosts match the target host.
 - `review` — no host was detected in the request shape, so the binding is ambiguous.
 - `fail` — at least one detected host does not match the target host.
+
+## CLI usage
+
+```bash
+python scripts/build_scope_fidelity_report.py --spec examples/security-contract-proof/approved_execution_spec.json
+```
+
+The CLI reads only local JSON and emits a schema-validated `scope_fidelity_report`. It accepts prepared/approved-spec-like objects containing `target`, `normalized_args` or `args`, and `execution_plan` or `tool_chain`.
 
 ## Public-safety boundary
 
