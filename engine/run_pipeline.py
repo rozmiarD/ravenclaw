@@ -44,6 +44,9 @@ def _selected_scope_path() -> Path:
                 return p
     except Exception:
         pass
+    demo_scope = ENGINE_DIR / 'planer' / 'examples' / 'sample_scope.txt'
+    if os.environ.get('RAVENCLAW_MODE') == 'demo' and demo_scope.exists():
+        return demo_scope
     return wp('scope', 'scope.txt')
 
 

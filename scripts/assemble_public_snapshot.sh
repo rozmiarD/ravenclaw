@@ -83,11 +83,14 @@ for f in \
 mkdir -p "$OUT/examples/campaign_registry"
 mkdir -p "$OUT/examples/runtime_state"
 mkdir -p "$OUT/scripts"
+copy_path bin/demo
+copy_path bin/demo-bundle
 copy_path scripts/assemble_public_snapshot.sh
 copy_path scripts/bootstrap_public_demo.sh
 cp "$ROOT/scripts/prepare_public_examples.md" "$OUT/scripts/prepare_public_examples.md"
 copy_path scripts/audit_public_snapshot_residue.py
 copy_path scripts/validate_security_contract_fixtures.py
+copy_path scripts/run_security_contract_validation.py
 copy_path examples/security-contract-proof
 
 cat > "$OUT/examples/campaign_registry/example-registry-entry.md" <<'EOF'

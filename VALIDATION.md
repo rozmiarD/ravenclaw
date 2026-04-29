@@ -80,6 +80,14 @@ For the generated public demo bundle path, run:
 bin/demo-bundle --print-summary
 ```
 
+For the repeatable local/public-safe Security Contract validation receipt, run:
+
+```bash
+python scripts/run_security_contract_validation.py --include-pytest
+```
+
+Expected result: JSON with `artifact_type: security_contract_validation_receipt` and `status: passed`. This runner validates the committed fixtures, generates the demo bundle in a temporary directory, assembles a temporary public snapshot, validates copied fixtures inside that snapshot, audits snapshot residue, and optionally runs the focused Security Contract/public snapshot pytest slice.
+
 ## What not to assume
 
 Passing tests does **not** mean:

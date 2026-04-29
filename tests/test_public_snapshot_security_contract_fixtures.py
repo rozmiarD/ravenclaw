@@ -38,10 +38,13 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         '.devcontainer/devcontainer.json',
         '.devcontainer/Dockerfile',
         'compose.demo.yaml',
+        'bin/demo',
+        'bin/demo-bundle',
         'scripts/assemble_public_snapshot.sh',
         'scripts/audit_public_snapshot_residue.py',
         'scripts/bootstrap_public_demo.sh',
         'scripts/validate_security_contract_fixtures.py',
+        'scripts/run_security_contract_validation.py',
     ]
     for rel in expected_paths:
         assert (out / rel).exists(), rel

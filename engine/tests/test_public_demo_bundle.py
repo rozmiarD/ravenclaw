@@ -8,6 +8,14 @@ if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
 import public_demo_bundle as pdb  # type: ignore
+import run_pipeline  # type: ignore
+
+
+def test_run_pipeline_uses_sample_scope_fallback_in_demo_mode(monkeypatch) -> None:
+    monkeypatch.setenv('RAVENCLAW_MODE', 'demo')
+    monkeypatch.setattr(run_pipeline, 'load_planner_ui_state', lambda: {})
+    assert run_pipeline._selected_scope_path().as_posix().endswith('engine/planer/examples/sample_scope.txt')
+
 
 
 def test_parse_first_json_document_tolerates_trailing_text() -> None:

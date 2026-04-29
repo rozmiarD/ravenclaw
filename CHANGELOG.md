@@ -1,6 +1,9 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added `scripts/run_security_contract_validation.py` as a local/public-safe Security Contract validation runner that emits a `security_contract_validation_receipt` across fixture validation, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, and optional focused pytest checks.
+- Hardened the Ravenclaw Security Contract OpenClaw Skill with workspace workflow, risk-based validation, clean publish-tree, source-of-truth, and stop-condition guardrails.
+- Added a workspace OpenClaw Skill for Ravenclaw Security Contract proof validation, demo-bundle review, snapshot residue audit, and publish-safety checks.
 - Added the exact Security Contract proof fixture validation command to `VALIDATION.md` for public readers.
 - Included public demo container/compose/bootstrap scaffolding in the assembled public snapshot so snapshot-local validation exercises advertised demo surfaces.
 - Added public snapshot residue audit tooling and remediated discovered public residue blockers in snapshot-pruned source/test surfaces.

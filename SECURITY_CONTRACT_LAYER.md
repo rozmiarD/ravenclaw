@@ -45,7 +45,7 @@ The contract layer should be extracted only from real artifacts already produced
 
 The current internal boundary module is `engine/security_contract_layer.py`. It centralizes public-safe proof-trace artifact builders, manifest metadata, and deterministic public-safety invariant checks while `engine/public_demo_bundle.py` remains the demo bundle orchestration/CLI surface.
 
-A committed public-safe fixture lives at `examples/security-contract-proof/` and can be validated with `scripts/validate_security_contract_fixtures.py`.
+A committed public-safe fixture lives at `examples/security-contract-proof/` and can be validated with `scripts/validate_security_contract_fixtures.py`. The broader local/public-safe validation path is `scripts/run_security_contract_validation.py`, which emits a `security_contract_validation_receipt` covering fixtures, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, and residue audit.
 
 ## Relation to OpenClaw, MCP, and A2A
 
@@ -85,10 +85,11 @@ Public contract examples must:
 2. Maintain schema-backed v0.1 artifacts for `ApprovedExecutionSpec`, `PolicyDecision`, public-safe `ExecutionReceipt`, and public-safe `EvidenceBundle`.
 3. Keep `engine/security_contract_layer.py` as the internal helper/invariant boundary and avoid growing `engine/public_demo_bundle.py` back into contract logic.
 4. Keep `examples/security-contract-proof/` synchronized with schemas and boundary invariants when the public proof trace changes.
-5. Keep Ravenclaw Runtime as proof/reference while sharpening the internal contract boundary.
-6. Build OpenClaw Skill later as the first adapter.
-7. Build MCP Policy Gateway later after schemas/examples are stable.
-8. Add A2A security metadata/profile later as an example-first carrier.
+5. Keep `scripts/run_security_contract_validation.py` as the repeatable contract-validation receipt surface for local/public-safe proof checks.
+6. Keep Ravenclaw Runtime as proof/reference while sharpening the internal contract boundary.
+7. Build OpenClaw Skill later as the first adapter.
+8. Build MCP Policy Gateway later after schemas/examples are stable.
+9. Add A2A security metadata/profile later as an example-first carrier.
 
 ## Explicit non-goal
 

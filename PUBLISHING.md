@@ -100,6 +100,14 @@ Then run the residue audit against the exact snapshot:
 python scripts/audit_public_snapshot_residue.py .
 ```
 
+For a consolidated local receipt before publication prep, run from the live workspace:
+
+```bash
+python scripts/run_security_contract_validation.py --include-pytest
+```
+
+This runner uses temporary output directories and does not replace the final clean publish-tree validation steps below.
+
 If validation is run inside a clean publish worktree, remember that pytest or demo checks may generate local runtime artifacts. Before committing that publish tree, re-apply the already validated snapshot with `rsync --delete --exclude='.git'`, then rerun fixture validation and residue audit on the exact final tree.
 
 ## Document ownership and source-of-truth map
