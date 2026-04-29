@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ravenclaw.local/schemas/scope_fidelity_report.v0.1.schema.json",
+  "title": "Ravenclaw Scope Fidelity Report v0.1",
+  "description": "Public-safe report for deterministic target binding and request-shape hygiene checks without live target execution.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "target",
+    "target_host",
+    "verdict",
+    "target_host_match_status",
+    "request_shape_hygiene_status",
+    "request_shape_hygiene_reason",
+    "request_shape_hygiene_source",
+    "arg_hosts_detected",
+    "execution_plan_hosts_detected",
+    "all_hosts_detected",
+    "mismatched_hosts_detected",
+    "evaluated_inputs",
+    "public_safety"
+  ],
+  "properties": {
+    "schema_version": {"const": "2026-04-29.scope-fidelity.v0.1"},
+    "artifact_type": {"const": "scope_fidelity_report"},
+    "target": {"type": "string"},
+    "target_host": {"type": "string"},
+    "target_in_scope": {"type": ["boolean", "null"]},
+    "verdict": {"enum": ["pass", "review", "fail"]},
+    "target_host_match_status": {"enum": ["exact", "mixed", "none_detected"]},
+    "request_shape_hygiene_status": {"enum": ["clean", "ambiguous", "cross_host_mismatch"]},
+    "request_shape_hygiene_reason": {"type": "string"},
+    "request_shape_hygiene_source": {"type": "string"},
+    "arg_hosts_detected": {"type": "array", "items": {"type": "string"}},
+    "execution_plan_hosts_detected": {"type": "array", "items": {"type": "string"}},
+    "all_hosts_detected": {"type": "array", "items": {"type": "string"}},
+    "mismatched_hosts_detected": {"type": "array", "items": {"type": "string"}},
+    "evaluated_inputs": {
+      "type": "object",
+      "required": ["normalized_args_count", "execution_plan_steps", "stdin_present"],
+      "properties": {
+        "normalized_args_count": {"type": "integer", "minimum": 0},
+        "execution_plan_steps": {"type": "integer", "minimum": 0},
+        "stdin_present": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "public_safety": {
+      "type": "object",
+      "required": ["live_target_execution", "protocol_adapter_work", "raw_stdout_stderr_included"],
+      "properties": {
+        "live_target_execution": {"const": false},
+        "protocol_adapter_work": {"const": false},
+        "raw_stdout_stderr_included": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

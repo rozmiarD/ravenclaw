@@ -60,6 +60,7 @@ Examples include:
 - `references/logdash-operator-truth-contracts.md`
 - `REPLAYABLE_TRUTH_RUNTIME.md`
 - `references/evaluation-replay-contract.md`
+- `references/scope-fidelity-report-v0.1.md`
 - `references/effectiveness-metrics-contract.md`
 - `references/runtime-artifact-ownership.md`
 
@@ -98,6 +99,7 @@ Taken together, these signals support the following public claims:
 - governance and operator-visibility behavior are treated as real correctness concerns
 - the emerging Security Contract Layer is grounded in Ravenclaw Runtime artifacts, not protocol-first marketing
 - the Replayable Truth Runtime proof path can evaluate preserved decisions without live target execution by default
+- the Scope Fidelity report can deterministically classify target-binding/request-shape drift without executing against live targets
 
 ## What these signals do not prove
 

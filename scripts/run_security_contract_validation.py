@@ -29,6 +29,7 @@ FOCUSED_PYTEST_TARGETS = [
     'engine/tests/test_security_contract_fixtures.py',
     'engine/tests/test_public_demo_bundle.py',
     'engine/tests/test_security_contract_layer_schemas.py',
+    'engine/tests/test_scope_fidelity_report.py',
     'tests/test_public_snapshot_security_contract_fixtures.py',
     'tests/test_public_snapshot_residue_audit.py',
     'tests/test_replayable_truth_fixture.py',

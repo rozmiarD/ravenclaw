@@ -4,7 +4,10 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Mapping
 
-from execution_contracts import redact_prepared_execution_spec_for_auditor  # type: ignore
+from execution_contracts import (  # type: ignore
+    redact_prepared_execution_spec_for_auditor,
+    summarize_request_shape_hygiene,
+)
 from policy_gateway import normalize_policy_decision_v0  # type: ignore
 
 
@@ -13,6 +16,9 @@ APPROVED_EXECUTION_SPEC_VERSION = '2026-03-18.approved.v1'
 EXECUTION_RECEIPT_ARTIFACT_TYPE = 'execution_receipt'
 EVIDENCE_BUNDLE_SCHEMA_VERSION = '2026-04-28.evidence-bundle.v0.1'
 EVIDENCE_BUNDLE_ARTIFACT_TYPE = 'evidence_bundle'
+SCOPE_FIDELITY_SCHEMA_VERSION = '2026-04-29.scope-fidelity.v0.1'
+SCOPE_FIDELITY_ARTIFACT_TYPE = 'scope_fidelity_report'
+SCOPE_FIDELITY_SCHEMA_REF = 'schemas/scope_fidelity_report.v0.1.schema.json'
 DEMO_PROOF_MODE = 'dry_run_contract_proof'
 PUBLIC_DEMO_TARGET_HOST = 'example.com'
 
@@ -127,6 +133,69 @@ def load_json_schema(schema_ref: str, *, root: Path | None = None) -> Dict[str, 
 
 def validate_schema_ref(schema_ref: str, value: Any, *, root: Path | None = None, path: str = '$') -> None:
     validate_json_schema_value(load_json_schema(schema_ref, root=root), value, path=path)
+
+
+def _scope_fidelity_verdict(status: str, mismatched_hosts: List[str]) -> str:
+    if status == 'clean' and not mismatched_hosts:
+        return 'pass'
+    if status == 'ambiguous':
+        return 'review'
+    return 'fail'
+
+
+def build_scope_fidelity_report(
+    *,
+    target: str,
+    normalized_args: List[Any] | None = None,
+    execution_plan: List[Mapping[str, Any]] | None = None,
+    target_in_scope: bool | None = None,
+) -> Dict[str, Any]:
+    """Build a deterministic public-safe scope-fidelity report.
+
+    The report is intentionally about target binding/request-shape hygiene, not
+    live target testing. It evaluates only local proposal/spec structure.
+    """
+    args = list(normalized_args or [])
+    plan = [dict(step) for step in list(execution_plan or []) if isinstance(step, Mapping)]
+    hygiene = summarize_request_shape_hygiene(
+        target=str(target or ''),
+        normalized_args=args,
+        execution_plan=plan,
+    )
+    mismatched_hosts = list(hygiene.get('mismatched_hosts_detected') or [])
+    status = str(hygiene.get('request_shape_hygiene_status') or '')
+    stdin_present = any(bool(step.get('stdin')) for step in plan)
+    report = {
+        'schema_version': SCOPE_FIDELITY_SCHEMA_VERSION,
+        'artifact_type': SCOPE_FIDELITY_ARTIFACT_TYPE,
+        'target': str(target or ''),
+        'target_host': str(hygiene.get('target_host') or ''),
+        'target_in_scope': bool(target_in_scope) if target_in_scope is not None else None,
+        'verdict': _scope_fidelity_verdict(status, mismatched_hosts),
+        'target_host_match_status': str(hygiene.get('target_host_match_status') or ''),
+        'request_shape_hygiene_status': status,
+        'request_shape_hygiene_reason': str(hygiene.get('request_shape_hygiene_reason') or ''),
+        'request_shape_hygiene_source': str(hygiene.get('request_shape_hygiene_source') or ''),
+        'arg_hosts_detected': list(hygiene.get('arg_hosts_detected') or []),
+        'execution_plan_hosts_detected': list(hygiene.get('execution_plan_hosts_detected') or []),
+        'all_hosts_detected': list(hygiene.get('all_hosts_detected') or []),
+        'mismatched_hosts_detected': mismatched_hosts,
+        'evaluated_inputs': {
+            'normalized_args_count': len(args),
+            'execution_plan_steps': len(plan),
+            'stdin_present': stdin_present,
+        },
+        'public_safety': {
+            'live_target_execution': False,
+            'protocol_adapter_work': False,
+            'raw_stdout_stderr_included': False,
+        },
+    }
+    return sanitize_public_artifact(report)
+
+
+def validate_scope_fidelity_report(report: Mapping[str, Any], *, root: Path | None = None) -> None:
+    validate_schema_ref(SCOPE_FIDELITY_SCHEMA_REF, report, root=root)
 
 
 def _sanitize_string(value: Any) -> str:
