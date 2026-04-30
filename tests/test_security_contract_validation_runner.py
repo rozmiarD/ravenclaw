@@ -22,6 +22,7 @@ def test_security_contract_validation_runner_lists_core_checks() -> None:
         'snapshot_fixture_validation',
         'snapshot_residue_audit',
         'snapshot_replayable_truth_fixture',
+        'snapshot_scope_fidelity_fixture',
     ]
 
 

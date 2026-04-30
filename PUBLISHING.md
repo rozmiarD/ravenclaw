@@ -106,7 +106,15 @@ For a consolidated local receipt before publication prep, run from the live work
 python scripts/run_security_contract_validation.py --include-pytest
 ```
 
-This runner uses temporary output directories and does not replace the final clean publish-tree validation steps below.
+Before every public push, also reproduce the exact GitHub Actions pytest matrix from the final clean publish tree or exact public tree:
+
+```bash
+for slice in contracts_policy auto_campaign runtime_core runtime_runner logdash misc_public; do
+  PYTHONDONTWRITEBYTECODE=1 python scripts/run_pytest_slice.py "$slice"
+done
+```
+
+This catches slice-only failures that are not covered by focused local validation. The consolidated runner uses temporary output directories and does not replace the final clean publish-tree validation steps below.
 
 If validation is run inside a clean publish worktree, remember that pytest or demo checks may generate local runtime artifacts. Before committing that publish tree, re-apply the already validated snapshot with `rsync --delete --exclude='.git'`, then rerun fixture validation and residue audit on the exact final tree.
 
