@@ -86,7 +86,13 @@ For the repeatable local/public-safe Security Contract validation receipt, run:
 python scripts/run_security_contract_validation.py --include-pytest
 ```
 
-Expected result: JSON with `artifact_type: security_contract_validation_receipt`, `schema_version: v0.1`, and `status: passed`. This runner validates the committed fixtures, generates the demo bundle from a disposable public snapshot, assembles a temporary public snapshot, validates copied fixtures inside that snapshot, audits snapshot residue, validates the public-safe Replayable Truth Runtime fixture, and optionally runs the focused Security Contract/public snapshot pytest slice. The receipt is schema-backed by `schemas/security_contract_validation_receipt.v0.1.schema.json` and described in `references/security-contract-validation-receipt-v0.1.md`.
+Before a public push, run the GitHub Actions parity form:
+
+```bash
+python scripts/run_security_contract_validation.py --include-pytest --include-github-actions-matrix
+```
+
+Expected result: JSON with `artifact_type: security_contract_validation_receipt`, `schema_version: v0.1`, and `status: passed`. This runner validates the committed fixtures, generates the demo bundle from a disposable public snapshot, assembles a temporary public snapshot, validates copied fixtures inside that snapshot, audits snapshot residue, validates the public-safe Replayable Truth Runtime fixture and Scope Fidelity fixtures, optionally runs the focused Security Contract/public snapshot pytest slice, and can optionally run the full GitHub Actions pytest slice matrix from a disposable public snapshot. The receipt is schema-backed by `schemas/security_contract_validation_receipt.v0.1.schema.json` and described in `references/security-contract-validation-receipt-v0.1.md`.
 
 ## What not to assume
 

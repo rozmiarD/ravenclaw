@@ -19,11 +19,14 @@ if str(ENGINE_DIR) not in sys.path:
     sys.path.insert(0, str(ENGINE_DIR))
 
 import security_contract_layer as scl  # type: ignore
+import run_pytest_slice as pytest_slices  # type: ignore
 
 RECEIPT_ARTIFACT_TYPE = 'security_contract_validation_receipt'
 RECEIPT_SCHEMA_VERSION = 'v0.1'
 RECEIPT_SCHEMA_REF = 'schemas/security_contract_validation_receipt.v0.1.schema.json'
 VALIDATED_TRACE = 'scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary'
+
+GITHUB_ACTIONS_PYTEST_SLICES = list(pytest_slices.SLICE_ORDER)
 
 FOCUSED_PYTEST_TARGETS = [
     'engine/tests/test_security_contract_fixtures.py',
@@ -177,6 +180,20 @@ def _snapshot_scope_fidelity_fixture_check(snapshot_dir: Path) -> ValidationChec
     )
 
 
+def _github_actions_pytest_matrix_check(matrix_repo: Path) -> ValidationCheck:
+    return ValidationCheck(
+        check_id='github_actions_pytest_matrix',
+        description='Run the full GitHub Actions pytest slice matrix from a disposable public snapshot.',
+        command=[
+            'bash',
+            '-lc',
+            'scripts/assemble_public_snapshot.sh "$MATRIX_REPO" >/dev/null && cd "$MATRIX_REPO" && for slice in $MATRIX_SLICES; do echo "== $slice =="; python scripts/run_pytest_slice.py "$slice"; done',
+        ],
+        cwd=ROOT,
+        env={'MATRIX_REPO': str(matrix_repo), 'MATRIX_SLICES': ' '.join(GITHUB_ACTIONS_PYTEST_SLICES)},
+    )
+
+
 def _focused_pytest_check(pytest_repo: Path) -> ValidationCheck:
     return ValidationCheck(
         check_id='focused_pytest',
@@ -200,7 +217,7 @@ def validate_receipt_schema(receipt: Mapping[str, Any]) -> None:
     scl.validate_schema_ref(RECEIPT_SCHEMA_REF, receipt, root=ROOT)
 
 
-def list_check_ids(include_pytest: bool) -> List[str]:
+def list_check_ids(include_pytest: bool, include_github_actions_matrix: bool = False) -> List[str]:
     ids = [
         'fixture_validation',
         'demo_bundle_smoke',
@@ -208,14 +225,20 @@ def list_check_ids(include_pytest: bool) -> List[str]:
         'snapshot_fixture_validation',
         'snapshot_residue_audit',
         'snapshot_replayable_truth_fixture',
-    'snapshot_scope_fidelity_fixture',
+        'snapshot_scope_fidelity_fixture',
     ]
     if include_pytest:
         ids.append('focused_pytest')
+    if include_github_actions_matrix:
+        ids.append('github_actions_pytest_matrix')
     return ids
 
 
-def _build_receipt(checks: Sequence[CheckReceipt], include_pytest: bool) -> Dict[str, Any]:
+def _build_receipt(
+    checks: Sequence[CheckReceipt],
+    include_pytest: bool,
+    include_github_actions_matrix: bool = False,
+) -> Dict[str, Any]:
     failed = [check for check in checks if check.status != 'passed']
     receipt = {
         'artifact_type': RECEIPT_ARTIFACT_TYPE,
@@ -230,7 +253,7 @@ def _build_receipt(checks: Sequence[CheckReceipt], include_pytest: bool) -> Dict
             'public_push': False,
         },
         'validated_trace': VALIDATED_TRACE,
-        'checks_requested': list_check_ids(include_pytest),
+        'checks_requested': list_check_ids(include_pytest, include_github_actions_matrix),
         'checks_passed': [check.check_id for check in checks if check.status == 'passed'],
         'checks_failed': [check.check_id for check in failed],
         'checks': [asdict(check) for check in checks],
@@ -273,7 +296,7 @@ def _print_markdown(receipt: Mapping[str, Any]) -> None:
                     print('```')
 
 
-def run_validation(include_pytest: bool) -> Dict[str, Any]:
+def run_validation(include_pytest: bool, include_github_actions_matrix: bool = False) -> Dict[str, Any]:
     receipts: List[CheckReceipt] = []
     with tempfile.TemporaryDirectory(prefix='ravenclaw-contract-validation.') as tmp:
         tmp_path = Path(tmp)
@@ -289,28 +312,45 @@ def run_validation(include_pytest: bool) -> Dict[str, Any]:
         ]
         if include_pytest:
             checks.append(_focused_pytest_check(tmp_path / 'pytest-repo'))
+        if include_github_actions_matrix:
+            checks.append(_github_actions_pytest_matrix_check(tmp_path / 'github-actions-pytest-repo'))
 
         for check in checks:
             receipt = _run_check(check)
             receipts.append(receipt)
             if receipt.status != 'passed':
                 break
-    return _build_receipt(receipts, include_pytest=include_pytest)
+    return _build_receipt(
+        receipts,
+        include_pytest=include_pytest,
+        include_github_actions_matrix=include_github_actions_matrix,
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description='Run local/public-safe Ravenclaw Security Contract validation and emit a receipt.')
     parser.add_argument('--include-pytest', action='store_true', help='also run focused Security Contract/public snapshot pytest checks')
+    parser.add_argument(
+        '--include-github-actions-matrix',
+        action='store_true',
+        help='also run the full GitHub Actions pytest slice matrix from a disposable public snapshot',
+    )
     parser.add_argument('--list-checks', action='store_true', help='print planned check identifiers and exit')
     parser.add_argument('--format', choices=['json', 'markdown'], default='json', help='receipt output format')
     args = parser.parse_args(argv)
 
     if args.list_checks:
-        for check_id in list_check_ids(include_pytest=args.include_pytest):
+        for check_id in list_check_ids(
+            include_pytest=args.include_pytest,
+            include_github_actions_matrix=args.include_github_actions_matrix,
+        ):
             print(check_id)
         return 0
 
-    receipt = run_validation(include_pytest=args.include_pytest)
+    receipt = run_validation(
+        include_pytest=args.include_pytest,
+        include_github_actions_matrix=args.include_github_actions_matrix,
+    )
     if args.format == 'markdown':
         _print_markdown(receipt)
     else:

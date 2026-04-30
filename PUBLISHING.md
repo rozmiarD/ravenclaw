@@ -100,13 +100,19 @@ Then run the residue audit against the exact snapshot:
 python scripts/audit_public_snapshot_residue.py .
 ```
 
-For a consolidated local receipt before publication prep, run from the live workspace:
+For a consolidated local receipt before publication prep, run from the live workspace. For routine SCL/public-snapshot work, use the focused path:
 
 ```bash
 python scripts/run_security_contract_validation.py --include-pytest
 ```
 
-Before every public push, also reproduce the exact GitHub Actions pytest matrix from the final clean publish tree or exact public tree:
+Before every public push, use the GitHub Actions parity path so the receipt also runs the exact public pytest slice matrix from a disposable public snapshot:
+
+```bash
+python scripts/run_security_contract_validation.py --include-pytest --include-github-actions-matrix
+```
+
+Also reproduce the exact GitHub Actions pytest matrix from the final clean publish tree or exact public tree immediately before pushing:
 
 ```bash
 for slice in contracts_policy auto_campaign runtime_core runtime_runner logdash misc_public; do
