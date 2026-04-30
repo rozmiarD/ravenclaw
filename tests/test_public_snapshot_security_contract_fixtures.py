@@ -61,6 +61,7 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         'scripts/validate_scope_fidelity_fixtures.py',
         'scripts/build_scope_fidelity_report.py',
         'scripts/run_pytest_slice.py',
+        'scripts/list_public_validation_surfaces.py',
     ]
     for rel in expected_paths:
         assert (out / rel).exists(), rel
@@ -106,3 +107,13 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         check=True,
     )
     assert 'scope_fidelity_fixtures_ok:' in scope_proc.stdout
+
+    index_proc = subprocess.run(
+        [sys.executable, str(out / 'scripts' / 'list_public_validation_surfaces.py'), '--format', 'json', '--check'],
+        cwd=str(out),
+        env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'},
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert 'public_validation_surface_index' in index_proc.stdout

@@ -18,6 +18,7 @@ def test_security_contract_validation_runner_lists_core_checks() -> None:
     ids = runner.list_check_ids(include_pytest=False)
     assert ids == [
         'fixture_validation',
+        'public_validation_surface_index',
         'demo_bundle_smoke',
         'assemble_public_snapshot',
         'snapshot_fixture_validation',

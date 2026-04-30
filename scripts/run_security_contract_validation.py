@@ -38,6 +38,7 @@ FOCUSED_PYTEST_TARGETS = [
     'tests/test_replayable_truth_fixture.py',
     'tests/test_scope_fidelity_fixtures.py',
     'tests/test_scope_fidelity_cli.py',
+    'tests/test_public_validation_surface_index.py',
 ]
 
 
@@ -117,6 +118,15 @@ def _fixture_check() -> ValidationCheck:
         check_id='fixture_validation',
         description='Validate committed Security Contract proof fixtures against schemas, invariants, and sanitization rules.',
         command=[sys.executable, 'scripts/validate_security_contract_fixtures.py', 'examples/security-contract-proof'],
+        cwd=ROOT,
+    )
+
+
+def _public_validation_surface_index_check() -> ValidationCheck:
+    return ValidationCheck(
+        check_id='public_validation_surface_index',
+        description='Validate the public-facing index of local/public-safe validation surfaces.',
+        command=[sys.executable, 'scripts/list_public_validation_surfaces.py', '--format', 'json', '--check'],
         cwd=ROOT,
     )
 
@@ -220,6 +230,7 @@ def validate_receipt_schema(receipt: Mapping[str, Any]) -> None:
 def list_check_ids(include_pytest: bool, include_github_actions_matrix: bool = False) -> List[str]:
     ids = [
         'fixture_validation',
+        'public_validation_surface_index',
         'demo_bundle_smoke',
         'assemble_public_snapshot',
         'snapshot_fixture_validation',
@@ -303,6 +314,7 @@ def run_validation(include_pytest: bool, include_github_actions_matrix: bool = F
         snapshot_dir = tmp_path / 'public-snapshot'
         checks = [
             _fixture_check(),
+            _public_validation_surface_index_check(),
             _demo_bundle_check(tmp_path / 'demo-output', tmp_path / 'demo-repo'),
             _assemble_snapshot_check(snapshot_dir),
             _snapshot_fixture_check(snapshot_dir),
