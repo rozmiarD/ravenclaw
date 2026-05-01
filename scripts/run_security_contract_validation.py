@@ -41,6 +41,7 @@ FOCUSED_PYTEST_TARGETS = [
     'tests/test_public_validation_surface_index.py',
     'tests/test_public_snapshot_manifest.py',
     'tests/test_reviewer_validation_guide.py',
+    'tests/test_proof_of_value_framing.py',
 ]
 
 

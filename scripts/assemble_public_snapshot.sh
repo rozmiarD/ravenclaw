@@ -52,6 +52,7 @@ for f in \
   DEMO.md \
   VALIDATION.md \
   REVIEWER_VALIDATION_GUIDE.md \
+  PROOF_OF_VALUE.md \
   QUALITY_SIGNALS.md \
   PUBLIC_STATUS.md \
   AUDIENCE.md \

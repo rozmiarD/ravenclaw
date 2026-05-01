@@ -10,6 +10,7 @@ Start with:
 2. `DEMO.md`
 3. `PUBLIC_STATUS.md`
 4. `QUALITY_SIGNALS.md`
+5. `PROOF_OF_VALUE.md`
 
 That gives you the project shape, the safe public demo path, the maturity truth, and the proof surface.
 
@@ -41,6 +42,14 @@ Start with:
 6. `references/logdash-operator-truth-contracts.md`
 7. `references/evaluation-replay-contract.md`
 8. `references/effectiveness-metrics-contract.md`
+
+## If you want proof-of-value context
+
+Start with:
+1. `PROOF_OF_VALUE.md`
+2. `QUALITY_SIGNALS.md`
+3. `REVIEWER_VALIDATION_GUIDE.md`
+4. `SECURITY_CONTRACT_LAYER.md`
 
 ## If you want public-release context
 

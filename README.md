@@ -42,7 +42,7 @@ Recommended order:
 1. `INSTALL.md`
 2. `ENVIRONMENT_SUPPORT.md`
 3. `DEMO.md`
-4. `VALIDATION.md`
+4. `VALIDATION.md` / `PROOF_OF_VALUE.md`
 5. `QUALITY_SIGNALS.md`
 6. `PUBLIC_STATUS.md`
 7. `AUDIENCE.md`

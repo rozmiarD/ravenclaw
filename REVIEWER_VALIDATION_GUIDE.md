@@ -12,6 +12,7 @@ Read these first:
 2. `QUALITY_SIGNALS.md` — what the repo's trust signals support and do not support.
 3. `VALIDATION.md` — runnable validation commands.
 4. `SECURITY_CONTRACT_LAYER.md` — contract-layer proof direction and artifact map.
+5. `PROOF_OF_VALUE.md` — market-legible value framing without live exploit claims.
 
 ## 2. Run the broad validation surface
 

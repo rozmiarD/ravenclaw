@@ -22,6 +22,7 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
     expected_paths = [
         'SECURITY_CONTRACT_LAYER.md',
         'REVIEWER_VALIDATION_GUIDE.md',
+        'PROOF_OF_VALUE.md',
         'REPLAYABLE_TRUTH_RUNTIME.md',
         'schemas/policy_decision.v0.1.schema.json',
         'schemas/approved_execution_spec.v0.1.schema.json',

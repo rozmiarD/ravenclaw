@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added `PROOF_OF_VALUE.md` to frame Ravenclaw public value around governance, reviewability, and benchmark dimensions without claiming live exploit performance.
 - Added a `reviewer-report` markdown format for `scripts/build_public_snapshot_manifest.py`, turning snapshot manifest checks into a ready-to-read public review artifact.
 - Added `REVIEWER_VALIDATION_GUIDE.md` as a public-safe reviewer path linking validation commands, manifest evidence, quality signals, and non-claims.
 - Added a schema-backed Public Snapshot Manifest (`schemas/public_snapshot_manifest.v0.1.schema.json`) that maps validation surfaces to concrete files in assembled public snapshots and fails on missing paths.
