@@ -32,6 +32,7 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         'schemas/scope_fidelity_report.v0.1.schema.json',
         'schemas/public_validation_surface_index.v0.1.schema.json',
         'schemas/public_snapshot_manifest.v0.1.schema.json',
+        'schemas/proof_of_value_scorecard.v0.1.schema.json',
         'references/policy-decision-v0.1.md',
         'references/approved-execution-spec-v0.1.md',
         'references/execution-receipt-v0.1.md',
@@ -40,6 +41,7 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         'references/scope-fidelity-report-v0.1.md',
         'references/public-validation-surface-index-v0.1.md',
         'references/public-snapshot-manifest-v0.1.md',
+        'references/proof-of-value-scorecard-v0.1.md',
         'examples/security-contract-proof/policy_decision.json',
         'examples/security-contract-proof/prepared_execution_spec.redacted.json',
         'examples/security-contract-proof/approved_execution_spec.json',
@@ -69,6 +71,7 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         'scripts/run_pytest_slice.py',
         'scripts/list_public_validation_surfaces.py',
         'scripts/build_public_snapshot_manifest.py',
+        'scripts/build_proof_of_value_scorecard.py',
     ]
     for rel in expected_paths:
         assert (out / rel).exists(), rel
@@ -134,3 +137,13 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         check=True,
     )
     assert 'public_snapshot_manifest' in manifest_proc.stdout
+
+    scorecard_proc = subprocess.run(
+        [sys.executable, str(out / 'scripts' / 'build_proof_of_value_scorecard.py'), '.', '--check'],
+        cwd=str(out),
+        env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'},
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert 'proof_of_value_scorecard' in scorecard_proc.stdout

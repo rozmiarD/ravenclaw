@@ -96,6 +96,14 @@ Primary proof/evidence files:
 
 These are dry-run/local/example artifacts. They are meant to show governance, schema, and evidence structure — not live vulnerability findings.
 
+
+Proof-of-value scorecard:
+
+```bash
+python scripts/build_proof_of_value_scorecard.py . --check
+python scripts/build_proof_of_value_scorecard.py . --format markdown --check
+```
+
 ## 6. Non-claims to preserve
 
 Passing the above checks does **not** mean:

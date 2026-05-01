@@ -114,6 +114,14 @@ python scripts/run_security_contract_validation.py --include-pytest --include-gi
 
 Expected result: JSON with `artifact_type: security_contract_validation_receipt`, `schema_version: v0.1`, and `status: passed`. This runner validates the public validation surface index, validates the public snapshot manifest, validates the committed fixtures, generates the demo bundle from a disposable public snapshot, assembles a temporary public snapshot, validates copied fixtures inside that snapshot, audits snapshot residue, validates the public-safe Replayable Truth Runtime fixture and Scope Fidelity fixtures, optionally runs the focused Security Contract/public snapshot pytest slice, and can optionally run the full GitHub Actions pytest slice matrix from a disposable public snapshot. The receipt is schema-backed by `schemas/security_contract_validation_receipt.v0.1.schema.json` and described in `references/security-contract-validation-receipt-v0.1.md`.
 
+
+Proof-of-value scorecard:
+
+```bash
+python scripts/build_proof_of_value_scorecard.py . --check
+python scripts/build_proof_of_value_scorecard.py . --format markdown --check
+```
+
 ## What not to assume
 
 Passing tests does **not** mean:

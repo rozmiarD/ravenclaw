@@ -61,6 +61,14 @@ Ravenclaw does **not** currently claim:
 - that passing local tests replaces human authorization or legal scope review;
 - superior real-world outcomes by itself.
 
+
+Proof-of-value scorecard:
+
+```bash
+python scripts/build_proof_of_value_scorecard.py . --check
+python scripts/build_proof_of_value_scorecard.py . --format markdown --check
+```
+
 ## How to verify this value layer
 
 Start with:

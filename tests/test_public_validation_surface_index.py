@@ -44,6 +44,7 @@ def test_public_validation_surface_index_lists_core_surfaces() -> None:
         'public_snapshot_residue_audit',
         'demo_bundle_smoke',
         'public_snapshot_manifest',
+        'proof_of_value_scorecard',
     } <= ids
     assert index['summary']['missing_path_count'] == 0
 

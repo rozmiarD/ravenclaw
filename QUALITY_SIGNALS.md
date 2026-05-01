@@ -131,4 +131,4 @@ If you want the shortest serious verification path, read these in order:
 ## Validation posture summary
 
 The strongest honest quality claim today is:
-Ravenclaw already has real contract, CI, operator-truth, and proof-of-value framing surfaces, even though its public onboarding and proof presentation are still catching up to the strength of the technical core. See `PROOF_OF_VALUE.md` for the market-legible but non-exploit-claim framing.
+Ravenclaw already has real contract, CI, operator-truth, and proof-of-value framing surfaces, even though its public onboarding and proof presentation are still catching up to the strength of the technical core. See `PROOF_OF_VALUE.md` and `scripts/build_proof_of_value_scorecard.py` for the market-legible but non-exploit-claim framing and scorecard.

@@ -42,6 +42,7 @@ FOCUSED_PYTEST_TARGETS = [
     'tests/test_public_snapshot_manifest.py',
     'tests/test_reviewer_validation_guide.py',
     'tests/test_proof_of_value_framing.py',
+    'tests/test_proof_of_value_scorecard.py',
 ]
 
 
@@ -202,6 +203,15 @@ def _snapshot_manifest_check(snapshot_dir: Path) -> ValidationCheck:
     )
 
 
+def _proof_of_value_scorecard_check(snapshot_dir: Path) -> ValidationCheck:
+    return ValidationCheck(
+        check_id='proof_of_value_scorecard',
+        description='Build and validate the public-safe proof-of-value scorecard from copied snapshot evidence paths.',
+        command=[sys.executable, 'scripts/build_proof_of_value_scorecard.py', '.', '--check'],
+        cwd=snapshot_dir,
+    )
+
+
 def _github_actions_pytest_matrix_check(matrix_repo: Path) -> ValidationCheck:
     return ValidationCheck(
         check_id='github_actions_pytest_matrix',
@@ -250,6 +260,7 @@ def list_check_ids(include_pytest: bool, include_github_actions_matrix: bool = F
         'snapshot_replayable_truth_fixture',
         'snapshot_scope_fidelity_fixture',
         'snapshot_manifest',
+        'proof_of_value_scorecard',
     ]
     if include_pytest:
         ids.append('focused_pytest')
@@ -335,6 +346,7 @@ def run_validation(include_pytest: bool, include_github_actions_matrix: bool = F
             _snapshot_replayable_truth_fixture_check(snapshot_dir),
             _snapshot_scope_fidelity_fixture_check(snapshot_dir),
             _snapshot_manifest_check(snapshot_dir),
+            _proof_of_value_scorecard_check(snapshot_dir),
         ]
         if include_pytest:
             checks.append(_focused_pytest_check(tmp_path / 'pytest-repo'))
