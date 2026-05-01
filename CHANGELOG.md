@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added a docs/contracts-only OpenClaw adapter-prep contract map that preserves SCL non-claims without implementing an adapter.
 - Added a committed proof-of-value scorecard fixture and validator under `examples/proof-of-value-scorecard/`.
 - Added a schema-backed proof-of-value scorecard (`scripts/build_proof_of_value_scorecard.py`) for public-safe governance/reviewability benchmark dimensions.
 - Added `PROOF_OF_VALUE.md` to frame Ravenclaw public value around governance, reviewability, and benchmark dimensions without claiming live exploit performance.

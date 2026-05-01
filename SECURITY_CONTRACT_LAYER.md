@@ -49,7 +49,7 @@ A committed public-safe fixture lives at `examples/security-contract-proof/` and
 
 ## Relation to OpenClaw, MCP, and A2A
 
-- **OpenClaw**: first practical later adapter. A future skill/plugin can validate proposals, check scope, build/redact specs, and qualify evidence using these contracts.
+- **OpenClaw**: first practical later adapter. A future skill/plugin can validate proposals, check scope, build/redact specs, and qualify evidence using these contracts. Adapter-prep responsibilities are mapped in `references/openclaw-adapter-contract-map.md`; this is not an implementation.
 - **MCP**: later policy-gated tool wrapper/gateway candidate after schemas are stable.
 - **A2A**: later metadata/profile example, not an implementation priority.
 
@@ -93,7 +93,7 @@ Public contract examples must:
 6. Keep Replayable Truth Runtime visible as the proof/evaluation engine for offline governance-aware replay.
 7. Keep `ScopeFidelityReport` small and deterministic as a reusable target-binding/request-shape hygiene proof surface, with exact/mismatch/ambiguous fixtures kept public-safe.
 8. Keep Ravenclaw Runtime as proof/reference while sharpening the internal contract boundary.
-9. Build OpenClaw Skill later as the first adapter.
+9. Keep `references/openclaw-adapter-contract-map.md` as the docs/contracts-only bridge for a later OpenClaw Skill; build the actual OpenClaw Skill later as the first adapter.
 10. Build MCP Policy Gateway later after schemas/examples are stable.
 11. Add A2A security metadata/profile later as an example-first carrier.
 

@@ -42,6 +42,7 @@ Start with:
 6. `references/logdash-operator-truth-contracts.md`
 7. `references/evaluation-replay-contract.md`
 8. `references/effectiveness-metrics-contract.md`
+9. `references/openclaw-adapter-contract-map.md`
 
 ## If you want proof-of-value context
 
