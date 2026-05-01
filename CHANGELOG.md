@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added a carrier readiness packet template so future adapter proposals must state scope UX, redaction, command authority, contracts, validation, rollback, and public/private boundaries before implementation.
 - Added a carrier readiness checklist for future OpenClaw/MCP/A2A work, preserving scope, redaction, command authority, provenance, channel-leakage, and non-claim gates.
 - Added a docs/contracts-only OpenClaw adapter-prep contract map that preserves SCL non-claims without implementing an adapter.
 - Added a committed proof-of-value scorecard fixture and validator under `examples/proof-of-value-scorecard/`.

@@ -53,7 +53,7 @@ Do not pivot protocol-first into MCP or A2A before the OpenClaw boundary is cred
 
 ## Minimum implementation-entry packet
 
-Before a carrier implementation branch starts, require a short packet containing:
+Before a carrier implementation branch starts, require a short packet. Use `references/carrier-readiness-packet-template.md` and include:
 
 1. target carrier and mode, for example `OpenClaw Skill`, `MCP gateway`, or `A2A metadata profile`;
 2. explicit non-goals;

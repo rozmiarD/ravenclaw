@@ -49,7 +49,7 @@ A committed public-safe fixture lives at `examples/security-contract-proof/` and
 
 ## Relation to OpenClaw, MCP, and A2A
 
-- **OpenClaw**: first practical later adapter. A future skill/plugin can validate proposals, check scope, build/redact specs, and qualify evidence using these contracts. Adapter-prep responsibilities are mapped in `references/openclaw-adapter-contract-map.md`; pre-implementation gates are listed in `references/carrier-readiness-checklist.md`. These are not implementations.
+- **OpenClaw**: first practical later adapter. A future skill/plugin can validate proposals, check scope, build/redact specs, and qualify evidence using these contracts. Adapter-prep responsibilities are mapped in `references/openclaw-adapter-contract-map.md`; pre-implementation gates are listed in `references/carrier-readiness-checklist.md`, with proposal fields in `references/carrier-readiness-packet-template.md`. These are not implementations.
 - **MCP**: later policy-gated tool wrapper/gateway candidate after schemas are stable.
 - **A2A**: later metadata/profile example, not an implementation priority.
 

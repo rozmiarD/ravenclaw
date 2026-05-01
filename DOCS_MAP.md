@@ -44,6 +44,7 @@ Start with:
 8. `references/effectiveness-metrics-contract.md`
 9. `references/openclaw-adapter-contract-map.md`
 10. `references/carrier-readiness-checklist.md`
+11. `references/carrier-readiness-packet-template.md`
 
 ## If you want proof-of-value context
 
