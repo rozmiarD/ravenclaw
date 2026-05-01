@@ -48,9 +48,10 @@ For an assembled public snapshot, use the Public Snapshot Manifest to map those 
 
 ```bash
 python scripts/build_public_snapshot_manifest.py . --check
+python scripts/build_public_snapshot_manifest.py . --format reviewer-report --check
 ```
 
-Expected manifest result:
+Expected manifest/reviewer-report result:
 - `artifact_type: public_snapshot_manifest`
 - `schema_version: v0.1`
 - `summary.missing_path_count: 0`

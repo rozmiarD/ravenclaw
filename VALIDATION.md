@@ -27,9 +27,10 @@ For an assembled public snapshot, map those validation surfaces to concrete snap
 
 ```bash
 python scripts/build_public_snapshot_manifest.py . --check
+python scripts/build_public_snapshot_manifest.py . --format reviewer-report --check
 ```
 
-This emits a schema-backed `public_snapshot_manifest` artifact (`schemas/public_snapshot_manifest.v0.1.schema.json`; see `references/public-snapshot-manifest-v0.1.md`) and fails if any validation-surface path is missing from the snapshot.
+This emits a schema-backed `public_snapshot_manifest` artifact (`schemas/public_snapshot_manifest.v0.1.schema.json`; see `references/public-snapshot-manifest-v0.1.md`) and fails if any validation-surface path is missing from the snapshot. The `reviewer-report` format renders the same checks as a ready-to-read markdown review artifact.
 
 ## Stable sliced validation path
 

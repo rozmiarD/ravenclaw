@@ -94,3 +94,32 @@ def test_public_snapshot_manifest_schema_rejects_unsafe_boundary(tmp_path: Path)
         assert 'protocol_adapter_work' in str(exc)
     else:  # pragma: no cover - assertion guard
         raise AssertionError('public snapshot manifest must not authorize protocol adapter work')
+
+
+def test_public_snapshot_manifest_markdown_is_reviewer_facing(tmp_path: Path) -> None:
+    snapshot = _assemble_snapshot(tmp_path)
+    proc = subprocess.run(
+        [sys.executable, str(snapshot / 'scripts' / 'build_public_snapshot_manifest.py'), '.', '--format', 'markdown', '--check'],
+        cwd=str(snapshot),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert '# Public Snapshot Manifest' in proc.stdout
+    assert 'status: `PASS`' in proc.stdout
+    assert '`scripts/list_public_validation_surfaces.py` — present' in proc.stdout
+
+
+def test_public_snapshot_manifest_reviewer_report_is_publish_ready(tmp_path: Path) -> None:
+    snapshot = _assemble_snapshot(tmp_path)
+    proc = subprocess.run(
+        [sys.executable, str(snapshot / 'scripts' / 'build_public_snapshot_manifest.py'), '.', '--format', 'reviewer-report', '--check'],
+        cwd=str(snapshot),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert '# Ravenclaw Public Snapshot Reviewer Report' in proc.stdout
+    assert 'Result: `PASS`' in proc.stdout
+    assert '| Surface | Status | Evidence paths | Non-claim |' in proc.stdout
+    assert 'no live target execution authorization' in proc.stdout

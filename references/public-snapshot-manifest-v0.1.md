@@ -28,6 +28,7 @@ Run against an assembled public snapshot:
 
 ```bash
 python scripts/build_public_snapshot_manifest.py . --check
+python scripts/build_public_snapshot_manifest.py . --format reviewer-report --check
 ```
 
 Expected result: JSON with `artifact_type: public_snapshot_manifest`, `schema_version: v0.1`, and `summary.missing_path_count: 0`.
@@ -35,3 +36,7 @@ Expected result: JSON with `artifact_type: public_snapshot_manifest`, `schema_ve
 ## Relationship to the validation surface index
 
 The manifest is derived from `scripts/list_public_validation_surfaces.py`. The index describes the validation surfaces; the manifest confirms their referenced paths are present in a specific snapshot tree.
+
+## Reviewer report format
+
+Use `--format reviewer-report` to render the manifest as a markdown review artifact with a summary, surface/path table, and explicit non-authorization boundaries.
