@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added a carrier readiness checklist for future OpenClaw/MCP/A2A work, preserving scope, redaction, command authority, provenance, channel-leakage, and non-claim gates.
 - Added a docs/contracts-only OpenClaw adapter-prep contract map that preserves SCL non-claims without implementing an adapter.
 - Added a committed proof-of-value scorecard fixture and validator under `examples/proof-of-value-scorecard/`.
 - Added a schema-backed proof-of-value scorecard (`scripts/build_proof_of_value_scorecard.py`) for public-safe governance/reviewability benchmark dimensions.

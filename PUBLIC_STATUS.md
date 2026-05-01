@@ -25,7 +25,7 @@ These areas are real and important, but should still be treated as actively evol
 - some planner-to-runtime semantics that have recently been hardened but are still being refined
 - public onboarding, quickstart, and demo ergonomics
 - public proof presentation and broader trust storytelling, even though the underlying validation surfaces are now more explicit
-- adapter/carrier ideas such as an OpenClaw Skill, MCP Policy Gateway, and A2A security metadata profile; these should follow stable contract proof rather than lead it. The docs/contracts-only OpenClaw boundary is mapped in `references/openclaw-adapter-contract-map.md`.
+- adapter/carrier ideas such as an OpenClaw Skill, MCP Policy Gateway, and A2A security metadata profile; these should follow stable contract proof rather than lead it. The docs/contracts-only OpenClaw boundary is mapped in `references/openclaw-adapter-contract-map.md`; future carrier gates are listed in `references/carrier-readiness-checklist.md`.
 
 In other words, the system is real, but not every surface should be read as frozen.
 
