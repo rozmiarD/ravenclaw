@@ -1,6 +1,6 @@
 # VALIDATION.md
 
-This file tells a public reader how to validate the current Ravenclaw repository without assuming a full live operator environment.
+This file tells a public reader how to validate the current Ravenclaw repository without assuming a full live operator environment. For a shorter reviewer-oriented path, see `REVIEWER_VALIDATION_GUIDE.md`.
 
 ## Fast public validation path
 

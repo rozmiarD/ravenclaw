@@ -33,6 +33,7 @@ def test_security_contract_validation_runner_can_include_focused_pytest() -> Non
     ids = runner.list_check_ids(include_pytest=True)
     assert ids[-1] == 'focused_pytest'
     assert 'tests/test_public_snapshot_manifest.py' in runner.FOCUSED_PYTEST_TARGETS
+    assert 'tests/test_reviewer_validation_guide.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'engine/tests/test_security_contract_fixtures.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_public_snapshot_residue_audit.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_replayable_truth_fixture.py' in runner.FOCUSED_PYTEST_TARGETS

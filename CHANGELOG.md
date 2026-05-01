@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added `REVIEWER_VALIDATION_GUIDE.md` as a public-safe reviewer path linking validation commands, manifest evidence, quality signals, and non-claims.
 - Added a schema-backed Public Snapshot Manifest (`schemas/public_snapshot_manifest.v0.1.schema.json`) that maps validation surfaces to concrete files in assembled public snapshots and fails on missing paths.
 - Added a schema-backed Public Validation Surface Index contract (`schemas/public_validation_surface_index.v0.1.schema.json`) and reference documentation so validation-surface claims, non-claims, boundaries, and path checks are machine-checked.
 - Added `--fail-on` preflight exit-code support to the Scope Fidelity report CLI.

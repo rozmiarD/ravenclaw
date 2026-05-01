@@ -40,6 +40,7 @@ FOCUSED_PYTEST_TARGETS = [
     'tests/test_scope_fidelity_cli.py',
     'tests/test_public_validation_surface_index.py',
     'tests/test_public_snapshot_manifest.py',
+    'tests/test_reviewer_validation_guide.py',
 ]
 
 

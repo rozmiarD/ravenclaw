@@ -116,6 +116,7 @@ In other words, the trust surface is meaningful, but it is not magic.
 ## Best evidence trails for a new reader
 
 If you want the shortest serious verification path, read these in order:
+0. `REVIEWER_VALIDATION_GUIDE.md`
 1. `PUBLIC_STATUS.md`
 2. `DEMO.md`
 3. `.github/workflows/pytest.yml`

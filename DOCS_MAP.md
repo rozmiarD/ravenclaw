@@ -18,8 +18,9 @@ That gives you the project shape, the safe public demo path, the maturity truth,
 Start with:
 1. `INSTALL.md`
 2. `VALIDATION.md`
-3. `.github/workflows/pytest.yml`
-4. `tests/test_logdash_smoke.py`
+3. `REVIEWER_VALIDATION_GUIDE.md`
+4. `.github/workflows/pytest.yml`
+5. `tests/test_logdash_smoke.py`
 
 ## If you want the shortest architecture understanding
 
