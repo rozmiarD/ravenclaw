@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ravenclaw.local/schemas/public_validation_surface_index.v0.1.schema.json",
+  "title": "Ravenclaw PublicValidationSurfaceIndex v0.1",
+  "description": "Public-safe index of Ravenclaw validation entry points, their claims, boundaries, and referenced paths. This is a navigation artifact and does not authorize live target execution, protocol adapter work, or public push.",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "schema_ref",
+    "summary",
+    "surfaces"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "public_validation_surface_index"
+    },
+    "schema_version": {
+      "const": "v0.1"
+    },
+    "schema_ref": {
+      "const": "schemas/public_validation_surface_index.v0.1.schema.json"
+    },
+    "summary": {
+      "type": "object",
+      "required": ["surface_count", "missing_path_count"],
+      "properties": {
+        "surface_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing_path_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "surfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "command",
+          "paths",
+          "claim",
+          "non_claim",
+          "boundaries",
+          "missing_paths"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "claim": {
+            "type": "string",
+            "minLength": 1
+          },
+          "non_claim": {
+            "type": "string",
+            "minLength": 1
+          },
+          "boundaries": {
+            "type": "object",
+            "required": [
+              "public_safe",
+              "dry_run_or_local_only",
+              "live_target_execution",
+              "protocol_adapter_work"
+            ],
+            "properties": {
+              "public_safe": {
+                "const": true
+              },
+              "dry_run_or_local_only": {
+                "const": true
+              },
+              "live_target_execution": {
+                "const": false
+              },
+              "protocol_adapter_work": {
+                "const": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "missing_paths": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

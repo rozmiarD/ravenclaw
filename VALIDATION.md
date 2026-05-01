@@ -21,7 +21,7 @@ python scripts/list_public_validation_surfaces.py
 python scripts/list_public_validation_surfaces.py --format json --check
 ```
 
-This is a navigation aid for readers and release prep. It does not run live targets and does not replace the actual validation commands listed below.
+This emits a schema-backed `public_validation_surface_index` artifact (`schemas/public_validation_surface_index.v0.1.schema.json`; see `references/public-validation-surface-index-v0.1.md`). It is a navigation aid for readers and release prep. It does not run live targets and does not replace the actual validation commands listed below.
 
 ## Stable sliced validation path
 

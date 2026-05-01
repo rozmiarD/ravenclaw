@@ -3,10 +3,20 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
+ENGINE_DIR = ROOT / 'engine'
+if str(ENGINE_DIR) not in sys.path:
+    sys.path.insert(0, str(ENGINE_DIR))
+
+import security_contract_layer as scl  # type: ignore
+
+INDEX_ARTIFACT_TYPE = 'public_validation_surface_index'
+INDEX_SCHEMA_VERSION = 'v0.1'
+INDEX_SCHEMA_REF = 'schemas/public_validation_surface_index.v0.1.schema.json'
 
 VALIDATION_SURFACES: list[dict[str, Any]] = [
     {
@@ -99,14 +109,19 @@ def build_index(root: Path = ROOT) -> dict[str, Any]:
         item['missing_paths'] = _missing_paths(surface, root)
         surfaces.append(item)
     return {
-        'artifact_type': 'public_validation_surface_index',
-        'schema_version': 'v0.1',
+        'artifact_type': INDEX_ARTIFACT_TYPE,
+        'schema_version': INDEX_SCHEMA_VERSION,
+        'schema_ref': INDEX_SCHEMA_REF,
         'summary': {
             'surface_count': len(surfaces),
             'missing_path_count': sum(len(surface['missing_paths']) for surface in surfaces),
         },
         'surfaces': surfaces,
     }
+
+
+def validate_index_schema(index: Mapping[str, Any], root: Path = ROOT) -> None:
+    scl.validate_schema_ref(INDEX_SCHEMA_REF, index, root=root)
 
 
 def print_markdown(index: Mapping[str, Any]) -> None:
@@ -133,6 +148,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     index = build_index()
+    validate_index_schema(index)
     if args.format == 'json':
         print(json.dumps(index, indent=2, sort_keys=True))
     else:

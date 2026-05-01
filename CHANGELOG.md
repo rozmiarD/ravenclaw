@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added a schema-backed Public Validation Surface Index contract (`schemas/public_validation_surface_index.v0.1.schema.json`) and reference documentation so validation-surface claims, non-claims, boundaries, and path checks are machine-checked.
 - Added `--fail-on` preflight exit-code support to the Scope Fidelity report CLI.
 - Added a local Scope Fidelity report CLI for generating schema-validated reports from prepared/approved spec JSON.
 - Added public-safe Scope Fidelity report fixtures and validation coverage for exact, mismatch, and ambiguous target binding.
