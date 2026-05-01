@@ -98,6 +98,7 @@ Then run the residue audit against the exact snapshot:
 
 ```bash
 python scripts/audit_public_snapshot_residue.py .
+python scripts/build_public_snapshot_manifest.py . --check
 ```
 
 For a consolidated local receipt before publication prep, run from the live workspace. For routine SCL/public-snapshot work, use the focused path:

@@ -97,6 +97,7 @@ copy_path scripts/validate_scope_fidelity_fixtures.py
 copy_path scripts/build_scope_fidelity_report.py
 copy_path scripts/run_pytest_slice.py
 copy_path scripts/list_public_validation_surfaces.py
+copy_path scripts/build_public_snapshot_manifest.py
 copy_path examples/security-contract-proof
 copy_path examples/replayable-truth-runtime
 copy_path examples/scope-fidelity-report

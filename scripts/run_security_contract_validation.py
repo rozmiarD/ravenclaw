@@ -39,6 +39,7 @@ FOCUSED_PYTEST_TARGETS = [
     'tests/test_scope_fidelity_fixtures.py',
     'tests/test_scope_fidelity_cli.py',
     'tests/test_public_validation_surface_index.py',
+    'tests/test_public_snapshot_manifest.py',
 ]
 
 
@@ -190,6 +191,15 @@ def _snapshot_scope_fidelity_fixture_check(snapshot_dir: Path) -> ValidationChec
     )
 
 
+def _snapshot_manifest_check(snapshot_dir: Path) -> ValidationCheck:
+    return ValidationCheck(
+        check_id='snapshot_manifest',
+        description='Build and validate the public snapshot manifest against copied validation-surface paths.',
+        command=[sys.executable, 'scripts/build_public_snapshot_manifest.py', '.', '--check'],
+        cwd=snapshot_dir,
+    )
+
+
 def _github_actions_pytest_matrix_check(matrix_repo: Path) -> ValidationCheck:
     return ValidationCheck(
         check_id='github_actions_pytest_matrix',
@@ -237,6 +247,7 @@ def list_check_ids(include_pytest: bool, include_github_actions_matrix: bool = F
         'snapshot_residue_audit',
         'snapshot_replayable_truth_fixture',
         'snapshot_scope_fidelity_fixture',
+        'snapshot_manifest',
     ]
     if include_pytest:
         ids.append('focused_pytest')
@@ -321,6 +332,7 @@ def run_validation(include_pytest: bool, include_github_actions_matrix: bool = F
             _snapshot_residue_check(snapshot_dir),
             _snapshot_replayable_truth_fixture_check(snapshot_dir),
             _snapshot_scope_fidelity_fixture_check(snapshot_dir),
+            _snapshot_manifest_check(snapshot_dir),
         ]
         if include_pytest:
             checks.append(_focused_pytest_check(tmp_path / 'pytest-repo'))

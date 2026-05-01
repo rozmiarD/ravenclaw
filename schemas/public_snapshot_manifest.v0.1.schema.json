@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ravenclaw.local/schemas/public_snapshot_manifest.v0.1.schema.json",
+  "title": "Ravenclaw PublicSnapshotManifest v0.1",
+  "description": "Public-safe manifest mapping validation surfaces to files present in an assembled public snapshot. This is a review/navigation artifact and does not authorize live target execution, protocol adapter work, or publication.",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "schema_ref",
+    "snapshot_root_label",
+    "generated_by",
+    "summary",
+    "surfaces"
+  ],
+  "properties": {
+    "artifact_type": {"const": "public_snapshot_manifest"},
+    "schema_version": {"const": "v0.1"},
+    "schema_ref": {"const": "schemas/public_snapshot_manifest.v0.1.schema.json"},
+    "snapshot_root_label": {"type": "string", "minLength": 1},
+    "generated_by": {"const": "scripts/build_public_snapshot_manifest.py"},
+    "summary": {
+      "type": "object",
+      "required": ["surface_count", "path_count", "missing_path_count"],
+      "properties": {
+        "surface_count": {"type": "integer", "minimum": 0},
+        "path_count": {"type": "integer", "minimum": 0},
+        "missing_path_count": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "surfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "claim", "non_claim", "boundaries", "paths", "missing_paths"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "claim": {"type": "string", "minLength": 1},
+          "non_claim": {"type": "string", "minLength": 1},
+          "boundaries": {
+            "type": "object",
+            "required": ["public_safe", "dry_run_or_local_only", "live_target_execution", "protocol_adapter_work"],
+            "properties": {
+              "public_safe": {"const": true},
+              "dry_run_or_local_only": {"const": true},
+              "live_target_execution": {"const": false},
+              "protocol_adapter_work": {"const": false}
+            },
+            "additionalProperties": false
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["path", "present"],
+              "properties": {
+                "path": {"type": "string", "minLength": 1},
+                "present": {"type": "boolean"}
+              },
+              "additionalProperties": false
+            }
+          },
+          "missing_paths": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1}
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

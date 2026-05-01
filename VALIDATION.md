@@ -23,6 +23,14 @@ python scripts/list_public_validation_surfaces.py --format json --check
 
 This emits a schema-backed `public_validation_surface_index` artifact (`schemas/public_validation_surface_index.v0.1.schema.json`; see `references/public-validation-surface-index-v0.1.md`). It is a navigation aid for readers and release prep. It does not run live targets and does not replace the actual validation commands listed below.
 
+For an assembled public snapshot, map those validation surfaces to concrete snapshot files with:
+
+```bash
+python scripts/build_public_snapshot_manifest.py . --check
+```
+
+This emits a schema-backed `public_snapshot_manifest` artifact (`schemas/public_snapshot_manifest.v0.1.schema.json`; see `references/public-snapshot-manifest-v0.1.md`) and fails if any validation-surface path is missing from the snapshot.
+
 ## Stable sliced validation path
 
 For CI or lower-wall-time local validation, use the slice runner:
@@ -103,7 +111,7 @@ Before a public push, run the GitHub Actions parity form:
 python scripts/run_security_contract_validation.py --include-pytest --include-github-actions-matrix
 ```
 
-Expected result: JSON with `artifact_type: security_contract_validation_receipt`, `schema_version: v0.1`, and `status: passed`. This runner validates the public validation surface index, validates the committed fixtures, generates the demo bundle from a disposable public snapshot, assembles a temporary public snapshot, validates copied fixtures inside that snapshot, audits snapshot residue, validates the public-safe Replayable Truth Runtime fixture and Scope Fidelity fixtures, optionally runs the focused Security Contract/public snapshot pytest slice, and can optionally run the full GitHub Actions pytest slice matrix from a disposable public snapshot. The receipt is schema-backed by `schemas/security_contract_validation_receipt.v0.1.schema.json` and described in `references/security-contract-validation-receipt-v0.1.md`.
+Expected result: JSON with `artifact_type: security_contract_validation_receipt`, `schema_version: v0.1`, and `status: passed`. This runner validates the public validation surface index, validates the public snapshot manifest, validates the committed fixtures, generates the demo bundle from a disposable public snapshot, assembles a temporary public snapshot, validates copied fixtures inside that snapshot, audits snapshot residue, validates the public-safe Replayable Truth Runtime fixture and Scope Fidelity fixtures, optionally runs the focused Security Contract/public snapshot pytest slice, and can optionally run the full GitHub Actions pytest slice matrix from a disposable public snapshot. The receipt is schema-backed by `schemas/security_contract_validation_receipt.v0.1.schema.json` and described in `references/security-contract-validation-receipt-v0.1.md`.
 
 ## What not to assume
 

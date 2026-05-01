@@ -20,6 +20,14 @@ INDEX_SCHEMA_REF = 'schemas/public_validation_surface_index.v0.1.schema.json'
 
 VALIDATION_SURFACES: list[dict[str, Any]] = [
     {
+        'id': 'public_validation_surface_index',
+        'title': 'Public validation surface index',
+        'command': 'python scripts/list_public_validation_surfaces.py --format json --check',
+        'paths': ['scripts/list_public_validation_surfaces.py', 'schemas/public_validation_surface_index.v0.1.schema.json', 'references/public-validation-surface-index-v0.1.md'],
+        'claim': 'Lists local/public-safe validation entry points with explicit claims, non-claims, and boundaries.',
+        'non_claim': 'Does not run validation checks or authorize publication by itself.',
+    },
+    {
         'id': 'repo_pytest',
         'title': 'Repository pytest suite',
         'command': 'python -m pytest -q',
@@ -82,6 +90,15 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'paths': ['bin/demo-bundle', 'DEMO.md'],
         'claim': 'Local dry-run demo path produces a compact public-safe summary.',
         'non_claim': 'Demo output is illustrative, not production telemetry.',
+    },
+
+    {
+        'id': 'public_snapshot_manifest',
+        'title': 'Public snapshot manifest',
+        'command': 'python scripts/build_public_snapshot_manifest.py . --check',
+        'paths': ['scripts/build_public_snapshot_manifest.py', 'schemas/public_snapshot_manifest.v0.1.schema.json', 'references/public-snapshot-manifest-v0.1.md'],
+        'claim': 'Maps public validation surfaces to concrete files present in an assembled public snapshot.',
+        'non_claim': 'Does not authorize publication or prove production deployment readiness.',
     },
 ]
 

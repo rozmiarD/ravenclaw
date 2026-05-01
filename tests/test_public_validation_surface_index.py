@@ -34,6 +34,7 @@ def test_public_validation_surface_index_lists_core_surfaces() -> None:
     assert index['schema_ref'] == 'schemas/public_validation_surface_index.v0.1.schema.json'
     ids = {surface['id'] for surface in index['surfaces']}
     assert {
+        'public_validation_surface_index',
         'repo_pytest',
         'github_actions_pytest_matrix',
         'security_contract_fixture',
@@ -42,6 +43,7 @@ def test_public_validation_surface_index_lists_core_surfaces() -> None:
         'scope_fidelity_fixture',
         'public_snapshot_residue_audit',
         'demo_bundle_smoke',
+        'public_snapshot_manifest',
     } <= ids
     assert index['summary']['missing_path_count'] == 0
 
