@@ -27,6 +27,7 @@ def test_security_contract_validation_runner_lists_core_checks() -> None:
         'snapshot_scope_fidelity_fixture',
         'snapshot_manifest',
         'proof_of_value_scorecard',
+        'proof_of_value_scorecard_fixture',
     ]
 
 
@@ -37,6 +38,7 @@ def test_security_contract_validation_runner_can_include_focused_pytest() -> Non
     assert 'tests/test_reviewer_validation_guide.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_proof_of_value_framing.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_proof_of_value_scorecard.py' in runner.FOCUSED_PYTEST_TARGETS
+    assert 'tests/test_proof_of_value_scorecard_fixture.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'engine/tests/test_security_contract_fixtures.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_public_snapshot_residue_audit.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_replayable_truth_fixture.py' in runner.FOCUSED_PYTEST_TARGETS

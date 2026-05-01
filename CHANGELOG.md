@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added a committed proof-of-value scorecard fixture and validator under `examples/proof-of-value-scorecard/`.
 - Added a schema-backed proof-of-value scorecard (`scripts/build_proof_of_value_scorecard.py`) for public-safe governance/reviewability benchmark dimensions.
 - Added `PROOF_OF_VALUE.md` to frame Ravenclaw public value around governance, reviewability, and benchmark dimensions without claiming live exploit performance.
 - Added a `reviewer-report` markdown format for `scripts/build_public_snapshot_manifest.py`, turning snapshot manifest checks into a ready-to-read public review artifact.

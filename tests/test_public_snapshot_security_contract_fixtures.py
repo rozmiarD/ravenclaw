@@ -55,6 +55,9 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         'examples/scope-fidelity-report/exact.json',
         'examples/scope-fidelity-report/cross_host_mismatch.json',
         'examples/scope-fidelity-report/ambiguous.json',
+        'examples/proof-of-value-scorecard/README.md',
+        'examples/proof-of-value-scorecard/scorecard.json',
+        'examples/proof-of-value-scorecard/scorecard.md',
         '.devcontainer/devcontainer.json',
         '.devcontainer/Dockerfile',
         'compose.demo.yaml',
@@ -72,6 +75,7 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         'scripts/list_public_validation_surfaces.py',
         'scripts/build_public_snapshot_manifest.py',
         'scripts/build_proof_of_value_scorecard.py',
+        'scripts/validate_proof_of_value_scorecard.py',
     ]
     for rel in expected_paths:
         assert (out / rel).exists(), rel
@@ -147,3 +151,13 @@ def test_public_snapshot_includes_and_validates_security_contract_fixtures(tmp_p
         check=True,
     )
     assert 'proof_of_value_scorecard' in scorecard_proc.stdout
+
+    scorecard_fixture_proc = subprocess.run(
+        [sys.executable, str(out / 'scripts' / 'validate_proof_of_value_scorecard.py'), 'examples/proof-of-value-scorecard/scorecard.json'],
+        cwd=str(out),
+        env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'},
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert 'proof_of_value_scorecard_ok:' in scorecard_fixture_proc.stdout

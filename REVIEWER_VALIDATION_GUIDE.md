@@ -99,6 +99,13 @@ These are dry-run/local/example artifacts. They are meant to show governance, sc
 
 Proof-of-value scorecard:
 
+Committed fixture validation:
+
+```bash
+python scripts/validate_proof_of_value_scorecard.py examples/proof-of-value-scorecard/scorecard.json
+```
+
+
 ```bash
 python scripts/build_proof_of_value_scorecard.py . --check
 python scripts/build_proof_of_value_scorecard.py . --format markdown --check

@@ -101,9 +101,11 @@ copy_path scripts/run_pytest_slice.py
 copy_path scripts/list_public_validation_surfaces.py
 copy_path scripts/build_public_snapshot_manifest.py
 copy_path scripts/build_proof_of_value_scorecard.py
+copy_path scripts/validate_proof_of_value_scorecard.py
 copy_path examples/security-contract-proof
 copy_path examples/replayable-truth-runtime
 copy_path examples/scope-fidelity-report
+copy_path examples/proof-of-value-scorecard
 
 cat > "$OUT/examples/campaign_registry/example-registry-entry.md" <<'EOF'
 # Example campaign registry entry

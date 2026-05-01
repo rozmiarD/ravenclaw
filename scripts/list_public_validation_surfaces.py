@@ -104,7 +104,7 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'id': 'proof_of_value_scorecard',
         'title': 'Proof-of-Value scorecard',
         'command': 'python scripts/build_proof_of_value_scorecard.py . --check',
-        'paths': ['scripts/build_proof_of_value_scorecard.py', 'schemas/proof_of_value_scorecard.v0.1.schema.json', 'references/proof-of-value-scorecard-v0.1.md', 'PROOF_OF_VALUE.md'],
+        'paths': ['scripts/build_proof_of_value_scorecard.py', 'scripts/validate_proof_of_value_scorecard.py', 'schemas/proof_of_value_scorecard.v0.1.schema.json', 'references/proof-of-value-scorecard-v0.1.md', 'examples/proof-of-value-scorecard', 'PROOF_OF_VALUE.md'],
         'claim': 'Machine-readable public-safe benchmark checklist for Ravenclaw governance/reviewability value dimensions.',
         'non_claim': 'Does not claim live vulnerability discovery, production readiness, or protocol-adapter completeness.',
     },
