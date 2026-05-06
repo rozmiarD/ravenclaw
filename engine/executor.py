@@ -9,6 +9,7 @@ from typing import Any, Dict, List
 from action_compiler import compile_action_spec  # type: ignore
 from campaign_utils import extract_host_from_url, host_in_scope, load_scope_domains  # type: ignore
 from policy_core import get_approved_spec_allowed_tools, get_runtime_allowed_tools, contains_tool_restricted_patterns, normalize_tool  # type: ignore
+from sclite.integrity import artifact_descriptor  # type: ignore
 from tool_registry import get_tool_catalog  # type: ignore
 
 HOST_TOKEN_RE = re.compile(r"(https?://[^\s\"'<>]+)|\b((?:[a-z0-9-]+\.)+[a-z]{2,})\b", re.IGNORECASE)
@@ -220,8 +221,74 @@ class ExecutionEngine:
             raise ValueError('missing_execution_plan')
         return out
 
-    def execute_approved_spec(self, approved_execution_spec: Dict[str, Any], dry_run: bool = False) -> Dict[str, Any]:
+    def _validate_execution_ticket_gate(
+        self,
+        approved_execution_spec: Dict[str, Any],
+        *,
+        execution_ticket: Dict[str, Any] | None,
+        execution_contract: Dict[str, Any] | None,
+        raw_steps: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        if not isinstance(execution_ticket, dict):
+            raise ValueError('missing_execution_ticket')
+        if not isinstance(execution_contract, dict):
+            raise ValueError('missing_execution_contract')
+        artifact_type = str(execution_ticket.get('artifact_type') or '').strip()
+        schema_version = str(execution_ticket.get('schema_version') or '').strip()
+        if artifact_type != 'execution_ticket' or schema_version != 'v0.2':
+            raise ValueError(f'invalid_execution_ticket:{artifact_type or "missing"}:{schema_version or "missing"}')
+        approval = execution_ticket.get('approval') if isinstance(execution_ticket.get('approval'), dict) else {}
+        status = str(approval.get('status') or '').strip().lower()
+        if status != 'approve':
+            raise ValueError(f'invalid_execution_ticket_approval:{status or "missing"}')
+        limits = execution_ticket.get('execution_limits') if isinstance(execution_ticket.get('execution_limits'), dict) else {}
+        try:
+            max_runs = int(limits.get('max_runs', 0) or 0)
+        except (TypeError, ValueError):
+            max_runs = 0
+        if max_runs < 1:
+            raise ValueError('invalid_execution_ticket_max_runs')
+        contract_digest = artifact_descriptor(execution_contract)['digest']
+        integrity = execution_ticket.get('integrity') if isinstance(execution_ticket.get('integrity'), dict) else {}
+        bound_digest = str(integrity.get('ticket_binds_execution_contract_digest') or '').strip()
+        if bound_digest != contract_digest:
+            raise ValueError('execution_ticket_contract_digest_mismatch')
+        shape = execution_contract.get('execution_shape') if isinstance(execution_contract.get('execution_shape'), dict) else {}
+        contract_plan = shape.get('plan') if isinstance(shape.get('plan'), list) else []
+        if len(contract_plan) != len(raw_steps):
+            raise ValueError('execution_ticket_plan_length_mismatch')
+        for idx, (contract_step, approved_step) in enumerate(zip(contract_plan, raw_steps), 1):
+            if not isinstance(contract_step, dict):
+                raise ValueError(f'execution_ticket_invalid_contract_step:{idx}')
+            if str(contract_step.get('tool') or '') != str(approved_step.get('tool') or ''):
+                raise ValueError(f'execution_ticket_tool_mismatch:{idx}')
+            if [str(item) for item in list(contract_step.get('args') or [])] != [str(item) for item in list(approved_step.get('args') or [])]:
+                raise ValueError(f'execution_ticket_args_mismatch:{idx}')
+        return {
+            'status': 'passed',
+            'ticket_id': str(execution_ticket.get('ticket_id') or ''),
+            'execution_contract_digest': contract_digest,
+            'profile': str(integrity.get('profile') or ''),
+        }
+
+    def execute_approved_spec(
+        self,
+        approved_execution_spec: Dict[str, Any],
+        dry_run: bool = False,
+        *,
+        execution_ticket: Dict[str, Any] | None = None,
+        execution_contract: Dict[str, Any] | None = None,
+        require_execution_ticket: bool = False,
+    ) -> Dict[str, Any]:
         raw_steps = self._approved_execution_steps(approved_execution_spec)
+        execution_ticket_gate = None
+        if require_execution_ticket:
+            execution_ticket_gate = self._validate_execution_ticket_gate(
+                approved_execution_spec,
+                execution_ticket=execution_ticket,
+                execution_contract=execution_contract,
+                raw_steps=raw_steps,
+            )
         plan = [self._normalize_argv(str(step.get('tool') or ''), list(step.get('args') or []), approved_spec=True) for step in raw_steps]
         compiled = {
             'action_type': str(approved_execution_spec.get('action_type') or ''),
@@ -243,6 +310,7 @@ class ExecutionEngine:
                 'compiled_action': compiled,
                 'planned_commands': plan,
                 'execution_source': 'approved_execution_spec',
+                'execution_ticket_gate': execution_ticket_gate or {'status': 'not_required'},
             }
 
         combined_stdout: List[str] = []
@@ -277,6 +345,7 @@ class ExecutionEngine:
                     'executed_commands': executed_commands,
                     'step_artifacts': step_artifacts,
                     'execution_source': 'approved_execution_spec',
+                    'execution_ticket_gate': execution_ticket_gate or {'status': 'not_required'},
                 }
         return {
             'status': 'succeeded',
@@ -289,6 +358,7 @@ class ExecutionEngine:
             'executed_commands': executed_commands,
             'step_artifacts': step_artifacts,
             'execution_source': 'approved_execution_spec',
+            'execution_ticket_gate': execution_ticket_gate or {'status': 'not_required'},
         }
 
     def execute(self, action_spec: Dict[str, Any], dry_run: bool = False) -> Dict[str, Any]:

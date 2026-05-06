@@ -32,6 +32,7 @@ from capability_recipes import can_resolve_tool_from_capability  # type: ignore
 from execution_contracts import build_prepared_execution_spec, build_approved_execution_spec, redact_prepared_execution_spec_for_auditor  # type: ignore
 from semantic_loss_policy import semantic_loss_runtime_gate  # type: ignore
 from public_delivery import apply_delivery_profile_to_pipeline, resolve_delivery_profile, run_auditor_adapter, run_brain_adapter, run_execution_adapter  # type: ignore
+from scl_ravenclaw_adapter import build_lifecycle_artifacts_v02  # type: ignore
 
 
 def _selected_scope_path() -> Path:
@@ -1641,6 +1642,25 @@ def execute_flow(
     if cfg.get('verbose_commands', True):
         output['planned_command'] = built_cmd or None
 
+    try:
+        lifecycle_artifacts_v0_2 = build_lifecycle_artifacts_v02(output)
+        output['scl_lifecycle_artifacts_v0_2'] = lifecycle_artifacts_v0_2
+        output['execution_contract_v0_2'] = lifecycle_artifacts_v0_2.get('execution_contract.json')
+        output['execution_ticket_v0_2'] = lifecycle_artifacts_v0_2.get('execution_ticket.json')
+        output['artifact_chain_manifest_v0_2'] = lifecycle_artifacts_v0_2.get('artifact_chain_manifest.json')
+        log_stage('ENGINE', 'execution_ticket_gate_prepare', 'success', 'sclite_v0_2_execution_ticket_ready')
+    except Exception as exc:
+        log_stage('ENGINE', 'execution_ticket_gate_prepare', 'failed', str(exc))
+        output['engine'] = {
+            'status': 'blocked',
+            'returncode': None,
+            'stdout': '',
+            'stderr': str(exc),
+            'reason': 'execution_ticket_gate_prepare_failed',
+        }
+        output['reason_code'] = 'execution_ticket_gate_prepare_failed'
+        return output, 'blocked', 'execution_ticket_gate_prepare_failed'
+
     execution_adapter_meta: Dict[str, Any] = {}
     try:
         _t0 = time.perf_counter()
@@ -1648,7 +1668,13 @@ def execute_flow(
         def _local_execution_runner(effective_dry_run: bool) -> Dict[str, Any]:
             if not hasattr(engine, 'execute_approved_spec'):
                 raise RuntimeError('execution_engine_missing_approved_spec_path')
-            return engine.execute_approved_spec(output['approved_execution_spec'], dry_run=effective_dry_run)
+            return engine.execute_approved_spec(
+                output['approved_execution_spec'],
+                dry_run=effective_dry_run,
+                execution_ticket=output.get('execution_ticket_v0_2'),
+                execution_contract=output.get('execution_contract_v0_2'),
+                require_execution_ticket=True,
+            )
 
         def _mock_execution_runner(effective_dry_run: bool) -> Dict[str, Any]:
             return _mock_execution_result(output['approved_execution_spec'], effective_dry_run=effective_dry_run)

@@ -111,7 +111,7 @@ def test_execute_flow_demo_mode_uses_local_adapters_and_forces_dry_run(monkeypat
     monkeypatch.setattr(rp, 'ask_json', lambda *a, **k: (_ for _ in ()).throw(AssertionError('ask_json should not be used in demo mode')))
 
     class FakeEngine:
-        def execute_approved_spec(self, approved_spec, dry_run: bool = False):
+        def execute_approved_spec(self, approved_spec, dry_run: bool = False, **kwargs):
             engine_calls.append(bool(dry_run))
             preview = list((approved_spec.get('execution_truth') or {}).get('command_preview') or [])
             return {

@@ -27,7 +27,7 @@ def test_execute_flow_marks_semantic_loss_rereview_on_approved_degraded_run(monk
         def build_command(self, action_spec):
             return ['curl', '-I', action_spec.get('target') or 'https://api.example.com/']
 
-        def execute_approved_spec(self, action_spec, dry_run=False):
+        def execute_approved_spec(self, action_spec, dry_run=False, **kwargs):
             return self.execute(action_spec, dry_run=dry_run)
 
         def execute(self, action_spec, dry_run=False):

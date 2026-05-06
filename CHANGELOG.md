@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added a runtime ExecutionTicket gate for the local approved-spec execution path: Ravenclaw now builds SCLite v0.2 lifecycle artifacts before local execution and requires the execution ticket to bind the exact execution contract shape.
 - Updated Ravenclaw to consume SCLite v0.2 and emit a public-safe lifecycle chain alongside the legacy proof trace: `IntentContract`, v0.2 `PolicyDecision`, `ExecutionContract`, `ExecutionTicket`, v0.2 `ExecutionReceipt`, `EvidenceContract`, and a hash-linked `ArtifactChainManifest` verified by SCLite.
 - Integrated Ravenclaw with external SCLite as the single Security Contract Layer core dependency, removed the embedded local contract-core copy, synchronized public schemas/proof fixtures from SCLite, updated validation/CI install paths, and planned engine extraction around the new package boundary.
 - Added a carrier readiness packet template so future adapter proposals must state scope UX, redaction, command authority, contracts, validation, rollback, and public/private boundaries before implementation.

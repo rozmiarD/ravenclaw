@@ -172,7 +172,7 @@ def test_execute_flow_mocked_harness_applies_auth_sanitization_and_aggression_re
     monkeypatch.setattr(rp, 'ask_json', fake_ask_json)
 
     class FakeEngine:
-        def execute_approved_spec(self, approved_spec, dry_run: bool = False):
+        def execute_approved_spec(self, approved_spec, dry_run: bool = False, **kwargs):
             captured_engine_spec['approved_spec'] = approved_spec
             return {
                 'status': 'success',
@@ -273,7 +273,7 @@ def test_execute_flow_prefers_approved_execution_spec_path_even_if_raw_execute_e
     monkeypatch.setattr(rp, 'ask_json', fake_ask_json)
 
     class FakeEngine:
-        def execute_approved_spec(self, approved_spec, dry_run: bool = False):
+        def execute_approved_spec(self, approved_spec, dry_run: bool = False, **kwargs):
             preview = list((approved_spec.get('execution_truth') or {}).get('command_preview') or [])
             return {
                 'status': 'success',
@@ -300,6 +300,10 @@ def test_execute_flow_prefers_approved_execution_spec_path_even_if_raw_execute_e
     assert final_summary == 'ok'
     assert output['engine']['status'] == 'success'
     assert output['approved_execution_spec']['approval']['decision'] == 'approve'
+    assert output['execution_ticket_v0_2']['artifact_type'] == 'execution_ticket'
+    assert output['execution_contract_v0_2']['artifact_type'] == 'execution_contract'
+    assert output['artifact_chain_manifest_v0_2']['artifact_type'] == 'artifact_chain_manifest'
+    assert output['artifact_chain_manifest_v0_2']['root_chain_digest']
     assert output['execution_lineage']['approved_command_preview'][0] == 'curl'
 
 

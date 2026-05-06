@@ -10,8 +10,30 @@ if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
 from executor import ExecutionEngine  # type: ignore
+from sclite.integrity import artifact_descriptor  # type: ignore
 from policy_core import get_approved_spec_allowed_tools, get_runtime_allowed_tools  # type: ignore
 
+
+
+
+def _execution_ticket_for(approved_spec: dict) -> tuple[dict, dict]:
+    execution_plan = list((approved_spec.get('execution_truth') or {}).get('execution_plan') or [])
+    execution_contract = {
+        'artifact_type': 'execution_contract',
+        'schema_version': 'v0.2',
+        'contract_id': 'test-contract',
+        'execution_shape': {'plan': execution_plan},
+    }
+    digest = artifact_descriptor(execution_contract)['digest']
+    execution_ticket = {
+        'artifact_type': 'execution_ticket',
+        'schema_version': 'v0.2',
+        'ticket_id': 'test-ticket',
+        'approval': {'status': 'approve'},
+        'execution_limits': {'one_shot': True, 'max_runs': 1},
+        'integrity': {'ticket_binds_execution_contract_digest': digest, 'profile': 'test-integrity-only'},
+    }
+    return execution_ticket, execution_contract
 
 def _approved_spec(*, tool: str, execution_plan: list[dict], action_type: str = 'single_probe', capability: str = 'http_probe', execution_mode: str = 'normalized') -> dict:
     return {
@@ -414,4 +436,42 @@ def test_execution_engine_rejects_hakrawler_out_of_scope_stdin_url_target() -> N
                 'probe_recipe': {'sequence_steps': ['single'], 'evidence_goal': 'stdin-fed out-of-scope target'},
             },
             dry_run=True,
+        )
+
+
+def test_execute_approved_spec_runtime_ticket_gate_passes_for_bound_contract() -> None:
+    engine = ExecutionEngine()
+    engine.scope_domains = {'exact': ['example.com'], 'suffix': [], 'exclude_exact': [], 'exclude_suffix': []}
+    approved = _approved_spec(tool='curl', execution_plan=[{'tool': 'curl', 'args': ['https://example.com']}])
+    ticket, contract = _execution_ticket_for(approved)
+    res = engine.execute_approved_spec(
+        approved,
+        dry_run=True,
+        execution_ticket=ticket,
+        execution_contract=contract,
+        require_execution_ticket=True,
+    )
+    assert res['execution_ticket_gate']['status'] == 'passed'
+    assert res['execution_ticket_gate']['ticket_id'] == 'test-ticket'
+
+
+def test_execute_approved_spec_runtime_ticket_gate_rejects_missing_ticket() -> None:
+    engine = ExecutionEngine()
+    approved = _approved_spec(tool='curl', execution_plan=[{'tool': 'curl', 'args': ['https://example.com']}])
+    with pytest.raises(ValueError, match='missing_execution_ticket'):
+        engine.execute_approved_spec(approved, dry_run=True, require_execution_ticket=True)
+
+
+def test_execute_approved_spec_runtime_ticket_gate_rejects_contract_mismatch() -> None:
+    engine = ExecutionEngine()
+    approved = _approved_spec(tool='curl', execution_plan=[{'tool': 'curl', 'args': ['https://example.com']}])
+    ticket, contract = _execution_ticket_for(approved)
+    contract['execution_shape']['plan'][0]['args'] = ['https://different.example']
+    with pytest.raises(ValueError, match='execution_ticket_contract_digest_mismatch'):
+        engine.execute_approved_spec(
+            approved,
+            dry_run=True,
+            execution_ticket=ticket,
+            execution_contract=contract,
+            require_execution_ticket=True,
         )
