@@ -100,6 +100,12 @@ For the generated public demo bundle path, run:
 bin/demo-bundle --print-summary
 ```
 
+The demo bundle now emits both the legacy v0.1 proof trace and a SCLite v0.2 lifecycle chain. To verify the generated v0.2 hash-linked artifact chain, run:
+
+```bash
+sclite validate-chain demo-output/artifact_chain_manifest.json
+```
+
 For the repeatable local/public-safe Security Contract validation receipt, run:
 
 ```bash

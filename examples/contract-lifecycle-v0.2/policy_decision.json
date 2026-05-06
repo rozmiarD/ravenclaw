@@ -1,0 +1,46 @@
+{
+  "artifact_type": "policy_decision",
+  "capability": {
+    "class": "passive",
+    "name": "http_probe",
+    "network_effect": "none_in_dry_run"
+  },
+  "constraints": [
+    "dry_run_only",
+    "single_target_host",
+    "no_credentials",
+    "no_raw_private_output"
+  ],
+  "created_at": "2026-05-06T18:21:00+00:00",
+  "decision": "allow_prepare",
+  "decision_id": "policy-demo-001",
+  "links": {
+    "intent": {
+      "descriptor": {
+        "algorithm": "sha256",
+        "artifact_type": "intent_contract",
+        "canonical_bytes": 803,
+        "canonicalization": "sclite-json-v0.1",
+        "digest": "35a0f49b424851ef7a2864705bfb9e5411b049641f5734456bf45068293d492f",
+        "schema_ref": "schemas/intent_contract.v0.2.schema.json",
+        "schema_version": "v0.2"
+      },
+      "role": "intent_contract"
+    }
+  },
+  "reason_codes": [
+    "demo_scope_allowed",
+    "dry_run_contract_path"
+  ],
+  "risk": {
+    "level": "low",
+    "reason": "synthetic public-safe dry-run fixture"
+  },
+  "schema_ref": "schemas/policy_decision.v0.2.schema.json",
+  "schema_version": "v0.2",
+  "scope": {
+    "scope_profile": "demo-public-safe",
+    "target_host": "example.com",
+    "target_in_scope": true
+  }
+}

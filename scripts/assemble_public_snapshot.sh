@@ -103,6 +103,7 @@ copy_path scripts/build_public_snapshot_manifest.py
 copy_path scripts/build_proof_of_value_scorecard.py
 copy_path scripts/validate_proof_of_value_scorecard.py
 copy_path examples/security-contract-proof
+copy_path examples/contract-lifecycle-v0.2
 copy_path examples/replayable-truth-runtime
 copy_path examples/scope-fidelity-report
 copy_path examples/proof-of-value-scorecard

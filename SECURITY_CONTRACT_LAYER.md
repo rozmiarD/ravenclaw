@@ -2,15 +2,21 @@
 
 ## Status
 
-Draft v0.1 direction. The reusable contract/schema core has been split into the standalone public **SCLite** package/repository (`https://github.com/rozmiarD/SCLite`) and Ravenclaw now consumes it as a pinned dependency. Ravenclaw Runtime remains the governed reference/proof implementation; SCLite remains a contract artifact, validation, redaction, and public-safe fixture layer — not a new protocol.
+Draft v0.2 direction. The reusable contract/schema core lives in the standalone public **SCLite** package/repository (`https://github.com/rozmiarD/SCLite`) and Ravenclaw consumes it as a pinned dependency. Ravenclaw Runtime remains the governed reference/proof implementation; SCLite remains a contract lifecycle, validation, redaction, integrity-chain, and public-safe fixture layer — not a new protocol.
 
 ## What it is
 
-The Security Contract Layer is the small set of structured artifacts Ravenclaw uses to carry security-critical truth through a governed workflow:
+The Security Contract Layer is the small set of structured artifacts Ravenclaw uses to carry security-critical truth through a governed workflow.
+
+Legacy v0.1 proof trace:
 
 `scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run/execution receipt -> evidence summary`
 
-Its purpose is to make scope, policy, approval, execution constraints, evidence, and provenance explicit enough to validate, redact, replay, and explain.
+SCLite v0.2 lifecycle chain:
+
+`intent -> policy decision -> execution contract -> execution ticket -> execution receipt -> evidence contract -> artifact chain manifest`
+
+Its purpose is to make scope, policy, approval, execution constraints, evidence, provenance, and local artifact-chain integrity explicit enough to validate, redact, replay, verify, and explain.
 
 ## What it is not
 
@@ -43,7 +49,7 @@ Ravenclaw Runtime remains the reference/proof implementation. Its Replayable Tru
 
 The contract layer should be extracted only from real artifacts already produced or consumed by runtime code. The current proof path is intentionally narrow and public-safe: demo mode, safe demo targets, mock/dry-run execution, sanitized output, and deterministic replay fixtures.
 
-The reusable SCL implementation now lives in the external `sclite` package. Ravenclaw keeps only integration code: `engine/scl_ravenclaw_adapter.py` maps Ravenclaw runtime/policy output into SCLite artifacts, `engine/security_contract_layer.py` is the Ravenclaw compatibility wrapper, and `engine/public_demo_bundle.py` remains the demo bundle orchestration/CLI surface. Root `schemas/` and `examples/security-contract-proof/` are public-review copies synchronized from SCLite so Ravenclaw snapshots remain self-describing.
+The reusable SCL implementation now lives in the external `sclite` package. Ravenclaw keeps only integration code: `engine/scl_ravenclaw_adapter.py` maps Ravenclaw runtime/policy output into SCLite artifacts, `engine/security_contract_layer.py` is the Ravenclaw compatibility wrapper, and `engine/public_demo_bundle.py` remains the demo bundle orchestration/CLI surface. Root `schemas/`, `examples/security-contract-proof/`, and `examples/contract-lifecycle-v0.2/` are public-review copies synchronized from SCLite so Ravenclaw snapshots remain self-describing.
 
 A committed public-safe fixture lives at `examples/security-contract-proof/` and can be validated with `scripts/validate_security_contract_fixtures.py`. A replay fixture lives at `examples/replayable-truth-runtime/` and can be validated with `scripts/validate_replayable_truth_fixture.py`. The broader local/public-safe validation path is `scripts/run_security_contract_validation.py`, which emits a schema-backed `security_contract_validation_receipt` covering fixtures, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, replay fixture validation, and optional focused pytest.
 
@@ -55,7 +61,19 @@ A committed public-safe fixture lives at `examples/security-contract-proof/` and
 
 No adapter should be promoted before the public proof bundle and schema validation are credible.
 
-## v0.1 candidate artifacts
+## v0.2 lifecycle artifacts
+
+| Artifact | Current implementation status | Producer | Consumer | Notes |
+|---|---|---|---|---|
+| `IntentContract` | Implemented as public-safe SCLite v0.2 adapter output | `engine/scl_ravenclaw_adapter.py` | reviewer/public demo bundle, chain verifier | Records what Ravenclaw intended before authority exists. |
+| `PolicyDecision` v0.2 | Implemented alongside legacy v0.1 decision | `engine/scl_ravenclaw_adapter.py` | lifecycle chain, reviewer | Links to the exact intent descriptor. |
+| `ExecutionContract` | Implemented as v0.2 lifecycle execution-shape artifact | `engine/scl_ravenclaw_adapter.py` | execution ticket, reviewer | Captures target binding, execution shape, and bounds. |
+| `ExecutionTicket` | Implemented as integrity-bound v0.2 ticket | `engine/scl_ravenclaw_adapter.py` | lifecycle chain, future runtime enforcement | Binds to the exact execution contract digest; signer identity is not claimed in core. |
+| `ExecutionReceipt` v0.2 | Implemented as lifecycle receipt | `engine/scl_ravenclaw_adapter.py` | evidence contract, reviewer | Records what Ravenclaw dry-ran/executed in compact public-safe form. |
+| `EvidenceContract` | Implemented as v0.2 claims/non-claims artifact | `engine/scl_ravenclaw_adapter.py` | reviewer/public bundle | Links evidence claims to the exact receipt/ticket. |
+| `ArtifactChainManifest` | Implemented and verified by SCLite | `sclite.integrity.build_artifact_chain_manifest(...)` via Ravenclaw adapter | `sclite validate-chain` / public demo bundle | Lightweight hash-linked integrity chain, not PKI or legal authorization proof. |
+
+## v0.1 compatibility artifacts
 
 | Artifact | Current implementation status | Producer | Consumer | Notes |
 |---|---|---|---|---|

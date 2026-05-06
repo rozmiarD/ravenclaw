@@ -1,0 +1,72 @@
+{
+  "approval": {
+    "approval_id": "approval-demo-001",
+    "approver_kind": "fixture_reviewer",
+    "status": "approved_for_dry_run"
+  },
+  "artifact_type": "execution_ticket",
+  "created_at": "2026-05-06T18:21:00+00:00",
+  "execution_limits": {
+    "max_runs": 1,
+    "mode": "dry_run",
+    "one_shot": true
+  },
+  "integrity": {
+    "profile": "sclite-v0.2-integrity-only",
+    "ticket_binds_execution_contract_digest": "573ea42c15c4cc82e422f0aef66f5303ad68bc9b77ba11df7d8a53f3edf3d6ca"
+  },
+  "links": {
+    "execution_contract": {
+      "descriptor": {
+        "algorithm": "sha256",
+        "artifact_type": "execution_contract",
+        "canonical_bytes": 1449,
+        "canonicalization": "sclite-json-v0.1",
+        "digest": "573ea42c15c4cc82e422f0aef66f5303ad68bc9b77ba11df7d8a53f3edf3d6ca",
+        "schema_ref": "schemas/execution_contract.v0.2.schema.json",
+        "schema_version": "v0.2"
+      },
+      "role": "execution_contract"
+    },
+    "intent": {
+      "descriptor": {
+        "algorithm": "sha256",
+        "artifact_type": "intent_contract",
+        "canonical_bytes": 803,
+        "canonicalization": "sclite-json-v0.1",
+        "digest": "35a0f49b424851ef7a2864705bfb9e5411b049641f5734456bf45068293d492f",
+        "schema_ref": "schemas/intent_contract.v0.2.schema.json",
+        "schema_version": "v0.2"
+      },
+      "role": "intent_contract"
+    },
+    "policy_decision": {
+      "descriptor": {
+        "algorithm": "sha256",
+        "artifact_type": "policy_decision",
+        "canonical_bytes": 958,
+        "canonicalization": "sclite-json-v0.1",
+        "digest": "fe997b9400b3dbac7f562a2f946734ca189b48253b0142f137e7e13b7b669e0b",
+        "schema_ref": "schemas/policy_decision.v0.2.schema.json",
+        "schema_version": "v0.2"
+      },
+      "role": "policy_decision"
+    }
+  },
+  "non_claims": [
+    "ticket_fixture_does_not_prove_real_world_identity",
+    "runtime_must_enforce_ticket_bounds"
+  ],
+  "schema_ref": "schemas/execution_ticket.v0.2.schema.json",
+  "schema_version": "v0.2",
+  "signature": {
+    "identity_signature_required": false,
+    "mode": "not_signed_integrity_only_fixture",
+    "note": "SCLite v0.2 core uses hash-linked integrity without requiring PKI dependencies."
+  },
+  "ticket_id": "ticket-demo-001",
+  "validity": {
+    "not_after": "2026-05-07T18:21:00+00:00",
+    "not_before": "2026-05-06T18:21:00+00:00"
+  }
+}

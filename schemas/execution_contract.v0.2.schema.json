@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ExecutionContract v0.2",
+  "type": "object",
+  "required": ["artifact_type", "schema_version", "schema_ref", "contract_id", "created_at", "links", "target_binding", "execution_shape", "execution_bounds", "expected_receipt"],
+  "properties": {
+    "artifact_type": {"const": "execution_contract"},
+    "schema_version": {"const": "v0.2"},
+    "schema_ref": {"const": "schemas/execution_contract.v0.2.schema.json"},
+    "contract_id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "minLength": 1},
+    "links": {"type": "object"},
+    "target_binding": {"type": "object"},
+    "execution_shape": {"type": "object"},
+    "execution_bounds": {"type": "object"},
+    "expected_receipt": {"type": "object"},
+    "non_claims": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

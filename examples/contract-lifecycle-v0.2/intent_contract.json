@@ -1,0 +1,38 @@
+{
+  "actor": {
+    "carrier": "fixture",
+    "kind": "agent",
+    "label": "demo-agent"
+  },
+  "artifact_type": "intent_contract",
+  "authority": {
+    "intent_is_authority": false,
+    "requires_execution_ticket": true,
+    "requires_policy_decision": true
+  },
+  "constraints": [
+    "public_safe_fixture",
+    "dry_run_only",
+    "no_live_private_target"
+  ],
+  "created_at": "2026-05-06T18:21:00+00:00",
+  "intent": {
+    "category": "passive_http_probe",
+    "summary": "Check whether a demo login endpoint is reachable using a dry-run HTTP probe."
+  },
+  "intent_id": "intent-demo-001",
+  "non_claims": [
+    "intent_does_not_authorize_execution",
+    "fixture_does_not_claim_live_vulnerability_evidence"
+  ],
+  "requested_capability": {
+    "mode": "dry_run",
+    "name": "http_probe"
+  },
+  "schema_ref": "schemas/intent_contract.v0.2.schema.json",
+  "schema_version": "v0.2",
+  "target": {
+    "host": "example.com",
+    "uri": "https://example.com/login"
+  }
+}

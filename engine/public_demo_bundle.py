@@ -11,15 +11,18 @@ from typing import Any, Dict, List
 
 import demo_entry  # type: ignore
 from security_contract_layer import (  # type: ignore
+    LIFECYCLE_TRACE_FILES_V02,
     PROOF_TRACE_FILES,
     assert_public_proof_trace_artifacts,
     build_evidence_bundle_artifact,
     build_evidence_summary_markdown,
+    build_lifecycle_artifacts_v02,
     build_policy_decision_artifact,
     build_proof_trace_artifacts,
     repo_root,
     sanitize_public_artifact,
 )
+from sclite.integrity import verify_artifact_chain_manifest  # type: ignore
 
 
 BUNDLE_VERSION = '2026-04-24.public-demo-bundle.v1'
@@ -64,6 +67,7 @@ def build_bundle_summary(*, plan_data: Dict[str, Any], pipeline_data: Dict[str, 
         'plan_summary': plan_summary,
         'planned_command': sanitize_public_artifact(list(pipeline_data.get('planned_command') or [])),
         'proof_trace_files': list(PROOF_TRACE_FILES),
+        'lifecycle_trace_files_v0_2': list(LIFECYCLE_TRACE_FILES_V02),
         'demo_commands': sanitize_public_artifact([list(cmd) for cmd in commands]),
     }
 
@@ -91,12 +95,23 @@ def build_bundle_markdown(summary: Dict[str, Any]) -> str:
         '- `execution_receipt.json`',
         '- `evidence_bundle.json`',
         '- `evidence_summary.md`',
+        '- `intent_contract.json`',
+        '- `policy_decision.v0.2.json`',
+        '- `execution_contract.json`',
+        '- `execution_ticket.json`',
+        '- `execution_receipt.v0.2.json`',
+        '- `evidence_contract.json`',
+        '- `artifact_chain_manifest.json`',
         '- `bundle_summary.json`',
         '- `bundle_summary.md`',
         '',
         '## Proof trace',
         '',
         '`scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence bundle/summary`',
+        '',
+        '## SCLite v0.2 lifecycle chain',
+        '',
+        '`intent -> policy decision -> execution contract -> execution ticket -> execution receipt -> evidence contract -> artifact chain manifest`',
     ]
     return '\n'.join(lines) + '\n'
 
@@ -114,6 +129,7 @@ def generate_bundle(*, output_dir: str = DEFAULT_OUTPUT_DIR, python_bin: str | N
     summary = build_bundle_summary(plan_data=plan_data, pipeline_data=pipeline_data, commands=commands)
     proof_trace = build_proof_trace_artifacts(pipeline_data)
     assert_public_proof_trace_artifacts(proof_trace)
+    lifecycle_trace = build_lifecycle_artifacts_v02(pipeline_data)
     markdown = build_bundle_markdown(summary)
 
     (out_dir / 'plan_campaign.demo.json').write_text(json.dumps(sanitize_public_artifact(plan_data), ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
@@ -123,12 +139,16 @@ def generate_bundle(*, output_dir: str = DEFAULT_OUTPUT_DIR, python_bin: str | N
             (out_dir / filename).write_text(str(artifact), encoding='utf-8')
         else:
             (out_dir / filename).write_text(json.dumps(artifact, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    for filename, artifact in lifecycle_trace.items():
+        (out_dir / filename).write_text(json.dumps(artifact, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    verify_artifact_chain_manifest(lifecycle_trace['artifact_chain_manifest.json'], root=out_dir)
     (out_dir / 'bundle_summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     (out_dir / 'bundle_summary.md').write_text(markdown, encoding='utf-8')
     files = [
         str(out_dir / 'plan_campaign.demo.json'),
         str(out_dir / 'run_pipeline.demo.json'),
         *[str(out_dir / name) for name in PROOF_TRACE_FILES],
+        *[str(out_dir / name) for name in LIFECYCLE_TRACE_FILES_V02],
         str(out_dir / 'bundle_summary.json'),
         str(out_dir / 'bundle_summary.md'),
     ]

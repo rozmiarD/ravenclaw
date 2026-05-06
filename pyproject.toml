@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "PyYAML>=6,<7",
-  "sclite @ git+https://github.com/rozmiarD/SCLite.git@db79284f31b3dff97ce5f9c2171ea2e196abdf3b",
+  "sclite @ git+https://github.com/rozmiarD/SCLite.git@ed907eadb1fe9461021873cbc4e883b1103ecc1e",
 ]
 
 [project.optional-dependencies]

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ExecutionReceipt v0.2",
+  "type": "object",
+  "required": ["artifact_type", "schema_version", "schema_ref", "receipt_id", "created_at", "links", "runtime", "execution", "outcome"],
+  "properties": {
+    "artifact_type": {"const": "execution_receipt"},
+    "schema_version": {"const": "v0.2"},
+    "schema_ref": {"const": "schemas/execution_receipt.v0.2.schema.json"},
+    "receipt_id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "minLength": 1},
+    "links": {"type": "object"},
+    "runtime": {"type": "object"},
+    "execution": {"type": "object"},
+    "outcome": {"type": "object"},
+    "evidence_refs": {"type": "array", "items": {"type": "object"}},
+    "non_claims": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

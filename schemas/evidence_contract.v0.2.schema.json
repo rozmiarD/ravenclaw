@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EvidenceContract v0.2",
+  "type": "object",
+  "required": ["artifact_type", "schema_version", "schema_ref", "evidence_contract_id", "created_at", "links", "claims", "non_claims", "verification"],
+  "properties": {
+    "artifact_type": {"const": "evidence_contract"},
+    "schema_version": {"const": "v0.2"},
+    "schema_ref": {"const": "schemas/evidence_contract.v0.2.schema.json"},
+    "evidence_contract_id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "minLength": 1},
+    "links": {"type": "object"},
+    "claims": {"type": "array", "items": {"type": "object"}},
+    "non_claims": {"type": "array", "items": {"type": "string"}},
+    "verification": {"type": "object"},
+    "replay": {"type": "object"}
+  },
+  "additionalProperties": true
+}

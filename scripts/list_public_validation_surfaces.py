@@ -61,6 +61,14 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'non_claim': 'Does not authorize publication, protocol adapter work, or live target testing.',
     },
     {
+        'id': 'sclite_v02_lifecycle_chain',
+        'title': 'SCLite v0.2 lifecycle chain fixture',
+        'command': 'sclite validate-chain examples/contract-lifecycle-v0.2/artifact_chain_manifest.json',
+        'paths': ['examples/contract-lifecycle-v0.2', 'schemas/artifact_chain_manifest.v0.2.schema.json'],
+        'claim': 'Verifies the public-safe intent-to-evidence lifecycle fixture with a hash-linked artifact chain.',
+        'non_claim': 'Does not prove signer identity, legal authorization, live execution, or transparency-log inclusion.',
+    },
+    {
         'id': 'replayable_truth_runtime_fixture',
         'title': 'Replayable Truth Runtime fixture',
         'command': 'PYTHONDONTWRITEBYTECODE=1 python scripts/validate_replayable_truth_fixture.py examples/replayable-truth-runtime',

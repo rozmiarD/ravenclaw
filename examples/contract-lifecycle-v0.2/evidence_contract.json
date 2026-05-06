@@ -1,0 +1,54 @@
+{
+  "artifact_type": "evidence_contract",
+  "claims": [
+    {
+      "id": "chain_complete",
+      "statement": "The public-safe v0.2 lifecycle fixture links intent, policy, execution contract, ticket, receipt, and evidence contract by canonical SHA-256 descriptors.",
+      "status": "met"
+    }
+  ],
+  "created_at": "2026-05-06T18:21:00+00:00",
+  "evidence_contract_id": "evidence-demo-001",
+  "links": {
+    "execution_receipt": {
+      "descriptor": {
+        "algorithm": "sha256",
+        "artifact_type": "execution_receipt",
+        "canonical_bytes": 1468,
+        "canonicalization": "sclite-json-v0.1",
+        "digest": "dbc8ccd856928c3386f296795ffaa98f744cf005a5211aadde635d2c0fc0768a",
+        "schema_ref": "schemas/execution_receipt.v0.2.schema.json",
+        "schema_version": "v0.2"
+      },
+      "role": "execution_receipt"
+    },
+    "execution_ticket": {
+      "descriptor": {
+        "algorithm": "sha256",
+        "artifact_type": "execution_ticket",
+        "canonical_bytes": 1917,
+        "canonicalization": "sclite-json-v0.1",
+        "digest": "f003b4820d73ef4bc0c1ed5badef40f132e6b2d84ad10e07ef3f30da1802c063",
+        "schema_ref": "schemas/execution_ticket.v0.2.schema.json",
+        "schema_version": "v0.2"
+      },
+      "role": "execution_ticket"
+    }
+  },
+  "non_claims": [
+    "does_not_claim_live_vulnerability_evidence",
+    "does_not_include_private_runtime_logs",
+    "does_not_prove_legal_authorization"
+  ],
+  "replay": {
+    "live_execution_required": false,
+    "mode": "static_bundle_verification"
+  },
+  "schema_ref": "schemas/evidence_contract.v0.2.schema.json",
+  "schema_version": "v0.2",
+  "verification": {
+    "commands": [
+      "sclite validate-chain sclite/examples/contract-lifecycle-v0.2/artifact_chain_manifest.json"
+    ]
+  }
+}

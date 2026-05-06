@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -49,6 +50,8 @@ def test_build_bundle_summary_surfaces_runtime_and_adapter_truth() -> None:
     assert summary['plan_summary']['scope_targets'] == 25
     assert 'approved_execution_spec.json' in summary['proof_trace_files']
     assert 'evidence_bundle.json' in summary['proof_trace_files']
+    assert 'execution_ticket.json' in summary['lifecycle_trace_files_v0_2']
+    assert 'artifact_chain_manifest.json' in summary['lifecycle_trace_files_v0_2']
 
 
 def test_build_bundle_summary_redacts_local_command_paths() -> None:
@@ -88,7 +91,10 @@ def test_build_bundle_markdown_mentions_generated_files() -> None:
     assert 'run_pipeline.demo.json' in text
     assert 'approved_execution_spec.json' in text
     assert 'evidence_bundle.json' in text
+    assert 'execution_ticket.json' in text
+    assert 'artifact_chain_manifest.json' in text
     assert 'scope/input -> policy decision' in text
+    assert 'intent -> policy decision -> execution contract' in text
 
 
 def test_build_proof_trace_artifacts_redacts_public_sensitive_values() -> None:
@@ -135,3 +141,44 @@ def test_build_proof_trace_artifacts_redacts_public_sensitive_values() -> None:
     assert artifacts['policy_decision.json']['decision'] == 'allow_prepare'
     assert artifacts['evidence_bundle.json']['artifact_type'] == 'evidence_bundle'
     assert artifacts['evidence_bundle.json']['public_safety']['raw_live_evidence_included'] is False
+
+
+def test_build_lifecycle_artifacts_v02_redacts_and_links_public_chain(tmp_path: Path) -> None:
+    pipeline_data = {
+        'run_id': 'demo-chain-001',
+        'created_at': '2026-05-06T18:31:00+00:00',
+        'settings': {'runtime_mode': 'demo'},
+        'policy_gate': {'pass': True, 'reason': 'ok'},
+        'auditor': {'owner_gate': False, 'constraints': {'aggression': 3}},
+        'prepared_execution_spec': {
+            'target': 'https://example.com',
+            'target_host': 'example.com',
+            'target_in_scope': True,
+            'action_type': 'single_probe',
+            'resolved_tool': 'curl',
+            'normalized_args': ['-H', 'X-Bug-Bounty: secret', 'https://example.com'],
+            'execution_plan': [{'tool': 'curl', 'args': ['https://example.com']}],
+            'scope_facts': {'target': 'https://example.com', 'target_host': 'example.com', 'target_in_scope': True},
+        },
+        'approved_execution_spec': {
+            'target': 'https://example.com',
+            'target_host': 'example.com',
+            'target_in_scope': True,
+            'resolved_tool': 'curl',
+            'normalized_args': ['https://example.com'],
+            'execution_plan': [{'tool': 'curl', 'args': ['https://example.com']}],
+            'approval': {'decision': 'approve', 'reason': 'ok', 'approval_source': 'auditor'},
+            'execution_truth': {'artifact_type': 'approved_execution_spec', 'execution_plan': [{'tool': 'curl', 'args': ['https://example.com']}], 'normalized_args': ['https://example.com']},
+        },
+        'engine': {'status': 'dry-run', 'returncode': 0, 'reason': 'mock_execution_adapter', 'execution_source': 'mock_adapter', 'stdout': 'secret output', 'planned_commands': [['curl', 'https://example.com']], 'executed_commands': []},
+    }
+    artifacts = pdb.build_lifecycle_artifacts_v02(pipeline_data)
+    for filename, artifact in artifacts.items():
+        (tmp_path / filename).write_text(json.dumps(artifact, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    from sclite.integrity import verify_artifact_chain_manifest
+
+    result = verify_artifact_chain_manifest(artifacts['artifact_chain_manifest.json'], root=tmp_path)
+    serialized = json.dumps(artifacts, sort_keys=True)
+    assert result['entry_count'] == 6
+    assert 'X-Bug-Bounty: secret' not in serialized
+    assert artifacts['execution_ticket.json']['integrity']['ticket_binds_execution_contract_digest']

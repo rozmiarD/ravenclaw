@@ -16,7 +16,15 @@ from sclite.scope_fidelity import (  # noqa: F401
     validate_scope_fidelity_report as _sclite_validate_scope_fidelity_report,
 )
 from scl_ravenclaw_adapter import (  # noqa: F401
+    LIFECYCLE_TRACE_FILES_V02,
+    build_evidence_contract_v02,
+    build_execution_contract_v02,
+    build_execution_receipt_v02,
+    build_execution_ticket_v02,
+    build_intent_contract_v02,
+    build_lifecycle_artifacts_v02,
     build_policy_decision_artifact,
+    build_policy_decision_artifact_v02,
     build_proof_trace_artifacts,
     redact_prepared_execution_spec as redact_prepared_spec,
 )
