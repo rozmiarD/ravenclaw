@@ -1,12 +1,21 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
-- Integrated Ravenclaw with external SCLite as the single Security Contract Layer core dependency, removed the embedded `scl/` package copy, synchronized public schemas/proof fixtures from SCLite, updated validation/CI install paths, and added an engine-extraction plan grounded in the new package boundary.
-- Added neutral `ScopeFidelityReport` v0.1 to the pre-extraction SCL/SCLite core with schema, static host-binding builder, CLI report generation, clean fixture, and tests; it remains static/public-safe and does not execute tools or prove authorization.
-- Advanced the pre-extraction SCL core toward a clean standalone Security Contract Layer v0.1 boundary: added MIT/package metadata, moved Ravenclaw-specific adapter and validation-runner code into `engine/`, replaced proof fixtures with clean synthetic data, and preserved Ravenclaw compatibility wrappers without adding live execution or external adapters.
+- Integrated Ravenclaw with external SCLite as the single Security Contract Layer core dependency, removed the embedded local contract-core copy, synchronized public schemas/proof fixtures from SCLite, updated validation/CI install paths, and planned engine extraction around the new package boundary.
 - Added a carrier readiness packet template so future adapter proposals must state scope UX, redaction, command authority, contracts, validation, rollback, and public/private boundaries before implementation.
 - Added a carrier readiness checklist for future OpenClaw/MCP/A2A work, preserving scope, redaction, command authority, provenance, channel-leakage, and non-claim gates.
 - Added a docs/contracts-only OpenClaw adapter-prep contract map that preserves SCL non-claims without implementing an adapter.
+- Added a committed proof-of-value scorecard fixture and validator under `examples/proof-of-value-scorecard/`.
+- Added a schema-backed proof-of-value scorecard (`scripts/build_proof_of_value_scorecard.py`) for public-safe governance/reviewability benchmark dimensions.
+- Added `PROOF_OF_VALUE.md` to frame Ravenclaw public value around governance, reviewability, and benchmark dimensions without claiming live exploit performance.
+- Added a `reviewer-report` markdown format for `scripts/build_public_snapshot_manifest.py`, turning snapshot manifest checks into a ready-to-read public review artifact.
+- Added `REVIEWER_VALIDATION_GUIDE.md` as a public-safe reviewer path linking validation commands, manifest evidence, quality signals, and non-claims.
+- Added a schema-backed Public Snapshot Manifest (`schemas/public_snapshot_manifest.v0.1.schema.json`) that maps validation surfaces to concrete files in assembled public snapshots and fails on missing paths.
+- Added a schema-backed Public Validation Surface Index contract (`schemas/public_validation_surface_index.v0.1.schema.json`) and reference documentation so validation-surface claims, non-claims, boundaries, and path checks are machine-checked.
+- Added `--fail-on` preflight exit-code support to the Scope Fidelity report CLI.
+- Added a local Scope Fidelity report CLI for generating schema-validated reports from prepared/approved spec JSON.
+- Added public-safe Scope Fidelity report fixtures and validation coverage for exact, mismatch, and ambiguous target binding.
+- Added a schema-backed Scope Fidelity report for local target-binding/request-shape hygiene checks.
 - Moved public contract schema validation helpers behind `engine/security_contract_layer.py` so fixture and receipt validation share the SCL boundary.
 - Added a public-safe Replayable Truth Runtime proof fixture plus deterministic fixture validation and documentation.
 - Added schema/reference documentation for `security_contract_validation_receipt` v0.1 and made `scripts/run_security_contract_validation.py` validate receipts before emitting them.

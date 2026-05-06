@@ -10,6 +10,7 @@ SCRIPTS_DIR = ROOT / 'scripts'
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
+import run_pytest_slice as pytest_slices  # type: ignore
 import run_security_contract_validation as runner  # type: ignore
 
 
@@ -17,20 +18,39 @@ def test_security_contract_validation_runner_lists_core_checks() -> None:
     ids = runner.list_check_ids(include_pytest=False)
     assert ids == [
         'fixture_validation',
+        'public_validation_surface_index',
         'demo_bundle_smoke',
         'assemble_public_snapshot',
         'snapshot_fixture_validation',
         'snapshot_residue_audit',
         'snapshot_replayable_truth_fixture',
+        'snapshot_scope_fidelity_fixture',
+        'snapshot_manifest',
+        'proof_of_value_scorecard',
+        'proof_of_value_scorecard_fixture',
     ]
 
 
 def test_security_contract_validation_runner_can_include_focused_pytest() -> None:
     ids = runner.list_check_ids(include_pytest=True)
     assert ids[-1] == 'focused_pytest'
+    assert 'tests/test_public_snapshot_manifest.py' in runner.FOCUSED_PYTEST_TARGETS
+    assert 'tests/test_reviewer_validation_guide.py' in runner.FOCUSED_PYTEST_TARGETS
+    assert 'tests/test_proof_of_value_framing.py' in runner.FOCUSED_PYTEST_TARGETS
+    assert 'tests/test_proof_of_value_scorecard.py' in runner.FOCUSED_PYTEST_TARGETS
+    assert 'tests/test_proof_of_value_scorecard_fixture.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'engine/tests/test_security_contract_fixtures.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_public_snapshot_residue_audit.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_replayable_truth_fixture.py' in runner.FOCUSED_PYTEST_TARGETS
+
+
+def test_security_contract_validation_runner_can_include_github_actions_matrix() -> None:
+    ids = runner.list_check_ids(include_pytest=True, include_github_actions_matrix=True)
+    assert ids[-2:] == ['focused_pytest', 'github_actions_pytest_matrix']
+    assert runner.GITHUB_ACTIONS_PYTEST_SLICES == list(pytest_slices.SLICE_ORDER)
+    workflow = (ROOT / '.github/workflows/pytest.yml').read_text(encoding='utf-8')
+    for slice_name in runner.GITHUB_ACTIONS_PYTEST_SLICES:
+        assert f'- {slice_name}' in workflow
 
 
 def test_security_contract_validation_receipt_marks_public_safe_scope() -> None:
@@ -95,7 +115,13 @@ def test_security_contract_validation_receipt_schema_file_is_loadable() -> None:
 
 def test_security_contract_validation_runner_list_checks_cli() -> None:
     proc = subprocess.run(
-        [sys.executable, str(SCRIPTS_DIR / 'run_security_contract_validation.py'), '--list-checks', '--include-pytest'],
+        [
+            sys.executable,
+            str(SCRIPTS_DIR / 'run_security_contract_validation.py'),
+            '--list-checks',
+            '--include-pytest',
+            '--include-github-actions-matrix',
+        ],
         cwd=str(ROOT),
         capture_output=True,
         text=True,
@@ -103,4 +129,4 @@ def test_security_contract_validation_runner_list_checks_cli() -> None:
     )
     lines = proc.stdout.strip().splitlines()
     assert lines[0] == 'fixture_validation'
-    assert lines[-1] == 'focused_pytest'
+    assert lines[-2:] == ['focused_pytest', 'github_actions_pytest_matrix']

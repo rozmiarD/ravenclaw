@@ -51,6 +51,8 @@ for f in \
   ENVIRONMENT_SUPPORT.md \
   DEMO.md \
   VALIDATION.md \
+  REVIEWER_VALIDATION_GUIDE.md \
+  PROOF_OF_VALUE.md \
   QUALITY_SIGNALS.md \
   PUBLIC_STATUS.md \
   AUDIENCE.md \
@@ -93,9 +95,17 @@ copy_path scripts/audit_public_snapshot_residue.py
 copy_path scripts/validate_security_contract_fixtures.py
 copy_path scripts/run_security_contract_validation.py
 copy_path scripts/validate_replayable_truth_fixture.py
+copy_path scripts/validate_scope_fidelity_fixtures.py
+copy_path scripts/build_scope_fidelity_report.py
 copy_path scripts/run_pytest_slice.py
+copy_path scripts/list_public_validation_surfaces.py
+copy_path scripts/build_public_snapshot_manifest.py
+copy_path scripts/build_proof_of_value_scorecard.py
+copy_path scripts/validate_proof_of_value_scorecard.py
 copy_path examples/security-contract-proof
 copy_path examples/replayable-truth-runtime
+copy_path examples/scope-fidelity-report
+copy_path examples/proof-of-value-scorecard
 
 cat > "$OUT/examples/campaign_registry/example-registry-entry.md" <<'EOF'
 # Example campaign registry entry

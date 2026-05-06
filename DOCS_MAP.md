@@ -10,6 +10,7 @@ Start with:
 2. `DEMO.md`
 3. `PUBLIC_STATUS.md`
 4. `QUALITY_SIGNALS.md`
+5. `PROOF_OF_VALUE.md`
 
 That gives you the project shape, the safe public demo path, the maturity truth, and the proof surface.
 
@@ -18,8 +19,9 @@ That gives you the project shape, the safe public demo path, the maturity truth,
 Start with:
 1. `INSTALL.md`
 2. `VALIDATION.md`
-3. `.github/workflows/pytest.yml`
-4. `tests/test_logdash_smoke.py`
+3. `REVIEWER_VALIDATION_GUIDE.md`
+4. `.github/workflows/pytest.yml`
+5. `tests/test_logdash_smoke.py`
 
 ## If you want the shortest architecture understanding
 
@@ -43,6 +45,14 @@ Start with:
 9. `references/openclaw-adapter-contract-map.md`
 10. `references/carrier-readiness-checklist.md`
 11. `references/carrier-readiness-packet-template.md`
+
+## If you want proof-of-value context
+
+Start with:
+1. `PROOF_OF_VALUE.md`
+2. `QUALITY_SIGNALS.md`
+3. `REVIEWER_VALIDATION_GUIDE.md`
+4. `SECURITY_CONTRACT_LAYER.md`
 
 ## If you want public-release context
 

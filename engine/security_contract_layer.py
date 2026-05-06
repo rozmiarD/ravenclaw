@@ -9,6 +9,12 @@ if str(ROOT) not in sys.path:
 
 from sclite.artifacts import *  # noqa: F401,F403
 from sclite.redaction import sanitize_public_artifact  # noqa: F401
+from sclite.scope_fidelity import (  # noqa: F401
+    build_scope_fidelity_report,
+    build_scope_fidelity_report_from_approved_spec,
+    summarize_scope_fidelity,
+    validate_scope_fidelity_report as _sclite_validate_scope_fidelity_report,
+)
 from scl_ravenclaw_adapter import (  # noqa: F401
     build_policy_decision_artifact,
     build_proof_trace_artifacts,
@@ -19,3 +25,8 @@ from scl_ravenclaw_adapter import (  # noqa: F401
 def repo_root() -> Path:
     """Return Ravenclaw's repository root, not the installed SCLite package root."""
     return ROOT
+
+def validate_scope_fidelity_report(report, root: Path | None = None) -> None:
+    """Compatibility wrapper for pre-SCLite Ravenclaw callers."""
+    _sclite_validate_scope_fidelity_report(report)
+

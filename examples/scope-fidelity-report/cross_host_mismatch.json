@@ -1,0 +1,39 @@
+{
+  "artifact_type": "scope_fidelity_report",
+  "generated_at": "2026-05-06T15:06:26+00:00",
+  "limitations": [
+    "static_host_binding_check_only",
+    "does_not_resolve_dns_redirects_or_ownership",
+    "does_not_prove_legal_authorization",
+    "does_not_execute_tools"
+  ],
+  "public_safety": {
+    "live_target_execution": false,
+    "protocol_adapter_work": false,
+    "public_push": false,
+    "static_analysis_only": true
+  },
+  "request_shape": {
+    "all_hosts_detected": [
+      "other.example.com"
+    ],
+    "arg_hosts_detected": [
+      "other.example.com"
+    ],
+    "execution_plan_hosts_detected": [],
+    "mismatched_hosts_detected": [
+      "other.example.com"
+    ],
+    "request_shape_hygiene_reason": "mismatched_hosts_detected:other.example.com",
+    "request_shape_hygiene_source": "normalized_args",
+    "request_shape_hygiene_status": "cross_host_mismatch",
+    "target_host_match_status": "mixed"
+  },
+  "schema_ref": "schemas/scope_fidelity_report.v0.1.schema.json",
+  "schema_version": "v0.1",
+  "source_artifact": "example_cross_host_mismatch",
+  "target": "https://api.example.com/",
+  "target_host": "api.example.com",
+  "target_in_scope": true,
+  "verdict": "fail"
+}
