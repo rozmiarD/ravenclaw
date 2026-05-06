@@ -98,30 +98,15 @@ Then run the residue audit against the exact snapshot:
 
 ```bash
 python scripts/audit_public_snapshot_residue.py .
-python scripts/build_public_snapshot_manifest.py . --check
 ```
 
-For a consolidated local receipt before publication prep, run from the live workspace. For routine SCL/public-snapshot work, use the focused path:
+For a consolidated local receipt before publication prep, run from the live workspace:
 
 ```bash
 python scripts/run_security_contract_validation.py --include-pytest
 ```
 
-Before every public push, use the GitHub Actions parity path so the receipt also runs the exact public pytest slice matrix from a disposable public snapshot:
-
-```bash
-python scripts/run_security_contract_validation.py --include-pytest --include-github-actions-matrix
-```
-
-Also reproduce the exact GitHub Actions pytest matrix from the final clean publish tree or exact public tree immediately before pushing:
-
-```bash
-for slice in contracts_policy auto_campaign runtime_core runtime_runner logdash misc_public; do
-  PYTHONDONTWRITEBYTECODE=1 python scripts/run_pytest_slice.py "$slice"
-done
-```
-
-This catches slice-only failures that are not covered by focused local validation. The consolidated runner uses temporary output directories and does not replace the final clean publish-tree validation steps below.
+This runner uses temporary output directories and does not replace the final clean publish-tree validation steps below.
 
 If validation is run inside a clean publish worktree, remember that pytest or demo checks may generate local runtime artifacts. Before committing that publish tree, re-apply the already validated snapshot with `rsync --delete --exclude='.git'`, then rerun fixture validation and residue audit on the exact final tree.
 

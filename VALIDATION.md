@@ -1,6 +1,6 @@
 # VALIDATION.md
 
-This file tells a public reader how to validate the current Ravenclaw repository without assuming a full live operator environment. For a shorter reviewer-oriented path, see `REVIEWER_VALIDATION_GUIDE.md`.
+This file tells a public reader how to validate the current Ravenclaw repository without assuming a full live operator environment.
 
 ## Fast public validation path
 
@@ -11,26 +11,6 @@ pytest -q
 ```
 
 This is the primary repo-wide validation command exposed publicly today.
-
-## Public validation surface index
-
-To list the public-safe validation entry points and what each one does and does not prove, run:
-
-```bash
-python scripts/list_public_validation_surfaces.py
-python scripts/list_public_validation_surfaces.py --format json --check
-```
-
-This emits a schema-backed `public_validation_surface_index` artifact (`schemas/public_validation_surface_index.v0.1.schema.json`; see `references/public-validation-surface-index-v0.1.md`). It is a navigation aid for readers and release prep. It does not run live targets and does not replace the actual validation commands listed below.
-
-For an assembled public snapshot, map those validation surfaces to concrete snapshot files with:
-
-```bash
-python scripts/build_public_snapshot_manifest.py . --check
-python scripts/build_public_snapshot_manifest.py . --format reviewer-report --check
-```
-
-This emits a schema-backed `public_snapshot_manifest` artifact (`schemas/public_snapshot_manifest.v0.1.schema.json`; see `references/public-snapshot-manifest-v0.1.md`) and fails if any validation-surface path is missing from the snapshot. The `reviewer-report` format renders the same checks as a ready-to-read markdown review artifact.
 
 ## Stable sliced validation path
 
@@ -92,7 +72,7 @@ Expected result:
 security_contract_fixtures_ok:...
 ```
 
-This checks the schema-backed proof trace, public-safety invariants, and fixture sanitization. The fixture is dry-run/local/example-only evidence; it does not claim live vulnerability evidence.
+This checks the schema-backed proof trace, public-safety invariants, and fixture sanitization using the pinned SCLite dependency. The fixture is dry-run/local/example-only evidence; it does not claim live vulnerability evidence.
 
 For the generated public demo bundle path, run:
 
@@ -106,28 +86,7 @@ For the repeatable local/public-safe Security Contract validation receipt, run:
 python scripts/run_security_contract_validation.py --include-pytest
 ```
 
-Before a public push, run the GitHub Actions parity form:
-
-```bash
-python scripts/run_security_contract_validation.py --include-pytest --include-github-actions-matrix
-```
-
-Expected result: JSON with `artifact_type: security_contract_validation_receipt`, `schema_version: v0.1`, and `status: passed`. This runner validates the public validation surface index, validates the public snapshot manifest, validates the committed fixtures, generates the demo bundle from a disposable public snapshot, assembles a temporary public snapshot, validates copied fixtures inside that snapshot, audits snapshot residue, validates the public-safe Replayable Truth Runtime fixture and Scope Fidelity fixtures, optionally runs the focused Security Contract/public snapshot pytest slice, and can optionally run the full GitHub Actions pytest slice matrix from a disposable public snapshot. The receipt is schema-backed by `schemas/security_contract_validation_receipt.v0.1.schema.json` and described in `references/security-contract-validation-receipt-v0.1.md`.
-
-
-Proof-of-value scorecard:
-
-Committed fixture validation:
-
-```bash
-python scripts/validate_proof_of_value_scorecard.py examples/proof-of-value-scorecard/scorecard.json
-```
-
-
-```bash
-python scripts/build_proof_of_value_scorecard.py . --check
-python scripts/build_proof_of_value_scorecard.py . --format markdown --check
-```
+Expected result: JSON with `artifact_type: security_contract_validation_receipt`, `schema_version: v0.1`, and `status: passed`. This runner validates the committed fixtures, generates the demo bundle from a disposable public snapshot, assembles a temporary public snapshot, validates copied fixtures inside that snapshot, audits snapshot residue, validates the public-safe Replayable Truth Runtime fixture, and optionally runs the focused Security Contract/public snapshot pytest slice. The receipt is produced through SCLite validation helpers, schema-backed by `schemas/security_contract_validation_receipt.v0.1.schema.json`, and described in `references/security-contract-validation-receipt-v0.1.md`.
 
 ## What not to assume
 

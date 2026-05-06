@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sclite.local/schemas/redaction_receipt.v0.1.schema.json",
+  "title": "SCLite RedactionReceipt v0.1",
+  "description": "Draft public-safe redaction receipt. It records hashes and summary counts without including raw private source data or proving complete secret detection.",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "generated_at",
+    "policy",
+    "source",
+    "redacted",
+    "status",
+    "summary",
+    "public_safety",
+    "non_claims"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "redaction_receipt"
+    },
+    "schema_version": {
+      "const": "v0.1"
+    },
+    "generated_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "policy_id",
+        "policy_hash"
+      ],
+      "properties": {
+        "policy_id": {
+          "type": "string"
+        },
+        "policy_hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "label",
+        "hash"
+      ],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "redacted": {
+      "type": "object",
+      "required": [
+        "label",
+        "hash"
+      ],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "status": {
+      "enum": [
+        "redacted",
+        "unchanged"
+      ]
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "rules_considered",
+        "changed_paths_estimate",
+        "source_and_redacted_hash_match"
+      ],
+      "properties": {
+        "rules_considered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "changed_paths_estimate": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_and_redacted_hash_match": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_safety": {
+      "type": "object",
+      "required": [
+        "raw_source_included",
+        "raw_live_evidence_included",
+        "raw_stdout_stderr_included",
+        "credentials_included",
+        "private_paths_included"
+      ],
+      "properties": {
+        "raw_source_included": {
+          "const": false
+        },
+        "raw_live_evidence_included": {
+          "const": false
+        },
+        "raw_stdout_stderr_included": {
+          "const": false
+        },
+        "credentials_included": {
+          "const": false
+        },
+        "private_paths_included": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "non_claims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,60 +1,110 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ravenclaw.local/schemas/scope_fidelity_report.v0.1.schema.json",
-  "title": "Ravenclaw Scope Fidelity Report v0.1",
-  "description": "Public-safe report for deterministic target binding and request-shape hygiene checks without live target execution.",
+  "$id": "https://sclite.local/schemas/scope_fidelity_report.v0.1.schema.json",
+  "title": "Security Contract Layer ScopeFidelityReport v0.1",
+  "description": "Static, public-safe host-binding review artifact for comparing a target host against hosts detected in normalized arguments and execution-plan steps. This is not live target execution and does not prove authorization.",
   "type": "object",
   "required": [
-    "schema_version",
     "artifact_type",
+    "schema_version",
+    "schema_ref",
+    "generated_at",
     "target",
     "target_host",
+    "target_in_scope",
+    "source_artifact",
     "verdict",
-    "target_host_match_status",
-    "request_shape_hygiene_status",
-    "request_shape_hygiene_reason",
-    "request_shape_hygiene_source",
-    "arg_hosts_detected",
-    "execution_plan_hosts_detected",
-    "all_hosts_detected",
-    "mismatched_hosts_detected",
-    "evaluated_inputs",
-    "public_safety"
+    "request_shape",
+    "public_safety",
+    "limitations"
   ],
   "properties": {
-    "schema_version": {"const": "2026-04-29.scope-fidelity.v0.1"},
-    "artifact_type": {"const": "scope_fidelity_report"},
-    "target": {"type": "string"},
-    "target_host": {"type": "string"},
-    "target_in_scope": {"type": ["boolean", "null"]},
-    "verdict": {"enum": ["pass", "review", "fail"]},
-    "target_host_match_status": {"enum": ["exact", "mixed", "none_detected"]},
-    "request_shape_hygiene_status": {"enum": ["clean", "ambiguous", "cross_host_mismatch"]},
-    "request_shape_hygiene_reason": {"type": "string"},
-    "request_shape_hygiene_source": {"type": "string"},
-    "arg_hosts_detected": {"type": "array", "items": {"type": "string"}},
-    "execution_plan_hosts_detected": {"type": "array", "items": {"type": "string"}},
-    "all_hosts_detected": {"type": "array", "items": {"type": "string"}},
-    "mismatched_hosts_detected": {"type": "array", "items": {"type": "string"}},
-    "evaluated_inputs": {
+    "artifact_type": {
+      "const": "scope_fidelity_report"
+    },
+    "schema_version": {
+      "const": "v0.1"
+    },
+    "schema_ref": {
+      "const": "schemas/scope_fidelity_report.v0.1.schema.json"
+    },
+    "generated_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target": {
+      "type": "string"
+    },
+    "target_host": {
+      "type": "string"
+    },
+    "target_in_scope": {
+      "type": ["boolean", "null"]
+    },
+    "source_artifact": {
+      "type": "string"
+    },
+    "verdict": {
+      "enum": ["pass", "review", "fail"]
+    },
+    "request_shape": {
       "type": "object",
-      "required": ["normalized_args_count", "execution_plan_steps", "stdin_present"],
+      "required": [
+        "arg_hosts_detected",
+        "execution_plan_hosts_detected",
+        "all_hosts_detected",
+        "mismatched_hosts_detected",
+        "target_host_match_status",
+        "request_shape_hygiene_status",
+        "request_shape_hygiene_reason",
+        "request_shape_hygiene_source"
+      ],
       "properties": {
-        "normalized_args_count": {"type": "integer", "minimum": 0},
-        "execution_plan_steps": {"type": "integer", "minimum": 0},
-        "stdin_present": {"type": "boolean"}
+        "arg_hosts_detected": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "execution_plan_hosts_detected": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "all_hosts_detected": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "mismatched_hosts_detected": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "target_host_match_status": {
+          "enum": ["exact", "mixed", "none_detected"]
+        },
+        "request_shape_hygiene_status": {
+          "enum": ["clean", "ambiguous", "cross_host_mismatch"]
+        },
+        "request_shape_hygiene_reason": {
+          "type": "string"
+        },
+        "request_shape_hygiene_source": {
+          "type": "string"
+        }
       },
       "additionalProperties": false
     },
     "public_safety": {
       "type": "object",
-      "required": ["live_target_execution", "protocol_adapter_work", "raw_stdout_stderr_included"],
+      "required": ["live_target_execution", "protocol_adapter_work", "public_push", "static_analysis_only"],
       "properties": {
         "live_target_execution": {"const": false},
         "protocol_adapter_work": {"const": false},
-        "raw_stdout_stderr_included": {"const": false}
+        "public_push": {"const": false},
+        "static_analysis_only": {"const": true}
       },
       "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
     }
   },
   "additionalProperties": false

@@ -13,7 +13,7 @@ These areas are currently the strongest public reference surfaces:
 - substantial regression and contract-test coverage
 - bounded public snapshot assembly path
 - the explicit public-core/private-overlay boundary model
-- the emerging Security Contract Layer direction, as a contract/schema layer backed by Ravenclaw Runtime rather than a new protocol
+- SCLite-backed Security Contract Layer integration: SCLite is the reusable contract/schema dependency, while Ravenclaw remains the governed reference runtime rather than a new protocol
 
 These are the parts of the repo most ready to be read as intentional system design rather than rough experimentation.
 
@@ -45,6 +45,7 @@ Public readers should evaluate Ravenclaw from the intentionally published surfac
 
 Ravenclaw does **not** currently promise:
 - a zero-friction consumer install experience
+- a PyPI-published Ravenclaw/SCLite dependency path; Ravenclaw currently pins SCLite from GitHub
 - a fully stable package/distribution shape
 - that every internal subsystem is final
 - that the public checkout equals the operator's full live environment
@@ -55,8 +56,7 @@ Ravenclaw does **not** currently promise:
 The strongest honest claim today is:
 Ravenclaw is a serious governance-first security research runtime with a publishable public core, a separate private/operator overlay reality, and a stronger technical core than its current public ergonomics.
 
-For the current public validation, trust, and proof-of-value layer, start with:
+For the current public validation and trust layer, start with:
 - `VALIDATION.md`
 - `QUALITY_SIGNALS.md`
-- `PROOF_OF_VALUE.md`
 - `references/public-core-private-overlay-boundary.md`

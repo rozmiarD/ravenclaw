@@ -1,73 +1,144 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ravenclaw.local/schemas/public_snapshot_manifest.v0.1.schema.json",
-  "title": "Ravenclaw PublicSnapshotManifest v0.1",
-  "description": "Public-safe manifest mapping validation surfaces to files present in an assembled public snapshot. This is a review/navigation artifact and does not authorize live target execution, protocol adapter work, or publication.",
+  "$id": "https://sclite.local/schemas/public_snapshot_manifest.v0.1.schema.json",
+  "title": "SCLite PublicSnapshotManifest v0.1",
+  "description": "Draft public snapshot manifest for selected public-safe artifacts. It can include canonical hash descriptors but does not prove provenance or authorize publication.",
   "type": "object",
   "required": [
     "artifact_type",
     "schema_version",
-    "schema_ref",
-    "snapshot_root_label",
-    "generated_by",
+    "snapshot_name",
+    "snapshot_version",
+    "generated_at",
+    "files",
     "summary",
-    "surfaces"
+    "public_safety",
+    "non_claims"
   ],
   "properties": {
-    "artifact_type": {"const": "public_snapshot_manifest"},
-    "schema_version": {"const": "v0.1"},
-    "schema_ref": {"const": "schemas/public_snapshot_manifest.v0.1.schema.json"},
-    "snapshot_root_label": {"type": "string", "minLength": 1},
-    "generated_by": {"const": "scripts/build_public_snapshot_manifest.py"},
-    "summary": {
-      "type": "object",
-      "required": ["surface_count", "path_count", "missing_path_count"],
-      "properties": {
-        "surface_count": {"type": "integer", "minimum": 0},
-        "path_count": {"type": "integer", "minimum": 0},
-        "missing_path_count": {"type": "integer", "minimum": 0}
-      },
-      "additionalProperties": false
+    "artifact_type": {
+      "const": "public_snapshot_manifest"
     },
-    "surfaces": {
+    "schema_version": {
+      "const": "v0.1"
+    },
+    "snapshot_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "snapshot_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "files": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "title", "claim", "non_claim", "boundaries", "paths", "missing_paths"],
+        "required": [
+          "path",
+          "artifact_type",
+          "schema",
+          "public_safe"
+        ],
         "properties": {
-          "id": {"type": "string", "minLength": 1},
-          "title": {"type": "string", "minLength": 1},
-          "claim": {"type": "string", "minLength": 1},
-          "non_claim": {"type": "string", "minLength": 1},
-          "boundaries": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_type": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "string"
+          },
+          "public_safe": {
+            "type": "boolean"
+          },
+          "hash": {
             "type": "object",
-            "required": ["public_safe", "dry_run_or_local_only", "live_target_execution", "protocol_adapter_work"],
+            "required": [
+              "canonicalization",
+              "algorithm",
+              "digest",
+              "canonical_bytes"
+            ],
             "properties": {
-              "public_safe": {"const": true},
-              "dry_run_or_local_only": {"const": true},
-              "live_target_execution": {"const": false},
-              "protocol_adapter_work": {"const": false}
+              "canonicalization": {
+                "const": "sclite-json-v0.1"
+              },
+              "algorithm": {
+                "const": "sha256"
+              },
+              "digest": {
+                "type": "string",
+                "minLength": 1
+              },
+              "canonical_bytes": {
+                "type": "integer",
+                "minimum": 0
+              }
             },
             "additionalProperties": false
-          },
-          "paths": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["path", "present"],
-              "properties": {
-                "path": {"type": "string", "minLength": 1},
-                "present": {"type": "boolean"}
-              },
-              "additionalProperties": false
-            }
-          },
-          "missing_paths": {
-            "type": "array",
-            "items": {"type": "string", "minLength": 1}
           }
         },
         "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "file_count",
+        "hashed_file_count",
+        "public_safe_file_count"
+      ],
+      "properties": {
+        "file_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hashed_file_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "public_safe_file_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_safety": {
+      "type": "object",
+      "required": [
+        "live_target_execution",
+        "protocol_adapter_work",
+        "raw_live_evidence_included",
+        "raw_stdout_stderr_included"
+      ],
+      "properties": {
+        "live_target_execution": {
+          "const": false
+        },
+        "protocol_adapter_work": {
+          "const": false
+        },
+        "raw_live_evidence_included": {
+          "const": false
+        },
+        "raw_stdout_stderr_included": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "non_claims": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     }
   },

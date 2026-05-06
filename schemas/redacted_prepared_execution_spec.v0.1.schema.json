@@ -1,0 +1,245 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sclite.local/schemas/redacted_prepared_execution_spec.v0.1.schema.json",
+  "title": "SCLite RedactedPreparedExecutionSpec v0.1",
+  "description": "Draft v0.1 public/auditor-safe prepared execution view. Validates a redacted handoff shape without raw private output, credentials, or private paths.",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "spec_version",
+    "target",
+    "target_host",
+    "target_in_scope",
+    "resolved_tool",
+    "normalized_args",
+    "execution_plan",
+    "scope_facts",
+    "redaction",
+    "public_safety"
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "redacted_prepared_execution_spec"
+    },
+    "spec_version": {
+      "const": "2026-03-18.prepared.v1"
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_host": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_in_scope": {
+      "type": "boolean"
+    },
+    "action_type": {
+      "type": "string"
+    },
+    "capability": {
+      "type": "string"
+    },
+    "task_family": {
+      "type": "string"
+    },
+    "execution_mode": {
+      "type": "string"
+    },
+    "resolved_planner_profiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "resolved_tool": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tool_candidates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "normalized_args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stdin": {
+      "type": "string"
+    },
+    "execution_plan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "tool",
+          "args"
+        ],
+        "properties": {
+          "tool": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stdin": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "arg_hosts_detected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "execution_plan_hosts_detected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "all_hosts_detected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "mismatched_hosts_detected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "target_host_match_status": {
+      "type": "string"
+    },
+    "request_shape_hygiene_status": {
+      "type": "string"
+    },
+    "request_shape_hygiene_reason": {
+      "type": "string"
+    },
+    "request_shape_hygiene_source": {
+      "type": "string"
+    },
+    "scope_facts": {
+      "type": "object",
+      "required": [
+        "target",
+        "target_host",
+        "target_in_scope"
+      ],
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_host": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_in_scope": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "command_preview": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "command_input_summary": {
+      "type": "object"
+    },
+    "execution_input_summaries": {
+      "type": "array"
+    },
+    "prepared_by": {
+      "type": "string"
+    },
+    "preparation_source": {
+      "type": "string"
+    },
+    "redaction": {
+      "type": "object",
+      "required": [
+        "status",
+        "raw_stdout_stderr_included",
+        "credentials_included",
+        "private_paths_included"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "not_required",
+            "redacted",
+            "public_synthetic"
+          ]
+        },
+        "raw_stdout_stderr_included": {
+          "const": false
+        },
+        "credentials_included": {
+          "const": false
+        },
+        "private_paths_included": {
+          "const": false
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "public_safety": {
+      "type": "object",
+      "required": [
+        "live_target_execution",
+        "raw_live_evidence_included",
+        "raw_stdout_stderr_included"
+      ],
+      "properties": {
+        "live_target_execution": {
+          "const": false
+        },
+        "raw_live_evidence_included": {
+          "const": false
+        },
+        "raw_stdout_stderr_included": {
+          "const": false
+        },
+        "target_host": {
+          "type": "string"
+        },
+        "fixture": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "public_fixture_note": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

@@ -3,25 +3,17 @@
   "runtime_mode": "demo",
   "status": "dry-run",
   "returncode": 0,
-  "reason": "mock_execution_adapter",
-  "execution_source": "mock_adapter",
+  "reason": "synthetic_fixture_no_execution",
+  "execution_source": "synthetic_fixture",
   "dry_run": true,
   "compiled_action": {
-    "action_type": "single_probe",
-    "compiler_tool_choice": "curl",
-    "execution_mode": "normalized",
-    "recipe_name": ""
+    "tool": "http_probe",
+    "target": "https://example.com"
   },
   "command_input_summary": {
-    "preview_source": "execution_plan_first_step",
     "target_delivery_mode": "argv",
-    "tool": "curl",
-    "role": "probe",
-    "stdin_present": false,
-    "stdin_char_count": 0,
-    "stdin_line_count": 0,
-    "stdin_preview": "",
-    "stdin_preview_truncated": false
+    "tool": "http_probe",
+    "stdin_present": false
   },
   "planned_command_count": 1,
   "executed_command_count": 0,

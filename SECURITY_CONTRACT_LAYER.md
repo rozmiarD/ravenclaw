@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft v0.1 direction. This is a contract/schema layer emerging from Ravenclaw Runtime. It is not a new protocol and not a separate public package yet.
+Draft v0.1 direction. The reusable contract/schema core has been split into the standalone public **SCLite** package/repository (`https://github.com/rozmiarD/SCLite`) and Ravenclaw now consumes it as a pinned dependency. Ravenclaw Runtime remains the governed reference/proof implementation; SCLite remains a contract artifact, validation, redaction, and public-safe fixture layer — not a new protocol.
 
 ## What it is
 
@@ -43,9 +43,9 @@ Ravenclaw Runtime remains the reference/proof implementation. Its Replayable Tru
 
 The contract layer should be extracted only from real artifacts already produced or consumed by runtime code. The current proof path is intentionally narrow and public-safe: demo mode, safe demo targets, mock/dry-run execution, sanitized output, and deterministic replay fixtures.
 
-The current internal boundary module is `engine/security_contract_layer.py`. It centralizes public-safe proof-trace artifact builders, manifest metadata, deterministic public-safety invariant checks, the lightweight JSON Schema subset validator used by public contract fixtures/receipts, and a small scope-fidelity report builder for local target-binding/request-shape hygiene checks while `engine/public_demo_bundle.py` remains the demo bundle orchestration/CLI surface.
+The reusable SCL implementation now lives in the external `sclite` package. Ravenclaw keeps only integration code: `engine/scl_ravenclaw_adapter.py` maps Ravenclaw runtime/policy output into SCLite artifacts, `engine/security_contract_layer.py` is the Ravenclaw compatibility wrapper, and `engine/public_demo_bundle.py` remains the demo bundle orchestration/CLI surface. Root `schemas/` and `examples/security-contract-proof/` are public-review copies synchronized from SCLite so Ravenclaw snapshots remain self-describing.
 
-A committed public-safe fixture lives at `examples/security-contract-proof/` and can be validated with `scripts/validate_security_contract_fixtures.py`. A replay fixture lives at `examples/replayable-truth-runtime/` and can be validated with `scripts/validate_replayable_truth_fixture.py`. Scope Fidelity report fixtures live at `examples/scope-fidelity-report/`, can be validated with `scripts/validate_scope_fidelity_fixtures.py`, and can be generated from local specs with `scripts/build_scope_fidelity_report.py`. The broader local/public-safe validation path is `scripts/run_security_contract_validation.py`, which emits a schema-backed `security_contract_validation_receipt` covering fixtures, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, replay fixture validation, Scope Fidelity fixture validation, and optional focused pytest.
+A committed public-safe fixture lives at `examples/security-contract-proof/` and can be validated with `scripts/validate_security_contract_fixtures.py`. A replay fixture lives at `examples/replayable-truth-runtime/` and can be validated with `scripts/validate_replayable_truth_fixture.py`. The broader local/public-safe validation path is `scripts/run_security_contract_validation.py`, which emits a schema-backed `security_contract_validation_receipt` covering fixtures, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, replay fixture validation, and optional focused pytest.
 
 ## Relation to OpenClaw, MCP, and A2A
 
@@ -60,16 +60,14 @@ No adapter should be promoted before the public proof bundle and schema validati
 | Artifact | Current implementation status | Producer | Consumer | Notes |
 |---|---|---|---|---|
 | `RuntimeTaskV2` | Implemented / evolving | `normalize_runtime_task_v2(...)` in `engine/runtime_task_schema.py` | planner/runtime handoff | Documented in `references/runtime-task-contract-v2.md`; schema version `2`. |
-| `PolicyDecision` | Implemented as legacy `{pass, reason}` plus schema-backed v0.1 compatibility artifact | `evaluate_action_spec(...)` / `normalize_policy_decision_v0(...)` in `engine/policy_gateway.py`; public artifact via `engine/security_contract_layer.py` | pipeline/policy gate, public demo bundle | Schema: `schemas/policy_decision.v0.1.schema.json`; reference: `references/policy-decision-v0.1.md`. |
+| `PolicyDecision` | Implemented as legacy `{pass, reason}` plus schema-backed v0.1 compatibility artifact | `evaluate_action_spec(...)` / `normalize_policy_decision_v0(...)` in `engine/policy_gateway.py`; public artifact via `engine/scl_ravenclaw_adapter.py` and `engine/security_contract_layer.py` compatibility wrapper | pipeline/policy gate, public demo bundle | Schema: `schemas/policy_decision.v0.1.schema.json`; reference: `references/policy-decision-v0.1.md`. |
 | `PreparedExecutionSpec` | Implemented | `build_prepared_execution_spec(...)` in `engine/execution_contracts.py` | auditor/redaction/approval path | Version `2026-03-18.prepared.v1`; includes scope facts and request-shape hygiene. |
 | `RedactedPreparedExecutionSpec` | Implemented | `redact_prepared_execution_spec_for_auditor(...)` in `engine/execution_contracts.py` | auditor/public proof | Removes or masks stdin, cookies, basic auth, and sensitive request decoration. |
 | `ApprovedExecutionSpec` | Implemented; schema v0.1 introduced | `build_approved_execution_spec(...)` in `engine/execution_contracts.py` | `ExecutionEngine.execute_approved_spec(...)` in `engine/executor.py` | Schema: `schemas/approved_execution_spec.v0.1.schema.json`; reference: `references/approved-execution-spec-v0.1.md`. |
-| `ExecutionReceipt` | Implemented in executor output; public-safe demo receipt schema-backed in v0.1 | `ExecutionEngine.execute_approved_spec(...)`; public artifact via `engine/security_contract_layer.py` | pipeline/demo/reporting | Schema: `schemas/execution_receipt.v0.1.schema.json`; reference: `references/execution-receipt-v0.1.md`; compact/sanitized, no raw stdout/stderr. |
-| `EvidenceBundle` | Public-safe demo evidence bundle schema-backed in v0.1; broader qualification schema later | evidence and qualification modules such as `engine/vuln_qualification.py`, `engine/evidence_policy.py`; public artifact via `engine/security_contract_layer.py` | reporting/follow-up/public proof | Schema: `schemas/evidence_bundle.v0.1.schema.json`; reference: `references/evidence-bundle-v0.1.md`; states dry-run proof criteria and non-claims. |
-| `PublicValidationSurfaceIndex` | Public-safe index of validation entry points and explicit non-claims | `scripts/list_public_validation_surfaces.py` | reader navigation / release prep / validation discovery | Schema: `schemas/public_validation_surface_index.v0.1.schema.json`; reference: `references/public-validation-surface-index-v0.1.md`; does not authorize live target execution, protocol adapter work, or publication. |
-| `PublicSnapshotManifest` | Public-safe manifest mapping validation surfaces to concrete snapshot files | `scripts/build_public_snapshot_manifest.py` | snapshot review / release prep / validation discovery | Schema: `schemas/public_snapshot_manifest.v0.1.schema.json`; reference: `references/public-snapshot-manifest-v0.1.md`; fails on missing validation-surface paths and does not authorize publication. |
-| `SecurityContractValidationReceipt` | Implemented as local/public-safe validation receipt schema-backed in v0.1 | `scripts/run_security_contract_validation.py` | publication prep, CI/reviewer validation, later adapter surfaces | Schema: `schemas/security_contract_validation_receipt.v0.1.schema.json`; reference: `references/security-contract-validation-receipt-v0.1.md`; records validation checks and explicit non-authorizations. |
-| `ScopeFidelityReport` | Implemented as local/public-safe schema-backed v0.1 report | `build_scope_fidelity_report(...)` in `engine/security_contract_layer.py` | reviewer validation, future proposal/spec preflight, later adapter surfaces | Schema: `schemas/scope_fidelity_report.v0.1.schema.json`; reference: `references/scope-fidelity-report-v0.1.md`; classifies exact, ambiguous, and cross-host request-shape binding without live target execution. |
+| `ExecutionReceipt` | Implemented in executor output; public-safe demo receipt schema-backed in v0.1 | `ExecutionEngine.execute_approved_spec(...)`; public artifact via SCLite and `engine/security_contract_layer.py` compatibility wrapper | pipeline/demo/reporting | Schema: `schemas/execution_receipt.v0.1.schema.json`; reference: `references/execution-receipt-v0.1.md`; compact/sanitized, no raw stdout/stderr. |
+| `EvidenceBundle` | Public-safe demo evidence bundle schema-backed in v0.1; broader qualification schema later | evidence and qualification modules such as `engine/vuln_qualification.py`, `engine/evidence_policy.py`; public artifact via SCLite and `engine/security_contract_layer.py` compatibility wrapper | reporting/follow-up/public proof | Schema: `schemas/evidence_bundle.v0.1.schema.json`; reference: `references/evidence-bundle-v0.1.md`; states dry-run proof criteria and non-claims. |
+| `ScopeFidelityReport` | Implemented in SCLite core as a neutral static host-binding review artifact | `sclite.scope_fidelity.build_scope_fidelity_report(...)` / `sclite scope-fidelity` | reviewer/preflight, later carrier-agnostic API surfaces | Schema: `schemas/scope_fidelity_report.v0.1.schema.json`; reports `pass`, `review`, or `fail` without executing tools or proving legal authorization. |
+| `SecurityContractValidationReceipt` | Implemented as local/public-safe validation receipt schema-backed in v0.1 | `scripts/run_security_contract_validation.py` / `sclite.validation` | publication prep, CI/reviewer validation, later adapter surfaces | Schema: `schemas/security_contract_validation_receipt.v0.1.schema.json`; reference: `references/security-contract-validation-receipt-v0.1.md`; records validation checks and explicit non-authorizations. |
 | `RuntimeTruth` | Implemented for demo/delivery truth | `engine/public_delivery.py`, pipeline output, Logdash truth docs | public bundle/operator UI | Includes demo/local/external mode, adapter mode, dry-run/mock truth, provenance/source labels. |
 
 ## Public safety and redaction requirements
@@ -85,18 +83,17 @@ Public contract examples must:
 
 ## Near-term roadmap
 
-1. Keep the public demo/proof bundle trace deterministic and sanitized.
-2. Maintain schema-backed v0.1 artifacts for `ApprovedExecutionSpec`, `PolicyDecision`, public-safe `ExecutionReceipt`, and public-safe `EvidenceBundle`.
-3. Keep `engine/security_contract_layer.py` as the internal helper/invariant boundary and avoid growing `engine/public_demo_bundle.py` back into contract logic.
-4. Keep `examples/security-contract-proof/` synchronized with schemas and boundary invariants when the public proof trace changes.
-5. Keep `scripts/run_security_contract_validation.py` as the repeatable schema-backed contract-validation receipt surface for local/public-safe proof checks.
+1. Keep Ravenclaw consuming SCLite as the single contract-core source of truth.
+2. Keep the public demo/proof bundle trace deterministic and sanitized.
+3. Maintain schema-backed v0.1 artifacts for `PolicyDecision`, `PreparedExecutionSpec`, `RedactedPreparedExecutionSpec`, `ApprovedExecutionSpec`, public-safe `ExecutionReceipt`, public-safe `EvidenceBundle`, redaction/public-surface artifacts, `ScopeFidelityReport`, and `SecurityContractValidationReceipt`.
+4. Keep Ravenclaw root `schemas/` and `examples/security-contract-proof/` synchronized with the pinned SCLite baseline for reviewer/snapshot readability.
+5. Keep `scripts/run_security_contract_validation.py` as a Ravenclaw compatibility entrypoint delegating to `engine/scl_validation_runner.py`; core fixture/schema validation comes from `sclite.validation`.
 6. Keep Replayable Truth Runtime visible as the proof/evaluation engine for offline governance-aware replay.
-7. Keep `ScopeFidelityReport` small and deterministic as a reusable target-binding/request-shape hygiene proof surface, with exact/mismatch/ambiguous fixtures kept public-safe.
-8. Keep Ravenclaw Runtime as proof/reference while sharpening the internal contract boundary.
-9. Keep `references/openclaw-adapter-contract-map.md` as the docs/contracts-only bridge for a later OpenClaw Skill; build the actual OpenClaw Skill later as the first adapter.
-10. Use `references/carrier-readiness-checklist.md` before any carrier implementation wave.
-11. Build MCP Policy Gateway later after schemas/examples are stable.
-12. Add A2A security metadata/profile later as an example-first carrier.
+7. Keep Ravenclaw Runtime as proof/reference while sharpening the internal contract boundary.
+8. Plan engine extraction only after the SCLite dependency seam is validated.
+9. Build OpenClaw Skill later as the first adapter.
+10. Build MCP Policy Gateway later after schemas/examples are stable.
+11. Add A2A security metadata/profile later as an example-first carrier.
 
 ## Explicit non-goal
 

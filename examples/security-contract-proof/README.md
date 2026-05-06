@@ -1,30 +1,25 @@
-# Security Contract Proof Fixture
+# Security Contract Layer proof fixture
 
-This directory contains a minimal public-safe Security Contract Layer proof trace generated from Ravenclaw demo mode.
+This directory contains a clean synthetic v0.1 proof trace:
 
-Proof trace:
+1. `policy_decision.json`
+2. `prepared_execution_spec.redacted.json`
+3. `approved_execution_spec.json`
+4. `execution_receipt.json`
+5. `evidence_bundle.json`
+6. `evidence_summary.md`
 
-`scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence bundle/summary`
+The fixture uses the reserved documentation host `example.com`, dry-run semantics, and synthetic metadata. It is authored as public-safe data from the start; it is not a redacted export from a private runtime.
 
-## Files
-
-- `policy_decision.json` — schema-backed PolicyDecision v0.1 compatibility artifact.
-- `prepared_execution_spec.redacted.json` — redacted prepared spec for public/auditor review.
-- `approved_execution_spec.json` — schema-backed ApprovedExecutionSpec v0.1 artifact.
-- `execution_receipt.json` — schema-backed public-safe dry-run execution receipt.
-- `evidence_bundle.json` — schema-backed public-safe dry-run evidence bundle.
-- `evidence_summary.md` — human-readable evidence summary and non-claims.
-
-## Public-safety constraints
-
-This fixture is demo/local/dry-run only. It uses `example.com`, includes no live vulnerability evidence, and must not contain credentials, private workspace paths, raw stdout/stderr, or private operator state.
-
-## Validation
-
-Run:
+Validate it with:
 
 ```bash
-python scripts/validate_security_contract_fixtures.py examples/security-contract-proof
+python -m sclite.cli validate examples/security-contract-proof
 ```
 
-The validator checks the schema-backed artifacts, Security Contract Layer public invariants, and a small sanitization denylist.
+Non-claims:
+
+- no live vulnerability evidence;
+- no private target execution;
+- no raw stdout/stderr;
+- no credentials, cookies, tokens, operator state, or private local paths.

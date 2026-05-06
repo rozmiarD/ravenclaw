@@ -5,45 +5,39 @@
   "status": "dry_run_contract_proof",
   "met": true,
   "gap": "live_target_evidence_not_collected_by_design",
-  "evidence_items": 6,
+  "evidence_items": 5,
   "criteria": [
     {
-      "id": "demo_runtime_mode",
-      "claim": "Demo bundle was generated in demo mode.",
-      "source": "run_pipeline.demo.json",
-      "status": "met",
-      "observed": "demo"
-    },
-    {
       "id": "policy_decision_recorded",
-      "claim": "Policy gate decision was captured as a contract artifact.",
+      "claim": "A policy decision artifact exists before approval.",
       "source": "policy_decision.json",
       "status": "met",
-      "observed": "demo_scope_target_override"
+      "observed": "allow_prepare"
     },
     {
-      "id": "prepared_spec_redacted",
-      "claim": "Prepared execution spec can be redacted for public/auditor review.",
+      "id": "prepared_spec_recorded",
+      "claim": "A prepared execution spec artifact exists for review.",
       "source": "prepared_execution_spec.redacted.json",
-      "status": "met"
+      "status": "met",
+      "observed": "synthetic_public_fixture"
     },
     {
       "id": "approved_spec_recorded",
-      "claim": "Approved execution spec was produced before executor handoff.",
+      "claim": "An approved execution spec exists before execution receipt creation.",
       "source": "approved_execution_spec.json",
       "status": "met",
       "observed": "2026-03-18.approved.v1"
     },
     {
       "id": "dry_run_receipt_recorded",
-      "claim": "Execution receipt records dry-run/mock execution instead of live offensive execution.",
+      "claim": "The execution receipt records dry-run behavior and zero executed commands.",
       "source": "execution_receipt.json",
       "status": "met",
       "observed": "dry-run"
     },
     {
       "id": "public_safe_target",
-      "claim": "Public demo target remains example.com/local-safe.",
+      "claim": "The fixture target is the reserved documentation host example.com.",
       "source": "approved_execution_spec.json",
       "status": "met",
       "observed": "example.com"

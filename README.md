@@ -32,7 +32,7 @@ Its core design claim is different:
 
 In short, Ravenclaw optimizes for bounded usefulness rather than raw autonomy theater.
 
-The current reusable direction is a small **Security Contract Layer** backed by Ravenclaw Runtime artifacts: scope binding, policy decisions, approved execution specs, execution receipts, evidence summaries, and runtime truth. OpenClaw, MCP, and A2A are potential later carriers for these contracts, not new protocols Ravenclaw is trying to own.
+The current reusable direction is a small **Security Contract Layer** backed by Ravenclaw Runtime artifacts: scope binding, policy decisions, prepared/approved execution specs, execution receipts, evidence summaries, and runtime truth. The reusable contract core is now the standalone `sclite` package/repo, while Ravenclaw consumes it as the governed reference runtime. OpenClaw, MCP, and A2A are potential later carriers for these contracts, not new protocols Ravenclaw is trying to own.
 
 ## Safe quickstart
 
@@ -42,7 +42,7 @@ Recommended order:
 1. `INSTALL.md`
 2. `ENVIRONMENT_SUPPORT.md`
 3. `DEMO.md`
-4. `VALIDATION.md` / `PROOF_OF_VALUE.md`
+4. `VALIDATION.md`
 5. `QUALITY_SIGNALS.md`
 6. `PUBLIC_STATUS.md`
 7. `AUDIENCE.md`

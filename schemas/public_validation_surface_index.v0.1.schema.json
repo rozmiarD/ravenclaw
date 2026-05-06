@@ -1,15 +1,17 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ravenclaw.local/schemas/public_validation_surface_index.v0.1.schema.json",
-  "title": "Ravenclaw PublicValidationSurfaceIndex v0.1",
-  "description": "Public-safe index of Ravenclaw validation entry points, their claims, boundaries, and referenced paths. This is a navigation artifact and does not authorize live target execution, protocol adapter work, or public push.",
+  "$id": "https://sclite.local/schemas/public_validation_surface_index.v0.1.schema.json",
+  "title": "SCLite PublicValidationSurfaceIndex v0.1",
+  "description": "Draft index of public-safe validation surfaces available in a repository or bundle. It documents local validation paths and commands; it does not authorize publication or live execution.",
   "type": "object",
   "required": [
     "artifact_type",
     "schema_version",
-    "schema_ref",
+    "generated_at",
+    "surfaces",
     "summary",
-    "surfaces"
+    "public_safety",
+    "non_claims"
   ],
   "properties": {
     "artifact_type": {
@@ -18,99 +20,104 @@
     "schema_version": {
       "const": "v0.1"
     },
-    "schema_ref": {
-      "const": "schemas/public_validation_surface_index.v0.1.schema.json"
-    },
-    "summary": {
-      "type": "object",
-      "required": ["surface_count", "missing_path_count"],
-      "properties": {
-        "surface_count": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "missing_path_count": {
-          "type": "integer",
-          "minimum": 0
-        }
-      },
-      "additionalProperties": false
+    "generated_at": {
+      "type": "string",
+      "minLength": 1
     },
     "surfaces": {
       "type": "array",
       "items": {
         "type": "object",
         "required": [
-          "id",
-          "title",
-          "command",
-          "paths",
-          "claim",
-          "non_claim",
-          "boundaries",
-          "missing_paths"
+          "surface_id",
+          "path",
+          "kind",
+          "purpose",
+          "schemas",
+          "commands",
+          "public_safe"
         ],
         "properties": {
-          "id": {
+          "surface_id": {
             "type": "string",
             "minLength": 1
           },
-          "title": {
+          "path": {
             "type": "string",
             "minLength": 1
           },
-          "command": {
+          "kind": {
             "type": "string",
             "minLength": 1
           },
-          "paths": {
+          "purpose": {
+            "type": "string"
+          },
+          "schemas": {
             "type": "array",
             "items": {
-              "type": "string",
-              "minLength": 1
+              "type": "string"
             }
           },
-          "claim": {
-            "type": "string",
-            "minLength": 1
-          },
-          "non_claim": {
-            "type": "string",
-            "minLength": 1
-          },
-          "boundaries": {
-            "type": "object",
-            "required": [
-              "public_safe",
-              "dry_run_or_local_only",
-              "live_target_execution",
-              "protocol_adapter_work"
-            ],
-            "properties": {
-              "public_safe": {
-                "const": true
-              },
-              "dry_run_or_local_only": {
-                "const": true
-              },
-              "live_target_execution": {
-                "const": false
-              },
-              "protocol_adapter_work": {
-                "const": false
-              }
-            },
-            "additionalProperties": false
-          },
-          "missing_paths": {
+          "commands": {
             "type": "array",
             "items": {
-              "type": "string",
-              "minLength": 1
+              "type": "string"
             }
+          },
+          "public_safe": {
+            "type": "boolean"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": true
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "surface_count",
+        "public_safe_surface_count"
+      ],
+      "properties": {
+        "surface_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "public_safe_surface_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_safety": {
+      "type": "object",
+      "required": [
+        "live_target_execution",
+        "protocol_adapter_work",
+        "public_push_authorized",
+        "raw_live_evidence_included"
+      ],
+      "properties": {
+        "live_target_execution": {
+          "const": false
+        },
+        "protocol_adapter_work": {
+          "const": false
+        },
+        "public_push_authorized": {
+          "const": false
+        },
+        "raw_live_evidence_included": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "non_claims": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     }
   },

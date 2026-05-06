@@ -60,7 +60,6 @@ Examples include:
 - `references/logdash-operator-truth-contracts.md`
 - `REPLAYABLE_TRUTH_RUNTIME.md`
 - `references/evaluation-replay-contract.md`
-- `references/scope-fidelity-report-v0.1.md`
 - `references/effectiveness-metrics-contract.md`
 - `references/runtime-artifact-ownership.md`
 
@@ -87,7 +86,7 @@ The repo also includes publication-boundary and public-snapshot planning surface
 - `scripts/assemble_public_snapshot.sh`
 - `scripts/run_security_contract_validation.py`
 
-That is a useful trust signal because it shows the project is trying to separate a public artifact from a messy live workspace, instead of pretending they are the same thing. The Security Contract validation runner adds a repeatable schema-backed receipt surface for fixture validation, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, Replayable Truth Runtime fixture validation, Scope Fidelity fixture validation, and optional focused pytest.
+That is a useful trust signal because it shows the project is trying to separate a public artifact from a messy live workspace, instead of pretending they are the same thing. The Security Contract validation runner adds a repeatable schema-backed receipt surface for fixture validation, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, Replayable Truth Runtime fixture validation, and optional focused pytest.
 
 ## What these signals support
 
@@ -97,9 +96,8 @@ Taken together, these signals support the following public claims:
 - important runtime and UI truth surfaces are tested
 - the public repo is being shaped deliberately rather than dumped casually
 - governance and operator-visibility behavior are treated as real correctness concerns
-- the emerging Security Contract Layer is grounded in Ravenclaw Runtime artifacts, not protocol-first marketing
+- the SCLite-backed Security Contract Layer is grounded in Ravenclaw Runtime artifacts, not protocol-first marketing
 - the Replayable Truth Runtime proof path can evaluate preserved decisions without live target execution by default
-- the Scope Fidelity report can deterministically classify target-binding/request-shape drift without executing against live targets
 
 ## What these signals do not prove
 
@@ -116,7 +114,6 @@ In other words, the trust surface is meaningful, but it is not magic.
 ## Best evidence trails for a new reader
 
 If you want the shortest serious verification path, read these in order:
-0. `REVIEWER_VALIDATION_GUIDE.md`
 1. `PUBLIC_STATUS.md`
 2. `DEMO.md`
 3. `.github/workflows/pytest.yml`
@@ -131,4 +128,4 @@ If you want the shortest serious verification path, read these in order:
 ## Validation posture summary
 
 The strongest honest quality claim today is:
-Ravenclaw already has real contract, CI, operator-truth, and proof-of-value framing surfaces, even though its public onboarding and proof presentation are still catching up to the strength of the technical core. See `PROOF_OF_VALUE.md` and `scripts/build_proof_of_value_scorecard.py` for the market-legible but non-exploit-claim framing and scorecard.
+Ravenclaw already has real contract, CI, and operator-truth validation surfaces, even though its public onboarding and proof presentation are still catching up to the strength of the technical core.
