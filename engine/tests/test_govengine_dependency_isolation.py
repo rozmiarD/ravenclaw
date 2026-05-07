@@ -9,6 +9,15 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
+def _govengine_source_dir() -> Path:
+    in_tree = REPO_ROOT / 'govengine'
+    if in_tree.is_dir():
+        return in_tree
+    import govengine
+
+    return Path(govengine.__file__).resolve().parent
+
+
 STANDALONE_MODULES = [
     'govengine',
     'govengine.context',
@@ -32,7 +41,7 @@ STANDALONE_MODULES = [
 
 def test_govengine_public_surface_imports_without_engine_path(tmp_path: Path) -> None:
     package_root = tmp_path / 'standalone'
-    shutil.copytree(REPO_ROOT / 'govengine', package_root / 'govengine')
+    shutil.copytree(_govengine_source_dir(), package_root / 'govengine')
     script = '\n'.join([
         'import importlib',
         f'mods = {STANDALONE_MODULES!r}',

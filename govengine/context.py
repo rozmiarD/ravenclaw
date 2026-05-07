@@ -61,7 +61,9 @@ def discover_repo_root(start: Path) -> Path:
     if current.is_file():
         current = current.parent
     for candidate in (current, *current.parents):
-        if (candidate / 'pyproject.toml').exists() and (candidate / 'engine').is_dir():
+        if not (candidate / 'pyproject.toml').exists():
+            continue
+        if (candidate / 'engine').is_dir() or (candidate / 'govengine').is_dir():
             return candidate
     return current
 
