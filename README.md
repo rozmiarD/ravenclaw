@@ -2,6 +2,9 @@
 
 [![pytest](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml/badge.svg)](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
+[![Ravenclaw 0.10.0](https://img.shields.io/badge/version-0.10.0-blueviolet.svg)](pyproject.toml)
+[![SCLite 0.2.0](https://img.shields.io/badge/SCLite-0.2.0-blueviolet.svg)](https://github.com/rozmiarD/SCLite)
 
 **RAVENCLAW is a governance-first security research runtime for bounded, auditable security operations.**
 
