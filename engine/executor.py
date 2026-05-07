@@ -9,7 +9,8 @@ from typing import Any, Dict, List
 from action_compiler import compile_action_spec  # type: ignore
 from campaign_utils import extract_host_from_url, host_in_scope, load_scope_domains  # type: ignore
 from policy_core import get_approved_spec_allowed_tools, get_runtime_allowed_tools, contains_tool_restricted_patterns, normalize_tool  # type: ignore
-from sclite.integrity import artifact_descriptor  # type: ignore
+from govengine.execution.approved_spec import approved_execution_steps, validate_approved_execution_spec
+from govengine.execution.ticket_gate import validate_execution_ticket_gate
 from tool_registry import get_tool_catalog  # type: ignore
 
 HOST_TOKEN_RE = re.compile(r"(https?://[^\s\"'<>]+)|\b((?:[a-z0-9-]+\.)+[a-z]{2,})\b", re.IGNORECASE)
@@ -181,37 +182,10 @@ class ExecutionEngine:
         return plan[0]
 
     def _validate_approved_execution_spec(self, approved_execution_spec: Dict[str, Any]) -> Dict[str, Any]:
-        if not isinstance(approved_execution_spec, dict):
-            raise ValueError('invalid_approved_execution_spec')
-        spec_version = str(approved_execution_spec.get('spec_version') or '').strip()
-        if spec_version != '2026-03-18.approved.v1':
-            raise ValueError(f'invalid_approved_execution_spec_version:{spec_version or "missing"}')
-        approval = approved_execution_spec.get('approval') if isinstance(approved_execution_spec.get('approval'), dict) else {}
-        decision = str(approval.get('decision') or '').strip().lower()
-        if decision != 'approve':
-            raise ValueError(f'invalid_approved_execution_decision:{decision or "missing"}')
-        execution_truth = approved_execution_spec.get('execution_truth') if isinstance(approved_execution_spec.get('execution_truth'), dict) else {}
-        artifact_type = str(execution_truth.get('artifact_type') or '').strip()
-        if artifact_type != 'approved_execution_spec':
-            raise ValueError(f'invalid_approved_execution_truth_artifact:{artifact_type or "missing"}')
-        return execution_truth
+        return validate_approved_execution_spec(approved_execution_spec)
 
     def _approved_execution_steps(self, approved_execution_spec: Dict[str, Any]) -> List[Dict[str, Any]]:
-        execution_truth = self._validate_approved_execution_spec(approved_execution_spec)
-        execution_plan = execution_truth.get('execution_plan') if isinstance(execution_truth, dict) else approved_execution_spec.get('execution_plan')
-        if not isinstance(execution_plan, list) or not execution_plan:
-            raise ValueError('missing_execution_plan')
-        out: List[Dict[str, Any]] = []
-        for step in execution_plan:
-            if not isinstance(step, dict):
-                continue
-            normalized_step = {'tool': str(step.get('tool') or ''), 'args': list(step.get('args') or [])}
-            if step.get('stdin'):
-                normalized_step['stdin'] = str(step.get('stdin') or '')
-            out.append(normalized_step)
-        if not out:
-            raise ValueError('missing_execution_plan')
-        return out
+        return approved_execution_steps(approved_execution_spec)
 
     def build_execution_plan_from_approved_spec(self, approved_execution_spec: Dict[str, Any]) -> List[List[str]]:
         out: List[List[str]] = []
@@ -229,48 +203,12 @@ class ExecutionEngine:
         execution_contract: Dict[str, Any] | None,
         raw_steps: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
-        if not isinstance(execution_ticket, dict):
-            raise ValueError('missing_execution_ticket')
-        if not isinstance(execution_contract, dict):
-            raise ValueError('missing_execution_contract')
-        artifact_type = str(execution_ticket.get('artifact_type') or '').strip()
-        schema_version = str(execution_ticket.get('schema_version') or '').strip()
-        if artifact_type != 'execution_ticket' or schema_version != 'v0.2':
-            raise ValueError(f'invalid_execution_ticket:{artifact_type or "missing"}:{schema_version or "missing"}')
-        approval = execution_ticket.get('approval') if isinstance(execution_ticket.get('approval'), dict) else {}
-        status = str(approval.get('status') or '').strip().lower()
-        approved_statuses = {'approve', 'approved', 'approved_for_dry_run'}
-        if status not in approved_statuses:
-            raise ValueError(f'invalid_execution_ticket_approval:{status or "missing"}')
-        limits = execution_ticket.get('execution_limits') if isinstance(execution_ticket.get('execution_limits'), dict) else {}
-        try:
-            max_runs = int(limits.get('max_runs', 0) or 0)
-        except (TypeError, ValueError):
-            max_runs = 0
-        if max_runs < 1:
-            raise ValueError('invalid_execution_ticket_max_runs')
-        contract_digest = artifact_descriptor(execution_contract)['digest']
-        integrity = execution_ticket.get('integrity') if isinstance(execution_ticket.get('integrity'), dict) else {}
-        bound_digest = str(integrity.get('ticket_binds_execution_contract_digest') or '').strip()
-        if bound_digest != contract_digest:
-            raise ValueError('execution_ticket_contract_digest_mismatch')
-        shape = execution_contract.get('execution_shape') if isinstance(execution_contract.get('execution_shape'), dict) else {}
-        contract_plan = shape.get('plan') if isinstance(shape.get('plan'), list) else []
-        if len(contract_plan) != len(raw_steps):
-            raise ValueError('execution_ticket_plan_length_mismatch')
-        for idx, (contract_step, approved_step) in enumerate(zip(contract_plan, raw_steps), 1):
-            if not isinstance(contract_step, dict):
-                raise ValueError(f'execution_ticket_invalid_contract_step:{idx}')
-            if str(contract_step.get('tool') or '') != str(approved_step.get('tool') or ''):
-                raise ValueError(f'execution_ticket_tool_mismatch:{idx}')
-            if [str(item) for item in list(contract_step.get('args') or [])] != [str(item) for item in list(approved_step.get('args') or [])]:
-                raise ValueError(f'execution_ticket_args_mismatch:{idx}')
-        return {
-            'status': 'passed',
-            'ticket_id': str(execution_ticket.get('ticket_id') or ''),
-            'execution_contract_digest': contract_digest,
-            'profile': str(integrity.get('profile') or ''),
-        }
+        return validate_execution_ticket_gate(
+            approved_execution_spec,
+            execution_ticket=execution_ticket,
+            execution_contract=execution_contract,
+            raw_steps=raw_steps,
+        )
 
     def execute_approved_spec(
         self,
