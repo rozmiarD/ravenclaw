@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 import subprocess
 import uuid
 from pathlib import Path
@@ -11,9 +10,14 @@ from campaign_utils import extract_host_from_url, host_in_scope, load_scope_doma
 from policy_core import get_approved_spec_allowed_tools, get_runtime_allowed_tools, contains_tool_restricted_patterns, normalize_tool  # type: ignore
 from govengine.execution.approved_spec import approved_execution_steps, validate_approved_execution_spec
 from govengine.execution.ticket_gate import validate_execution_ticket_gate
+from govengine.execution.command_shape import (
+    arg_target_observations,
+    enforce_scope,
+    enforce_target_semantics,
+    extract_hosts_from_text,
+    normalize_argv,
+)
 from tool_registry import get_tool_catalog  # type: ignore
-
-HOST_TOKEN_RE = re.compile(r"(https?://[^\s\"'<>]+)|\b((?:[a-z0-9-]+\.)+[a-z]{2,})\b", re.IGNORECASE)
 
 
 class ExecutionEngine:
@@ -23,109 +27,40 @@ class ExecutionEngine:
         self.tool_catalog = get_tool_catalog()
 
     def _normalize_argv(self, tool: str, args: List[Any], *, approved_spec: bool = False) -> List[str]:
-        norm_tool = normalize_tool(tool)
-        if not norm_tool:
-            raise ValueError('missing_tool')
-        allowed_tools = get_approved_spec_allowed_tools() if approved_spec else get_runtime_allowed_tools()
-        if norm_tool not in allowed_tools:
-            reason = 'tool_not_allowed_for_approved_spec' if approved_spec else 'tool_not_allowed'
-            raise ValueError(f'{reason}:{norm_tool}')
-        normalized_args = [str(a) for a in (args or [])]
-        if norm_tool == 'curl' and '-q' not in normalized_args and '--disable' not in normalized_args:
-            normalized_args = ['-q'] + normalized_args
-        restricted, restricted_pattern = contains_tool_restricted_patterns(norm_tool, normalized_args)
-        if restricted:
-            raise ValueError(f'tool_restricted_pattern:{norm_tool}:{restricted_pattern}')
-        return [norm_tool] + normalized_args
+        return normalize_argv(
+            tool,
+            args,
+            allowed_tools=get_approved_spec_allowed_tools() if approved_spec else get_runtime_allowed_tools(),
+            contains_tool_restricted_patterns=contains_tool_restricted_patterns,
+            normalize_tool=normalize_tool,
+            approved_spec=approved_spec,
+        )
 
     def _extract_hosts_from_text(self, text: Any) -> List[str]:
-        raw = str(text or '').strip()
-        if not raw:
-            return []
-        raw_lower = raw.lower()
-        if raw_lower.startswith('file://'):
-            return []
-        hosts: List[str] = []
-        seen: set[str] = set()
-        direct = str(extract_host_from_url(raw) or '').strip().lower()
-        if direct:
-            seen.add(direct)
-            hosts.append(direct)
-        allow_bare_domain_match = ('/' not in raw and '\\' not in raw) or 'host:' in raw_lower
-        for match in HOST_TOKEN_RE.finditer(raw):
-            if match.group(1):
-                token = str(match.group(1) or '').strip().lower()
-            else:
-                if not allow_bare_domain_match:
-                    continue
-                token = str(match.group(2) or '').strip().lower()
-            host = str(extract_host_from_url(token) or token).strip().lower()
-            if host and host not in seen:
-                seen.add(host)
-                hosts.append(host)
-        return hosts
+        return extract_hosts_from_text(text, extract_host_from_url=extract_host_from_url)
 
     def _arg_target_observations(self, argv: List[str], stdin_text: Any = '') -> Dict[str, List[str]]:
-        out: Dict[str, List[str]] = {'urls': [], 'hosts': [], 'files': []}
-        seen: Dict[str, set[str]] = {'urls': set(), 'hosts': set(), 'files': set()}
-
-        def _observe(raw_value: Any) -> None:
-            raw = str(raw_value or '').strip()
-            if not raw or raw.startswith('-'):
-                return
-            lowered = raw.lower()
-            if lowered.startswith(('http://', 'https://')):
-                if lowered not in seen['urls']:
-                    seen['urls'].add(lowered)
-                    out['urls'].append(raw)
-                return
-            if lowered.startswith('file://'):
-                if lowered not in seen['files']:
-                    seen['files'].add(lowered)
-                    out['files'].append(raw)
-                return
-            if any(ch.isspace() for ch in raw) or '/' in raw or '\\' in raw:
-                return
-            host = str(extract_host_from_url(raw) or raw).strip().lower()
-            if not host or '.' not in host:
-                return
-            if host not in seen['hosts']:
-                seen['hosts'].add(host)
-                out['hosts'].append(host)
-
-        for token in argv[1:]:
-            _observe(token)
-        for line in str(stdin_text or '').splitlines():
-            _observe(line)
-        return out
+        return arg_target_observations(argv, extract_host_from_url=extract_host_from_url, stdin_text=stdin_text)
 
     def _enforce_target_semantics(self, argv: List[str], stdin_text: Any = '') -> None:
-        tool = normalize_tool(argv[0] if argv else '')
-        if not tool:
-            return
-        info = self.tool_catalog.get(tool) or {}
-        target_validation_mode = str(info.get('target_validation_mode') or 'none').strip().lower() or 'none'
-        observed = self._arg_target_observations(argv, stdin_text=stdin_text)
-
-        if target_validation_mode == 'strict_url':
-            if observed['files'] and not observed['urls']:
-                return
-            if not observed['urls']:
-                raise ValueError(f'missing_target_kind:{tool}:url')
-            return
-
-        if target_validation_mode == 'strict_host_domain':
-            if observed['urls']:
-                raise ValueError(f'invalid_target_kind:{tool}:url')
-            if not observed['hosts']:
-                raise ValueError(f'missing_target_kind:{tool}:host_or_domain')
+        enforce_target_semantics(
+            argv,
+            tool_catalog=self.tool_catalog,
+            normalize_tool=normalize_tool,
+            extract_host_from_url=extract_host_from_url,
+            stdin_text=stdin_text,
+        )
 
     def _enforce_scope(self, argv: List[str], stdin_text: Any = '') -> None:
-        self._enforce_target_semantics(argv, stdin_text=stdin_text)
-        for token in [*argv[1:], *str(stdin_text or '').splitlines()]:
-            for host in self._extract_hosts_from_text(token):
-                if not host_in_scope(host, self.scope_domains):
-                    raise ValueError(f'out_of_scope_target:{host}')
+        enforce_scope(
+            argv,
+            scope_domains=self.scope_domains,
+            host_in_scope=host_in_scope,
+            tool_catalog=self.tool_catalog,
+            normalize_tool=normalize_tool,
+            extract_host_from_url=extract_host_from_url,
+            stdin_text=stdin_text,
+        )
 
     def _artifact_run_dir(self) -> Path:
         run_dir = self.artifacts_root / str(uuid.uuid4())
