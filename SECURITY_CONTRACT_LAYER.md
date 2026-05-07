@@ -71,7 +71,7 @@ No adapter should be promoted before the public proof bundle and schema validati
 | `ExecutionTicket` | Implemented as integrity-bound v0.2 ticket and enforced on the local approved-spec runtime path | `engine/scl_ravenclaw_adapter.py`; gate in `engine/executor.py` | lifecycle chain, local execution gate, reviewer | Binds to the exact execution contract digest; signer identity is not claimed in core. |
 | `ExecutionReceipt` v0.2 | Implemented as lifecycle receipt | `engine/scl_ravenclaw_adapter.py` | evidence contract, reviewer | Records what Ravenclaw dry-ran/executed in compact public-safe form. |
 | `EvidenceContract` | Implemented as v0.2 claims/non-claims artifact | `engine/scl_ravenclaw_adapter.py` | reviewer/public bundle | Links evidence claims to the exact receipt/ticket. |
-| `ArtifactChainManifest` | Implemented and verified by SCLite | `sclite.integrity.build_artifact_chain_manifest(...)` via Ravenclaw adapter | `sclite validate-chain` / public demo bundle | Lightweight hash-linked integrity chain, not PKI or legal authorization proof. |
+| `ArtifactChainManifest` | Implemented and verified by SCLite | `sclite.integrity.build_artifact_chain_manifest(...)` via Ravenclaw adapter | `sclite validate-chain` / `sclite verify-lifecycle` / public demo bundle | Lightweight hash-linked integrity chain plus semantic lifecycle binding checks, not PKI or legal authorization proof. |
 
 ## v0.1 compatibility artifacts
 
