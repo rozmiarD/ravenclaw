@@ -1,5 +1,8 @@
 # RAVENCLAW
 
+[![pytest](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml/badge.svg)](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **RAVENCLAW is a governance-first security research runtime for bounded, auditable security operations.**
 
 It is built around a simple idea:
