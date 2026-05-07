@@ -239,7 +239,8 @@ class ExecutionEngine:
             raise ValueError(f'invalid_execution_ticket:{artifact_type or "missing"}:{schema_version or "missing"}')
         approval = execution_ticket.get('approval') if isinstance(execution_ticket.get('approval'), dict) else {}
         status = str(approval.get('status') or '').strip().lower()
-        if status != 'approve':
+        approved_statuses = {'approve', 'approved', 'approved_for_dry_run'}
+        if status not in approved_statuses:
             raise ValueError(f'invalid_execution_ticket_approval:{status or "missing"}')
         limits = execution_ticket.get('execution_limits') if isinstance(execution_ticket.get('execution_limits'), dict) else {}
         try:
