@@ -24,6 +24,12 @@ class GovEnginePaths:
     @classmethod
     def from_root(cls, root: Path) -> 'GovEnginePaths':
         resolved = root.resolve()
+        tool_registry_candidates = [
+            resolved / 'engine' / 'tool_registry.yaml',
+            resolved / 'govengine' / 'tool_registry.yaml',
+            resolved / 'tool_registry.yaml',
+        ]
+        tool_registry_file = next((candidate for candidate in tool_registry_candidates if candidate.exists()), tool_registry_candidates[0])
         return cls(
             repo_root=resolved,
             reports_dir=resolved / 'reports',
@@ -31,7 +37,7 @@ class GovEnginePaths:
             state_dir=resolved / 'state',
             policy_file=resolved / 'policy.yaml',
             whitelist_file=resolved / 'whitelist.yaml',
-            tool_registry_file=resolved / 'engine' / 'tool_registry.yaml',
+            tool_registry_file=tool_registry_file,
         )
 
 

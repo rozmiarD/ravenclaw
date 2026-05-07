@@ -15,11 +15,11 @@ for _path in (_ROOT, _ENGINE):
 import re
 from typing import Any, Dict, List
 
-from campaign_utils import extract_host_from_url, host_in_scope, load_scope_domains  # type: ignore
+from govengine.scope import extract_host_from_url, host_in_scope, load_scope_domains
 from govengine.policy.core import get_runtime_allowed_tools, contains_banned_patterns, contains_tool_restricted_patterns, normalize_tool, check_credentials_policy
-from action_compiler import compile_action_spec  # type: ignore
-from action_validators import validate_probe_recipe, validate_action_contract_v2  # type: ignore
-from action_schema import DEFAULT_ACTION_TYPE  # type: ignore
+from govengine.action_compiler import compile_action_spec
+from govengine.action_validators import validate_probe_recipe, validate_action_contract_v2
+from govengine.action_schema import DEFAULT_ACTION_TYPE
 from govengine.tool_registry import get_tool_catalog
 
 HOST_TOKEN_RE = re.compile(r"(https?://[^\s\"'<>]+)|\b((?:[a-z0-9-]+\.)+[a-z]{2,})\b", re.IGNORECASE)

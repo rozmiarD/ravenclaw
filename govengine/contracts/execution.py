@@ -16,7 +16,7 @@ from copy import deepcopy
 from typing import Any, Dict, List
 from urllib.parse import urlparse
 
-from campaign_utils import extract_host_from_url  # type: ignore
+from govengine.scope import extract_host_from_url
 
 
 _DECORATION_HEADER_FLAGS = {'-H', '--header', '--headers'}

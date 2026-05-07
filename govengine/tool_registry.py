@@ -19,7 +19,7 @@ from typing import Any, Dict, Iterable, List, Set
 
 import yaml
 
-from json_state_io import atomic_write_json, safe_load_json_object  # type: ignore
+from govengine.state_store import atomic_write_json, safe_load_json_object
 
 REGISTRY_PATH = _CONTEXT.paths.tool_registry_file
 TOOL_REGISTRY_STATE_PATH = _CONTEXT.paths.reports_dir / '.tool_registry.state.json'

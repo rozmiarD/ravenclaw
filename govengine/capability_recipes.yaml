@@ -1,0 +1,129 @@
+version: 1
+
+defaults:
+  auto_expand_max_profile: specialized
+  allow_lab_auto_expand: false
+
+recipes:
+  historical_then_validate:
+    capability: historical_url_collection
+    action_type: enumeration_probe
+    steps:
+      - tool: gau
+        role: probe
+        args: ['--subs', '{target_host}']
+      - tool: httpx
+        role: validate
+        args: ['-silent', '-status-code', '-title', '-l', '{prev_stdout_path}']
+  crawl_then_validate:
+    capability: crawler_route_discovery
+    action_type: enumeration_probe
+    steps:
+      - tool: katana
+        role: probe
+        args: ['-u', '{target}', '-jc', '-kf', '-silent']
+      - tool: httpx
+        role: validate
+        args: ['-silent', '-status-code', '-title', '-l', '{prev_stdout_path}']
+  subdomains_then_resolve:
+    capability: passive_subdomain_discovery
+    action_type: enumeration_probe
+    steps:
+      - tool: subfinder
+        role: probe
+        args: ['-silent', '-d', '{target_host}']
+      - tool: dnsx
+        role: validate
+        args: ['-silent', '-l', '{prev_stdout_path}']
+
+task_families:
+  recon:
+    primary_capabilities: [http_fingerprint, passive_subdomain_discovery, dns_enumeration, service_enumeration]
+  subdomain_expansion:
+    primary_capabilities: [passive_subdomain_discovery, subdomain_permutation, dns_resolution]
+  dns:
+    primary_capabilities: [dns_enumeration, dns_resolution]
+  content_discovery:
+    primary_capabilities: [content_discovery, crawler_route_discovery]
+  historical_url_mining:
+    primary_capabilities: [historical_url_collection, crawler_route_discovery]
+  secret_hunt:
+    primary_capabilities: [secret_exposure_scan, historical_url_collection, crawler_route_discovery]
+    profile_expansion: [extended]
+  tls_assessment:
+    primary_capabilities: [tls_posture_check, transport_tls_handshake]
+    profile_expansion: [extended]
+  network_service:
+    primary_capabilities: [service_enumeration]
+    profile_expansion: [extended]
+  auth:
+    primary_capabilities: [http_probe, parameter_mining]
+  auth_flow:
+    primary_capabilities: [http_probe, parameter_mining, packet_observation]
+    profile_expansion: [specialized]
+  authz:
+    primary_capabilities: [http_probe]
+  logic:
+    primary_capabilities: [http_probe, parameter_mining]
+  client_input:
+    primary_capabilities: [http_probe, parameter_mining]
+  input_tamper:
+    primary_capabilities: [http_probe, parameter_mining]
+  redirect_trust:
+    primary_capabilities: [http_probe, http_fingerprint]
+  traffic_capture:
+    primary_capabilities: [packet_observation]
+    profile_expansion: [specialized]
+  wireless:
+    primary_capabilities: [wireless_assessment]
+    profile_expansion: [lab]
+
+capabilities:
+  http_probe:
+    tools: [curl, httpx]
+    action_type_tools:
+      differential_probe: [curl, httpx]
+      confirmatory_probe: [curl, httpx]
+      variant_probe: [curl, httpx]
+      state_transition_probe: [curl, httpx]
+      fingerprint_probe: [httpx, curl]
+  http_fingerprint:
+    tools: [httpx, whatweb, curl]
+  content_discovery:
+    tools: [katana, ffuf, feroxbuster, gobuster, dirsearch]
+    action_type_tools:
+      enumeration_probe: [katana, gau, ffuf, feroxbuster]
+  crawler_route_discovery:
+    tools: [katana, hakrawler, gau, httpx]
+  historical_url_collection:
+    tools: [gau, katana, hakrawler]
+  passive_subdomain_discovery:
+    tools: [subfinder, assetfinder, amass]
+  subdomain_permutation:
+    tools: [dnsgen, dnsx, subfinder]
+  dns_resolution:
+    tools: [dnsx, dig, nslookup]
+  dns_enumeration:
+    tools: [subfinder, assetfinder, amass, dnsx]
+  parameter_mining:
+    tools: [arjun, katana, curl]
+  service_enumeration:
+    tools: [httpx, naabu, nmap, masscan]
+  tls_posture_check:
+    tools: [httpx-pd, testssl.sh, curl]
+  transport_tls_handshake:
+    tools: [openssl, httpx-pd, testssl.sh]
+  secret_exposure_scan:
+    tools: [gitleaks, trufflehog, katana, rg]
+  template_detection:
+    tools: [nuclei, httpx]
+  injection_validation:
+    tools: [curl, ffuf, nuclei]
+  web_misconfig_check:
+    tools: [httpx, nuclei, nikto]
+  packet_observation:
+    tools: [mitmdump, tcpdump]
+  auth_bruteforce:
+    tools: [hydra]
+  wireless_assessment:
+    tools: [aircrack-ng, iw]

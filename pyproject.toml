@@ -30,3 +30,6 @@ py-modules = []
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["engine/tests", "engine/planer/tests", "tests"]
+
+[tool.setuptools.package-data]
+govengine = ["*.yaml"]
