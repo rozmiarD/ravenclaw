@@ -143,3 +143,11 @@ def test_adapter_generated_execution_ticket_passes_runtime_gate() -> None:
 
     assert result['execution_ticket_gate']['status'] == 'passed'
     assert result['execution_ticket_gate']['ticket_id'] == ticket['ticket_id']
+
+
+def test_scl_ravenclaw_adapter_is_govengine_compat_wrapper() -> None:
+    from govengine import sclite_adapter as gov_adapter
+
+    assert adapter.build_lifecycle_artifacts_v02 is gov_adapter.build_lifecycle_artifacts_v02
+    assert adapter.build_execution_ticket_v02 is gov_adapter.build_execution_ticket_v02
+    assert adapter.LIFECYCLE_TRACE_FILES_V02 == gov_adapter.LIFECYCLE_TRACE_FILES_V02

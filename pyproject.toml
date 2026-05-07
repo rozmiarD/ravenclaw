@@ -24,7 +24,7 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["govengine"]
+packages = ["govengine", "govengine.policy"]
 py-modules = []
 
 [tool.pytest.ini_options]
