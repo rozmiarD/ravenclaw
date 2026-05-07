@@ -15,8 +15,8 @@ for _path in (_ROOT, _ENGINE):
 from datetime import datetime, timezone
 from typing import Any, Dict, Mapping
 
-from execution_contracts import redact_prepared_execution_spec_for_auditor  # type: ignore
-from policy_gateway import normalize_policy_decision_v0  # type: ignore
+from govengine.contracts.execution import redact_prepared_execution_spec_for_auditor
+from govengine.policy.gateway import normalize_policy_decision_v0
 from sclite.artifacts import (
     PREPARED_EXECUTION_SPEC_VERSION,
     REDACTED_PREPARED_EXECUTION_SPEC_ARTIFACT_TYPE,

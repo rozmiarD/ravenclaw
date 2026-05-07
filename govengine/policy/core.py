@@ -15,7 +15,7 @@ for _path in (_ROOT, _ENGINE):
 from typing import Any, Dict, Iterable, List, Tuple
 import yaml
 
-from tool_registry import get_execution_allowed_tools, get_planner_visible_tools, get_tool_catalog  # type: ignore
+from govengine.tool_registry import get_execution_allowed_tools, get_planner_visible_tools, get_tool_catalog
 
 
 DEFAULT_ALLOWED_TOOLS = {"curl", "ffuf", "nmap", "gobuster", "nikto", "sqlmap"}
