@@ -10,6 +10,7 @@ from campaign_utils import extract_host_from_url, host_in_scope, load_scope_doma
 from policy_core import get_approved_spec_allowed_tools, get_runtime_allowed_tools, contains_tool_restricted_patterns, normalize_tool  # type: ignore
 from govengine.execution.approved_spec import approved_execution_steps, validate_approved_execution_spec
 from govengine.execution.ticket_gate import validate_execution_ticket_gate
+from govengine.execution.runner import approved_spec_compiled_action, approved_spec_dry_run_result, legacy_action_spec_dry_run_result
 from govengine.execution.command_shape import (
     arg_target_observations,
     enforce_scope,
@@ -166,28 +167,15 @@ class ExecutionEngine:
                 raw_steps=raw_steps,
             )
         plan = [self._normalize_argv(str(step.get('tool') or ''), list(step.get('args') or []), approved_spec=True) for step in raw_steps]
-        compiled = {
-            'action_type': str(approved_execution_spec.get('action_type') or ''),
-            'capability': str(approved_execution_spec.get('capability') or ''),
-            'compiler_tool_choice': str(approved_execution_spec.get('resolved_tool') or ''),
-            'compiler_tool_choice_source': 'approved_execution_spec',
-            'execution_mode': str(approved_execution_spec.get('execution_mode') or ''),
-            'semantic_loss_policy': dict((approved_execution_spec.get('compiler') or {}).get('semantic_loss_policy') or {}) if isinstance(approved_execution_spec.get('compiler'), dict) else {},
-        }
+        compiled = approved_spec_compiled_action(approved_execution_spec)
         if dry_run:
             for step, argv in zip(raw_steps, plan):
                 self._enforce_scope(argv, stdin_text=step.get('stdin') or '')
-            return {
-                'status': 'dry-run',
-                'returncode': 0,
-                'stdout': '',
-                'stderr': '',
-                'reason': 'dry_run_requested',
-                'compiled_action': compiled,
-                'planned_commands': plan,
-                'execution_source': 'approved_execution_spec',
-                'execution_ticket_gate': execution_ticket_gate or {'status': 'not_required'},
-            }
+            return approved_spec_dry_run_result(
+                approved_execution_spec=approved_execution_spec,
+                planned_commands=plan,
+                execution_ticket_gate=execution_ticket_gate or {'status': 'not_required'},
+            )
 
         combined_stdout: List[str] = []
         combined_stderr: List[str] = []
@@ -246,16 +234,7 @@ class ExecutionEngine:
                 if not isinstance(step, dict):
                     continue
                 self._enforce_scope(argv, stdin_text=step.get('stdin') or '')
-            return {
-                'status': 'dry-run',
-                'returncode': 0,
-                'stdout': '',
-                'stderr': '',
-                'reason': 'dry_run_requested',
-                'compiled_action': compiled,
-                'planned_commands': plan,
-                'execution_source': 'legacy_direct_action_spec',
-            }
+            return legacy_action_spec_dry_run_result(compiled_action=compiled, planned_commands=plan)
 
         combined_stdout: List[str] = []
         combined_stderr: List[str] = []
