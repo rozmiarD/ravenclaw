@@ -3,6 +3,8 @@ from __future__ import annotations
 import re
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Tuple
 
+from govengine.scope import GovScopePort
+
 HOST_TOKEN_RE = re.compile(r"(https?://[^\s\"'<>]+)|\b((?:[a-z0-9-]+\.)+[a-z]{2,})\b", re.IGNORECASE)
 
 ExtractHost = Callable[[Any], Any]
@@ -38,16 +40,21 @@ def normalize_argv(
     return [norm_tool] + normalized_args
 
 
-def extract_hosts_from_text(text: Any, *, extract_host_from_url: ExtractHost) -> List[str]:
+def extract_hosts_from_text(text: Any, *, extract_host_from_url: ExtractHost | None = None, scope_port: GovScopePort | None = None) -> List[str]:
     raw = str(text or '').strip()
     if not raw:
         return []
     raw_lower = raw.lower()
     if raw_lower.startswith('file://'):
         return []
+    if scope_port is None and extract_host_from_url is None:
+        raise ValueError('missing_scope_host_extractor')
+    def _extract(value: Any) -> str:
+        return scope_port.extract_host(value) if scope_port is not None else str(extract_host_from_url(value) or '').strip().lower()
+
     hosts: List[str] = []
     seen: set[str] = set()
-    direct = str(extract_host_from_url(raw) or '').strip().lower()
+    direct = _extract(raw)
     if direct:
         seen.add(direct)
         hosts.append(direct)
@@ -59,14 +66,19 @@ def extract_hosts_from_text(text: Any, *, extract_host_from_url: ExtractHost) ->
             if not allow_bare_domain_match:
                 continue
             token = str(match.group(2) or '').strip().lower()
-        host = str(extract_host_from_url(token) or token).strip().lower()
+        host = _extract(token) or str(token).strip().lower()
         if host and host not in seen:
             seen.add(host)
             hosts.append(host)
     return hosts
 
 
-def arg_target_observations(argv: List[str], *, extract_host_from_url: ExtractHost, stdin_text: Any = '') -> Dict[str, List[str]]:
+def arg_target_observations(argv: List[str], *, extract_host_from_url: ExtractHost | None = None, scope_port: GovScopePort | None = None, stdin_text: Any = '') -> Dict[str, List[str]]:
+    if scope_port is None and extract_host_from_url is None:
+        raise ValueError('missing_scope_host_extractor')
+    def _extract(value: Any) -> str:
+        return scope_port.extract_host(value) if scope_port is not None else str(extract_host_from_url(value) or '').strip().lower()
+
     out: Dict[str, List[str]] = {'urls': [], 'hosts': [], 'files': []}
     seen: Dict[str, set[str]] = {'urls': set(), 'hosts': set(), 'files': set()}
 
@@ -87,7 +99,7 @@ def arg_target_observations(argv: List[str], *, extract_host_from_url: ExtractHo
             return
         if any(ch.isspace() for ch in raw) or '/' in raw or '\\' in raw:
             return
-        host = str(extract_host_from_url(raw) or raw).strip().lower()
+        host = _extract(raw) or str(raw).strip().lower()
         if not host or '.' not in host:
             return
         if host not in seen['hosts']:
@@ -106,7 +118,8 @@ def enforce_target_semantics(
     *,
     tool_catalog: Mapping[str, Mapping[str, Any]],
     normalize_tool: NormalizeTool,
-    extract_host_from_url: ExtractHost,
+    extract_host_from_url: ExtractHost | None = None,
+    scope_port: GovScopePort | None = None,
     stdin_text: Any = '',
 ) -> None:
     tool = normalize_tool(argv[0] if argv else '')
@@ -114,7 +127,7 @@ def enforce_target_semantics(
         return
     info = tool_catalog.get(tool) or {}
     target_validation_mode = str(info.get('target_validation_mode') or 'none').strip().lower() or 'none'
-    observed = arg_target_observations(argv, extract_host_from_url=extract_host_from_url, stdin_text=stdin_text)
+    observed = arg_target_observations(argv, extract_host_from_url=extract_host_from_url, scope_port=scope_port, stdin_text=stdin_text)
 
     if target_validation_mode == 'strict_url':
         if observed['files'] and not observed['urls']:
@@ -134,10 +147,11 @@ def enforce_scope(
     argv: List[str],
     *,
     scope_domains: Any,
-    host_in_scope: HostInScope,
+    host_in_scope: HostInScope | None = None,
     tool_catalog: Mapping[str, Mapping[str, Any]],
     normalize_tool: NormalizeTool,
-    extract_host_from_url: ExtractHost,
+    extract_host_from_url: ExtractHost | None = None,
+    scope_port: GovScopePort | None = None,
     stdin_text: Any = '',
 ) -> None:
     """Enforce target semantics and scope using host-supplied scope policy."""
@@ -147,9 +161,13 @@ def enforce_scope(
         tool_catalog=tool_catalog,
         normalize_tool=normalize_tool,
         extract_host_from_url=extract_host_from_url,
+        scope_port=scope_port,
         stdin_text=stdin_text,
     )
+    if scope_port is None and host_in_scope is None:
+        raise ValueError('missing_scope_policy')
     for token in [*argv[1:], *str(stdin_text or '').splitlines()]:
-        for host in extract_hosts_from_text(token, extract_host_from_url=extract_host_from_url):
-            if not host_in_scope(host, scope_domains):
+        for host in extract_hosts_from_text(token, extract_host_from_url=extract_host_from_url, scope_port=scope_port):
+            in_scope = scope_port.host_in_scope(host, scope_domains) if scope_port is not None else bool(host_in_scope(host, scope_domains))
+            if not in_scope:
                 raise ValueError(f'out_of_scope_target:{host}')

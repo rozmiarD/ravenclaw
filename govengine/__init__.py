@@ -7,6 +7,7 @@ port contracts without moving Ravenclaw runtime logic yet.
 from .context import GovEngineContext, GovEnginePaths, ravenclaw_context
 from .execution_backend import CommandResult, GovExecutionBackend
 from .roles import GovRoleAdapters
+from .scope import FunctionalScopePort, GovScopePort
 from .sclite_contracts import GovSCLiteLifecycleVerifier, verify_lifecycle_manifest
 from .state_store import GovStateStore
 
@@ -16,6 +17,8 @@ __all__ = [
     'GovEnginePaths',
     'GovExecutionBackend',
     'GovRoleAdapters',
+    'FunctionalScopePort',
+    'GovScopePort',
     'GovSCLiteLifecycleVerifier',
     'GovStateStore',
     'ravenclaw_context',

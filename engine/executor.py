@@ -17,6 +17,7 @@ from govengine.execution.command_shape import (
     extract_hosts_from_text,
     normalize_argv,
 )
+from govengine.scope import FunctionalScopePort
 from tool_registry import get_tool_catalog  # type: ignore
 
 
@@ -25,6 +26,7 @@ class ExecutionEngine:
         self.scope_domains = load_scope_domains()
         self.artifacts_root = Path.cwd() / 'tmp' / 'engine-handoffs'
         self.tool_catalog = get_tool_catalog()
+        self.scope_port = FunctionalScopePort(extract_host_from_url, host_in_scope)
 
     def _normalize_argv(self, tool: str, args: List[Any], *, approved_spec: bool = False) -> List[str]:
         return normalize_argv(
@@ -37,17 +39,17 @@ class ExecutionEngine:
         )
 
     def _extract_hosts_from_text(self, text: Any) -> List[str]:
-        return extract_hosts_from_text(text, extract_host_from_url=extract_host_from_url)
+        return extract_hosts_from_text(text, scope_port=self.scope_port)
 
     def _arg_target_observations(self, argv: List[str], stdin_text: Any = '') -> Dict[str, List[str]]:
-        return arg_target_observations(argv, extract_host_from_url=extract_host_from_url, stdin_text=stdin_text)
+        return arg_target_observations(argv, scope_port=self.scope_port, stdin_text=stdin_text)
 
     def _enforce_target_semantics(self, argv: List[str], stdin_text: Any = '') -> None:
         enforce_target_semantics(
             argv,
             tool_catalog=self.tool_catalog,
             normalize_tool=normalize_tool,
-            extract_host_from_url=extract_host_from_url,
+            scope_port=self.scope_port,
             stdin_text=stdin_text,
         )
 
@@ -58,7 +60,7 @@ class ExecutionEngine:
             host_in_scope=host_in_scope,
             tool_catalog=self.tool_catalog,
             normalize_tool=normalize_tool,
-            extract_host_from_url=extract_host_from_url,
+            scope_port=self.scope_port,
             stdin_text=stdin_text,
         )
 
