@@ -166,6 +166,28 @@ def build_policy_decision_artifact_v02(pipeline_data: Dict[str, Any], intent_con
     })
 
 
+
+def _sclite_execution_mode(pipeline_data: Mapping[str, Any]) -> str:
+    settings = _dict(pipeline_data.get('settings'))
+    engine = _dict(pipeline_data.get('engine'))
+    runtime_mode = str(settings.get('runtime_mode') or '').lower()
+    if bool(settings.get('forced_dry_run')) or str(engine.get('status') or '').lower() == 'dry-run' or runtime_mode in {'demo', 'dry_run', 'dry-run'}:
+        return 'dry_run'
+    return 'live'
+
+
+def _sclite_approval_status(approval: Mapping[str, Any]) -> str:
+    decision = str(approval.get('decision') or approval.get('status') or '').lower()
+    if decision in {'approve', 'approved', 'allow', 'allowed'}:
+        return 'approved_for_dry_run'
+    if decision in {'owner_approval_required', 'review', 'needs_review'}:
+        return 'owner_approval_required'
+    if decision in {'reject', 'rejected', 'deny', 'denied'}:
+        return 'rejected'
+    if decision in {'expired', 'revoked'}:
+        return decision
+    return 'owner_approval_required'
+
 def build_execution_contract_v02(pipeline_data: Dict[str, Any], intent_contract: Mapping[str, Any], policy_decision: Mapping[str, Any]) -> Dict[str, Any]:
     prepared = _prepared(pipeline_data)
     approved = _approved(pipeline_data)
@@ -188,8 +210,8 @@ def build_execution_contract_v02(pipeline_data: Dict[str, Any], intent_contract:
             'plan': _list(truth.get('execution_plan') or approved.get('execution_plan') or prepared.get('execution_plan')),
         },
         'execution_bounds': {
-            'mode': str(_dict(pipeline_data.get('settings')).get('runtime_mode') or ''),
-            'dry_run': str(_dict(pipeline_data.get('engine')).get('status') or '') == 'dry-run',
+            'mode': _sclite_execution_mode(pipeline_data),
+            'dry_run': _sclite_execution_mode(pipeline_data) == 'dry_run',
             'max_commands': len(_list(truth.get('execution_plan') or approved.get('execution_plan') or prepared.get('execution_plan'))),
         },
         'expected_receipt': {'schema_ref': 'schemas/execution_receipt.v0.2.schema.json', 'required': True},
@@ -209,12 +231,12 @@ def build_execution_ticket_v02(pipeline_data: Dict[str, Any], policy_decision: M
         'created_at': _created_at(pipeline_data),
         'links': {'policy_decision': _link('policy_decision', policy_decision), 'execution_contract': _link('execution_contract', execution_contract)},
         'approval': {
-            'status': str(approval.get('decision') or 'unknown'),
+            'status': _sclite_approval_status(approval),
             'approval_source': str(approval.get('approval_source') or 'ravenclaw_auditor'),
             'reason': str(approval.get('reason') or ''),
         },
-        'validity': {'not_before': _created_at(pipeline_data), 'not_after': str(approval.get('expires_at') or '')},
-        'execution_limits': {'one_shot': True, 'max_runs': 1, 'mode': str(_dict(pipeline_data.get('settings')).get('runtime_mode') or '')},
+        'validity': {'not_before': _created_at(pipeline_data), 'not_after': str(approval.get('expires_at') or _created_at(pipeline_data))},
+        'execution_limits': {'one_shot': True, 'max_runs': 1, 'mode': _sclite_execution_mode(pipeline_data)},
         'integrity': {'ticket_binds_execution_contract_digest': contract_desc['digest'], 'profile': 'sclite-v0.2-integrity-only'},
         'signature': {'mode': 'not_signed_integrity_only', 'identity_signature_required': False, 'note': 'Ravenclaw v0.2 adapter uses SCLite hash-linked integrity; signer identity can be added as an optional profile.'},
         'non_claims': ['ticket_does_not_prove_real_world_identity', 'runtime_must_enforce_ticket_bounds'],

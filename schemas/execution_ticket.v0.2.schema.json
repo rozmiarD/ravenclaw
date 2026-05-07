@@ -9,13 +9,81 @@
     "schema_ref": {"const": "schemas/execution_ticket.v0.2.schema.json"},
     "ticket_id": {"type": "string", "minLength": 1},
     "created_at": {"type": "string", "minLength": 1},
-    "links": {"type": "object"},
-    "approval": {"type": "object"},
-    "validity": {"type": "object"},
-    "execution_limits": {"type": "object"},
-    "integrity": {"type": "object"},
+    "links": {
+      "type": "object",
+      "required": ["execution_contract"],
+      "properties": {
+        "execution_contract": {"$ref": "#/$defs/artifact_link"},
+        "intent": {"$ref": "#/$defs/artifact_link"},
+        "policy_decision": {"$ref": "#/$defs/artifact_link"}
+      },
+      "additionalProperties": true
+    },
+    "approval": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {"type": "string", "enum": ["approved_for_dry_run", "approved", "rejected", "owner_approval_required", "expired", "revoked"]},
+        "approval_id": {"type": "string", "minLength": 1},
+        "approver_kind": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "validity": {
+      "type": "object",
+      "required": ["not_before", "not_after"],
+      "properties": {
+        "not_before": {"type": "string", "minLength": 1},
+        "not_after": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "execution_limits": {
+      "type": "object",
+      "required": ["mode", "max_runs"],
+      "properties": {
+        "mode": {"type": "string", "enum": ["dry_run", "live"]},
+        "max_runs": {"type": "integer", "minimum": 1},
+        "one_shot": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "integrity": {
+      "type": "object",
+      "required": ["ticket_binds_execution_contract_digest"],
+      "properties": {
+        "profile": {"type": "string", "minLength": 1},
+        "ticket_binds_execution_contract_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": true
+    },
     "signature": {"type": "object"},
     "non_claims": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "artifact_link": {
+      "type": "object",
+      "required": ["role", "descriptor"],
+      "properties": {
+        "role": {"type": "string", "minLength": 1},
+        "descriptor": {"$ref": "#/$defs/descriptor"}
+      },
+      "additionalProperties": true
+    },
+    "descriptor": {
+      "type": "object",
+      "required": ["artifact_type", "schema_version", "schema_ref", "canonicalization", "algorithm", "digest", "canonical_bytes"],
+      "properties": {
+        "artifact_type": {"type": "string", "minLength": 1},
+        "schema_version": {"type": "string", "minLength": 1},
+        "schema_ref": {"type": "string", "minLength": 1},
+        "canonicalization": {"type": "string", "minLength": 1},
+        "algorithm": {"const": "sha256"},
+        "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "canonical_bytes": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": true
+    }
   },
   "additionalProperties": true
 }

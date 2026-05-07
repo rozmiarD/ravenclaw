@@ -9,10 +9,46 @@
     "schema_ref": {"const": "schemas/execution_contract.v0.2.schema.json"},
     "contract_id": {"type": "string", "minLength": 1},
     "created_at": {"type": "string", "minLength": 1},
-    "links": {"type": "object"},
-    "target_binding": {"type": "object"},
-    "execution_shape": {"type": "object"},
-    "execution_bounds": {"type": "object"},
+    "links": {
+      "type": "object",
+      "required": ["intent", "policy_decision"],
+      "properties": {
+        "intent": {"type": "object"},
+        "policy_decision": {"type": "object"}
+      },
+      "additionalProperties": true
+    },
+    "target_binding": {
+      "type": "object",
+      "required": ["target", "target_host", "target_in_scope"],
+      "properties": {
+        "target": {"type": "string", "minLength": 1},
+        "target_host": {"type": "string", "minLength": 1},
+        "target_in_scope": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "execution_shape": {
+      "type": "object",
+      "required": ["tool", "normalized_args"],
+      "properties": {
+        "tool": {"type": "string", "minLength": 1},
+        "normalized_args": {"type": "array", "items": {"type": ["string", "number", "integer", "boolean", "null", "object", "array"]}},
+        "plan": {"type": "array", "items": {"type": "object"}}
+      },
+      "additionalProperties": true
+    },
+    "execution_bounds": {
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": {"type": "string", "enum": ["dry_run", "live"]},
+        "network_execution_allowed": {"type": "boolean"},
+        "max_commands": {"type": "integer", "minimum": 0},
+        "timeout_seconds": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": true
+    },
     "expected_receipt": {"type": "object"},
     "non_claims": {"type": "array", "items": {"type": "string"}}
   },
