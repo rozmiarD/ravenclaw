@@ -62,6 +62,14 @@ A v0.1 public demo evidence bundle can claim:
 - execution receipt records dry-run/mock execution;
 - public target remains `example.com` / local-safe.
 
+## OODA control decisions
+
+If a receipt includes GovEngine OODA control decisions, an evidence bundle may reference them as governance evidence: OODA control was evaluated, an interrupting decision stopped or reshaped execution, and the decision is linked to the approved execution shape.
+
+The evidence bundle must still keep OODA data compact and public-safe. It should reference decision/reason/summary fields, not raw telemetry or raw output.
+
+See `references/ooda-receipt-evidence-notes.md`.
+
 ## Non-claims
 
 A v0.1 public demo evidence bundle must not claim:

@@ -56,6 +56,14 @@ In the demo proof path, a valid receipt should make these claims legible:
 - raw output was not published;
 - planned/executed command counts are visible without exposing private command content.
 
+## OODA control decisions
+
+When a host runner uses GovEngine OODA control, the receipt may carry compact control-decision summaries such as decision, reason code, interrupting flag, step index, observation kinds, and orientation status booleans/enums.
+
+Those summaries are governance evidence only. They must not include raw stdout/stderr, raw command logs, request/response bodies, credentials, private paths, unredacted private targets, full host telemetry dumps, or LLM private reasoning.
+
+See `references/ooda-receipt-evidence-notes.md`.
+
 ## Non-claims
 
 A public demo `ExecutionReceipt` does not claim:
