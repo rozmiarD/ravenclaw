@@ -24,3 +24,4 @@ reports/campaign_registry/
 reports/*-staging-plan.md
 reports/*-summary.md
 reports/*-closeout-*.md
+.local-archive/
