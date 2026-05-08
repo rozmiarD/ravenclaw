@@ -12,7 +12,7 @@ authors = [{ name = "Krzysztof Probola" }]
 dependencies = [
   "PyYAML>=6,<7",
   "sclite @ git+https://github.com/rozmiarD/SCLite.git@43dae49b44602da76611fb42cd0b10aac3b3ae3f",
-  "govengine @ git+https://github.com/rozmiarD/GovEngine.git@f848476a7e67824814cd73eebfd87fc3d6985210",
+  "govengine @ git+https://github.com/rozmiarD/GovEngine.git@de8e53bcfddadb9f64d51b998aee5e9657d97591",
 ]
 
 [project.optional-dependencies]
