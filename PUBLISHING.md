@@ -3,6 +3,30 @@
 This file is the short final publication checklist for Ravenclaw.
 Use it before any real public GitHub push.
 
+## Identity guard
+
+Before any public commit or push, verify the effective repo-local Git identity:
+
+```bash
+git config --get user.name
+git config --get user.email
+```
+
+Required value:
+
+```text
+0x505badc0de <0x505badc0de@proton.me>
+```
+
+If a clean publish tree has a stale local config such as `OpenClaw <openclaw@local>`, fix it before committing:
+
+```bash
+git config user.name '0x505badc0de'
+git config user.email '0x505badc0de@proton.me'
+```
+
+Do not rewrite already-published history only to fix authorship unless the operator explicitly approves force-push/history rewrite.
+
 ## Default rule
 
 Do **not** publish directly from the live working tree.
@@ -130,6 +154,7 @@ If validation is run inside a clean publish worktree, remember that pytest or de
 Use the following ownership model to avoid parallel truths:
 
 - `README.md` = canonical public front-door truth about what Ravenclaw is.
+- `REPO_WORKFLOW.md` = canonical Git/worktree/branch/identity rules.
 - `PUBLISHING.md` = canonical GitHub publication and branch procedure.
 - `PUBLIC_STATUS.md` = canonical public maturity/status guide.
 - `references/public-release-boundary.md` = canonical publication boundary and exclusion policy.
@@ -157,11 +182,12 @@ This is the canonical GitHub publication flow unless the operator explicitly ask
 1. Assemble a clean public snapshot.
 2. Validate the exact snapshot that is intended for publication.
 3. Create an isolated clean publish tree from that validated snapshot.
-4. Fetch the current `origin/main`.
-5. Apply only the bounded public-release delta on top of current `origin/main`.
-6. Re-run validation if the publish tree changed materially while rebasing or applying the delta.
-7. Push to `origin/main`.
-8. If any temporary helper branch was used during preparation, delete it from the remote after `main` is updated.
+4. Confirm git identity is `0x505badc0de <0x505badc0de@proton.me>`.
+5. Fetch the current `origin/main`.
+6. Apply only the bounded public-release delta on top of current `origin/main`.
+7. Re-run validation if the publish tree changed materially while rebasing or applying the delta.
+8. Push to `origin/main`.
+9. If any temporary helper branch was used during preparation, delete it from the remote after `main` is updated.
 
 ### Why this rule exists
 
@@ -211,6 +237,7 @@ Before public push:
 2. review boundary and residue
 3. verify docs are present
 4. run validation
-5. apply the bounded publish state onto current `origin/main`
-6. push to `main`
-7. remove any temporary remote branch if one was used only during preparation
+5. verify Git identity
+6. apply the bounded publish state onto current `origin/main`
+7. push to `main`
+8. remove any temporary remote branch if one was used only during preparation

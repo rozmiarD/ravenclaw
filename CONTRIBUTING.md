@@ -9,6 +9,9 @@ RAVENCLAW changes are most useful when they improve one or more of these:
 - policy/runtime consistency
 
 ## Before changing code
+
+Read `REPO_WORKFLOW.md` before any commit, branch cleanup, or public push. It is the canonical Git identity/worktree/branch procedure.
+
 Read, in order:
 1. `README.md`
 2. `ARCHITECTURE.md`

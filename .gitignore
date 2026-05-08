@@ -1,0 +1,26 @@
+
+# Local OpenClaw/operator workspace and publication scratch
+.main-publish-fix/
+.publish-worktree/
+public-snapshot/tmp/
+public-snapshot/out.json
+demo-output/
+ravenclaw.egg-info/
+engine/tmp/
+memory/
+MEMORY.md
+AGENTS.md
+SOUL.md
+USER.md
+TOOLS.md
+IDENTITY.md
+HEARTBEAT.md
+NEXT_SESSION.md
+.openclaw/
+canvas/
+
+# Local runtime/campaign residue
+reports/campaign_registry/
+reports/*-staging-plan.md
+reports/*-summary.md
+reports/*-closeout-*.md

@@ -82,6 +82,16 @@ Start with:
 
 This direction keeps Ravenclaw Runtime as the proof/reference implementation, consumes SCLite as the reusable contract-core dependency, and treats OpenClaw, MCP, and A2A as later carriers, not new protocols. For the first future carrier boundary, read `references/openclaw-adapter-contract-map.md`; before implementation planning, use `references/carrier-readiness-checklist.md` and fill `references/carrier-readiness-packet-template.md`.
 
+## If you want contributor / publication workflow
+
+Start with:
+1. `REPO_WORKFLOW.md`
+2. `PUBLISHING.md`
+3. `CONTRIBUTING.md`
+4. `VALIDATION.md`
+
+This path covers Git identity, clean worktrees, branch cleanup, public snapshot publication, and validation expectations.
+
 ## Short rule
 
 Do not treat every file as equally important.
