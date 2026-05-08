@@ -8,9 +8,11 @@ version = "0.10.0"
 description = "Governance-first security research runtime"
 readme = "README.md"
 requires-python = ">=3.11"
+authors = [{ name = "Krzysztof Probola" }]
 dependencies = [
   "PyYAML>=6,<7",
   "sclite @ git+https://github.com/rozmiarD/SCLite.git@43dae49b44602da76611fb42cd0b10aac3b3ae3f",
+  "govengine @ git+https://github.com/rozmiarD/GovEngine.git@ece11b81abe804fd1677bd20f69567cf5ce7e9bb",
 ]
 
 [project.optional-dependencies]
@@ -24,12 +26,10 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["govengine", "govengine.contracts", "govengine.execution", "govengine.policy"]
+packages = []
 py-modules = []
 
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["engine/tests", "engine/planer/tests", "tests"]
 
-[tool.setuptools.package-data]
-govengine = ["*.yaml"]

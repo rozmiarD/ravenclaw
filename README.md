@@ -8,6 +8,8 @@
 
 **RAVENCLAW is a governance-first security research runtime for bounded, auditable security operations.**
 
+Project owner: **Krzysztof Probola**.
+
 It is built around a simple idea:
 advanced autonomy is only useful when it remains bounded, observable, and accountable.
 

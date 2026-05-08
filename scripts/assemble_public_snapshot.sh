@@ -37,7 +37,6 @@ prune_snapshot_noise() {
 
 # Core code
 copy_path engine
-copy_path govengine
 copy_path logdash
 copy_path tests
 copy_path references
