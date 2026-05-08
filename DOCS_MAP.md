@@ -57,6 +57,15 @@ Start with:
 ## If you want public-release context
 
 Start with:
+1. `references/repository-publication-readiness-2026-05-08.md`
+2. `OPEN_SOURCE_1_0_PLAN.md`
+3. `PUBLISHING.md`
+4. `references/public-release-boundary.md`
+5. `references/public-release-review-matrix.md`
+
+## If you want the older public-release context map
+
+Start with:
 1. `references/public-core-private-overlay-boundary.md`
 2. `OPEN_SOURCE_1_0_PLAN.md`
 3. `references/public-release-boundary.md`
