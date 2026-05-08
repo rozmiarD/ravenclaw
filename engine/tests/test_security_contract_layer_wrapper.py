@@ -103,3 +103,51 @@ def test_root_schema_fixture_copies_remain_in_parity_with_sclite_dependency() ->
         assert (core_artifacts.schema_dir() / schema_file).read_bytes() == (ROOT / 'schemas' / schema_file).read_bytes(), schema_file
     for proof_file in core_artifacts.PROOF_TRACE_FILES:
         assert (core_artifacts.examples_dir() / 'security-contract-proof' / proof_file).read_bytes() == (ROOT / 'examples' / 'security-contract-proof' / proof_file).read_bytes(), proof_file
+
+
+def test_govengine_context_imports_without_ravenclaw_workspace(monkeypatch) -> None:
+    monkeypatch.delenv('RAVENCLAW_WORKSPACE', raising=False)
+
+    from govengine import GovEngineContext, ravenclaw_context
+
+    context = ravenclaw_context(ROOT)
+    assert isinstance(context, GovEngineContext)
+    assert context.profile == 'ravenclaw'
+    assert context.repo_root == ROOT
+    assert context.paths.policy_file == ROOT / 'policy.yaml'
+
+
+def test_ravenclaw_security_contract_repo_root_uses_govengine_context() -> None:
+    assert wrapper.repo_root() == ROOT
+
+
+def test_adapter_generated_execution_ticket_passes_runtime_gate() -> None:
+    from executor import ExecutionEngine  # type: ignore
+
+    pipeline_data = _demo_pipeline_data()
+    artifacts = adapter.build_lifecycle_artifacts_v02(pipeline_data)
+    ticket = artifacts['execution_ticket.json']
+    contract = artifacts['execution_contract.json']
+
+    assert ticket['approval']['status'] == 'approved_for_dry_run'
+
+    engine = ExecutionEngine()
+    engine.scope_domains = {'exact': ['example.com'], 'suffix': [], 'exclude_exact': [], 'exclude_suffix': []}
+    result = engine.execute_approved_spec(
+        pipeline_data['approved_execution_spec'],
+        dry_run=True,
+        execution_ticket=ticket,
+        execution_contract=contract,
+        require_execution_ticket=True,
+    )
+
+    assert result['execution_ticket_gate']['status'] == 'passed'
+    assert result['execution_ticket_gate']['ticket_id'] == ticket['ticket_id']
+
+
+def test_scl_ravenclaw_adapter_is_govengine_compat_wrapper() -> None:
+    from govengine import sclite_adapter as gov_adapter
+
+    assert adapter.build_lifecycle_artifacts_v02 is gov_adapter.build_lifecycle_artifacts_v02
+    assert adapter.build_execution_ticket_v02 is gov_adapter.build_execution_ticket_v02
+    assert adapter.LIFECYCLE_TRACE_FILES_V02 == gov_adapter.LIFECYCLE_TRACE_FILES_V02

@@ -3,9 +3,14 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+_BOOTSTRAP_ROOT = Path(__file__).resolve().parents[1]
+if str(_BOOTSTRAP_ROOT) not in sys.path:
+    sys.path.insert(0, str(_BOOTSTRAP_ROOT))
+
+from govengine.context import ravenclaw_context
+
+_CONTEXT = ravenclaw_context(Path(__file__))
+ROOT = _CONTEXT.repo_root
 
 from sclite.artifacts import *  # noqa: F401,F403
 from sclite.redaction import sanitize_public_artifact  # noqa: F401
@@ -31,8 +36,8 @@ from scl_ravenclaw_adapter import (  # noqa: F401
 
 
 def repo_root() -> Path:
-    """Return Ravenclaw's repository root, not the installed SCLite package root."""
-    return ROOT
+    """Return the Ravenclaw compatibility repo root through GovEngine context."""
+    return _CONTEXT.repo_root
 
 def validate_scope_fidelity_report(report, root: Path | None = None) -> None:
     """Compatibility wrapper for pre-SCLite Ravenclaw callers."""
