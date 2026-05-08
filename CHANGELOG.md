@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Switched Ravenclaw's public dependency metadata from Git URL pins to the published PyPI packages `sclite-core>=0.2.1,<0.3` and `govengine>=0.1,<0.2`.
 - Added a multi-repository publication-readiness analysis for SCLite, GovEngine, and Ravenclaw, including recommended PyPI sequencing, versioning posture, and a deferred-adapter boundary.
 - Added public-safe OODA receipt/evidence guidance for recording GovEngine control decisions as compact governance evidence without publishing raw stdout/stderr, command logs, private telemetry, or sensitive target details.
 - Added a GovEngine OODA adapter seam test proving Ravenclaw host-runner logic can honor `pause`, `abort`, and `cooldown` decisions between approved-spec runner steps without moving live subprocess ownership into GovEngine.

@@ -19,7 +19,8 @@ Required:
 
 Minimal Python dependencies:
 - `PyYAML>=6,<7`
-- `sclite` from the pinned GitHub dependency in `pyproject.toml` until a PyPI release exists
+- `sclite-core>=0.2.1,<0.3` (PyPI distribution; Python import package `sclite`)
+- `govengine>=0.1,<0.2`
 - `Flask>=3,<4` for Logdash
 - `pytest>=8,<9` if you want test validation
 
@@ -45,13 +46,13 @@ source .venv/bin/activate
 pip install -e .[dev]
 ```
 
-If editable install is not suitable in your environment, install the same explicit dependencies, including SCLite from GitHub until PyPI publication exists:
+If editable install is not suitable in your environment, install the same explicit package dependencies:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install PyYAML "Flask>=3,<4" "pytest>=8,<9" \
-  "sclite @ git+https://github.com/rozmiarD/SCLite.git@db79284f31b3dff97ce5f9c2171ea2e196abdf3b"
+  "sclite-core>=0.2.1,<0.3" "govengine>=0.1,<0.2"
 ```
 
 ## What this gives you

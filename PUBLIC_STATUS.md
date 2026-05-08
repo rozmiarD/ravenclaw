@@ -45,7 +45,7 @@ Public readers should evaluate Ravenclaw from the intentionally published surfac
 
 Ravenclaw does **not** currently promise:
 - a zero-friction consumer install experience
-- a PyPI-published Ravenclaw/SCLite dependency path; Ravenclaw currently pins SCLite from GitHub
+- a PyPI-published Ravenclaw runtime package; Ravenclaw currently remains a source/reference runtime while consuming `sclite-core` and `govengine` from PyPI
 - a fully stable package/distribution shape
 - that every internal subsystem is final
 - that the public checkout equals the operator's full live environment

@@ -92,7 +92,7 @@ Expected result:
 security_contract_fixtures_ok:...
 ```
 
-This checks the schema-backed proof trace, public-safety invariants, and fixture sanitization using the pinned SCLite dependency. The fixture is dry-run/local/example-only evidence; it does not claim live vulnerability evidence.
+This checks the schema-backed proof trace, public-safety invariants, and fixture sanitization using the packaged SCLite dependency (`sclite-core`). The fixture is dry-run/local/example-only evidence; it does not claim live vulnerability evidence.
 
 For the generated public demo bundle path, run:
 

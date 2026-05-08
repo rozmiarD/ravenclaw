@@ -2,6 +2,8 @@
 
 ## Purpose
 
+Status update: this note began as a readiness analysis. Since then, SCLite has been published as `sclite-core==0.2.1`, GovEngine has been published as `govengine==0.1.0`, and Ravenclaw public dependency metadata now consumes those package ranges instead of Git URL pins.
+
 This note captures a publication-readiness pass across the current public repository family:
 
 - **SCLite** — reusable Security Contract Layer lifecycle package.
@@ -29,10 +31,10 @@ Adapters are intentionally deferred. The next work should make the repositories 
 
 ## Cross-repo dependency goal
 
-Current public direction should become:
+Current public direction is now:
 
 ```text
-Ravenclaw -> GovEngine >=0.y,<0.z -> SCLite >=0.2,<0.3
+Ravenclaw -> govengine>=0.1,<0.2 -> sclite-core>=0.2.1,<0.3
 ```
 
 Avoid long-term Git URL pins in public release metadata.
@@ -48,17 +50,16 @@ Avoid long-term Git URL pins in public release metadata.
 - README clearly states SCLite is not an executor/scanner/authorization authority.
 - Publication checklist exists.
 
-### Remaining before PyPI
+### PyPI outcome
 
-- Add root `CONTRIBUTING.md`, `SECURITY.md`, and optionally `PUBLIC_STATUS.md` / `VALIDATION.md` for public-reader parity.
-- Run build checks: `python -m build` and `twine check dist/*`.
-- Verify PyPI name availability and project metadata rendering.
-- Decide whether `0.2.0` is the first PyPI release or whether to cut `0.2.1` after publication docs are added.
-- Create a release checklist that includes tag identity, changelog, CI, package build, TestPyPI dry run, then PyPI.
+- Published as PyPI distribution `sclite-core==0.2.1`.
+- Python import package remains `sclite`.
+- Build, `twine check`, clean install, and package import verification passed before publication.
+- The original distribution name `sclite` was not accepted by PyPI, so the neutral distribution name `sclite-core` was selected.
 
 ### Recommendation
 
-SCLite should be the first PyPI release candidate after a short docs/build wave.
+Keep SCLite on `0.2.x` while the lifecycle contract remains pre-1.0 and use patch releases for packaging/docs fixes.
 
 ## GovEngine readiness
 
@@ -71,23 +72,16 @@ SCLite should be the first PyPI release candidate after a short docs/build wave.
 - Core API/runner/OODA surfaces now exist.
 - Carrier adapters are explicitly deferred.
 
-### Gaps found
+### PyPI outcome
 
-- Version is still `0.0.0`.
-- Runtime dependency points to SCLite by Git URL pin, which is not a good PyPI release posture.
-- `CHANGELOG.md` was missing before this readiness wave.
-- Root public hygiene docs were thin/missing: `CONTRIBUTING.md`, `SECURITY.md`, `PUBLIC_STATUS.md`, `PUBLISHING.md`.
-- No build/twine release check documented as a normal gate.
-- API stability policy needs to remain conservative and pre-1.0.
+- Published as `govengine==0.1.0`.
+- Depends on `sclite-core>=0.2.1,<0.3`.
+- Build, `twine check`, clean install, `pip check`, package import/version checks, and PyPI install verification passed before publication.
+- API stability policy remains conservative and pre-1.0.
 
 ### Recommendation
 
-Do not publish GovEngine to PyPI until SCLite is published. Then:
-
-1. change dependency from Git URL to `sclite>=0.2,<0.3`;
-2. choose initial external version, likely `0.1.0`;
-3. run package build/twine checks;
-4. tag only after Ravenclaw can consume the package candidate cleanly.
+Keep GovEngine on `0.1.x` until the public API boundary is hardened further and Ravenclaw package-consumption validation stays green.
 
 ## Ravenclaw readiness
 
@@ -100,23 +94,22 @@ Do not publish GovEngine to PyPI until SCLite is published. Then:
 
 ### Gaps / risks
 
-- `pyproject.toml` still uses Git URL pins for SCLite and GovEngine.
-- Ravenclaw is probably not the right first PyPI package because it is a runtime/reference system with broader operational expectations.
+- Ravenclaw now consumes `sclite-core` and `govengine` package ranges instead of Git URL pins, but it is still probably not the right first PyPI runtime package because it is a runtime/reference system with broader operational expectations.
 - Public version is `0.10.0`, but historical changelog contains stronger old `1.0.0` language; existing docs already explain the truth-restaging, but future package metadata should keep that conservative posture.
 - Packaging currently sets `packages = []` and `py-modules = []`, which is valid for repo metadata but not a useful installable runtime package.
 
 ### Recommendation
 
-Keep Ravenclaw as the public reference repo for now. Defer PyPI until:
+Keep Ravenclaw as the public reference repo for now. Defer Ravenclaw PyPI until:
 
-1. SCLite and GovEngine are package-installable;
-2. Ravenclaw's public install story no longer needs Git dependency pins;
+1. the public install story is stable on package dependencies;
+2. validation proves Ravenclaw consumes `sclite-core` and `govengine` cleanly;
 3. a clear decision is made whether Ravenclaw should be a package, an app repo, or a source/demo distribution.
 
 ## Versioning recommendation
 
-- **SCLite**: stay `0.2.x` for lifecycle candidate releases; use patch releases for publication/docs fixes.
-- **GovEngine**: move from `0.0.0` to `0.1.0` when SCLite package dependency is available and the current API/runner/OODA surface is treated as the first external pre-alpha line.
+- **SCLite**: published as `sclite-core==0.2.1`; stay `0.2.x` for lifecycle candidate releases and use patch releases for publication/docs fixes.
+- **GovEngine**: published as `govengine==0.1.0`; stay `0.1.x` while API/runner/OODA surfaces remain pre-alpha.
 - **Ravenclaw**: keep `0.10.x` until public install/delivery posture supports a stronger public claim.
 
 ## PyPI sequence
@@ -158,7 +151,6 @@ When adapter work resumes, default order remains:
 
 Recommended next wave:
 
-1. SCLite publication hygiene: add missing root docs and build/twine checks.
-2. Decide SCLite first PyPI version (`0.2.0` vs `0.2.1`).
-3. After SCLite is package-ready, prepare GovEngine `0.1.0` with normal SCLite dependency.
-4. Only then revisit Ravenclaw dependency pins and public install docs.
+1. Validate Ravenclaw end-to-end against the PyPI package chain.
+2. Keep Ravenclaw as a reference runtime/source distribution until package/app boundaries are clearer.
+3. Only after package-consumption validation stays green, revisit adapter proposals in the documented OpenClaw -> MCP -> A2A order.
