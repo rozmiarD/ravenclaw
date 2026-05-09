@@ -32,6 +32,14 @@ def test_public_install_validation_runtime_json() -> None:
         'security_profile_helpers',
     ]
     assert data['govengine_surface_registry']['optional_profile']['security_profile_helpers'] is True
+    assert data['govengine_security_profile']['status'] == 'passed'
+    assert data['govengine_security_profile']['actual_groups'] == [
+        'action_tooling',
+        'policy_scope',
+        'review_contracts',
+    ]
+    assert 'govengine.action_schema' in data['govengine_security_profile']['expected_modules']
+    assert data['govengine_security_profile']['surface']['name'] == 'security_profile_helpers'
     assert any('live target execution' in item for item in data['non_claims'])
 
 

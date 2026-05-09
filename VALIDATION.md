@@ -39,7 +39,7 @@ or, for dev/test installs:
 ravenclaw_public_install_validation:dev:passed
 ```
 
-This checks Python version, importability/version visibility for `PyYAML`, `govengine`, `sclite-core`, and — with `--dev` — `pytest` and `Flask`; verifies the GovEngine public surface registry expected by Ravenclaw (`artifact_governance_core`, `controlled_execution_core`, `security_profile_helpers`); then runs `python -m pip check`. The focused GovEngine seam tests also cover Ravenclaw's compatibility entrypoint for the optional `govengine.security_profile` facade, including fallback behavior for the published `govengine==0.1.4` line. These checks do not prove production deployment readiness or validate private operator overlays.
+This checks Python version, importability/version visibility for `PyYAML`, `govengine`, `sclite-core`, and — with `--dev` — `pytest` and `Flask`; verifies the GovEngine public surface registry expected by Ravenclaw (`artifact_governance_core`, `controlled_execution_core`, `security_profile_helpers`); then runs `python -m pip check`. Public install validation also reports Ravenclaw's compatibility entrypoint for the optional `govengine.security_profile` facade, including fallback behavior for the published `govengine==0.1.4` line. The focused GovEngine seam tests cover the same compatibility path. These checks do not prove production deployment readiness or validate private operator overlays.
 
 ## Public validation surface index
 

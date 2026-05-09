@@ -8,7 +8,13 @@ import json
 import subprocess
 import sys
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+ENGINE_DIR = ROOT / 'engine'
+if str(ENGINE_DIR) not in sys.path:
+    sys.path.insert(0, str(ENGINE_DIR))
 
 
 REQUIRED_RUNTIME = [
@@ -93,6 +99,63 @@ def check_govengine_surface_registry() -> dict[str, Any]:
         }
 
 
+def check_govengine_security_profile_compat() -> dict[str, Any]:
+    expected_groups = ['action_tooling', 'policy_scope', 'review_contracts']
+    expected_modules = [
+        'govengine.action_schema',
+        'govengine.policy.gateway',
+        'govengine.contracts.signal',
+    ]
+    try:
+        import govengine_security_profile as security_profile  # type: ignore
+    except Exception as exc:  # pragma: no cover - defensive diagnostic path
+        return {
+            'status': 'failed',
+            'source': None,
+            'upstream_available': False,
+            'expected_groups': expected_groups,
+            'actual_groups': [],
+            'expected_modules': expected_modules,
+            'error': f'{type(exc).__name__}: {exc}',
+        }
+
+    try:
+        payload = security_profile.security_profile_index()
+        groups = [str(group.get('name')) for group in payload.get('groups', [])]
+        modules = tuple(security_profile.security_profile_module_names())
+        security_profile.assert_security_profile_boundary()
+        imported = security_profile.import_security_profile_module('govengine.action_schema')
+        passed = (
+            payload.get('surface', {}).get('name') == 'security_profile_helpers'
+            and payload.get('surface', {}).get('optional_profile') is True
+            and groups == expected_groups
+            and all(module in modules for module in expected_modules)
+            and 'govengine.core' not in modules
+            and 'govengine.execution.gate' not in modules
+            and getattr(imported, 'DEFAULT_ACTION_TYPE', None) == 'single_probe'
+        )
+        return {
+            'status': 'passed' if passed else 'failed',
+            'source': payload.get('source'),
+            'upstream_available': bool(security_profile.govengine_security_profile_available()),
+            'expected_groups': expected_groups,
+            'actual_groups': groups,
+            'expected_modules': expected_modules,
+            'surface': payload.get('surface'),
+            'error': None if passed else 'unexpected GovEngine security-profile compatibility shape',
+        }
+    except Exception as exc:  # pragma: no cover - defensive diagnostic path
+        return {
+            'status': 'failed',
+            'source': None,
+            'upstream_available': bool(security_profile.govengine_security_profile_available()),
+            'expected_groups': expected_groups,
+            'actual_groups': [],
+            'expected_modules': expected_modules,
+            'error': f'{type(exc).__name__}: {exc}',
+        }
+
+
 def run_pip_check() -> dict[str, Any]:
     proc = subprocess.run(
         [sys.executable, '-m', 'pip', 'check'],
@@ -117,6 +180,7 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
     dependencies = [check_dependency(*spec) for spec in dependency_specs]
     pip_check = None if skip_pip_check else run_pip_check()
     govengine_surface_registry = check_govengine_surface_registry()
+    govengine_security_profile = check_govengine_security_profile_compat()
     python_ok = sys.version_info >= (3, 11)
 
     failed = [dep for dep in dependencies if dep.status != 'passed']
@@ -126,6 +190,8 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
         failed.append(DependencyCheck('pip-check', 'pip', 'python -m pip check', False, None, 'failed', pip_check.get('stdout') or pip_check.get('stderr') or 'pip check failed'))
     if govengine_surface_registry['status'] != 'passed':
         failed.append(DependencyCheck('govengine-surfaces', 'govengine', 'govengine.surfaces.public_surface_index', False, None, 'failed', govengine_surface_registry.get('error') or 'surface registry check failed'))
+    if govengine_security_profile['status'] != 'passed':
+        failed.append(DependencyCheck('govengine-security-profile', 'govengine_security_profile', 'Ravenclaw GovEngine security-profile compatibility seam', False, None, 'failed', govengine_security_profile.get('error') or 'security-profile compatibility check failed'))
 
     return {
         'artifact_type': 'ravenclaw_public_install_validation',
@@ -141,6 +207,7 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
         'dependencies': [dep.to_json() for dep in dependencies],
         'pip_check': pip_check,
         'govengine_surface_registry': govengine_surface_registry,
+        'govengine_security_profile': govengine_security_profile,
         'non_claims': [
             'Does not prove production deployment readiness.',
             'Does not authorize live target execution.',
@@ -166,6 +233,7 @@ def main() -> int:
         if report['pip_check'] is not None:
             print(f"{report['pip_check']['status']} pip_check")
         print(f"{report['govengine_surface_registry']['status']} govengine_surface_registry")
+        print(f"{report['govengine_security_profile']['status']} govengine_security_profile source={report['govengine_security_profile'].get('source')}")
     return 0 if report['status'] == 'passed' else 1
 
 
