@@ -32,7 +32,7 @@ def _ticket_and_contract() -> tuple[dict, dict, dict]:
     return execution_ticket, execution_contract, ticket_gate
 
 
-def test_control_gate_adapter_is_public_safe_when_new_govengine_gate_is_unavailable() -> None:
+def test_control_gate_adapter_allows_dry_run_with_published_govengine_gate() -> None:
     ticket, contract, ticket_gate = _ticket_and_contract()
 
     result = evaluate_govengine_control_gate(
@@ -43,15 +43,12 @@ def test_control_gate_adapter_is_public_safe_when_new_govengine_gate_is_unavaila
         execution_contract=contract,
     )
 
-    assert result['status'] in {'allowed', 'not_available'}
-    if result['status'] == 'not_available':
-        assert result['reason_code'] == 'govengine_control_gates_unavailable'
-    else:
-        assert result['available'] is True
-        assert result['allowed'] is True
-        assert result['runner_profile'] == 'dry-run'
-        assert result['state_index']['status'] == 'ready'
-        assert result['signature_gate']['allowed'] is True
+    assert result['status'] == 'allowed'
+    assert result['available'] is True
+    assert result['allowed'] is True
+    assert result['runner_profile'] == 'dry-run'
+    assert result['state_index']['status'] == 'ready'
+    assert result['signature_gate']['allowed'] is True
 
 
 def test_control_gate_adapter_marks_ravenclaw_as_host_runner_for_live_profile() -> None:
@@ -65,10 +62,9 @@ def test_control_gate_adapter_marks_ravenclaw_as_host_runner_for_live_profile() 
         execution_contract=contract,
     )
 
-    assert result['status'] in {'allowed', 'not_available'}
-    if result['status'] == 'allowed':
-        assert result['runner_profile'] == 'ravenclaw-host'
-        assert result['allowed'] is True
+    assert result['status'] == 'allowed'
+    assert result['runner_profile'] == 'ravenclaw-host'
+    assert result['allowed'] is True
 
 
 def test_control_gate_adapter_stays_out_when_ticket_gate_not_required() -> None:

@@ -1,11 +1,12 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
-- Added an optional GovEngine artifact-governance control-gate adapter for the approved-spec execution path, consuming newer GovEngine lifecycle/signing/state/execution gates when available while remaining compatible with the published `govengine>=0.1.2,<0.2` line.
-- Moved Ravenclaw signal, analysis, and evidence-policy seams behind GovEngine compatibility aliases and raised the GovEngine candidate dependency floor to `govengine>=0.1.2,<0.2`.
+- Raised the GovEngine dependency floor to `govengine>=0.1.3,<0.2` after the artifact-governance control-gate line was published and verified from PyPI.
+- Added a GovEngine artifact-governance control-gate adapter for the approved-spec execution path, consuming GovEngine lifecycle/signing/state/execution gates while retaining a defensive unavailable fallback for unsupported local environments.
+- Moved Ravenclaw signal, analysis, and evidence-policy seams behind GovEngine compatibility aliases and raised the GovEngine dependency floor to `govengine>=0.1.3,<0.2`.
 - Added public install validation via `scripts/validate_public_install.py`, clarified runtime-only vs dev/test install paths, and wired the public demo doctor to report dependency readiness.
 - Added `references/public-safe-proof-walkthrough.md` plus a refreshed public `THREAT_MODEL.md` so reviewers can follow the dry-run proof trace, trusted-core boundaries, and non-claims from committed artifacts.
-- Switched Ravenclaw's public dependency metadata from Git URL pins to the published PyPI packages `sclite-core>=0.2.1,<0.3` and `govengine>=0.1.2,<0.2`.
+- Switched Ravenclaw's public dependency metadata from Git URL pins to the published PyPI packages `sclite-core>=0.2.1,<0.3` and the current `govengine>=0.1.3,<0.2` line.
 - Added a multi-repository publication-readiness analysis for SCLite, GovEngine, and Ravenclaw, including recommended PyPI sequencing, versioning posture, and a deferred-adapter boundary.
 - Added public-safe OODA receipt/evidence guidance for recording GovEngine control decisions as compact governance evidence without publishing raw stdout/stderr, command logs, private telemetry, or sensitive target details.
 - Added a GovEngine OODA adapter seam test proving Ravenclaw host-runner logic can honor `pause`, `abort`, and `cooldown` decisions between approved-spec runner steps without moving live subprocess ownership into GovEngine.

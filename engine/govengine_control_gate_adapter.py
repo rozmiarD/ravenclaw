@@ -38,9 +38,9 @@ def evaluate_govengine_control_gate(
 ) -> Dict[str, Any]:
     """Evaluate optional GovEngine artifact-governance execution gates.
 
-    This is a Ravenclaw host adapter seam. It consumes the newer GovEngine
-    artifact-governance gate objects when available, but keeps Ravenclaw public
-    compatible with the currently published ``govengine>=0.1.2,<0.2`` line.
+    This is a Ravenclaw host adapter seam. It consumes the GovEngine 0.1.3+
+    artifact-governance gate objects and keeps a defensive unavailable fallback
+    for unsupported local environments.
     """
 
     if not require_execution_ticket:
@@ -52,7 +52,7 @@ def evaluate_govengine_control_gate(
         from govengine.sclite_contracts import descriptor_from_artifact
         from govengine.signing import SigningPolicy, signature_envelope_from_artifact, signature_transition_decision
         from govengine.state_index import ArtifactStateIndex
-    except Exception as exc:  # pragma: no cover - exercised with published govengine 0.1.2
+    except Exception as exc:  # pragma: no cover - defensive fallback for unsupported local environments
         return _unavailable(exc)
 
     ticket_gate = _dict(execution_ticket_gate)
