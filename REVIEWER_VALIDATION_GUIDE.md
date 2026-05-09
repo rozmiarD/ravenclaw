@@ -34,10 +34,12 @@ done
 ```
 
 What this supports:
-- broad regression confidence across public runtime, policy, Logdash, and proof surfaces.
+- broad regression confidence across public runtime, policy, Logdash, and proof surfaces;
+- package-chain readiness for `sclite-core` and `govengine`;
+- visibility into the GovEngine public surface registry and Ravenclaw's security-profile compatibility seam.
 
 What it does not prove:
-- live deployment readiness, exhaustive security assurance, or complete architecture stability.
+- live deployment readiness, exhaustive security assurance, complete architecture stability, or readiness of an unreleased GovEngine candidate for PyPI publication.
 
 ## 3. Inspect validation surfaces and snapshot files
 

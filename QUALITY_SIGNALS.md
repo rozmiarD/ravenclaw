@@ -49,7 +49,23 @@ Publicly visible examples:
 
 The exact count will evolve, but the important signal is structural: this repo already tests contracts and truth surfaces, not just utility helpers.
 
-### 3. Explicit contract documentation
+### 3. Public package-chain validation
+
+Ravenclaw consumes reusable package surfaces instead of carrying every contract helper in-tree:
+- `sclite-core>=0.2.1,<0.3`
+- `govengine>=0.1.4,<0.2`
+
+The public install validator checks that the active environment resolves that package chain, imports the expected modules, verifies the GovEngine public surface registry, and reports Ravenclaw's security-profile compatibility seam for the current published GovEngine line and the next `govengine.security_profile` facade.
+
+Concrete entry points:
+- `scripts/validate_public_install.py`
+- `engine/govengine_security_profile.py`
+- `tests/test_public_install_validation.py`
+- `engine/tests/test_govengine_security_profile_compat.py`
+
+This matters because package-boundary drift is tested directly rather than assumed from docs.
+
+### 4. Explicit contract documentation
 
 Ravenclaw documents several important runtime and operator contracts directly in `references/`.
 Examples include:
@@ -67,7 +83,7 @@ Examples include:
 This matters because the project is not relying only on informal code behavior.
 Important semantics are being pulled into named, reviewable reference docs.
 
-### 4. Operator-truth orientation
+### 5. Operator-truth orientation
 
 Some tests and docs are specifically about whether operator-visible surfaces remain truthful under recovery, fallback, and partial-failure conditions.
 That is a stronger signal than generic endpoint smoke testing.
@@ -78,7 +94,7 @@ Concrete examples:
 - `tests/test_logdash_runtime_recovery.py`
 - `tests/test_logdash_services_projection.py`
 
-### 5. Public-boundary discipline
+### 6. Public-boundary discipline
 
 The repo also includes publication-boundary and public-snapshot planning surfaces:
 - `references/public-release-boundary.md`
@@ -97,6 +113,7 @@ Taken together, these signals support the following public claims:
 - important runtime and UI truth surfaces are tested
 - the public repo is being shaped deliberately rather than dumped casually
 - governance and operator-visibility behavior are treated as real correctness concerns
+- the public dependency chain through GovEngine and SCLite is validated as an install/import surface, including the GovEngine security-profile compatibility seam
 - the SCLite-backed Security Contract Layer is grounded in Ravenclaw Runtime artifacts, not protocol-first marketing
 - the Replayable Truth Runtime proof path can evaluate preserved decisions without live target execution by default
 - the Scope Fidelity report can deterministically classify target-binding/request-shape drift without executing against live targets
