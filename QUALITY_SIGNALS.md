@@ -53,9 +53,9 @@ The exact count will evolve, but the important signal is structural: this repo a
 
 Ravenclaw consumes reusable package surfaces instead of carrying every contract helper in-tree:
 - `sclite-core>=0.2.1,<0.3`
-- `govengine>=0.1.4,<0.2`
+- `govengine>=0.1.5,<0.2`
 
-The public install validator checks that the active environment resolves that package chain, imports the expected modules, verifies the GovEngine public surface registry, and reports Ravenclaw's security-profile compatibility seam for the current published GovEngine line and the next `govengine.security_profile` facade.
+The public install validator checks that the active environment resolves that package chain, imports the expected modules, verifies the GovEngine public surface registry, and reports Ravenclaw's security-profile compatibility seam through the published `govengine.security_profile` facade.
 
 Concrete entry points:
 - `scripts/validate_public_install.py`

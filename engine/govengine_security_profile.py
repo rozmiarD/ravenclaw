@@ -2,11 +2,11 @@ from __future__ import annotations
 
 """Ravenclaw compatibility entrypoint for GovEngine's optional security profile.
 
-GovEngine 0.1.5 introduces ``govengine.security_profile``. Ravenclaw's public
-package floor is still the published 0.1.4 line, so this module provides a small
-host-side compatibility seam: use the upstream facade when it exists, otherwise
-expose the same discovery shape from the 0.1.4 surface registry and direct
-module imports.
+GovEngine 0.1.5 introduced ``govengine.security_profile``. Ravenclaw's public
+package floor now expects that upstream facade, while this module keeps a small
+host-side compatibility seam for older local environments: use the upstream
+facade when it exists, otherwise expose the same discovery shape from the
+surface registry and direct module imports.
 """
 
 from dataclasses import dataclass, field
