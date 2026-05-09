@@ -39,7 +39,7 @@ or, for dev/test installs:
 ravenclaw_public_install_validation:dev:passed
 ```
 
-This checks Python version, importability/version visibility for `PyYAML`, `govengine`, `sclite-core`, and — with `--dev` — `pytest` and `Flask`, then runs `python -m pip check`. It does not prove production deployment readiness or validate private operator overlays.
+This checks Python version, importability/version visibility for `PyYAML`, `govengine`, `sclite-core`, and — with `--dev` — `pytest` and `Flask`; verifies the GovEngine public surface registry expected by Ravenclaw (`artifact_governance_core`, `controlled_execution_core`, `security_profile_helpers`); then runs `python -m pip check`. It does not prove production deployment readiness or validate private operator overlays.
 
 ## Public validation surface index
 

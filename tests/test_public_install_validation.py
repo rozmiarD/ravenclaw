@@ -25,6 +25,13 @@ def test_public_install_validation_runtime_json() -> None:
     distributions = {dep['distribution'] for dep in data['dependencies']}
     assert {'PyYAML', 'sclite-core', 'govengine'} <= distributions
     assert data['pip_check'] is None
+    assert data['govengine_surface_registry']['status'] == 'passed'
+    assert data['govengine_surface_registry']['actual'] == [
+        'artifact_governance_core',
+        'controlled_execution_core',
+        'security_profile_helpers',
+    ]
+    assert data['govengine_surface_registry']['optional_profile']['security_profile_helpers'] is True
     assert any('live target execution' in item for item in data['non_claims'])
 
 

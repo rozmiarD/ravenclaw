@@ -14,7 +14,7 @@ from typing import Any
 REQUIRED_RUNTIME = [
     ('PyYAML', 'yaml', 'PyYAML>=6,<7'),
     ('sclite-core', 'sclite', 'sclite-core>=0.2.1,<0.3'),
-    ('govengine', 'govengine', 'govengine>=0.1,<0.2'),
+    ('govengine', 'govengine', 'govengine>=0.1.4,<0.2'),
 ]
 
 REQUIRED_DEV = [
@@ -60,6 +60,39 @@ def check_dependency(distribution: str, import_name: str, requirement: str) -> D
     return DependencyCheck(distribution, import_name, requirement, True, version, 'passed')
 
 
+def check_govengine_surface_registry() -> dict[str, Any]:
+    expected = ['artifact_governance_core', 'controlled_execution_core', 'security_profile_helpers']
+    try:
+        from govengine import public_surface_index  # type: ignore
+    except Exception as exc:  # pragma: no cover - defensive diagnostic path
+        return {
+            'status': 'failed',
+            'expected': expected,
+            'actual': [],
+            'error': f'{type(exc).__name__}: {exc}',
+        }
+
+    try:
+        surfaces = list(public_surface_index())
+        actual = [str(surface.name) for surface in surfaces]
+        optional = {str(surface.name): bool(surface.optional_profile) for surface in surfaces}
+        passed = actual == expected and optional.get('security_profile_helpers') is True
+        return {
+            'status': 'passed' if passed else 'failed',
+            'expected': expected,
+            'actual': actual,
+            'optional_profile': optional,
+            'error': None if passed else 'unexpected GovEngine public surface registry shape',
+        }
+    except Exception as exc:  # pragma: no cover - defensive diagnostic path
+        return {
+            'status': 'failed',
+            'expected': expected,
+            'actual': [],
+            'error': f'{type(exc).__name__}: {exc}',
+        }
+
+
 def run_pip_check() -> dict[str, Any]:
     proc = subprocess.run(
         [sys.executable, '-m', 'pip', 'check'],
@@ -83,6 +116,7 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
 
     dependencies = [check_dependency(*spec) for spec in dependency_specs]
     pip_check = None if skip_pip_check else run_pip_check()
+    govengine_surface_registry = check_govengine_surface_registry()
     python_ok = sys.version_info >= (3, 11)
 
     failed = [dep for dep in dependencies if dep.status != 'passed']
@@ -90,6 +124,8 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
         failed.append(DependencyCheck('python', 'python', 'Python>=3.11', False, sys.version.split()[0], 'failed', 'Python 3.11+ required'))
     if pip_check is not None and pip_check['status'] != 'passed':
         failed.append(DependencyCheck('pip-check', 'pip', 'python -m pip check', False, None, 'failed', pip_check.get('stdout') or pip_check.get('stderr') or 'pip check failed'))
+    if govengine_surface_registry['status'] != 'passed':
+        failed.append(DependencyCheck('govengine-surfaces', 'govengine', 'govengine.surfaces.public_surface_index', False, None, 'failed', govengine_surface_registry.get('error') or 'surface registry check failed'))
 
     return {
         'artifact_type': 'ravenclaw_public_install_validation',
@@ -104,6 +140,7 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
         },
         'dependencies': [dep.to_json() for dep in dependencies],
         'pip_check': pip_check,
+        'govengine_surface_registry': govengine_surface_registry,
         'non_claims': [
             'Does not prove production deployment readiness.',
             'Does not authorize live target execution.',
@@ -128,6 +165,7 @@ def main() -> int:
             print(f"{dep['status']} {dep['distribution']} {dep['version'] or '-'} import={dep['import_name']}")
         if report['pip_check'] is not None:
             print(f"{report['pip_check']['status']} pip_check")
+        print(f"{report['govengine_surface_registry']['status']} govengine_surface_registry")
     return 0 if report['status'] == 'passed' else 1
 
 
