@@ -10,6 +10,8 @@ All GitHub commits/tags pushed from this operator workspace must use:
 0x505badc0de <32790662+rozmiarD@users.noreply.github.com>
 ```
 
+This is an operator-workspace guardrail, not a requirement for external contributors. Contributors should use their own GitHub-associated commit identity.
+
 Before any commit or push, verify the effective repo-local identity:
 
 ```bash

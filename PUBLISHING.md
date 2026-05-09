@@ -5,18 +5,20 @@ Use it before any real public GitHub push.
 
 ## Identity guard
 
-Before any public commit or push, verify the effective repo-local Git identity:
+For maintainer releases/pushes performed from the operator-controlled publish tree, verify the effective repo-local Git identity:
 
 ```bash
 git config --get user.name
 git config --get user.email
 ```
 
-Required value:
+Required maintainer value for this publish tree:
 
 ```text
 0x505badc0de <32790662+rozmiarD@users.noreply.github.com>
 ```
+
+External contributors should use their own GitHub-associated identity; this guardrail is not a contributor identity requirement.
 
 If a clean publish tree has a stale local config such as `OpenClaw <openclaw@local>`, fix it before committing:
 
