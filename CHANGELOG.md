@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added a Ravenclaw compatibility entrypoint for GovEngine's optional security-profile facade so Ravenclaw can consume `govengine.security_profile` when available while retaining a fallback for the published `govengine==0.1.4` line.
 - Raised the GovEngine dependency floor to `govengine>=0.1.4,<0.2` after the public surface registry line was published and verified from PyPI; public install validation now checks the expected GovEngine surface registry shape.
 - Raised the GovEngine dependency floor to `govengine>=0.1.3,<0.2` after the artifact-governance control-gate line was published and verified from PyPI.
 - Added a GovEngine artifact-governance control-gate adapter for the approved-spec execution path, consuming GovEngine lifecycle/signing/state/execution gates while retaining a defensive unavailable fallback for unsupported local environments.
