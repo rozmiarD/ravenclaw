@@ -61,6 +61,7 @@ for f in \
   ARCHITECTURE_OVERVIEW.md \
   WHY_RAVENCLAW.md \
   ARCHITECTURE.md \
+  THREAT_MODEL.md \
   STATE_FILES.md \
   VERSION_ROADMAP.md \
   OPEN_SOURCE_1_0_PLAN.md \
@@ -93,6 +94,7 @@ copy_path scripts/bootstrap_public_demo.sh
 cp "$ROOT/scripts/prepare_public_examples.md" "$OUT/scripts/prepare_public_examples.md"
 copy_path scripts/audit_public_snapshot_residue.py
 copy_path scripts/validate_security_contract_fixtures.py
+copy_path scripts/validate_public_install.py
 copy_path scripts/run_security_contract_validation.py
 copy_path scripts/validate_replayable_truth_fixture.py
 copy_path scripts/validate_scope_fidelity_fixtures.py

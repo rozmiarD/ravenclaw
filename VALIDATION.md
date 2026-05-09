@@ -4,13 +4,42 @@ This file tells a public reader how to validate the current Ravenclaw repository
 
 ## Fast public validation path
 
-After following `INSTALL.md`, run:
+After following the dev/test path in `INSTALL.md`, run:
 
 ```bash
+python scripts/validate_public_install.py --dev
 pytest -q
 ```
 
-This is the primary repo-wide validation command exposed publicly today.
+`validate_public_install.py` confirms that the public dependency chain resolves from the active Python environment before tests run. `pytest -q` remains the primary repo-wide validation command exposed publicly today.
+
+## Install validation
+
+Runtime-only install check:
+
+```bash
+python scripts/validate_public_install.py
+```
+
+Dev/test install check, required before `pytest` and `--include-pytest` validation receipts:
+
+```bash
+python scripts/validate_public_install.py --dev
+```
+
+Expected result:
+
+```text
+ravenclaw_public_install_validation:runtime:passed
+```
+
+or, for dev/test installs:
+
+```text
+ravenclaw_public_install_validation:dev:passed
+```
+
+This checks Python version, importability/version visibility for `PyYAML`, `govengine`, `sclite-core`, and — with `--dev` — `pytest` and `Flask`, then runs `python -m pip check`. It does not prove production deployment readiness or validate private operator overlays.
 
 ## Public validation surface index
 
@@ -92,7 +121,7 @@ Expected result:
 security_contract_fixtures_ok:...
 ```
 
-This checks the schema-backed proof trace, public-safety invariants, and fixture sanitization using the packaged SCLite dependency (`sclite-core`). The fixture is dry-run/local/example-only evidence; it does not claim live vulnerability evidence.
+This checks the schema-backed proof trace, public-safety invariants, and fixture sanitization using the packaged SCLite dependency (`sclite-core`). The fixture is dry-run/local/example-only evidence; it does not claim live vulnerability evidence. For a reviewer-facing map of the proof path, read `references/public-safe-proof-walkthrough.md`.
 
 For the generated public demo bundle path, run:
 
@@ -109,9 +138,10 @@ sclite verify-lifecycle demo-output/artifact_chain_manifest.json
 
 The SCLite verifier checks the hash chain and semantic lifecycle bindings: canonical role order, ticket -> execution contract, receipt -> ticket, evidence -> receipt, and manifest path containment.
 
-For the repeatable local/public-safe Security Contract validation receipt, run:
+For the repeatable local/public-safe Security Contract validation receipt, first ensure dev/test dependencies are present, then run:
 
 ```bash
+python scripts/validate_public_install.py --dev
 python scripts/run_security_contract_validation.py --include-pytest
 ```
 

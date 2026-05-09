@@ -29,6 +29,14 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'non_claim': 'Does not run validation checks or authorize publication by itself.',
     },
     {
+        'id': 'public_install_validation',
+        'title': 'Public install validation',
+        'command': 'python scripts/validate_public_install.py --dev',
+        'paths': ['scripts/validate_public_install.py', 'INSTALL.md', 'VALIDATION.md'],
+        'claim': 'Checks that the active Python environment resolves Ravenclaw public runtime and dev/test dependencies from the package chain.',
+        'non_claim': 'Does not prove production deployment readiness or validate private operator overlays.',
+    },
+    {
         'id': 'repo_pytest',
         'title': 'Repository pytest suite',
         'command': 'python -m pytest -q',
@@ -48,7 +56,7 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'id': 'security_contract_fixture',
         'title': 'Security Contract proof fixture',
         'command': 'PYTHONDONTWRITEBYTECODE=1 python scripts/validate_security_contract_fixtures.py examples/security-contract-proof',
-        'paths': ['examples/security-contract-proof', 'scripts/validate_security_contract_fixtures.py', 'schemas'],
+        'paths': ['examples/security-contract-proof', 'scripts/validate_security_contract_fixtures.py', 'schemas', 'references/public-safe-proof-walkthrough.md'],
         'claim': 'Schema-backed dry-run proof trace from scope/input through evidence summary.',
         'non_claim': 'Does not claim live vulnerability evidence.',
     },

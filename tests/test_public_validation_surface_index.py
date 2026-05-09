@@ -35,6 +35,7 @@ def test_public_validation_surface_index_lists_core_surfaces() -> None:
     ids = {surface['surface_id'] for surface in index['surfaces']}
     assert {
         'public_validation_surface_index',
+        'public_install_validation',
         'repo_pytest',
         'github_actions_pytest_matrix',
         'security_contract_fixture',

@@ -1,6 +1,8 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added public install validation via `scripts/validate_public_install.py`, clarified runtime-only vs dev/test install paths, and wired the public demo doctor to report dependency readiness.
+- Added `references/public-safe-proof-walkthrough.md` plus a refreshed public `THREAT_MODEL.md` so reviewers can follow the dry-run proof trace, trusted-core boundaries, and non-claims from committed artifacts.
 - Switched Ravenclaw's public dependency metadata from Git URL pins to the published PyPI packages `sclite-core>=0.2.1,<0.3` and `govengine>=0.1,<0.2`.
 - Added a multi-repository publication-readiness analysis for SCLite, GovEngine, and Ravenclaw, including recommended PyPI sequencing, versioning posture, and a deferred-adapter boundary.
 - Added public-safe OODA receipt/evidence guidance for recording GovEngine control decisions as compact governance evidence without publishing raw stdout/stderr, command logs, private telemetry, or sensitive target details.

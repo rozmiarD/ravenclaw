@@ -18,10 +18,11 @@ That gives you the project shape, the safe public demo path, the maturity truth,
 
 Start with:
 1. `INSTALL.md`
-2. `VALIDATION.md`
-3. `REVIEWER_VALIDATION_GUIDE.md`
-4. `.github/workflows/pytest.yml`
-5. `tests/test_logdash_smoke.py`
+2. `scripts/validate_public_install.py`
+3. `VALIDATION.md`
+4. `REVIEWER_VALIDATION_GUIDE.md`
+5. `.github/workflows/pytest.yml`
+6. `tests/test_logdash_smoke.py`
 
 ## If you want the shortest architecture understanding
 
@@ -50,9 +51,10 @@ Start with:
 
 Start with:
 1. `PROOF_OF_VALUE.md`
-2. `QUALITY_SIGNALS.md`
-3. `REVIEWER_VALIDATION_GUIDE.md`
-4. `SECURITY_CONTRACT_LAYER.md`
+2. `references/public-safe-proof-walkthrough.md`
+3. `QUALITY_SIGNALS.md`
+4. `REVIEWER_VALIDATION_GUIDE.md`
+5. `SECURITY_CONTRACT_LAYER.md`
 
 ## If you want public-release context
 
@@ -83,11 +85,13 @@ Start with:
 ## If you want the contract proof direction
 
 Start with:
-1. `implementation-plans/contract-proof-sprint.md`
+1. `references/public-safe-proof-walkthrough.md`
 2. `SECURITY_CONTRACT_LAYER.md`
 3. `schemas/approved_execution_spec.v0.1.schema.json`
 4. `references/approved-execution-spec-v0.1.md`
-5. `DEMO.md`
+5. `examples/security-contract-proof/`
+6. `examples/contract-lifecycle-v0.2/`
+7. `DEMO.md`
 
 This direction keeps Ravenclaw Runtime as the proof/reference implementation, consumes SCLite as the reusable contract-core dependency, and treats OpenClaw, MCP, and A2A as later carriers, not new protocols. For the first future carrier boundary, read `references/openclaw-adapter-contract-map.md`; before implementation planning, use `references/carrier-readiness-checklist.md` and fill `references/carrier-readiness-packet-template.md`.
 

@@ -17,12 +17,14 @@ Required:
 - `pip`
 - ability to create a local virtual environment
 
-Minimal Python dependencies:
+Runtime Python dependencies:
 - `PyYAML>=6,<7`
 - `sclite-core>=0.2.1,<0.3` (PyPI distribution; Python import package `sclite`)
 - `govengine>=0.1,<0.2`
-- `Flask>=3,<4` for Logdash
-- `pytest>=8,<9` if you want test validation
+
+Dev/test dependencies:
+- `pytest>=8,<9` for tests and `--include-pytest` validation receipts
+- `Flask>=3,<4` for Logdash and public demo/dev paths
 
 ## Recommended install
 
@@ -38,12 +40,22 @@ Quick readiness check after install:
 ./scripts/bootstrap_public_demo.sh doctor
 ```
 
-Manual equivalent:
+Manual runtime-only install:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e .[dev]
+pip install -e .
+python scripts/validate_public_install.py
+```
+
+Manual dev/test install for validation, demos, Logdash, and pytest:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e '.[dev]'
+python scripts/validate_public_install.py --dev
 ```
 
 If editable install is not suitable in your environment, install the same explicit package dependencies:
@@ -51,8 +63,16 @@ If editable install is not suitable in your environment, install the same explic
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+pip install PyYAML "sclite-core>=0.2.1,<0.3" "govengine>=0.1,<0.2"
+python scripts/validate_public_install.py
+```
+
+For the equivalent explicit dev/test dependency set:
+
+```bash
 pip install PyYAML "Flask>=3,<4" "pytest>=8,<9" \
   "sclite-core>=0.2.1,<0.3" "govengine>=0.1,<0.2"
+python scripts/validate_public_install.py --dev
 ```
 
 ## What this gives you
@@ -62,6 +82,7 @@ This setup is enough to:
 - run the planner entrypoint locally
 - run the governed pipeline in dry-run mode
 - start Logdash locally
+- validate runtime and dev/test dependency readiness
 - execute focused tests
 - use the public bootstrap/devcontainer/compose demo path
 

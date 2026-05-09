@@ -66,8 +66,11 @@ run_doctor() {
   if [[ -f "$INSTALL_STAMP" ]] && [[ "$(cat "$INSTALL_STAMP")" == "$key" ]]; then
     install_status="ready"
   fi
-  python - <<PY
+  local install_validation
+  install_validation="$(python "$ROOT_DIR/scripts/validate_public_install.py" --dev --json)"
+  INSTALL_VALIDATION="$install_validation" python - <<PY
 import json
+import os
 from pathlib import Path
 print(json.dumps({
   'mode': 'doctor',
@@ -76,6 +79,7 @@ print(json.dumps({
   'logdash_port': int(r'''$LOGDASH_PORT'''),
   'demo_output_dir': str(Path(r'''$ROOT_DIR''') / r'''$DEMO_OUTPUT_DIR'''),
   'install_status': r'''$install_status''',
+  'install_validation': json.loads(os.environ['INSTALL_VALIDATION']),
   'runtime_mode': 'demo'
 }, ensure_ascii=False, indent=2))
 PY
@@ -116,7 +120,7 @@ case "$MODE" in
     install_deps
     ;;
   doctor)
-    install_deps
+    install_deps >&2
     run_doctor
     ;;
   demo)

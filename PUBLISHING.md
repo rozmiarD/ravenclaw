@@ -104,9 +104,10 @@ The Security Contract Layer proof fixture is intentionally publishable when pres
 
 ### 6. Validate the snapshot
 
-At minimum, run in the snapshot:
+At minimum, run in the snapshot after a dev/test install:
 
 ```bash
+python scripts/validate_public_install.py --dev
 pytest -q
 ```
 
@@ -128,6 +129,7 @@ python scripts/build_public_snapshot_manifest.py . --check
 For a consolidated local receipt before publication prep, run from the live workspace. For routine SCL/public-snapshot work, use the focused path:
 
 ```bash
+python scripts/validate_public_install.py --dev
 python scripts/run_security_contract_validation.py --include-pytest
 ```
 

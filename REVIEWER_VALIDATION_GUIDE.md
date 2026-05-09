@@ -11,14 +11,16 @@ Read these first:
 1. `PUBLIC_STATUS.md` — maturity and current public truth.
 2. `QUALITY_SIGNALS.md` — what the repo's trust signals support and do not support.
 3. `VALIDATION.md` — runnable validation commands.
-4. `SECURITY_CONTRACT_LAYER.md` — contract-layer proof direction and artifact map.
-5. `PROOF_OF_VALUE.md` — market-legible value framing without live exploit claims.
+4. `references/public-safe-proof-walkthrough.md` — the shortest proof-trace walkthrough.
+5. `SECURITY_CONTRACT_LAYER.md` — contract-layer proof direction and artifact map.
+6. `PROOF_OF_VALUE.md` — market-legible value framing without live exploit claims.
 
 ## 2. Run the broad validation surface
 
-From the repository root:
+From the repository root after the dev/test install path in `INSTALL.md`:
 
 ```bash
+python scripts/validate_public_install.py --dev
 pytest -q
 ```
 
@@ -64,6 +66,7 @@ Use this to answer: "Do the validation surfaces documented by the repo actually 
 Run the consolidated local/public-safe receipt:
 
 ```bash
+python scripts/validate_public_install.py --dev
 python scripts/run_security_contract_validation.py --include-pytest
 ```
 
@@ -86,7 +89,9 @@ This validates the public-safe proof trace:
 
 Primary proof/evidence files:
 
+- `references/public-safe-proof-walkthrough.md`
 - `examples/security-contract-proof/`
+- `examples/contract-lifecycle-v0.2/`
 - `examples/replayable-truth-runtime/`
 - `examples/scope-fidelity-report/`
 - `schemas/*.v0.1.schema.json`
