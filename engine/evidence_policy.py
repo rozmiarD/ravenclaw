@@ -1,21 +1,16 @@
 from __future__ import annotations
 
-from typing import Dict, Any
+"""Compatibility module alias for the GovEngine evidence policy seam."""
 
+from pathlib import Path
+import importlib
+import sys
 
-def can_be_confirmed(qualification: Dict[str, Any], *, require_repro_pass: bool = True) -> bool:
-    if not isinstance(qualification, dict):
-        return False
-    if str(qualification.get("verdict") or "") != "confirmed":
-        return False
-    if not bool(qualification.get("false_positive_guards_passed", False)):
-        return False
-    obs = qualification.get("observed_artifacts") or {}
-    if not bool(obs.get("control_comparison_performed", False)):
-        return False
-    if not bool(obs.get("control_delta_observed", False)):
-        return False
-    proto = (obs.get("protocol") or {}) if isinstance(obs, dict) else {}
-    if require_repro_pass and not bool(proto.get("repro_pass", False)):
-        return False
-    return True
+_ROOT = Path(__file__).resolve().parents[1]
+_ENGINE = Path(__file__).resolve().parent
+for _path in (_ROOT, _ENGINE):
+    if str(_path) not in sys.path:
+        sys.path.insert(0, str(_path))
+
+_impl = importlib.import_module('govengine.contracts.evidence_policy')
+sys.modules[__name__] = _impl

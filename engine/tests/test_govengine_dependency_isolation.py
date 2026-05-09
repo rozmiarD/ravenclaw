@@ -29,7 +29,10 @@ STANDALONE_MODULES = [
     'govengine.capability_recipes',
     'govengine.action_compiler',
     'govengine.tool_registry',
+    'govengine.contracts.analysis',
+    'govengine.contracts.evidence_policy',
     'govengine.contracts.execution',
+    'govengine.contracts.signal',
     'govengine.policy.core',
     'govengine.policy.gateway',
     'govengine.execution.approved_spec',
@@ -70,9 +73,15 @@ def test_ravenclaw_action_modules_are_govengine_compat_aliases() -> None:
     import action_validators  # type: ignore
     import capability_recipes  # type: ignore
     import semantic_loss_policy  # type: ignore
+    import signal_contract  # type: ignore
+    import analysis_contract  # type: ignore
+    import evidence_policy  # type: ignore
 
     assert action_schema.__name__ == 'govengine.action_schema'
     assert action_validators.__name__ == 'govengine.action_validators'
     assert action_compiler.__name__ == 'govengine.action_compiler'
     assert capability_recipes.__name__ == 'govengine.capability_recipes'
     assert semantic_loss_policy.__name__ == 'govengine.semantic_loss_policy'
+    assert signal_contract.__name__ == 'govengine.contracts.signal'
+    assert analysis_contract.__name__ == 'govengine.contracts.analysis'
+    assert evidence_policy.__name__ == 'govengine.contracts.evidence_policy'

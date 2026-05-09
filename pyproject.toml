@@ -12,7 +12,7 @@ authors = [{ name = "Krzysztof Probola" }]
 dependencies = [
   "PyYAML>=6,<7",
   "sclite-core>=0.2.1,<0.3",
-  "govengine>=0.1,<0.2",
+  "govengine>=0.1.2,<0.2",
 ]
 
 [project.optional-dependencies]
