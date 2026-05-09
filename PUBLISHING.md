@@ -25,7 +25,7 @@ git config user.name '0x505badc0de'
 git config user.email '32790662+rozmiarD@users.noreply.github.com'
 ```
 
-Do not rewrite already-published history only to fix authorship unless the operator explicitly approves force-push/history rewrite.
+Never rewrite already-published history to fix authorship, contribution graphs, cleanup, or cosmetics. Preserve history and add corrective commits instead.
 
 ## Default rule
 
@@ -195,14 +195,14 @@ This is the canonical GitHub publication flow unless the operator explicitly ask
 
 This avoids four common publication mistakes:
 - pushing private/local residue from the live tree
-- force-pushing over unrelated remote changes without review
+- any force-push or published-history rewrite
 - leaving branch clutter on GitHub that does not match the intended one-branch public repo shape
 - letting the live workspace and public repo drift into different README-level stories about what Ravenclaw is
 
 ### If `origin/main` moved while preparing the release
 
 If `origin/main` changed after the snapshot was validated:
-- do **not** blindly force-push the prepared snapshot branch onto `main`
+- do **not** force-push the prepared snapshot branch onto `main`
 - fetch the current `origin/main`
 - apply the bounded public delta on top of that latest `main`
 - validate again
@@ -219,7 +219,7 @@ If that is not explicitly requested, publish directly to `main` through the clea
 
 ### Force-push rule
 
-Do **not** force-push to `main` unless the operator explicitly approves a history rewrite.
+Do **not** force-push to `main` or rewrite already-published history.
 Normal case: preserve remote history and apply the public-release delta on top of current `origin/main`.
 
 ## Current recommendation

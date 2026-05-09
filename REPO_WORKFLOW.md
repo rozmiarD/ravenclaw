@@ -24,7 +24,7 @@ git config user.name '0x505badc0de'
 git config user.email '32790662+rozmiarD@users.noreply.github.com'
 ```
 
-Do not rewrite already-published history only to fix authorship unless the operator explicitly approves a force-push/history rewrite.
+Never rewrite already-published history to fix authorship, contribution graphs, cleanup, or cosmetics. This is a categorical transparency guardrail: no force-push, filter-branch/filter-repo, rebase of published branches, commit-date rewriting, or tag rewriting for already-published public history. Preserve history and add corrective commits instead.
 
 ## Public push model
 
@@ -37,7 +37,7 @@ For Ravenclaw public pushes:
 3. Validate at the right depth for the change.
 4. Run publication/residue checks before pushing.
 5. Confirm git identity is `0x505badc0de <32790662+rozmiarD@users.noreply.github.com>`.
-6. Push to `main` without force unless explicitly approved.
+6. Push to `main` with a normal non-force push only; never rewrite published history.
 7. Delete temporary remote branches after merge/push unless the operator asked to keep them.
 
 ## Branch hygiene
