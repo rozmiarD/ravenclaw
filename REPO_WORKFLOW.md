@@ -7,7 +7,7 @@ This is the canonical Git workflow for Ravenclaw public repository operations.
 All GitHub commits/tags pushed from this operator workspace must use:
 
 ```text
-0x505badc0de <0x505badc0de@proton.me>
+0x505badc0de <32790662+rozmiarD@users.noreply.github.com>
 ```
 
 Before any commit or push, verify the effective repo-local identity:
@@ -21,7 +21,7 @@ If either value differs, fix it before committing:
 
 ```bash
 git config user.name '0x505badc0de'
-git config user.email '0x505badc0de@proton.me'
+git config user.email '32790662+rozmiarD@users.noreply.github.com'
 ```
 
 Do not rewrite already-published history only to fix authorship unless the operator explicitly approves a force-push/history rewrite.
@@ -36,7 +36,7 @@ For Ravenclaw public pushes:
 2. Apply only the bounded public delta.
 3. Validate at the right depth for the change.
 4. Run publication/residue checks before pushing.
-5. Confirm git identity is `0x505badc0de <0x505badc0de@proton.me>`.
+5. Confirm git identity is `0x505badc0de <32790662+rozmiarD@users.noreply.github.com>`.
 6. Push to `main` without force unless explicitly approved.
 7. Delete temporary remote branches after merge/push unless the operator asked to keep them.
 
