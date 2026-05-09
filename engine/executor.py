@@ -19,6 +19,7 @@ from govengine.execution.command_shape import (
     normalize_argv,
 )
 from govengine.scope import FunctionalScopePort
+from govengine_control_gate_adapter import evaluate_govengine_control_gate  # type: ignore
 from tool_registry import get_tool_catalog  # type: ignore
 
 
@@ -166,16 +167,28 @@ class ExecutionEngine:
                 execution_contract=execution_contract,
                 raw_steps=raw_steps,
             )
+        govengine_control_gate = evaluate_govengine_control_gate(
+            dry_run=dry_run,
+            require_execution_ticket=require_execution_ticket,
+            execution_ticket_gate=execution_ticket_gate,
+            execution_ticket=execution_ticket,
+            execution_contract=execution_contract,
+        )
+        if govengine_control_gate.get('status') == 'blocked':
+            raise ValueError(f"govengine_control_gate_blocked:{govengine_control_gate.get('reason_code') or 'blocked'}")
         plan = [self._normalize_argv(str(step.get('tool') or ''), list(step.get('args') or []), approved_spec=True) for step in raw_steps]
         compiled = approved_spec_compiled_action(approved_execution_spec)
         if dry_run:
             for step, argv in zip(raw_steps, plan):
                 self._enforce_scope(argv, stdin_text=step.get('stdin') or '')
-            return approved_spec_dry_run_result(
+            result = approved_spec_dry_run_result(
                 approved_execution_spec=approved_execution_spec,
                 planned_commands=plan,
                 execution_ticket_gate=execution_ticket_gate or {'status': 'not_required'},
             )
+            if require_execution_ticket:
+                result['govengine_control_gate'] = govengine_control_gate
+            return result
 
         combined_stdout: List[str] = []
         combined_stderr: List[str] = []
@@ -210,6 +223,7 @@ class ExecutionEngine:
                     'step_artifacts': step_artifacts,
                     'execution_source': 'approved_execution_spec',
                     'execution_ticket_gate': execution_ticket_gate or {'status': 'not_required'},
+                    **({'govengine_control_gate': govengine_control_gate} if require_execution_ticket else {}),
                 }
         return {
             'status': 'succeeded',
@@ -223,6 +237,7 @@ class ExecutionEngine:
             'step_artifacts': step_artifacts,
             'execution_source': 'approved_execution_spec',
             'execution_ticket_gate': execution_ticket_gate or {'status': 'not_required'},
+            **({'govengine_control_gate': govengine_control_gate} if require_execution_ticket else {}),
         }
 
     def execute(self, action_spec: Dict[str, Any], dry_run: bool = False) -> Dict[str, Any]:

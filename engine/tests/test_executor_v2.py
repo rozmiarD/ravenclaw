@@ -453,6 +453,10 @@ def test_execute_approved_spec_runtime_ticket_gate_passes_for_bound_contract() -
     )
     assert res['execution_ticket_gate']['status'] == 'passed'
     assert res['execution_ticket_gate']['ticket_id'] == 'test-ticket'
+    assert res['govengine_control_gate']['status'] in {'allowed', 'not_available'}
+    if res['govengine_control_gate']['status'] == 'allowed':
+        assert res['govengine_control_gate']['runner_profile'] == 'dry-run'
+        assert res['govengine_control_gate']['state_index']['status'] == 'ready'
 
 
 def test_execute_approved_spec_runtime_ticket_gate_rejects_missing_ticket() -> None:

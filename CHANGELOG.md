@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added an optional GovEngine artifact-governance control-gate adapter for the approved-spec execution path, consuming newer GovEngine lifecycle/signing/state/execution gates when available while remaining compatible with the published `govengine>=0.1.2,<0.2` line.
 - Moved Ravenclaw signal, analysis, and evidence-policy seams behind GovEngine compatibility aliases and raised the GovEngine candidate dependency floor to `govengine>=0.1.2,<0.2`.
 - Added public install validation via `scripts/validate_public_install.py`, clarified runtime-only vs dev/test install paths, and wired the public demo doctor to report dependency readiness.
 - Added `references/public-safe-proof-walkthrough.md` plus a refreshed public `THREAT_MODEL.md` so reviewers can follow the dry-run proof trace, trusted-core boundaries, and non-claims from committed artifacts.
