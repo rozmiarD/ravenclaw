@@ -13,7 +13,7 @@ Read these first:
 3. `VALIDATION.md` — runnable validation commands.
 4. `references/public-safe-proof-walkthrough.md` — the shortest proof-trace walkthrough.
 5. `SECURITY_CONTRACT_LAYER.md` — contract-layer proof direction and artifact map.
-6. `PROOF_OF_VALUE.md` — market-legible value framing without live exploit claims.
+6. `PROOF_OF_VALUE.md` — value framing without live exploit claims.
 
 ## 2. Run the broad validation surface
 
@@ -39,7 +39,7 @@ What this supports:
 - visibility into the GovEngine public surface registry and Ravenclaw's security-profile compatibility seam.
 
 What it does not prove:
-- live deployment readiness, exhaustive security assurance, complete architecture stability, or readiness of an unreleased GovEngine candidate for PyPI publication.
+- live deployment readiness, exhaustive security assurance, complete architecture stability, or readiness of a future GovEngine release candidate.
 
 ## 3. Inspect validation surfaces and snapshot files
 

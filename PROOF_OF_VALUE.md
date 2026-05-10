@@ -6,7 +6,7 @@ The current public claim is narrower and more defensible:
 
 > Ravenclaw shows that security autonomy can be made more valuable by making scope, policy, execution, evidence, replay, and review surfaces explicit and locally verifiable.
 
-This document translates the existing validation surfaces into market-legible value signals without claiming live exploit performance or production readiness.
+This document maps existing validation surfaces to value signals without claiming live exploit performance or production readiness.
 
 ## Value thesis
 

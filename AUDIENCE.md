@@ -22,7 +22,7 @@ In practice, that usually means:
 
 Ravenclaw is not aimed at people looking for:
 - a one-click offensive automation product
-- an unconstrained "AI hacker"
+- an unconstrained offensive automation system
 - a beginner-friendly security starter kit
 - a polished consumer SaaS experience
 - a proof-free hype repo built mainly around screenshots and claims
@@ -54,4 +54,4 @@ Ravenclaw is a serious technical repo for readers who value governance, runtime 
 ## Short version
 
 Ravenclaw is for technically serious readers who want bounded autonomy under governance.
-It is not for people looking for a toy, a black box, or a magic button.
+It is not for people looking for a toy, an opaque system, or one-click security automation.

@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Polished public-facing docs to use plainer wording and keep claim/non-claim boundaries aligned with the current GovEngine `0.1.5` and SCLite `0.2.1` package state.
 - Raised the GovEngine dependency floor to `govengine>=0.1.5,<0.2` after the security-profile facade line was published and verified from PyPI; public install validation now expects the upstream `govengine.security_profile` path while retaining a defensive compatibility fallback for older local environments.
 - Added a Ravenclaw compatibility entrypoint for GovEngine's optional security-profile facade so Ravenclaw can consume `govengine.security_profile` when available while retaining a fallback for older local environments; public install validation now reports that compatibility seam.
 - Raised the GovEngine dependency floor to `govengine>=0.1.4,<0.2` after the public surface registry line was published and verified from PyPI; public install validation now checks the expected GovEngine surface registry shape.

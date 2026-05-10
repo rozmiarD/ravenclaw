@@ -8,7 +8,7 @@ It explains what evidence of quality exists in the repo today, what that evidenc
 A serious public repo should not ask readers to infer trust from tone alone.
 Ravenclaw already has meaningful proof surfaces, but before this file they were scattered across CI, tests, references, and deeper architecture docs.
 
-This document gathers the current signals into one honest public layer.
+This document gathers the current signals in one place.
 
 ## Current quality signals
 
@@ -108,10 +108,10 @@ That is a useful trust signal because it shows the project is trying to separate
 ## What these signals support
 
 Taken together, these signals support the following public claims:
-- the repo has a serious engineering core
+- the repo has tested governance, contract, and runtime surfaces
 - the project values contract clarity, not only feature growth
 - important runtime and UI truth surfaces are tested
-- the public repo is being shaped deliberately rather than dumped casually
+- the public repo is being separated from private operator state through explicit publication boundaries
 - governance and operator-visibility behavior are treated as real correctness concerns
 - the public dependency chain through GovEngine and SCLite is validated as an install/import surface, including the GovEngine security-profile compatibility seam
 - the SCLite-backed Security Contract Layer is grounded in Ravenclaw Runtime artifacts, not protocol-first marketing
@@ -128,7 +128,7 @@ These signals do **not** prove:
 - a finished OpenClaw/MCP/A2A adapter ecosystem
 - superior real-world outcomes by themselves
 
-In other words, the trust surface is meaningful, but it is not magic.
+In other words, these checks are useful evidence, but they do not replace deployment review or security review.
 
 ## Best evidence trails for a new reader
 
@@ -148,4 +148,4 @@ If you want the shortest serious verification path, read these in order:
 ## Validation posture summary
 
 The strongest honest quality claim today is:
-Ravenclaw already has real contract, CI, operator-truth, and proof-of-value framing surfaces, even though its public onboarding and proof presentation are still catching up to the strength of the technical core. See `PROOF_OF_VALUE.md` and `scripts/build_proof_of_value_scorecard.py` for the market-legible but non-exploit-claim framing and scorecard.
+Ravenclaw already has contract tests, CI, operator-truth checks, and proof-of-value scoring surfaces. Public onboarding and proof presentation are still improving. See `PROOF_OF_VALUE.md` and `scripts/build_proof_of_value_scorecard.py` for non-exploit-claim scoring and review context.

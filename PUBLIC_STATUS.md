@@ -24,7 +24,7 @@ These areas are real and important, but should still be treated as actively evol
 - parts of qualification and confirmation behavior
 - some planner-to-runtime semantics that have recently been hardened but are still being refined
 - public onboarding, quickstart, and demo ergonomics
-- public proof presentation and broader trust storytelling, even though the underlying validation surfaces are now more explicit
+- public proof presentation and trust documentation, even though the underlying validation surfaces are now more explicit
 - adapter/carrier ideas such as an OpenClaw Skill, MCP Policy Gateway, and A2A security metadata profile; these should follow stable contract proof rather than lead it. The docs/contracts-only OpenClaw boundary is mapped in `references/openclaw-adapter-contract-map.md`; future carrier gates are listed in `references/carrier-readiness-checklist.md`, and proposal packets should use `references/carrier-readiness-packet-template.md`.
 
 In other words, the system is real, but not every surface should be read as frozen.
@@ -54,7 +54,7 @@ Ravenclaw does **not** currently promise:
 - that autonomy removes the need for operator judgment, legal authorization, or organizational accountability
 
 The strongest honest claim today is:
-Ravenclaw is a serious governance-first security research runtime with a publishable public core, a separate private/operator overlay reality, and a stronger technical core than its current public ergonomics.
+Ravenclaw is a governance-first security research runtime with a publishable public core, a separate private/operator overlay, and public ergonomics that are still improving.
 
 For the current public validation, trust, and proof-of-value layer, start with:
 - `VALIDATION.md`

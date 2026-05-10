@@ -31,14 +31,14 @@ a publishable runtime/control-plane artifact with explicit governance and valida
 
 ## What makes it different
 
-Ravenclaw is not positioned as an unconstrained "AI hacker".
-Its core design claim is different:
+Ravenclaw is not an unconstrained offensive automation system.
+Its core design claim is narrower:
 - planning, authorization, execution, and interpretation are separated
 - policy is enforced in runtime paths, not only described in prompts or docs
 - operator approval remains explicit for sensitive actions
 - evidence quality and replayability matter as much as action generation
 
-In short, Ravenclaw optimizes for bounded usefulness rather than raw autonomy theater.
+In short, Ravenclaw optimizes for useful actions that stay within policy, scope, and review boundaries.
 
 Ravenclaw now consumes **GovEngine** for reusable governed-execution helpers and **SCLite** for contract lifecycle artifacts.
 
@@ -130,7 +130,7 @@ If you want a clearer fit/non-fit guide, read `AUDIENCE.md`.
 
 Ravenclaw is **not**:
 - an unconstrained offensive automation platform
-- a black-box autonomous attacker
+- an opaque autonomous attacker
 - a replacement for operator judgment
 - a guarantee of security outcomes
 - a polished consumer product
@@ -141,12 +141,11 @@ Its value depends on bounded behavior, explicit governance, and operator visibil
 
 ## Why this project exists
 
-Many autonomous security systems fail in one of two ways:
-- they are too rigid to stay useful
-- or too unconstrained to be trusted
+Many autonomous security systems have a hard tradeoff:
+- rigid systems can be safe but not useful enough;
+- unconstrained systems can act quickly but are hard to trust.
 
-Ravenclaw explores a third path:
-intelligent components may propose and adapt, but execution remains policy-bound, inspectable, and recoverable.
+Ravenclaw separates proposal, approval, execution, and review so adaptive parts can help without owning final authority.
 
 For the short public thesis, read `WHY_RAVENCLAW.md`.
 
@@ -167,8 +166,8 @@ High-level open-source/public-release direction is tracked in `OPEN_SOURCE_1_0_P
 Current public truth:
 - the technical core is strong and serious
 - the public repo is best understood as a governance-first public core, not a full private operator environment
-- the public repo shape is improving, but still being deliberately elevated
-- public clarity, official demoability, and proof surfaces are materially better than before, but still part of the active elevation track
+- the public repo shape is improving, but is still being refined
+- public clarity, demo usability, and proof surfaces are better than before, but remain active work
 
 ## Documentation map
 
