@@ -1,14 +1,14 @@
 # RAVENCLAW
 
-[![pytest](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml/badge.svg)](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
-[![Ravenclaw 0.10.0](https://img.shields.io/badge/version-0.10.0-blueviolet.svg)](pyproject.toml)
-[![SCLite 0.2.1](https://img.shields.io/badge/SCLite-0.2.1-blueviolet.svg)](https://github.com/rozmiarD/SCLite)
+[![CI: pytest](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml/badge.svg)](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml)
+[![Source: Ravenclaw 0.10.0](https://img.shields.io/badge/source-Ravenclaw%200.10.0-blueviolet.svg)](pyproject.toml)
+[![Python: 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
+[![Dependency: GovEngine >=0.1.5](https://img.shields.io/badge/dependency-GovEngine%20%3E%3D0.1.5-informational.svg)](https://github.com/rozmiarD/GovEngine)
+[![Dependency: SCLite 0.2.1](https://img.shields.io/badge/dependency-SCLite%200.2.1-informational.svg)](https://github.com/rozmiarD/SCLite)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 **RAVENCLAW is a governance-first security research runtime for bounded, auditable security operations.**
 
-Project owner: **Krzysztof Probola**.
 
 It is built around a simple idea:
 advanced autonomy is only useful when it remains bounded, observable, and accountable.

@@ -46,14 +46,14 @@ The following should not currently be assumed as first-class public support:
 ## Support boundary
 
 Public readers should assume:
-- local inspection is supported
-- local dry-run flow is supported
-- local Logdash bring-up is supported
-- generated public demo artifacts are supported via the same demo contract
-- devcontainer/compose demo bootstrap is supported for the public-safe path
-- broader live-operation ergonomics remain a later maturity target
+- local inspection is supported;
+- local dry-run flow is supported;
+- local Logdash bring-up is supported for public-demo inspection;
+- generated public demo artifacts are supported via the same demo contract;
+- devcontainer/compose demo bootstrap is supported for the public-safe path;
+- live target operation, cloud deployment, and production deployment need separate review.
 
 ## Why this file exists
 
-Ravenclaw has a stronger technical core than its current public install ergonomics.
+Ravenclaw has more runtime depth than its current public install path exposes.
 This file exists to keep the support claim honest.

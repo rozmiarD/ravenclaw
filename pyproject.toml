@@ -5,15 +5,35 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ravenclaw"
 version = "0.10.0"
-description = "Governance-first security research runtime"
+description = "Governance-first security research runtime with policy-gated execution and public-safe proof artifacts"
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
 authors = [{ name = "Krzysztof Probola" }]
+keywords = ["security", "governance", "runtime", "contracts", "dry-run", "evidence"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+]
 dependencies = [
   "PyYAML>=6,<7",
   "sclite-core>=0.2.1,<0.3",
   "govengine>=0.1.5,<0.2",
 ]
+
+[project.urls]
+Homepage = "https://github.com/rozmiarD/ravenclaw"
+Repository = "https://github.com/rozmiarD/ravenclaw"
+Issues = "https://github.com/rozmiarD/ravenclaw/issues"
+Changelog = "https://github.com/rozmiarD/ravenclaw/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/rozmiarD/ravenclaw#readme"
 
 [project.optional-dependencies]
 logdash = [
