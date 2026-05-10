@@ -44,7 +44,7 @@ Public readers should evaluate Ravenclaw from the intentionally published surfac
 ## Not promised or guaranteed
 
 Ravenclaw does **not** currently promise:
-- a zero-friction consumer install experience
+- an easy consumer install experience
 - a PyPI-published Ravenclaw runtime package; Ravenclaw currently remains a source/reference runtime while consuming `sclite-core` and `govengine` from PyPI
 - a fully stable package/distribution shape
 - that every internal subsystem is final
@@ -54,7 +54,7 @@ Ravenclaw does **not** currently promise:
 - that autonomy removes the need for operator judgment, legal authorization, or organizational accountability
 
 The strongest honest claim today is:
-Ravenclaw is a governance-first security research runtime with a publishable public core, a separate private/operator overlay, and public ergonomics that are still improving.
+Ravenclaw is a governance-first security research runtime with a publishable public core, a separate private/operator overlay, and public docs and setup paths that are still improving.
 
 For the current public validation, trust, and proof-of-value layer, start with:
 - `VALIDATION.md`

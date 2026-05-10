@@ -74,9 +74,9 @@ Validation:
 
 Security Contract Layer is the public contract surface. Replayable Truth Runtime is the reference runtime/evaluation engine that proves those contracts are useful beyond documentation.
 
-The strongest public claim is therefore:
+The current public claim is therefore:
 
-> Ravenclaw is a governed, replayable truth runtime for AI-assisted security operations.
+> Ravenclaw provides a governed replay layer for reviewing AI-assisted security decisions.
 
 ## Non-claims
 
@@ -85,10 +85,10 @@ Replayable Truth Runtime does not claim:
 - live vulnerability evidence;
 - execution simulation for arbitrary tools;
 - permission to test targets outside scope;
-- complete production readiness;
+- readiness for every production deployment;
 - replacement for OpenClaw, MCP, A2A, SIEM, or scanner ecosystems.
 
-It is a safety/evaluation layer for preserving and replaying governed cyber-agent decisions.
+It is a safety and evaluation layer for preserving and replaying governed security-agent decisions.
 
 ## Near-term roadmap
 

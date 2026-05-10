@@ -12,7 +12,7 @@ Start with:
 4. `QUALITY_SIGNALS.md`
 5. `PROOF_OF_VALUE.md`
 
-That gives you the project shape, the safe public demo path, the maturity truth, and the proof surface.
+That gives you the project shape, the safe public demo path, the maturity status, and the proof surface.
 
 ## If you want to validate the repo
 
@@ -54,11 +54,12 @@ Start with:
 ## If you want proof-of-value context
 
 Start with:
-1. `PROOF_OF_VALUE.md`
-2. `references/public-safe-proof-walkthrough.md`
-3. `QUALITY_SIGNALS.md`
-4. `REVIEWER_VALIDATION_GUIDE.md`
-5. `SECURITY_CONTRACT_LAYER.md`
+1. `PUBLIC_STATUS.md`
+2. `PROOF_OF_VALUE.md`
+3. `references/public-safe-proof-walkthrough.md`
+4. `QUALITY_SIGNALS.md`
+5. `REVIEWER_VALIDATION_GUIDE.md`
+6. `SECURITY_CONTRACT_LAYER.md`
 
 ## If you want public-release context
 
@@ -112,4 +113,4 @@ This path covers Git identity, clean worktrees, branch cleanup, public snapshot 
 ## Short rule
 
 Do not treat every file as equally important.
-Ravenclaw makes more sense when read through a deliberate path instead of as a raw directory tree.
+Ravenclaw is easier to review when read through a clear path instead of as a raw directory tree.

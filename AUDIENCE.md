@@ -24,7 +24,7 @@ Ravenclaw is not aimed at people looking for:
 - a one-click offensive automation product
 - an unconstrained offensive automation system
 - a beginner-friendly security starter kit
-- a polished consumer SaaS experience
+- a polished consumer product or hosted service
 - a proof-free hype repo built mainly around screenshots and claims
 
 If someone wants instant spectacle or zero-context usability, this repo is currently the wrong fit.
@@ -32,7 +32,7 @@ If someone wants instant spectacle or zero-context usability, this repo is curre
 ## What the current public repo is best at
 
 Today, the public repo is strongest as:
-- a serious architecture and runtime design artifact
+- an architecture and runtime design artifact
 - a publishable governance-first public core
 - a testable governance-first research codebase
 - a controlled local dry-run demo surface
@@ -49,9 +49,9 @@ The repo is still improving in areas such as:
 ## Best-fit expectation
 
 The best current expectation is:
-Ravenclaw is a serious technical repo for readers who value governance, runtime correctness, inspectability, and honest public-boundary signaling more than flashy demo theatrics.
+Ravenclaw is a technical repo for readers who value governance, runtime correctness, inspectability, and clear public-boundary signals more than one-click automation.
 
 ## Short version
 
-Ravenclaw is for technically serious readers who want bounded autonomy under governance.
+Ravenclaw is for technical readers who want bounded autonomy under governance.
 It is not for people looking for a toy, an opaque system, or one-click security automation.

@@ -38,6 +38,6 @@ The scorecard is local/public-safe only. It does **not** claim:
 
 - live target execution;
 - live vulnerability evidence;
-- production readiness;
+- production deployment readiness;
 - protocol adapter completeness;
 - superiority of real-world outcomes by itself.

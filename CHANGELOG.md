@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Polished broader public documentation wording to use simpler terms for install maturity, reviewer non-claims, proof-of-value limits, replay scope, carrier readiness, and audience fit.
 - Cleaned README badge order, removed personal ownership copy from public-facing docs, completed package metadata fields, and tightened install/environment/docs-map wording around the public-safe dry-run support boundary.
 - Polished public-facing docs to use plainer wording and keep claim/non-claim boundaries aligned with the current GovEngine `0.1.5` and SCLite `0.2.1` package state.
 - Raised the GovEngine dependency floor to `govengine>=0.1.5,<0.2` after the security-profile facade line was published and verified from PyPI; public install validation now expects the upstream `govengine.security_profile` path while retaining a defensive compatibility fallback for older local environments.

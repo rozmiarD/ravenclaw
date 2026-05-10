@@ -133,7 +133,7 @@ Ravenclaw is **not**:
 - an opaque autonomous attacker
 - a replacement for operator judgment
 - a guarantee of security outcomes
-- a polished consumer product
+- a polished consumer product or hosted service
 - a beginner-first security starter kit
 
 It is intended for authorized security research and controlled environments.
@@ -164,7 +164,7 @@ Version milestones are tracked in `VERSION_ROADMAP.md`.
 High-level open-source/public-release direction is tracked in `OPEN_SOURCE_1_0_PLAN.md`.
 
 Current public truth:
-- the technical core is strong and serious
+- the technical core has real governance, contract, and validation surfaces
 - the public repo is best understood as a governance-first public core, not a full private operator environment
 - the public repo shape is improving, but is still being refined
 - public clarity, demo usability, and proof surfaces are better than before, but remain active work

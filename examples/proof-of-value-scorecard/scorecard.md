@@ -1,6 +1,6 @@
 # Proof-of-Value Scorecard
 
-This scorecard summarizes public-safe benchmark dimensions for Ravenclaw. It does not claim live vulnerability discovery, production readiness, or protocol-adapter completeness.
+This scorecard summarizes public-safe benchmark dimensions for Ravenclaw. It does not claim live vulnerability discovery, production deployment readiness, or protocol-adapter completeness.
 
 status: `passed`
 dimensions: `7`

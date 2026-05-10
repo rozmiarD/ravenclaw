@@ -39,7 +39,7 @@ What this supports:
 - visibility into the GovEngine public surface registry and Ravenclaw's security-profile compatibility seam.
 
 What it does not prove:
-- live deployment readiness, exhaustive security assurance, complete architecture stability, or readiness of a future GovEngine release candidate.
+- live deployment readiness, exhaustive security assurance, complete architecture stability, or readiness of a future package release.
 
 ## 3. Inspect validation surfaces and snapshot files
 
@@ -122,10 +122,10 @@ python scripts/build_proof_of_value_scorecard.py . --format markdown --check
 
 Passing the above checks does **not** mean:
 
-- Ravenclaw is production-ready for every deployment.
+- Ravenclaw is ready for every production deployment.
 - Live target testing is authorized.
 - The public snapshot contains private operator state.
 - Protocol adapters such as OpenClaw, MCP, or A2A are complete.
 - Demo evidence is live vulnerability evidence.
 
-If a future change weakens these non-claims, treat it as a publication-safety regression.
+If a future change weakens these non-claims, treat it as a public-safety regression.

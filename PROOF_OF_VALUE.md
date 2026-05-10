@@ -6,7 +6,7 @@ The current public claim is narrower and more defensible:
 
 > Ravenclaw shows that security autonomy can be made more valuable by making scope, policy, execution, evidence, replay, and review surfaces explicit and locally verifiable.
 
-This document maps existing validation surfaces to value signals without claiming live exploit performance or production readiness.
+This document maps existing validation surfaces to value signals without claiming live exploit performance or production deployment readiness.
 
 ## Value thesis
 
@@ -55,7 +55,7 @@ These dimensions are deliberately different from "number of discovered vulnerabi
 Ravenclaw does **not** currently claim:
 
 - live vulnerability discovery in the public fixtures;
-- production readiness across all deployments;
+- readiness for every production deployment;
 - a complete OpenClaw/MCP/A2A adapter ecosystem;
 - that public snapshots contain private operator state;
 - that passing local tests replaces human authorization or legal scope review;

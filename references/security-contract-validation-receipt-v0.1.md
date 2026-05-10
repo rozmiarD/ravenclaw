@@ -88,7 +88,7 @@ A valid receipt does not claim:
 
 - live vulnerability evidence;
 - live target testing;
-- production readiness;
+- production deployment readiness;
 - absence of every possible private residue pattern;
 - approval to push to a public remote;
 - implementation of OpenClaw, MCP, or A2A adapters.

@@ -19,7 +19,7 @@ This checklist does **not**:
 - implement OpenClaw, MCP, A2A, or any protocol adapter;
 - authorize live target execution;
 - approve offensive tooling;
-- claim production readiness;
+- claim production deployment readiness;
 - claim live vulnerability discovery;
 - replace the public validation runner;
 - permit private operator state, credentials, memory, raw logs, or unredacted runtime artifacts in public outputs.
@@ -49,7 +49,7 @@ Do not pivot protocol-first into MCP or A2A before the OpenClaw boundary is cred
 | Replayability | The carrier can point to a validation receipt, public-safe fixture, or replayable artifact path. | Results cannot be independently reviewed. |
 | Channel leakage review | The carrier has a per-channel output policy for chat surfaces, files, embeds, attachments, and group contexts. | Sensitive details could be over-shared. |
 | Stop-loss and escalation | The carrier can surface budget/risk/repeated-failure stop conditions and require operator review. | Automation may continue past governance boundaries. |
-| Public non-claims | The carrier preserves Ravenclaw public non-claims in summaries and reports. | Public narrative could imply production readiness or live exploit proof. |
+| Public non-claims | The carrier preserves Ravenclaw public non-claims in summaries and reports. | Public narrative could imply production deployment readiness or live exploit proof. |
 
 ## Minimum implementation-entry packet
 

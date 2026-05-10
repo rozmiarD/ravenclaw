@@ -23,7 +23,7 @@ This document does **not**:
 - implement an OpenClaw Skill, plugin, node integration, or runtime hook;
 - start MCP or A2A adapter work;
 - authorize live target execution;
-- claim production readiness;
+- claim production deployment readiness;
 - claim live vulnerability discovery;
 - require private operator state, local memory, credentials, or raw runtime artifacts;
 - replace Ravenclaw Runtime as the reference/proof implementation.

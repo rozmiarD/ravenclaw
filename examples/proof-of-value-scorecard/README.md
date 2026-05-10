@@ -11,4 +11,4 @@ python scripts/build_proof_of_value_scorecard.py . --format markdown --check > e
 
 The scorecard checks whether the public evidence paths for Ravenclaw's governance/reviewability benchmark dimensions are present.
 
-It does **not** claim live vulnerability discovery, production readiness, protocol-adapter completeness, or superior real-world outcomes by itself.
+It does **not** claim live vulnerability discovery, production deployment readiness, protocol-adapter completeness, or superior real-world outcomes by itself.

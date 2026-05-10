@@ -93,7 +93,7 @@ This public install path does **not** assume or provide:
 - a production operator environment;
 - live credentials or campaign secrets;
 - authorization for live target testing;
-- a public-ready autonomous execution setup.
+- autonomous live execution that is ready for public use.
 
 ## Container/devcontainer option
 
@@ -116,4 +116,4 @@ After install, continue with:
 
 Ravenclaw is strongest today as a local research/runtime codebase with a safe dry-run path.
 That is the current public install story.
-A more polished zero-friction path may come later, but it should not be claimed before it is real.
+An easier install path may come later, but the docs should not claim it before it exists.

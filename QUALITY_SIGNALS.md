@@ -121,10 +121,10 @@ Taken together, these signals support the following public claims:
 ## What these signals do not prove
 
 These signals do **not** prove:
-- full production readiness in every subsystem
+- readiness for every production deployment
 - broad deployment simplicity
 - exhaustive security assurance
-- complete absence of architectural churn
+- a frozen architecture
 - a finished OpenClaw/MCP/A2A adapter ecosystem
 - superior real-world outcomes by themselves
 
@@ -132,7 +132,7 @@ In other words, these checks are useful evidence, but they do not replace deploy
 
 ## Best evidence trails for a new reader
 
-If you want the shortest serious verification path, read these in order:
+If you want the shortest useful verification path, read these in order:
 0. `REVIEWER_VALIDATION_GUIDE.md`
 1. `PUBLIC_STATUS.md`
 2. `DEMO.md`

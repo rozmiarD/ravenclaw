@@ -230,8 +230,8 @@ The safest current release posture is:
 - publish a deliberate public snapshot
 - land the final public state on `main`
 - use a clean publish tree, not the mixed live workspace
-- keep the story architecture-first, governance-first, and honesty-first
-- do not wait for perfect visual/demo polish if the goal is a serious technical public repo
+- keep the public explanation architecture-first, governance-first, and accurate
+- do not wait for perfect visual/demo polish if the goal is a useful technical public repo
 - do not overclaim ease, maturity, or deployment simplicity
 
 ## Short version

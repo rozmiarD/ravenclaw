@@ -41,7 +41,7 @@ This proposal does not:
 - authorize live target execution;
 - bypass Ravenclaw policy/auditor/execution-engine authority;
 - expose private operator state, credentials, memory, raw logs, or unredacted runtime artifacts;
-- claim production readiness;
+- claim production deployment readiness;
 - claim live vulnerability discovery from dry-run/local artifacts;
 - change carrier order from OpenClaw first, MCP later, A2A last/example-first.
 
