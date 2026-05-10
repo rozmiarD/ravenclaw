@@ -21,7 +21,7 @@ def test_carrier_readiness_checklist_preserves_non_implementation_boundary() -> 
         'not** an implementation plan for an adapter',
         'implement OpenClaw, MCP, A2A, or any protocol adapter',
         'authorize live target execution',
-        'claim production readiness',
+        'claim production deployment readiness',
         'claim live vulnerability discovery',
         'permit private operator state, credentials, memory, raw logs, or unredacted runtime artifacts',
     ]

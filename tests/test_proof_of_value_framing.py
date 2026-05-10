@@ -30,7 +30,7 @@ def test_proof_of_value_preserves_non_claims() -> None:
     required = [
         'does **not** currently claim',
         'live vulnerability discovery in the public fixtures',
-        'production readiness across all deployments',
+        'readiness for every production deployment',
         'complete OpenClaw/MCP/A2A adapter ecosystem',
         'passing local tests replaces human authorization or legal scope review',
         'superior real-world outcomes by itself',

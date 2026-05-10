@@ -27,7 +27,7 @@ def test_reviewer_validation_guide_preserves_public_safe_non_claims() -> None:
         'protocol adapter work',
         'production-readiness claims',
         'not live vulnerability findings',
-        'If a future change weakens these non-claims, treat it as a publication-safety regression.',
+        'If a future change weakens these non-claims, treat it as a public-safety regression.',
     ]
     for phrase in required_phrases:
         assert phrase in text
