@@ -14,6 +14,7 @@ These areas are currently the strongest public reference surfaces:
 - bounded public snapshot assembly path
 - the explicit public-core/private-overlay boundary model
 - SCLite-backed Security Contract Layer integration: SCLite is the reusable contract/schema dependency, while Ravenclaw remains the governed reference runtime rather than a new protocol
+- demo-mode GovEngine signing/trust-port projection on lifecycle tickets, explicitly as fixture evidence rather than PKI or production identity proof
 
 These are the parts of the repo most ready to be read as intentional system design rather than rough experimentation.
 
@@ -24,7 +25,7 @@ These areas are real and important, but should still be treated as actively evol
 - parts of qualification and confirmation behavior
 - some planner-to-runtime semantics that have recently been hardened but are still being refined
 - public onboarding, quickstart, and demo ergonomics
-- public proof presentation and trust documentation, even though the underlying validation surfaces are now more explicit
+- public proof presentation and trust documentation, including demo signing/trust-port evidence, even though the underlying validation surfaces are now more explicit
 - adapter/carrier ideas such as an OpenClaw Skill, MCP Policy Gateway, and A2A security metadata profile; these should follow stable contract proof rather than lead it. The docs/contracts-only OpenClaw boundary is mapped in `references/openclaw-adapter-contract-map.md`; future carrier gates are listed in `references/carrier-readiness-checklist.md`, and proposal packets should use `references/carrier-readiness-packet-template.md`.
 
 In other words, the system is real, but not every surface should be read as frozen.
@@ -52,6 +53,7 @@ Ravenclaw does **not** currently promise:
 - that public docs already cover every advanced runtime seam equally well
 - a new general agent protocol or near-term A2A/MCP implementation
 - that autonomy removes the need for operator judgment, legal authorization, or organizational accountability
+- PKI, CA, KMS, trust-store, key-store, or production identity ownership from demo signing/trust metadata
 
 The strongest honest claim today is:
 Ravenclaw is a governance-first security research runtime with a publishable public core, a separate private/operator overlay, and public docs and setup paths that are still improving.

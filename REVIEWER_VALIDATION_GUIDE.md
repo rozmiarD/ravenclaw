@@ -117,6 +117,7 @@ The summary records:
 - Ravenclaw demo runtime mode and dry-run/mock execution adapter;
 - active `govengine` and `sclite-core` package versions;
 - GovEngine `security_profile_helpers` groups;
+- demo execution-ticket signing/trust metadata bound to the execution-contract digest, when inspecting generated lifecycle artifacts;
 - SCLite lifecycle files checked by the scenario;
 - reviewer commands for independently checking the generated artifact-chain manifest.
 
@@ -162,5 +163,6 @@ Passing the above checks does **not** mean:
 - The public snapshot contains private operator state.
 - Protocol adapters such as OpenClaw, MCP, or A2A are complete.
 - Demo evidence is live vulnerability evidence.
+- Demo signing/trust metadata is PKI, production identity proof, or key-management support.
 
 If a future change weakens these non-claims, treat it as a public-safety regression.

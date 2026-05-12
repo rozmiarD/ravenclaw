@@ -93,6 +93,7 @@ If you want to inspect representative trust anchors before or after running test
 - `tests/test_logdash_operator_truth_contracts.py`
 - `engine/tests/test_execution_contracts.py`
 - `engine/tests/test_govengine_control_gate_adapter.py`
+- `engine/govengine_trust_demo.py`
 - `engine/tests/test_runtime_plan_service_contracts.py`
 - `references/runtime-task-contract-v2.md`
 - `references/logdash-operator-truth-contracts.md`

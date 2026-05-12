@@ -65,7 +65,19 @@ Concrete entry points:
 
 This matters because package-boundary drift is tested directly rather than assumed from docs.
 
-### 4. Explicit contract documentation
+### 4. Demo signing/trust-port evidence
+
+Demo lifecycle tickets now include deterministic GovEngine signer/verifier-port metadata bound to the execution-contract digest. Focused tests cover the Ravenclaw control-gate adapter and lifecycle projection path.
+
+This supports review of the signing/trust contract flow. It does **not** support PKI, CA, KMS, key-store, production identity, or legal authorization claims.
+
+Concrete examples:
+- `engine/govengine_trust_demo.py`
+- `engine/govengine_control_gate_adapter.py`
+- `engine/tests/test_govengine_control_gate_adapter.py`
+- `engine/tests/test_security_contract_layer_wrapper.py`
+
+### 5. Explicit contract documentation
 
 Ravenclaw documents several important runtime and operator contracts directly in `references/`.
 Examples include:
@@ -83,7 +95,7 @@ Examples include:
 This matters because the project is not relying only on informal code behavior.
 Important semantics are being pulled into named, reviewable reference docs.
 
-### 5. Operator-truth orientation
+### 6. Operator-truth orientation
 
 Some tests and docs are specifically about whether operator-visible surfaces remain truthful under recovery, fallback, and partial-failure conditions.
 That is a stronger signal than generic endpoint smoke testing.
@@ -94,7 +106,7 @@ Concrete examples:
 - `tests/test_logdash_runtime_recovery.py`
 - `tests/test_logdash_services_projection.py`
 
-### 6. Public-boundary discipline
+### 7. Public-boundary discipline
 
 The repo also includes publication-boundary and public-snapshot planning surfaces:
 - `references/public-release-boundary.md`
