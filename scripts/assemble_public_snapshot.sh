@@ -91,6 +91,7 @@ copy_path bin/demo
 copy_path bin/demo-bundle
 copy_path scripts/assemble_public_snapshot.sh
 copy_path scripts/bootstrap_public_demo.sh
+copy_path scripts/run_demo_scenario.py
 cp "$ROOT/scripts/prepare_public_examples.md" "$OUT/scripts/prepare_public_examples.md"
 copy_path scripts/audit_public_snapshot_residue.py
 copy_path scripts/validate_security_contract_fixtures.py
@@ -109,6 +110,7 @@ copy_path examples/contract-lifecycle-v0.2
 copy_path examples/replayable-truth-runtime
 copy_path examples/scope-fidelity-report
 copy_path examples/proof-of-value-scorecard
+copy_path examples/demo-scenario
 
 cat > "$OUT/examples/campaign_registry/example-registry-entry.md" <<'EOF'
 # Example campaign registry entry

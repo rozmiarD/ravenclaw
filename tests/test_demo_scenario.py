@@ -21,15 +21,25 @@ def test_demo_scenario_markdown_surfaces_package_chain_truth() -> None:
                 'engine_status': 'dry-run',
                 'execution_adapter': 'mock',
             },
+            'package_chain': {'govengine': '0.1.5', 'sclite-core': '0.2.1'},
             'govengine': {'surface': 'security_profile_helpers', 'groups': ['action_tooling', 'policy_scope']},
             'sclite': {'artifact_chain_status': 'passed', 'checked_entries': ['intent_contract', 'execution_receipt']},
+            'reviewer_commands': ['./scripts/bootstrap_public_demo.sh scenario', 'sclite verify-lifecycle demo-output/demo-scenario/artifact_chain_manifest.json'],
+            'artifact_paths': {
+                'demo_scenario_summary.json': 'demo-output/demo-scenario/demo_scenario_summary.json',
+                'artifact_chain_manifest.json': 'demo-output/demo-scenario/artifact_chain_manifest.json',
+            },
             'non_claims': ['no live target scanning'],
         }
     )
 
     assert '# Ravenclaw Demo Scenario Summary' in text
     assert 'execution_adapter: `mock`' in text
+    assert 'govengine_version: `0.1.5`' in text
+    assert 'sclite_core_version: `0.2.1`' in text
     assert 'govengine_surface: `security_profile_helpers`' in text
     assert 'sclite_chain_status: `passed`' in text
     assert 'artifact chain manifest' in text
+    assert './scripts/bootstrap_public_demo.sh scenario' in text
+    assert 'demo_scenario_summary.json' in text
     assert 'no live target scanning' in text

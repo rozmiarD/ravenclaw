@@ -107,6 +107,16 @@ That gives a reader:
 - a repo-wide automated validation path
 - a short explanation of what the proof surfaces do and do not mean
 
+## Demo scenario verification
+
+For the compact reviewer-facing Ravenclaw -> GovEngine -> SCLite scenario, run:
+
+```bash
+./scripts/bootstrap_public_demo.sh scenario
+```
+
+This writes `demo-output/demo-scenario/demo_scenario_summary.json` and `.md`, validates generated SCLite lifecycle artifacts, verifies the artifact-chain manifest, and records the GovEngine `security_profile` boundary. It remains local/demo-safe and dry-run/mock only.
+
 ## Security Contract proof fixture validation
 
 To validate the committed public-safe Security Contract proof fixture directly, run:

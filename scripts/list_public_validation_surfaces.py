@@ -108,6 +108,14 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'claim': 'Local dry-run demo path produces a compact public-safe summary.',
         'non_claim': 'Demo output is illustrative, not production telemetry.',
     },
+    {
+        'id': 'demo_scenario_package_chain',
+        'title': 'Ravenclaw/GovEngine/SCLite demo scenario',
+        'command': './scripts/bootstrap_public_demo.sh scenario',
+        'paths': ['scripts/run_demo_scenario.py', 'examples/demo-scenario', 'DEMO.md', 'VALIDATION.md', 'REVIEWER_VALIDATION_GUIDE.md'],
+        'claim': 'Generates a local dry-run scenario summary that records Ravenclaw demo output, GovEngine security-profile boundary metadata, and SCLite lifecycle-chain verification.',
+        'non_claim': 'Does not authorize live target testing, adapter implementation, production deployment, or raw/private evidence publication.',
+    },
 
     {
         'id': 'public_snapshot_manifest',

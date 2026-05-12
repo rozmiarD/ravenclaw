@@ -5,8 +5,9 @@ import argparse
 import json
 import os
 import sys
+from importlib import metadata
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[1]
 ROOT = Path(os.getenv('RAVENCLAW_WORKSPACE') or DEFAULT_ROOT).expanduser().resolve()
@@ -33,10 +34,60 @@ def _load_json(path: Path) -> Dict[str, Any]:
     return data
 
 
+def _package_version(distribution: str) -> str:
+    try:
+        return metadata.version(distribution)
+    except metadata.PackageNotFoundError:
+        return 'not-installed'
+
+
+def _relative_artifact_paths(out_dir: Path) -> Dict[str, str]:
+    names = [
+        'demo_scenario_summary.json',
+        'demo_scenario_summary.md',
+        'bundle_summary.json',
+        'bundle_summary.md',
+        'policy_decision.json',
+        'prepared_execution_spec.redacted.json',
+        'approved_execution_spec.json',
+        'execution_receipt.json',
+        'evidence_bundle.json',
+        'evidence_summary.md',
+        'intent_contract.json',
+        'policy_decision.v0.2.json',
+        'execution_contract.json',
+        'execution_ticket.json',
+        'execution_receipt.v0.2.json',
+        'evidence_contract.json',
+        'artifact_chain_manifest.json',
+    ]
+    paths: Dict[str, str] = {}
+    for name in names:
+        path = out_dir / name
+        try:
+            paths[name] = path.relative_to(ROOT).as_posix()
+        except ValueError:
+            paths[name] = str(path)
+    return paths
+
+
+def _reviewer_commands(out_dir: Path) -> List[str]:
+    try:
+        manifest = (out_dir / 'artifact_chain_manifest.json').relative_to(ROOT).as_posix()
+    except ValueError:
+        manifest = str(out_dir / 'artifact_chain_manifest.json')
+    return [
+        './scripts/bootstrap_public_demo.sh scenario',
+        f'sclite validate-chain {manifest}',
+        f'sclite verify-lifecycle {manifest}',
+        'python scripts/validate_public_install.py --dev',
+    ]
+
+
 def run_demo_scenario(*, output_dir: str = 'demo-output/demo-scenario') -> Dict[str, Any]:
     """Generate and verify the reviewer-facing Ravenclaw/GovEngine/SCLite demo.
 
-    The demo intentionally stays local and dry-run only. It proves that Ravenclaw
+    The demo intentionally stays local and dry-run only. It shows that Ravenclaw
     can produce a public-safe contract trace, GovEngine exposes the reusable
     security-profile helper boundary, and SCLite validates/hash-links the
     lifecycle artifacts.
@@ -66,6 +117,10 @@ def run_demo_scenario(*, output_dir: str = 'demo-output/demo-scenario') -> Dict[
             'execution_adapter': result['summary']['integration_adapters']['execution']['mode'],
             'proof_trace_files': result['summary']['proof_trace_files'],
         },
+        'package_chain': {
+            'govengine': _package_version('govengine'),
+            'sclite-core': _package_version('sclite-core'),
+        },
         'govengine': {
             'entrypoint': profile['entrypoint'],
             'surface': profile['surface']['name'],
@@ -76,6 +131,8 @@ def run_demo_scenario(*, output_dir: str = 'demo-output/demo-scenario') -> Dict[
             'artifact_chain_status': chain_result['status'],
             'checked_entries': chain_result['checked_entries'],
         },
+        'reviewer_commands': _reviewer_commands(out_dir),
+        'artifact_paths': _relative_artifact_paths(out_dir),
         'non_claims': [
             'no live target scanning',
             'no raw/private evidence publication',
@@ -96,12 +153,22 @@ def build_demo_scenario_markdown(summary: Dict[str, Any]) -> str:
         f"- runtime_mode: `{summary['ravenclaw']['runtime_mode']}`",
         f"- engine_status: `{summary['ravenclaw']['engine_status']}`",
         f"- execution_adapter: `{summary['ravenclaw']['execution_adapter']}`",
+        f"- govengine_version: `{summary.get('package_chain', {}).get('govengine', '')}`",
+        f"- sclite_core_version: `{summary.get('package_chain', {}).get('sclite-core', '')}`",
         f"- govengine_surface: `{summary['govengine']['surface']}`",
         f"- sclite_chain_status: `{summary['sclite']['artifact_chain_status']}`",
         '',
         '## Trace',
         '',
         f"`{summary['trace']}`",
+        '',
+        '## Reviewer commands',
+        '',
+        *[f"```bash\n{command}\n```" for command in summary.get('reviewer_commands', [])],
+        '',
+        '## Generated artifacts',
+        '',
+        *[f"- `{name}` -> `{path}`" for name, path in sorted(summary.get('artifact_paths', {}).items())],
         '',
         '## GovEngine groups',
         '',

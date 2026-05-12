@@ -104,6 +104,14 @@ Reusable public demo bundle:
 ./scripts/bootstrap_public_demo.sh bundle
 ```
 
+Reviewer-facing package-chain scenario:
+
+```bash
+./scripts/bootstrap_public_demo.sh scenario
+```
+
+That scenario generates a local dry-run summary tying Ravenclaw demo artifacts to the GovEngine `security_profile` boundary and SCLite lifecycle-chain verification.
+
 For containerized public-demo bring-up, see `.devcontainer/` and `compose.demo.yaml`.
 
 

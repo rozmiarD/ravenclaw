@@ -87,7 +87,30 @@ This validates the public-safe proof trace:
 
 `scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary`
 
-## 5. Read the evidence trail
+## 5. Run the reviewer demo scenario
+
+For a compact package-chain scenario that generates artifacts and validates the SCLite lifecycle chain:
+
+```bash
+./scripts/bootstrap_public_demo.sh scenario
+```
+
+Expected scenario summary files:
+
+- `demo-output/demo-scenario/demo_scenario_summary.json`
+- `demo-output/demo-scenario/demo_scenario_summary.md`
+
+The summary records:
+
+- Ravenclaw demo runtime mode and dry-run/mock execution adapter;
+- active `govengine` and `sclite-core` package versions;
+- GovEngine `security_profile_helpers` groups;
+- SCLite lifecycle files checked by the scenario;
+- reviewer commands for independently checking the generated artifact-chain manifest.
+
+This scenario is still local/demo-safe. It does not authorize live target testing or adapter implementation.
+
+## 6. Read the evidence trail
 
 Primary proof/evidence files:
 
@@ -118,7 +141,7 @@ python scripts/build_proof_of_value_scorecard.py . --check
 python scripts/build_proof_of_value_scorecard.py . --format markdown --check
 ```
 
-## 6. Non-claims to preserve
+## 7. Non-claims to preserve
 
 Passing the above checks does **not** mean:
 
