@@ -1,6 +1,8 @@
 # RAVENCLAW Architecture
 
-This document is the operator/developer map of the current production architecture in `~/.openclaw/workspace`.
+This document is the operator/developer map of the current production architecture.
+
+The runtime root is configurable with `RAVENCLAW_WORKSPACE`; when unset, Ravenclaw resolves the checkout root from the running script/module location. Do not hardcode historical operator-home paths in code or docs that describe portable public operation.
 
 It complements `README.md` by describing the concrete runtime path, key modules, persisted state, and handoff contracts used by the live system.
 

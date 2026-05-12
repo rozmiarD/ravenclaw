@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Made the Ravenclaw runtime/demo root explicitly configurable through `RAVENCLAW_WORKSPACE`, removed portable-doc references to the historical operator-home path, and added a public-safe Ravenclaw -> GovEngine -> SCLite demo scenario that generates and validates contract-chain evidence.
 - Polished broader public documentation wording to use simpler terms for install maturity, reviewer non-claims, proof-of-value limits, replay scope, carrier readiness, and audience fit.
 - Cleaned README badge order, removed personal ownership copy from public-facing docs, completed package metadata fields, and tightened install/environment/docs-map wording around the public-safe dry-run support boundary.
 - Polished public-facing docs to use plainer wording and keep claim/non-claim boundaries aligned with the current GovEngine `0.1.5` and SCLite `0.2.1` package state.
@@ -692,7 +693,7 @@
 - Final targeted regression at end of day: `97 passed` for the runner/runtime/logdash validation suite.
 
 ## 0.8.38 / 2026-03-19
-- Completed the end-to-end capability architecture wave on the canonical `~/.openclaw/workspace` runtime, turning the earlier runtime-local capability work into a planner-to-operator control-plane architecture that now stays capability-aware across planning, execution, learning, and visibility layers.
+- Completed the end-to-end capability architecture wave on the canonical configured runtime root, turning the earlier runtime-local capability work into a planner-to-operator control-plane architecture that now stays capability-aware across planning, execution, learning, and visibility layers.
 - Fixed planner/runtime binding and schema drift first: planner hints are now campaign-bound instead of latest-mtime bound, target typing was normalized around canonical `target_type` with legacy compatibility, and planner-to-runtime contract tests were expanded.
 - Upgraded planner outputs beyond family seeds/hints by adding explicit `planner_directives` (`constraints` / `preferences` / `unknowns`) and canonical `experiment_intents`, then taught runtime plan generation to consume those intents with a compatibility fallback for older blueprints.
 - Propagated intent-level semantics into runtime execution: `runtime_task_execution.py`, `auto_campaign_runner.py`, and `run_pipeline.py` now thread experiment-intent IDs, capability candidates, recommended action types, planner constraints/preferences, and related context into BRAIN prompting, fallback behavior, preferred tool resolution, and raw execution lineage.
@@ -702,7 +703,7 @@
 - Validation remained green through each staged slice and the final cleanup/polish pass, with the closing targeted UI/snapshot suite at `18 passed` and the broader end-to-end regression at `97 passed`.
 
 ## 0.8.37 / 2026-03-18
-- Completed the full 2026-03-18 Ravenclaw pipeline coherence wave on the canonical workspace across P1/P2/P3/P4/P5/P6, keeping the work scoped to the live `~/.openclaw/workspace` runtime instead of the old debug tree.
+- Completed the full 2026-03-18 Ravenclaw pipeline coherence wave on the canonical workspace across P1/P2/P3/P4/P5/P6, keeping the work scoped to the live configured runtime root instead of the old debug tree.
 - Closed approval/execution coherence gaps by hardening prepared/approved execution-spec flow, aligning request-decoration/runtime ownership semantics, and removing non-explicit post-auditor softening while preserving explicit `owner_override` as the only intentional bypass path.
 - Finished tool-policy coherence (P3): runtime hot paths now use live tool-policy accessors/registry semantics instead of stale duplicated sources, and Logdash/operator-facing tool-policy semantics were brought back into alignment with engine behavior.
 - Finished planner identity / provenance hardening (P4): planner reuse is keyed by stronger identity semantics (`operator_flags_hash`, `planner_semantics_hash`, `planner_identity_hash`), blueprint provenance now distinguishes deterministic vs hybrid planning honestly, registry reuse prefers planner identity with legacy source-hash fallback, and planner docs/state docs were updated accordingly.
@@ -713,7 +714,7 @@
 ## 0.8.36 / 2026-03-15
 - Performed a deep post-refactor cleanup of the canonical workspace after tracing live runtime/state dependencies from code and state-file documentation, then archived non-runtime clutter into `legacy/2026-03-15-deep-runtime-cleanup/` instead of deleting it.
 - Preserved only active pipeline/runtime inputs and state in-place (current engine context/config files, scope, current `reports/*.state.json`, campaign registry, current live summaries, learning store, Logdash DB, and the runtime roots `tmp/engine-handoffs/` / `workspace-brain/outputs/`), while moving stale archives, reset snapshots, generated tmp inventories, quarantined leftovers, and old workspace-brain outputs into legacy.
-- Consolidated the `debug` agent onto the canonical workspace by repointing its workspace to `~/.openclaw/workspace` while keeping its explicit no-fallback `gpt-5.4` model configuration.
+- Consolidated the `debug` agent onto the canonical workspace by repointing its workspace to the configured workspace root while keeping its explicit no-fallback `gpt-5.4` model configuration.
 - Retired the old `workspace-debug` tree as an active code/runtime workspace and archived its prior contents into `legacy/2026-03-15-workspace-debug-retired/`, leaving only a minimal retirement marker in the old directory.
 - Post-cleanup audit remained clean for the active workspace (`broken_symlinks=0`, `tmp_sensitive=0`, `hardcoded_disallowed=0`, `naive_time_calls=0`), confirming the cleanup did not damage the live Ravenclaw runtime path.
 
@@ -735,7 +736,7 @@
 - Added and updated regression coverage for capability recipes, capability-first contracts/compiler behavior, runtime decision canonicalization, persist-vs-adaptation staging, direct learning-store behavior, and richer decision-quality/utility scoring; targeted gate passed at `36 passed`, and full repository validation now passes at `154 passed`.
 
 ## 0.8.33 / 2026-03-15
-- Performed a post-refactor recovery/checkpoint pass on the real `~/.openclaw/workspace` after the Stage 3 + semantic execution waves, reconstructing continuity from repo checkpoints/daily notes and validating the still-unreleased maintenance/runtime changes against the live workspace rather than `workspace-debug`.
+- Performed a post-refactor recovery/checkpoint pass on the real configured runtime root after the Stage 3 + semantic execution waves, reconstructing continuity from repo checkpoints/daily notes and validating the still-unreleased maintenance/runtime changes against the live workspace rather than `workspace-debug`.
 - Added registry-driven tool governance with `tool_registry.yaml`, `tool_registry.py`, and `tool_registry_audit.py`: execution-allowed tools are now separated from planner-visible profiles, planner tool exposure can be switched by profile, and whitelist/profile alignment is covered by tests so the default core surface stays tight while richer profiles remain opt-in.
 - Hardened semantic action contracts and execution lowering across `action_schema.py`, `action_validators.py`, `action_compiler.py`, `contracts.py`, `policy_gateway.py`, `policy_core.py`, `executor.py`, and `run_pipeline.py`, including bounded `tool_chain` support, richer semantic probe metadata, auditor provenance/contract enrichment, and deterministic blocking of shell operators/placeholders leaking through tool-chain args.
 - Added maintenance and safety scaffolding with `time_utils.py`, `json_state_io.py`, `health_audit.py`, and related runtime/logdash wiring; the workspace now has explicit audit coverage for hardcoded workspace paths, naive UTC calls, broken symlinks, and sensitive tmp leftovers, with quarantine/hygiene cleanup folded into the same wave.
@@ -792,7 +793,7 @@
 - Created a local recovery checkpoint for this refactor state: commit `fcc8114` (`Checkpoint runtime snapshot and control-loop extraction`) and tag `checkpoint-2026-03-11-runtime-refactor`.
 
 ## 0.8.28 / 2026-03-10
-- Performed a full architecture/documentation alignment pass for the active `~/.openclaw/workspace` runtime: updated `README.md`, added `ARCHITECTURE.md` and `STATE_FILES.md`, refreshed `logdash/README.md`, and rewrote `SOUL.md` so repository docs now better match the real governance-first planner/policy/execution/runtime/control-plane stack.
+- Performed a full architecture/documentation alignment pass for the active configured runtime root: updated `README.md`, added `ARCHITECTURE.md` and `STATE_FILES.md`, refreshed `logdash/README.md`, and rewrote `SOUL.md` so repository docs now better match the real governance-first planner/policy/execution/runtime/control-plane stack.
 - Synchronized role guidance with the current runtime model by updating per-role system memory for BRAIN and AUDITOR, adding explicit runtime role memory for ANALYSIS and LIGHT, and aligning local role stubs so all primary runtime agents now reflect the same post-refactor governance model.
 - Repaired multiple Logdash regressions introduced by earlier refactors: restored missing global `STATE`, restored page routes (`/`, `/findings`, `/campaign-setup`, `/owner-actions`, `/system-settings`), restored `/api/agents-status`, and brought the dashboard service back to a stable `127.0.0.1:9091` runtime.
 - Removed the legacy `Runtime Logs` block from Pipeline Monitoring and cleaned up its frontend handlers, reducing dead UI surface and avoiding JS drift after the runtime/logging changes.

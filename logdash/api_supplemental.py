@@ -13,7 +13,8 @@ import sys
 
 from flask import Flask, jsonify, request
 
-_ENGINE_DIR = Path(__file__).resolve().parents[1] / 'engine'
+_WORKSPACE_ROOT = Path(os.getenv('RAVENCLAW_WORKSPACE') or Path(__file__).resolve().parents[1]).expanduser().resolve()
+_ENGINE_DIR = _WORKSPACE_ROOT / 'engine'
 if str(_ENGINE_DIR) not in sys.path:
     sys.path.insert(0, str(_ENGINE_DIR))
 from evaluation_bundle import build_replay_bundle  # type: ignore
@@ -174,7 +175,7 @@ def register_supplemental_api(app: Flask, ctx: dict[str, Any]) -> None:
         return [_coerce_mapping_row(row) for row in list(rows or [])]
 
     def _latest_run_payload() -> dict[str, Any]:
-        latest = Path(__file__).resolve().parents[1] / 'reports' / 'auto-campaign-latest.json'
+        latest = WORKSPACE_DIR / 'reports' / 'auto-campaign-latest.json'
         data, meta = safe_load_json_object(
             latest,
             {},
@@ -220,7 +221,7 @@ def register_supplemental_api(app: Flask, ctx: dict[str, Any]) -> None:
         return data
 
     def _latest_archive_dir() -> Path | None:
-        reports_root = Path(__file__).resolve().parents[1] / 'reports'
+        reports_root = WORKSPACE_DIR / 'reports'
         latest_link = reports_root / 'latest'
         try:
             if latest_link.exists():

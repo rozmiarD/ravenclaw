@@ -13,7 +13,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Sequence
 
-ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.getenv('RAVENCLAW_WORKSPACE') or DEFAULT_ROOT).expanduser().resolve()
 ENGINE_DIR = ROOT / 'engine'
 if str(ENGINE_DIR) not in sys.path:
     sys.path.insert(0, str(ENGINE_DIR))

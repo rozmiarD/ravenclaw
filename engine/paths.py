@@ -5,7 +5,21 @@ from pathlib import Path
 
 DEFAULT_WORKSPACE = str(Path(__file__).resolve().parents[1])
 
-WORKSPACE = Path(os.getenv("RAVENCLAW_WORKSPACE") or DEFAULT_WORKSPACE).resolve()
+
+def configured_workspace(default: str | Path | None = None) -> Path:
+    """Return the Ravenclaw workspace/repo root.
+
+    ``RAVENCLAW_WORKSPACE`` is the public configuration knob for running the
+    reference runtime from a path other than the historical in-place checkout.
+    Callers should use this helper instead of embedding historical operator-home paths
+    or re-deriving a root in subtly different ways.
+    """
+
+    fallback = Path(default) if default is not None else Path(DEFAULT_WORKSPACE)
+    return Path(os.getenv("RAVENCLAW_WORKSPACE") or fallback).expanduser().resolve()
+
+
+WORKSPACE = configured_workspace(DEFAULT_WORKSPACE)
 OPENCLAW_HOME = Path(os.getenv("OPENCLAW_HOME") or str(WORKSPACE.parent)).resolve()
 ENGINE_DIR = WORKSPACE / "engine"
 REPORTS_DIR = WORKSPACE / "reports"

@@ -41,7 +41,9 @@ class ValidationCheck:
 
 
 def repo_root() -> Path:
-    return Path(__file__).resolve().parents[1]
+    from paths import configured_workspace  # type: ignore
+
+    return configured_workspace(Path(__file__).resolve().parents[1])
 
 
 def _excerpt(text: str, limit: int = 1600) -> str:

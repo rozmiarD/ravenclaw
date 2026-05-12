@@ -32,7 +32,7 @@ Its parser core is deterministic, but the full planning pipeline may be **hybrid
 By default plans are stored in:
 `<workspace>/reports/campaign_registry/<campaign_key>/versions/vXXXX/`
 
-If you run outside the historical default location, set `RAVENCLAW_WORKSPACE=/path/to/workspace`.
+If you want the runtime root to differ from the script checkout, set `RAVENCLAW_WORKSPACE=/path/to/workspace`.
 
 Each version contains:
 - `blueprint.json`

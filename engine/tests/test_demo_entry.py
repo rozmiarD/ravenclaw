@@ -37,3 +37,14 @@ def test_main_print_only_emits_objective_form(capsys) -> None:
     out = capsys.readouterr().out
     assert rc == 0
     assert '--objective Fetch the homepage and summarize visible technologies --target https://example.com --runtime-mode demo --dry-run' in out
+
+
+def test_demo_commands_use_configured_workspace(monkeypatch, tmp_path: Path) -> None:
+    configured = tmp_path / 'configured-ravenclaw-root'
+    configured.mkdir()
+    monkeypatch.setenv('RAVENCLAW_WORKSPACE', str(configured))
+
+    commands = demo_entry.build_demo_commands(python_bin='python3')
+
+    assert commands[0][1] == str(configured / 'engine' / 'plan_campaign.py')
+    assert commands[1][1] == str(configured / 'engine' / 'run_pipeline.py')

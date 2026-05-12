@@ -8,7 +8,7 @@ This file documents how the Flask/SQLite log dashboard is managed as a user-leve
 - Virtualenv Python: `<workspace>/logdash/.venv/bin/python`
 - Port: `9091` (loopback-only, use SSH tunnel if you need remote access)
 
-If the workspace is not in the historical default location, set `RAVENCLAW_WORKSPACE=/path/to/workspace` in the systemd unit environment.
+If the runtime root should differ from the unit checkout path, set `RAVENCLAW_WORKSPACE=/path/to/workspace` in the systemd unit environment.
 
 ## Managing the service
 ```bash

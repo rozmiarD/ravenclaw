@@ -66,6 +66,18 @@ That writes the public demo bundle into `demo-output/`.
 
 The bundle includes compact proof-trace artifacts such as policy decision, redacted prepared spec, approved execution spec, dry-run execution receipt, evidence summary, and bundle summary files. These artifacts are generated from the same demo-mode runtime path and are intended to stay sanitized and deterministic.
 
+### Demo scenario: Ravenclaw -> GovEngine -> SCLite
+
+For the shortest package-chain demo:
+
+```bash
+./scripts/bootstrap_public_demo.sh scenario
+```
+
+This generates the normal demo bundle, validates the SCLite v0.2 lifecycle artifacts, verifies the artifact-chain manifest, and records the GovEngine `security_profile` helper boundary in `demo-output/demo-scenario/demo_scenario_summary.json` and `.md`.
+
+Use `RAVENCLAW_WORKSPACE=/path/to/ravenclaw` when running from a non-default checkout, and `DEMO_SCENARIO_OUTPUT_DIR=/tmp/ravenclaw-demo-scenario` to choose an output directory.
+
 ## Under the hood
 
 The wrapper currently runs these bounded commands:

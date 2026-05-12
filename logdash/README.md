@@ -94,7 +94,7 @@ pip install -r requirements.txt
 python app.py --port 9091
 ```
 
-If the workspace lives somewhere non-default, export `RAVENCLAW_WORKSPACE=/path/to/workspace` before starting the app.
+If the runtime root should differ from the script checkout, export `RAVENCLAW_WORKSPACE=/path/to/workspace` before starting the app.
 
 By default it binds to `127.0.0.1:9091`.
 

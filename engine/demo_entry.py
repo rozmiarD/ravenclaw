@@ -14,7 +14,9 @@ DEFAULT_TARGET = 'https://example.com'
 
 
 def repo_root() -> Path:
-    return Path(__file__).resolve().parents[1]
+    from paths import configured_workspace  # type: ignore
+
+    return configured_workspace(Path(__file__).resolve().parents[1])
 
 
 def _python_bin() -> str:

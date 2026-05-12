@@ -8,8 +8,9 @@ if str(_BOOTSTRAP_ROOT) not in sys.path:
     sys.path.insert(0, str(_BOOTSTRAP_ROOT))
 
 from govengine.context import ravenclaw_context
+from paths import configured_workspace  # type: ignore
 
-_CONTEXT = ravenclaw_context(Path(__file__))
+_CONTEXT = ravenclaw_context(configured_workspace(_BOOTSTRAP_ROOT))
 ROOT = _CONTEXT.repo_root
 
 from sclite.artifacts import *  # noqa: F401,F403

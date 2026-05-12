@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT_DIR="${RAVENCLAW_WORKSPACE:-$SCRIPT_ROOT}"
 MODE="${1:-install}"
 VENV_DIR="${VENV_DIR:-$ROOT_DIR/.venv}"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
@@ -18,10 +19,11 @@ ensure_venv() {
 }
 
 install_key() {
-  "$PYTHON_BIN" - <<'PY'
+  ROOT_FOR_INSTALL_KEY="$ROOT_DIR" "$PYTHON_BIN" - <<'PY'
 from pathlib import Path
 import hashlib
-root = Path.cwd()
+import os
+root = Path(os.environ['ROOT_FOR_INSTALL_KEY'])
 parts = []
 for rel in ['pyproject.toml', 'logdash/requirements.txt']:
     p = root / rel
@@ -39,7 +41,7 @@ install_deps() {
     return 0
   fi
   python -m pip install --upgrade pip
-  python -m pip install -e '.[dev]'
+  python -m pip install -e "$ROOT_DIR[dev]"
   printf '%s' "$current_key" > "$INSTALL_STAMP"
 }
 
@@ -100,6 +102,11 @@ print('public_demo_smoke_ok')
 PY
 }
 
+run_scenario() {
+  install_deps
+  python "$ROOT_DIR/scripts/run_demo_scenario.py" --output-dir "${DEMO_SCENARIO_OUTPUT_DIR:-$DEMO_OUTPUT_DIR/demo-scenario}"
+}
+
 usage() {
   cat <<'EOF'
 Usage: scripts/bootstrap_public_demo.sh <mode>
@@ -112,6 +119,7 @@ Modes:
   bundle       Generate reusable demo artifacts into DEMO_OUTPUT_DIR (default: demo-output)
   logdash      Start Logdash on LOGDASH_PORT (default: 9091)
   smoke        Run a bounded public demo smoke check
+  scenario     Run the Ravenclaw/GovEngine/SCLite public-safe demo scenario
 EOF
 }
 
@@ -142,6 +150,9 @@ case "$MODE" in
   smoke)
     install_deps
     run_smoke
+    ;;
+  scenario)
+    run_scenario
     ;;
   -h|--help|help)
     usage

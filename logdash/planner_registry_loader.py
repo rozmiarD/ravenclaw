@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).resolve().parents[1] / 'engine'
+_WORKSPACE_ROOT = Path(os.getenv('RAVENCLAW_WORKSPACE') or Path(__file__).resolve().parents[1]).expanduser().resolve()
+ROOT = _WORKSPACE_ROOT / 'engine'
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
