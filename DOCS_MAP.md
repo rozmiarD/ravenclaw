@@ -47,9 +47,12 @@ Start with:
 6. `references/logdash-operator-truth-contracts.md`
 7. `references/evaluation-replay-contract.md`
 8. `references/effectiveness-metrics-contract.md`
-9. `references/openclaw-adapter-contract-map.md`
-10. `references/carrier-readiness-checklist.md`
-11. `references/carrier-readiness-packet-template.md`
+9. `references/ooda-receipt-evidence-notes.md`
+10. `references/openclaw-adapter-contract-map.md`
+11. `references/carrier-readiness-checklist.md`
+12. `references/carrier-readiness-packet-template.md`
+13. `references/openclaw-carrier-readiness-packet-2026-05-12.md`
+14. `references/ravenclaw-consumer-cleanup-2026-05-12.md`
 
 ## If you want proof-of-value context
 

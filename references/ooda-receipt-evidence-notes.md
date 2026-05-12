@@ -91,6 +91,13 @@ It proves a Ravenclaw adapter can honor GovEngine OODA `pause`, `abort`, and `co
 
 ## Integration status
 
-Current status: contract/documentation and adapter seam test are complete.
+Current status: contract/documentation, adapter seam test, and compact receipt/evidence projection are complete for public-safe Ravenclaw proof artifacts.
 
-Remaining implementation work, if desired later: wire compact OODA decision summaries into the real runtime receipt/evidence builders while preserving the redaction rules above.
+Implemented projection:
+
+- `engine/ooda_receipts.py` compacts GovEngine OODA decision dictionaries into public-safe summaries.
+- `engine/security_contract_layer.py` adds compact `control_decisions` to v0.1 and v0.2 execution receipts when a pipeline/runner receipt supplies OODA decisions.
+- Evidence bundle/contract builders record OODA decisions as governance evidence only, not vulnerability evidence.
+- `engine/tests/test_security_contract_layer_wrapper.py` covers redaction of raw observation detail/facts while preserving decision, reason, interrupting state, step index, and orientation summary.
+
+Future work may wire more live-runtime sources into the same projection path, but the public artifact boundary is now explicit.

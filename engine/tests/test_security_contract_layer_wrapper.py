@@ -23,10 +23,12 @@ def test_engine_security_contract_layer_delegates_generic_helpers_to_scl() -> No
     assert wrapper.proof_trace_manifest is core_artifacts.proof_trace_manifest
 
 
-def test_engine_security_contract_layer_uses_ravenclaw_adapter_for_proof_trace() -> None:
-    assert wrapper.build_proof_trace_artifacts is adapter.build_proof_trace_artifacts
+def test_engine_security_contract_layer_uses_ravenclaw_adapter_for_core_artifacts() -> None:
     assert wrapper.build_policy_decision_artifact is adapter.build_policy_decision_artifact
-    assert wrapper.build_lifecycle_artifacts_v02 is adapter.build_lifecycle_artifacts_v02
+    assert wrapper.build_execution_contract_v02 is adapter.build_execution_contract_v02
+    assert wrapper.build_execution_ticket_v02 is adapter.build_execution_ticket_v02
+    assert wrapper.build_intent_contract_v02 is adapter.build_intent_contract_v02
+    assert wrapper.LIFECYCLE_TRACE_FILES_V02 == adapter.LIFECYCLE_TRACE_FILES_V02
 
 
 def test_ravenclaw_adapter_builds_policy_decision_from_engine_helpers() -> None:
@@ -151,3 +153,55 @@ def test_scl_ravenclaw_adapter_is_govengine_compat_wrapper() -> None:
     assert adapter.build_lifecycle_artifacts_v02 is gov_adapter.build_lifecycle_artifacts_v02
     assert adapter.build_execution_ticket_v02 is gov_adapter.build_execution_ticket_v02
     assert adapter.LIFECYCLE_TRACE_FILES_V02 == gov_adapter.LIFECYCLE_TRACE_FILES_V02
+
+
+def test_wrapper_projects_compact_ooda_decisions_into_receipts_without_raw_telemetry() -> None:
+    pipeline_data = _demo_pipeline_data()
+    pipeline_data['engine']['control_decisions'] = [
+        {
+            'decision': 'cooldown',
+            'reason_code': 'host_health_transport_noise',
+            'interrupting': True,
+            'cooldown_subject': str(Path.home() / 'private-host-label'),
+            'observations': [
+                {
+                    'kind': 'before_step',
+                    'severity': 'warning',
+                    'subject': 'curl',
+                    'detail': 'raw stderr and token should not appear',
+                    'facts': {'step_index': 1, 'token': 'secret-token'},
+                }
+            ],
+            'orientation': {
+                'scope_ok': True,
+                'policy_ok': True,
+                'ticket_ok': True,
+                'spec_ok': True,
+                'host_health': 'transport_noise',
+                'output_shape': 'expected',
+                'operator_control': 'run',
+                'budget_state': 'ok',
+                'notes': ['private detail'],
+            },
+        }
+    ]
+
+    proof = wrapper.build_proof_trace_artifacts(pipeline_data)
+    receipt = proof['execution_receipt.json']
+    evidence = proof['evidence_bundle.json']
+    summary = proof['evidence_summary.md']
+    lifecycle = wrapper.build_lifecycle_artifacts_v02(pipeline_data)
+
+    assert receipt['control_decision_count'] == 1
+    decision = receipt['control_decisions'][0]
+    assert decision['decision'] == 'cooldown'
+    assert decision['step_index'] == 1
+    assert decision['observation_kinds'] == ['before_step']
+    assert 'observations' not in decision
+    assert 'detail' not in str(decision)
+    assert 'secret-token' not in json.dumps(proof, sort_keys=True)
+    assert 'private detail' not in json.dumps(proof, sort_keys=True)
+    assert evidence['governance_evidence']['ooda_control_evaluated'] is True
+    assert 'OODA control decisions' in summary
+    assert lifecycle['execution_receipt.v0.2.json']['control_decision_count'] == 1
+    assert lifecycle['evidence_contract.json']['governance_evidence']['control_decision_count'] == 1
