@@ -17,16 +17,16 @@ That gives you the project shape, the safe public demo path, the maturity status
 ## If you want to validate the repo
 
 Start with:
-1. `PUBLIC_STATUS.md`
-2. `REVIEWER_VALIDATION_GUIDE.md`
-3. `INSTALL.md`
+1. `INSTALL.md`
+2. `DEMO.md`
+3. `REVIEWER_VALIDATION_GUIDE.md`
 4. `VALIDATION.md`
 5. `QUALITY_SIGNALS.md`
-6. `scripts/validate_public_install.py`
-7. `.github/workflows/pytest.yml`
-8. `tests/test_logdash_smoke.py`
+6. `PUBLIC_STATUS.md`
+7. `scripts/validate_public_install.py`
+8. `.github/workflows/pytest.yml`
 
-Use this path to separate current claims from checks that can be run locally.
+Use this path to run the local demo scenario first, then separate current claims from checks that can be reproduced locally.
 
 ## If you want the shortest architecture understanding
 

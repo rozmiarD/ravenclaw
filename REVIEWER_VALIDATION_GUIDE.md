@@ -4,6 +4,18 @@ This guide gives a public reviewer the shortest useful path for validating Raven
 
 It is intentionally local/public-safe. It does **not** authorize live target execution, protocol adapter work, publication, or production-readiness claims.
 
+## Fastest useful path
+
+If you only have a few minutes after installing dev dependencies:
+
+```bash
+./scripts/bootstrap_public_demo.sh scenario
+python scripts/validate_public_install.py --dev
+python scripts/list_public_validation_surfaces.py --format json --check
+```
+
+This gives you a generated Ravenclaw/GovEngine/SCLite scenario, confirms the active package chain, and lists the public validation surfaces without requiring live targets. For broader confidence, continue with the full guide below.
+
 ## 1. Start with repo truth
 
 Read these first:

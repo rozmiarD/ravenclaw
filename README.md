@@ -48,17 +48,14 @@ The current reusable direction is a small **Security Contract Layer** backed by 
 
 The current official public-safe path is local and dry-run oriented.
 
-Recommended order:
+Shortest reviewer path:
 1. `INSTALL.md`
-2. `ENVIRONMENT_SUPPORT.md`
-3. `DEMO.md`
-4. `VALIDATION.md` / `PROOF_OF_VALUE.md`
-5. `QUALITY_SIGNALS.md`
-6. `PUBLIC_STATUS.md`
-7. `AUDIENCE.md`
-8. `DOCS_MAP.md`
-9. `PUBLISHING.md`
-10. `ARCHITECTURE_OVERVIEW.md`
+2. `DEMO.md`
+3. `REVIEWER_VALIDATION_GUIDE.md`
+4. `QUALITY_SIGNALS.md`
+5. `PUBLIC_STATUS.md`
+
+Broader navigation lives in `DOCS_MAP.md`; architecture depth starts with `ARCHITECTURE_OVERVIEW.md`.
 
 This path is intentionally narrow and honest.
 It shows the governed flow with a small one-command demo entrypoint (`bin/demo`), a shared bootstrap path (`scripts/bootstrap_public_demo.sh`), and an explicit `RAVENCLAW_MODE=demo` delivery profile, without pretending the repo already has a polished one-command public deployment story.
