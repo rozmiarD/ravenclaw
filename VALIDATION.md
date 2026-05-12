@@ -79,6 +79,7 @@ Running the suite exercises public-visible correctness signals across areas such
 - planner and runtime contracts
 - policy and approval behavior
 - execution contract shaping
+- demo-only GovEngine signer/verifier trust-port binding for lifecycle tickets (no PKI/key ownership claim)
 - Logdash control and state projection behavior
 - runtime recovery truth
 - evaluation and replay semantics
@@ -91,6 +92,7 @@ If you want to inspect representative trust anchors before or after running test
 - `tests/test_logdash_smoke.py`
 - `tests/test_logdash_operator_truth_contracts.py`
 - `engine/tests/test_execution_contracts.py`
+- `engine/tests/test_govengine_control_gate_adapter.py`
 - `engine/tests/test_runtime_plan_service_contracts.py`
 - `references/runtime-task-contract-v2.md`
 - `references/logdash-operator-truth-contracts.md`

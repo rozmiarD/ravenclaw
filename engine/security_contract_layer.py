@@ -14,6 +14,7 @@ _CONTEXT = ravenclaw_context(configured_workspace(_BOOTSTRAP_ROOT))
 ROOT = _CONTEXT.repo_root
 
 from sclite.artifacts import *  # noqa: F401,F403
+from sclite.integrity import artifact_descriptor
 from sclite.redaction import sanitize_public_artifact  # noqa: F401
 from sclite.scope_fidelity import (  # noqa: F401
     build_scope_fidelity_report,
@@ -33,6 +34,7 @@ from scl_ravenclaw_adapter import (  # noqa: F401
     build_proof_trace_artifacts as _build_proof_trace_artifacts,
     redact_prepared_execution_spec as redact_prepared_spec,
 )
+from govengine_trust_demo import demo_sign_execution_contract  # type: ignore
 from ooda_receipts import (  # type: ignore
     add_ooda_to_evidence_bundle,
     add_ooda_to_execution_receipt,
@@ -94,6 +96,11 @@ def build_lifecycle_artifacts_v02(pipeline_data):
     policy = build_policy_decision_artifact_v02(pipeline_data, intent)
     contract = build_execution_contract_v02(pipeline_data, intent, policy)
     ticket = build_execution_ticket_v02(pipeline_data, policy, contract)
+    if str(((pipeline_data.get('settings') or {}) if isinstance(pipeline_data.get('settings'), dict) else {}).get('runtime_mode') or '') == 'demo':
+        trust = demo_sign_execution_contract(artifact_descriptor(contract), purpose='execution_contract_ticket_binding')
+        ticket['signature'] = trust['signature']
+        ticket['trust_decision'] = trust['trust_decision']
+        ticket['non_claims'] = list(dict.fromkeys(list(ticket.get('non_claims') or []) + trust['non_claims']))
     receipt = build_execution_receipt_v02(pipeline_data, ticket, contract)
     evidence = build_evidence_contract_v02(pipeline_data, receipt, ticket)
     from sclite.integrity import build_artifact_chain_manifest

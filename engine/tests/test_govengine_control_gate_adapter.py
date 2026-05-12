@@ -8,6 +8,7 @@ if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
 from govengine_control_gate_adapter import evaluate_govengine_control_gate  # type: ignore
+from govengine_trust_demo import demo_sign_execution_contract  # type: ignore
 from sclite.integrity import artifact_descriptor  # type: ignore
 
 
@@ -81,3 +82,22 @@ def test_control_gate_adapter_stays_out_when_ticket_gate_not_required() -> None:
         'reason_code': 'execution_ticket_not_required',
         'available': False,
     }
+
+def test_control_gate_adapter_accepts_demo_signature_trust_port_shape() -> None:
+    ticket, contract, ticket_gate = _ticket_and_contract()
+    trust = demo_sign_execution_contract(artifact_descriptor(contract), signer_id="owner-demo")
+    ticket["signature"] = trust["signature"]
+    ticket["trust_decision"] = trust["trust_decision"]
+
+    result = evaluate_govengine_control_gate(
+        dry_run=True,
+        require_execution_ticket=True,
+        execution_ticket_gate=ticket_gate,
+        execution_ticket=ticket,
+        execution_contract=contract,
+    )
+
+    assert result["allowed"] is True
+    assert result["signature_gate"]["allowed"] is True
+    assert result["signature_gate"]["context"]["metadata"]["signature"]["mode"] == "detached_demo_digest"
+    assert result["signature_gate"]["context"]["trust_decision"]["trust_status"] == "trusted"

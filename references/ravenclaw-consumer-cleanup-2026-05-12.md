@@ -33,12 +33,14 @@ These remain host/runtime-owned and should not be moved into GovEngine now:
 - `engine/scl_ravenclaw_adapter.py` should remain a compatibility alias to GovEngine's SCLite adapter while public imports/tests still reference the Ravenclaw path.
 - `engine/govengine_security_profile.py` should remain as a defensive compatibility entrypoint. The current package floor expects `govengine.security_profile`, but the wrapper keeps older local environments from failing hard and makes Ravenclaw's expected optional profile explicit.
 - `engine/govengine_control_gate_adapter.py` remains appropriate because it assembles Ravenclaw host artifacts/context into GovEngine gate inputs without moving host policy/state ownership into GovEngine.
+- `engine/govengine_trust_demo.py` remains Ravenclaw-owned host projection glue: it exercises GovEngine signer/verifier ports in public demo artifacts while keeping PKI, CA, KMS, and key-store ownership out of GovEngine and Ravenclaw.
 
 ### New bounded cleanup completed
 
 - `engine/ooda_receipts.py` adds a Ravenclaw-owned projection layer for compact OODA control-decision summaries.
 - `engine/security_contract_layer.py` now projects those summaries into v0.1/v0.2 public receipts/evidence when runtime data supplies OODA decisions.
 - This keeps GovEngine responsible for the OODA decision contract and Ravenclaw responsible for public artifact projection/redaction.
+- Demo lifecycle tickets now carry deterministic signing/trust metadata bound to the execution-contract digest, explicitly labelled as fixture/demo evidence rather than production identity proof.
 
 ## Non-actions
 

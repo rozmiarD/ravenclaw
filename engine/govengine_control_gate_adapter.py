@@ -50,7 +50,7 @@ def evaluate_govengine_control_gate(
         from govengine.core import ArtifactState
         from govengine.execution.gate import ExecutionGate, ExecutionGateInput, RunnerProfile
         from govengine.sclite_contracts import descriptor_from_artifact
-        from govengine.signing import SigningPolicy, signature_envelope_from_artifact, signature_transition_decision
+        from govengine.signing import SigningPolicy, TrustPolicy, signature_envelope_from_artifact, signature_transition_decision
         from govengine.state_index import ArtifactStateIndex
     except Exception as exc:  # pragma: no cover - defensive fallback for unsupported local environments
         return _unavailable(exc)
@@ -72,10 +72,37 @@ def evaluate_govengine_control_gate(
     if ticket:
         ticket_descriptor = descriptor_from_artifact(ticket, role='execution_ticket')
         signature = signature_envelope_from_artifact(ticket)
+        verification = None
+        require_signature = False
+        allowed_modes = ('not_signed_integrity_only', 'detached_signature', 'detached_demo_digest')
+        if signature.mode == 'detached_demo_digest':
+            contract_descriptor = descriptor_from_artifact(contract, role='execution_contract') if contract else ticket_descriptor
+            try:
+                from govengine.signing import DemoDigestVerifier  # type: ignore
+
+                verification = DemoDigestVerifier(
+                    verifier_id=str(((ticket.get('trust_decision') or {}) if isinstance(ticket.get('trust_decision'), dict) else {}).get('verifier_id') or 'ravenclaw-demo-verifier'),
+                    allowed_signer_ids=(str(signature.signer_id),) if signature.signer_id else (),
+                ).verify(contract_descriptor, signature)
+            except (ImportError, AttributeError):
+                trust = (ticket.get('trust_decision') or {}) if isinstance(ticket.get('trust_decision'), dict) else {}
+                from govengine.signing import VerificationResult
+
+                verification = VerificationResult(
+                    status=str(trust.get('status') or 'missing'),
+                    trust_status=str(trust.get('trust_status') or 'unknown'),
+                    reason_code=str(trust.get('reason_code') or ''),
+                    verifier_id=str(trust.get('verifier_id') or 'ravenclaw-compat-verifier'),
+                    metadata={'source': 'ticket_trust_decision_fallback'},
+                )
+            require_signature = True
+            ticket_descriptor = contract_descriptor
         signature_decision = signature_transition_decision(
             ticket_descriptor,
             signature=signature,
-            signing_policy=SigningPolicy(require_signature=False),
+            verification=verification,
+            signing_policy=SigningPolicy(require_signature=require_signature, allowed_modes=allowed_modes),
+            trust_policy=TrustPolicy(allowed_trust_statuses=('trusted',)) if require_signature else None,
         )
         artifact_states.append(ArtifactState(
             descriptor=ticket_descriptor,

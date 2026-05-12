@@ -12,7 +12,7 @@ if str(ENGINE_DIR) not in sys.path:
 import security_contract_layer as wrapper  # type: ignore
 import scl_ravenclaw_adapter as adapter  # type: ignore
 from sclite import artifacts as core_artifacts
-from sclite.integrity import verify_artifact_chain_manifest
+from sclite.integrity import artifact_descriptor, verify_artifact_chain_manifest
 
 
 def test_engine_security_contract_layer_delegates_generic_helpers_to_scl() -> None:
@@ -99,6 +99,24 @@ def test_ravenclaw_adapter_builds_sclite_v02_lifecycle_chain(tmp_path: Path) -> 
         'evidence_contract',
     ]
 
+
+
+def test_wrapper_adds_demo_signature_trust_metadata_to_demo_lifecycle_chain() -> None:
+    artifacts = wrapper.build_lifecycle_artifacts_v02(_demo_pipeline_data())
+    ticket = artifacts['execution_ticket.json']
+
+    assert ticket['signature']['mode'] == 'detached_demo_digest'
+    assert ticket['signature']['binds_digest'] == artifact_descriptor(artifacts['execution_contract.json'])['digest']
+    assert ticket['trust_decision']['trust_status'] == 'trusted'
+    assert 'no_pki_ca_kms_or_key_store_in_govengine' in ticket['non_claims']
+
+
+def test_wrapper_keeps_integrity_only_signature_outside_demo_runtime_mode() -> None:
+    pipeline_data = _demo_pipeline_data()
+    pipeline_data['settings']['runtime_mode'] = 'test'
+    artifacts = wrapper.build_lifecycle_artifacts_v02(pipeline_data)
+
+    assert artifacts['execution_ticket.json']['signature']['mode'] == 'not_signed_integrity_only'
 
 def test_root_schema_fixture_copies_remain_in_parity_with_sclite_dependency() -> None:
     for schema_file in core_artifacts.SCHEMA_FILES.values():
