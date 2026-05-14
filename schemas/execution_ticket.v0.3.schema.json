@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ExecutionTicket v0.3",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "schema_ref",
+    "ticket_id",
+    "created_at",
+    "ticket_profile",
+    "ticket_semantics",
+    "links",
+    "approval",
+    "validity",
+    "execution_limits",
+    "subject_binding",
+    "scope_binding",
+    "spend_limits",
+    "integrity",
+    "non_claims"
+  ],
+  "properties": {
+    "artifact_type": {"const": "execution_ticket"},
+    "schema_version": {"const": "v0.3"},
+    "schema_ref": {"const": "schemas/execution_ticket.v0.3.schema.json"},
+    "ticket_id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "minLength": 1},
+    "ticket_profile": {
+      "type": "string",
+      "enum": ["review_record", "scoped_execution_ticket", "external_capability_ref"]
+    },
+    "ticket_semantics": {
+      "type": "object",
+      "required": ["kind", "consumable_by_runtime", "default_transferable"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["review_record", "runtime_consumable_scoped_ticket", "external_capability_reference"]
+        },
+        "consumable_by_runtime": {"type": "boolean"},
+        "default_transferable": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "links": {
+      "type": "object",
+      "required": ["execution_contract"],
+      "properties": {
+        "execution_contract": {"$ref": "#/$defs/artifact_link"},
+        "intent": {"$ref": "#/$defs/artifact_link"},
+        "policy_decision": {"$ref": "#/$defs/artifact_link"}
+      },
+      "additionalProperties": true
+    },
+    "approval": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {"type": "string", "enum": ["approved_for_dry_run", "approved", "rejected", "owner_approval_required", "expired", "revoked"]},
+        "approval_id": {"type": "string", "minLength": 1},
+        "approver_kind": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "validity": {
+      "type": "object",
+      "required": ["not_before", "not_after"],
+      "properties": {
+        "not_before": {"type": "string", "minLength": 1},
+        "not_after": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "execution_limits": {
+      "type": "object",
+      "required": ["mode", "max_runs"],
+      "properties": {
+        "mode": {"type": "string", "enum": ["dry_run", "live"]},
+        "max_runs": {"type": "integer", "minimum": 1},
+        "one_shot": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "subject_binding": {
+      "type": "object",
+      "required": ["issued_for_actor", "usable_by_runtime"],
+      "properties": {
+        "issued_for_actor": {"type": "string", "minLength": 1},
+        "usable_by_runtime": {"type": "string", "minLength": 1},
+        "session_ref": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "scope_binding": {
+      "type": "object",
+      "required": ["target_kind", "target_ref", "target_host", "tool", "mode", "normalized_args_digest"],
+      "properties": {
+        "target_kind": {"type": "string", "minLength": 1},
+        "target_ref": {"type": "string", "minLength": 1},
+        "target_host": {"type": "string", "minLength": 1},
+        "tool": {"type": "string", "minLength": 1},
+        "mode": {"type": "string", "enum": ["dry_run", "live"]},
+        "normalized_args_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      },
+      "additionalProperties": true
+    },
+    "spend_limits": {
+      "type": "object",
+      "required": ["max_uses", "one_shot", "network_execution_allowed", "requires_receipt", "requires_evidence_contract"],
+      "properties": {
+        "max_uses": {"type": "integer", "minimum": 1},
+        "one_shot": {"type": "boolean"},
+        "network_execution_allowed": {"type": "boolean"},
+        "requires_receipt": {"type": "boolean"},
+        "requires_evidence_contract": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "integrity": {
+      "type": "object",
+      "required": ["profile", "ticket_binds_execution_contract_digest"],
+      "properties": {
+        "profile": {"type": "string", "minLength": 1},
+        "ticket_binds_execution_contract_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": true
+    },
+    "signature": {"type": "object"},
+    "trust_profile": {"type": "object"},
+    "non_claims": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+  },
+  "$defs": {
+    "artifact_link": {
+      "type": "object",
+      "required": ["role", "descriptor"],
+      "properties": {
+        "role": {"type": "string", "minLength": 1},
+        "descriptor": {"$ref": "#/$defs/descriptor"}
+      },
+      "additionalProperties": true
+    },
+    "descriptor": {
+      "type": "object",
+      "required": ["artifact_type", "schema_version", "schema_ref", "canonicalization", "algorithm", "digest", "canonical_bytes"],
+      "properties": {
+        "artifact_type": {"type": "string", "minLength": 1},
+        "schema_version": {"type": "string", "minLength": 1},
+        "schema_ref": {"type": "string", "minLength": 1},
+        "canonicalization": {"type": "string", "minLength": 1},
+        "algorithm": {"const": "sha256"},
+        "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "canonical_bytes": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
