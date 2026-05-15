@@ -2,191 +2,320 @@
 
 ## Purpose
 
-This file defines the recommended versioning roadmap for Ravenclaw from the historical `0.8.x` line through a future `2.0.0` line.
-It is intended to keep release numbers tied to meaningful architectural and operational milestones rather than incidental commit volume.
+This file defines Ravenclaw's version roadmap after the GovEngine/SCLite package-chain stabilization.
 
-Current public package/release truth is separately restaged at `0.10.0`.
-Use this file as a milestone map, not as the canonical statement of the currently asserted public package version.
+Current public source version: `0.10.0`.
+Current dependency baseline:
 
----
+```text
+Ravenclaw -> govengine>=0.1.6,<0.2 -> sclite-core>=0.3.5,<0.4
+```
+
+Use this as a milestone map, not as a promise that every milestone will become a PyPI/runtime release. Ravenclaw remains a source/reference security runtime until install, profile, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
+
+## Architecture direction
+
+Target ecosystem:
+
+```text
+SCLite     = contract / proof / review layer
+GovEngine  = deterministic governed-runtime kernel
+Ravenclaw  = reference security-research runtime and security domain profile
+Tecrax     = future governed infrastructure-operations runtime/profile
+```
+
+Ravenclaw's role is not to become a second GovEngine. Ravenclaw should preserve the security-research domain semantics, public-safe proof path, campaign UX, finding pipeline, Logdash/operator visibility, and future security harness adapters while generic mechanics move behind GovEngine contracts.
+
+Core thesis:
+
+```text
+LLM intent is not execution authority.
+```
+
+Ravenclaw should demonstrate that authorized security automation can be bounded, reviewable, interruptible, and accountable:
+
+```text
+intent
+  -> policy decision
+  -> execution contract
+  -> execution ticket
+  -> GovEngine gate
+  -> runner dry-run or bounded execution
+  -> receipt
+  -> evidence contract
+  -> SCLite review bundle
+```
+
+## Boundary rules
+
+Ravenclaw owns:
+
+- security research runtime semantics;
+- campaign and target/scope UX;
+- security task families and planning stages;
+- security-specific policies, audit checklists, and evidence rules;
+- security tools/capabilities and host adapters;
+- finding pipeline and reporting semantics;
+- Logdash/operator UI;
+- public demo/proof narrative;
+- future OpenClaw/harness adapter work after kernel/profile boundaries are stable.
+
+Ravenclaw should not own long-term generic versions of:
+
+- orchestrator kernel mechanics;
+- event/state/control envelopes;
+- queue/scheduler/heartbeat/lease mechanics;
+- generic planner/task contracts;
+- generic admission/policy/approval/ticket controllers;
+- generic runner protocol/supervision;
+- generic evidence-review contracts;
+- trust/signer/verifier ports;
+- carrier protocols.
+
+Refactor principle:
+
+```text
+Extract contracts and adapters, not files.
+```
+
+Do not mechanically move `engine/auto_campaign_runner.py` or other Ravenclaw modules into GovEngine. Define neutral GovEngine contracts first, route Ravenclaw through compatibility wrappers, validate parity, then thin legacy paths.
+
+## Ravenclaw Security Profile shape
+
+Future profile-oriented structure should converge toward:
+
+```text
+ravenclaw/
+  security_profile/
+    task_families.py
+    planning_stages.py
+    capabilities.py
+    tools.py
+    audit_checklists.py
+    policy_rules.py
+    evidence_rules.py
+
+  runtime/
+    campaign.py
+    target_surface.py
+    finding_pipeline.py
+    public_demo.py
+
+  logdash/
+    operator UI
+
+  adapters/
+    openclaw/     # later, after readiness review
+```
+
+Security profile examples:
+
+- resource types: `host`, `url`, `endpoint`, `web_app`;
+- task families: `recon`, `authz`, `idor`, `workflow`, `content_discovery`, `tls_assessment`;
+- planning stages: `discovery`, `validation`, `control_boundary_confirmation`, `state_transition_confirmation`, `bounded_exploit_proof`, `report_artifact_capture`.
+
+This structure is directional. It should emerge through compatibility layers and tests, not through a large unvalidated tree rewrite.
 
 ## Versioning principles
 
-- Patch and minor increments inside an active line should reflect bounded implementation progress, stabilization, hardening, and operator-visible improvements.
-- Milestone versions should represent a real step-change in architecture maturity, operational trust, or platform capability.
-- Internal refactor alone should not force a milestone bump unless it materially changes maintainability, reliability, or operator control.
-- Governance, operator control, and runtime inspectability matter as much as raw automation capability.
+- Version bumps should reflect meaningful boundary, validation, or operator-control improvements.
+- Internal refactors are valuable only when they preserve behavior and reduce real coupling.
+- Public claims must lag behind validated behavior.
+- Controlled live execution is a proof of governance, not a promise of offensive autonomy.
+- Adapters come after kernel/profile/proof stability. Default order: OpenClaw first, MCP later, A2A last/example-first.
 
----
+## `0.10.x` — package-chain and public-safe proof stabilization
 
-## `0.8.x` — bounded refactor and stabilization line
+Current line.
 
-### Intent
-Complete the current runner-thinning and runtime-shaping work without overstating the maturity of the platform.
+Intent:
 
-### Typical changes
-- bounded extraction waves in `engine/auto_campaign_runner.py`
-- test expansion and regression validation in `engine/tests`
-- contract cleanup and runtime seam clarification
-- artifact/state ownership cleanup
-- changelog, reports, and implementation-plan hygiene
-- no major operator-facing semantic shift
+- keep the current public-safe demo stable;
+- consume published GovEngine/SCLite package ranges;
+- keep Security Contract validation green;
+- document Ravenclaw as the security reference runtime/profile for the GovEngine/SCLite ecosystem;
+- mark legacy direct execution paths as compatibility/dev where appropriate;
+- do not start carrier adapters or live-authority expansion.
 
-### Exit criteria
-- the main runner is substantially thinned and no longer the primary architectural debt hotspot
-- remaining seams are manageable and explicit
-- regression coverage is consistently green
-- documentation and operational closeouts track the work accurately
+Current baseline:
 
----
+- Ravenclaw consumes `govengine>=0.1.6,<0.2` and `sclite-core>=0.3.5,<0.4`;
+- public install validation and Security Contract validation pass;
+- GovEngine/SCLite ticket and receipt-bounded-evidence surfaces are integrated into the public proof chain.
 
-## `0.9.0` — stabilization and runtime architecture maturity milestone
+Exit criteria:
 
-### Intent
-Mark the point where the runtime becomes architecturally defensible, materially more inspectable, and truthfully documented, even if the whole platform is not yet ready to be called fully production-grade.
+- docs consistently describe SCLite/GovEngine/Ravenclaw boundaries;
+- public demo and validation receipts remain reproducible;
+- stale roadmap language about older `0.8/0.9/1.x` directions is archived or remapped.
 
-### Required characteristics
-- Phase B3 / runner-thinning work is effectively complete
-- orchestration, policy, execution, persistence, and reporting boundaries are clearer and more durable
-- planner to runtime to execution handoff contracts are stable and documented
-- runtime artifact ownership is coherent and inspectable
-- Logdash and runtime control flow reflect the architecture cleanly
-- docs and operator-visible truth surfaces are aligned closely enough with live runtime behavior to avoid major overclaiming
+## `0.11.x` — GovEngine-compatible event/state/control mapping
 
-### What should be true
-- `engine/auto_campaign_runner.py` is no longer the main structural liability
-- the codebase feels intentionally shaped rather than actively being decompressed from historical monolith form
-- remaining debt is mostly bounded downstream cleanup, compatibility reduction, and clarity work rather than rescue refactoring
-- full engine regression remains green
+Intent:
 
-### What `0.9.0` does **not** need to imply
-- that every legacy compatibility path is already removed
-- that every consumer reads one perfectly singular truth surface
-- that all transition-era fallback behavior is gone
+Map Ravenclaw runtime/control state onto GovEngine-compatible models while preserving Logdash behavior.
 
-The honest bar is lower and stronger:
-- architecture stabilized
-- truth surfaces materially improved
-- remaining debt clearly bounded
+Planned work:
 
----
+- map `.auto_campaign.state.json` to `GovRunState`;
+- map `.orchestrator.state.json` to `GovOrchestratorState`;
+- map `.auto_campaign.queues.json` or current queue snapshots to `GovQueueSnapshot`;
+- map `.runtime_snapshot.json` or equivalent status projections to `GovRuntimeSnapshot`;
+- map Logdash/start/pause/resume/stop/cancel/replan/cooldown/archive semantics to GovEngine control actions;
+- keep state storage host-owned and public/private boundaries explicit.
 
-## Future `1.0.x` line — production-grade governance runtime
+Definition of done:
 
-### Intent
-Describe the conditions under which Ravenclaw could honestly be treated again as a stable production-grade runtime in a future public `1.0.x` line.
+- Ravenclaw control semantics still work;
+- GovEngine-compatible state/control adapters have focused tests;
+- no Logdash UI behavior is moved into GovEngine;
+- public docs explain canonical vs compatibility state paths.
 
-### Required characteristics
-- major architectural risk in the orchestration path is retired
-- governance and policy gates are explicit, enforced, and inspectable
-- planner to runtime to execution flow is stable under normal operator use
-- owner approval, stop-loss, pause/resume, and runtime control behavior are dependable
-- observability, replayability, and core operator documentation are solid
-- restart, resume, and partial-failure behavior are trustworthy enough for real operational usage
+## `0.12.x` — Planning and runtime task contract migration
 
-### What should be true
-- operators can use the system without feeling they are standing on top of an unfinished refactor
-- state files and runtime artifacts behave predictably
-- safety/control maturity matches automation maturity
+Intent:
 
----
+Route Ravenclaw planner/runtime task semantics through GovEngine planning/task contracts while preserving security meaning in Ravenclaw.
 
-## `1.1.x` to `1.4.x` — hardening and operator ergonomics
+Planned work:
 
-### `1.1.x`
-- execution-engine hardening
-- stronger policy and admission explanations
-- tighter evaluation and replay contracts
-- Security Contract Layer v0.1 artifacts validated against live runtime output
-- reduced documentation drift
+- map `engine/runtime_task_schema.py` to `GovTaskContract` compatibility;
+- map `engine/planer/planner_intent_contract.py` to `PlanIntentContract` compatibility;
+- preserve planning ladder, evidence goals, activation/depth/priority semantics, and security profile stages;
+- add semantic-preservation tests from blueprint -> runtime plan -> queue/admission payload;
+- keep security-specific planning heuristics in Ravenclaw profile.
 
-### `1.2.x`
-- Logdash/operator UX improvements
-- stronger diagnostics and runtime introspection
-- clearer campaign controls and state displays
-- legacy state-path cleanup
+Definition of done:
 
-### `1.3.x`
-- improved planner/runtime semantic preservation
-- more deterministic runtime-plan regeneration
-- clearer visibility into host-state learning and queue scoring
+- RuntimeTaskContract v2 is backed by or convertible to GovEngine task contracts;
+- planner intent contracts can be validated through GovEngine-compatible paths;
+- existing public demo and targeted runtime-plan tests remain green.
 
-### `1.4.x`
-- reporting and export improvements
-- stronger audit trail visibility
-- better artifact explainability
-- improved maintenance and hygiene automation
+## `0.13.x` — Admission, audit, policy, and approval migration
 
----
+Intent:
 
-## `1.5.0` — adaptive platform milestone
+Move generic admission/go-no-go mechanics behind GovEngine while Ravenclaw keeps security policy semantics.
 
-### Intent
-Mark the point where Ravenclaw is not only stable, but meaningfully adaptive in how it evaluates, learns, and sequences work.
+Planned work:
 
-### Required characteristics
-- stronger runtime learning loops
-- better decision-quality feedback paths
-- more capable followup and qualification orchestration
-- better economics and effectiveness visibility
+- adapt `runtime_admission_policy.py` and generic parts of `runtime_execution_gate.py` to GovEngine `AdmissionController`/gate contracts;
+- map Ravenclaw auditor decisions to GovEngine `AuditDecision`/`ApprovalRequest` shapes;
+- keep security-specific signals, rules of engagement, target/scope policies, and owner-gated semantics in Ravenclaw;
+- add negative tests for policy drift, scope drift, budget/depth violation, cooldown, missing owner approval, and dry-run degradation.
 
-### What should be true
-- the system is visibly better at adapting campaign behavior based on prior runtime results
-- adaptation is still governance-bound and operator-inspectable
+Definition of done:
 
----
+- Ravenclaw can ask GovEngine whether a task may continue, must dry-run, requires approval/replan, or is blocked;
+- security-specific policy remains profile-owned;
+- public docs accurately describe non-claims and approval boundaries.
 
-## `1.6.x` to `1.9.x` — scale, trust, and operational depth
+## `0.14.x` — Execution supervision and Controlled Live Mode groundwork
 
-### Intent
-Expand reliability, visibility, and operational trust at larger runtime scope.
+Intent:
 
-### Typical changes
-- stronger resilience for longer-running campaigns
-- better support across target classes and surface-role variants
-- richer governance telemetry
-- stronger recovery and operator audit tooling
-- possible external control/API surfaces if they preserve the same governance model
+Route approved execution through GovEngine runner gate/supervisor while keeping live execution disabled unless explicitly authorized and bounded.
 
----
+Planned work:
 
-## Contract proof track — public-core maturation bridge
+- introduce Ravenclaw host adapter/profile runner around GovEngine `RunnerGate`/`ExecutionSupervisor`;
+- mark legacy `execute(action_spec)` style paths as compatibility/dev-only where possible;
+- support `demo`, `dry-run`, `local-lab`, and future `authorized-live`/`controlled-live` mode names;
+- require scope, operator authorization, policy decision, execution contract, ticket, runner profile, bounded args, timeout/env/cwd/stdin policy, receipt, evidence bounds, and stop/pause controls;
+- start with safe classes only: metadata collection, DNS/TLS/header inspection, bounded HTTP probing, controlled content discovery, local lab validation, and evidence capture.
 
-Before any future public `1.x` reassertion, Ravenclaw should complete a contract-proof track:
-- Ravenclaw Runtime remains the reference implementation.
-- The reusable asset direction is a Security Contract Layer, not a new protocol.
-- The public demo bundle should show a schema-validated trace from scope/input through policy decision, approved execution spec, dry-run receipt, and evidence summary.
-- OpenClaw Skill integration is the first practical later adapter after contract proof.
-- MCP Policy Gateway is later.
-- A2A security metadata/profile work is later and example-first.
+Controlled Live Mode framing:
 
-## `2.0.0` — second-generation Ravenclaw platform
+```text
+Execution is possible, but never from raw intent.
+```
 
-### Intent
-Declare a second-generation platform release where the architecture, governance model, control plane, and adaptive runtime form a coherent whole.
+Definition of done:
 
-### Required characteristics
-- modular runtime with minimal legacy drag
-- clean planner/runtime/execution contracts across the whole stack
-- strong operator inspectability and auditability
-- governance enforced in practice across control flow, not just documented in policy text
-- evaluation, replay, and learning are native platform capabilities
-- Logdash/control plane operates as a first-class operational surface
-- artifact ownership and state-path semantics are clear, durable, and low-friction
+- dry-run remains the default;
+- live backend is blocked by default and negative-tested;
+- local-lab/controlled-live paths require explicit operator approval and receipts;
+- no raw prompt/tool execution path bypasses GovEngine.
 
-### What should be true
-- the platform feels intentionally designed end-to-end rather than historically accumulated
-- operator trust comes from evidence, control, and clarity, not just passing tests
-- the system can evolve without reopening the same foundational architectural debt
+## `0.15.x` — Evidence/review migration
 
----
+Intent:
 
-## Short form summary
+Move generic evidence qualification/review contracts behind GovEngine while Ravenclaw keeps finding taxonomy and security reporting semantics.
 
-- `0.8.x` = bounded refactor and stabilization
-- `0.9.0` = runtime architecture maturity
-- future `1.0.x` = production-grade governance runtime (not the current public package signal)
-- `1.1.x` to `1.4.x` = hardening and operator ergonomics
-- `1.5.0` = adaptive platform milestone
-- `1.6.x` to `1.9.x` = scale, trust, and operational depth
-- `2.0.0` = second-generation Ravenclaw platform
+Planned work:
+
+- map confirmation policy, false-positive guards, control comparison, reproduction requirements, and evidence qualification to GovEngine review contracts;
+- bridge Ravenclaw finding/evidence output to SCLite review bundles;
+- preserve security finding taxonomy and report narrative in Ravenclaw;
+- add overclaim tests: dry-run cannot support live vulnerability claims, missing receipts cannot support execution truth, blocked receipts cannot support completed-action claims.
+
+Definition of done:
+
+- Ravenclaw evidence pipeline consumes GovEngine review contracts;
+- SCLite review-bundle validation remains the proof boundary;
+- public proof narrative is clearer and less Ravenclaw-specific.
+
+## `0.16.x` — Security profile packaging and adapter readiness
+
+Intent:
+
+Make Ravenclaw visibly a domain profile/runtime over GovEngine rather than a mixed generic/runtime monolith.
+
+Planned work:
+
+- converge toward `security_profile/` and `runtime/` structure where compatibility allows;
+- add profile conformance metadata once GovEngine Domain Profile SDK exists;
+- produce OpenClaw adapter readiness packet covering scope UX, redaction, command authority, lifecycle artifacts, rollback, and public/private boundaries;
+- defer MCP/A2A until OpenClaw readiness is proven and kernel/profile boundaries remain boring.
+
+Definition of done:
+
+- profile boundary is documented and tested;
+- OpenClaw adapter work has a readiness packet, not implementation sprawl;
+- no carrier bypasses GovEngine or SCLite.
+
+## Future `1.0` bar
+
+Ravenclaw should not claim `1.0` maturity until all of the following are true:
+
+- public demo/proof path is reproducible and truthful;
+- GovEngine/SCLite boundaries are integrated without duplicate generic logic;
+- Logdash state/control truth matches runtime behavior;
+- execution path is governed through contracts, tickets, policy, trust, runner gate, receipt, and review;
+- profile boundary is clear enough that Tecrax can exist as a second dry-run domain proof;
+- docs and non-claims are aligned with behavior;
+- validation, install, residue, and public-safety gates pass on the exact tree to be published.
+
+`1.0` should mean governance maturity and evidence-backed operator control, not merely feature volume.
+
+## Tecrax relationship
+
+Tecrax is the reserved name for the future governed infrastructure-operations runtime/profile built on GovEngine + SCLite. It should not inherit temporary working-name/product framing until naming language is deliberately chosen.
+
+Ravenclaw should prepare for Tecrax by extracting generic mechanics into GovEngine, not by importing infrastructure semantics into the security runtime.
+
+Tecrax should eventually prove portability with infrastructure tasks such as:
+
+- inspect service state;
+- diagnose failure;
+- propose a bounded change;
+- dry-run the change;
+- request approval;
+- execute only under explicit policy/ticket/runner bounds;
+- verify;
+- rollback if needed;
+- emit SCLite review bundle.
+
+Initial Tecrax proofs should be dry-run/local-lab only.
+
+## Stop conditions
+
+Pause for operator review if:
+
+- live execution authority would expand;
+- a carrier/harness could bypass GovEngine;
+- public docs would claim more than tests prove;
+- private operator state or target material might enter public commits;
+- a refactor requires published-history rewrite;
+- Ravenclaw behavior drifts without a compatibility test.

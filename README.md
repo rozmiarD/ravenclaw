@@ -40,9 +40,9 @@ Its core design claim is narrower:
 
 In short, Ravenclaw optimizes for useful actions that stay within policy, scope, and review boundaries.
 
-Ravenclaw now consumes **GovEngine** for reusable governed-execution helpers and **SCLite** for contract lifecycle artifacts.
+Ravenclaw now consumes **GovEngine** for reusable governed-runtime kernel mechanics and **SCLite** for contract lifecycle artifacts.
 
-The current reusable direction is a small **Security Contract Layer** backed by Ravenclaw Runtime artifacts: scope binding, policy decisions, prepared/approved execution specs, execution receipts, evidence summaries, and runtime truth. The reusable contract core is now the standalone `sclite` package/repo, while Ravenclaw consumes it as the governed reference runtime. OpenClaw, MCP, and A2A are potential later carriers for these contracts, not new protocols Ravenclaw is trying to own.
+The current reusable direction is a small **Security Contract Layer** backed by Ravenclaw Runtime artifacts: scope binding, policy decisions, prepared/approved execution specs, execution receipts, evidence summaries, and runtime truth. The reusable contract core is now the standalone `sclite` package/repo, while Ravenclaw is being shaped as the reference security-research runtime/profile over GovEngine + SCLite. OpenClaw, MCP, and A2A are potential later carriers for these contracts, not new protocols Ravenclaw is trying to own.
 
 ## Safe quickstart
 

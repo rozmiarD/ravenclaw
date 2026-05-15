@@ -13,7 +13,7 @@ These areas are currently the strongest public reference surfaces:
 - substantial regression and contract-test coverage
 - bounded public snapshot assembly path
 - the explicit public-core/private-overlay boundary model
-- SCLite-backed Security Contract Layer integration: SCLite is the reusable contract/schema dependency, while Ravenclaw remains the governed reference runtime rather than a new protocol
+- SCLite-backed Security Contract Layer integration: SCLite is the reusable contract/schema dependency, GovEngine is the reusable governed-runtime kernel dependency, and Ravenclaw remains the governed security reference runtime/profile rather than a new protocol
 - demo-mode GovEngine signing/trust-port projection on lifecycle tickets, explicitly as fixture evidence rather than PKI or production identity proof
 
 These are the parts of the repo most ready to be read as intentional system design rather than rough experimentation.
