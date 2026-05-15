@@ -2,9 +2,9 @@ from __future__ import annotations
 
 """Ravenclaw compatibility entrypoint for GovEngine's optional security profile.
 
-GovEngine 0.1.6 preserves ``govengine.security_profile`` and adds SCLite v0.3
-scoped-ticket gates. Ravenclaw's public package floor now expects that upstream
-facade, while this module keeps a small
+GovEngine 0.1.7 preserves ``govengine.security_profile`` and adds SCLite `0.5.1`
+review-bundle bridges on top of the scoped-ticket gates. Ravenclaw's public package
+floor now expects that upstream facade, while this module keeps a small
 host-side compatibility seam for older local environments: use the upstream
 facade when it exists, otherwise expose the same discovery shape from the
 surface registry and direct module imports.

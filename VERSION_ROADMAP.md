@@ -8,7 +8,7 @@ Current public source version: `0.10.0`.
 Current dependency baseline:
 
 ```text
-Ravenclaw -> govengine>=0.1.6,<0.2 -> sclite-core>=0.3.5,<0.4
+Ravenclaw -> govengine>=0.1.7,<0.2 -> sclite-core>=0.5.1,<0.6
 ```
 
 Use this as a milestone map, not as a promise that every milestone will become a PyPI/runtime release. Ravenclaw remains a source/reference security runtime until install, profile, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
@@ -139,7 +139,7 @@ Intent:
 
 Current baseline:
 
-- Ravenclaw consumes `govengine>=0.1.6,<0.2` and `sclite-core>=0.3.5,<0.4`;
+- Ravenclaw consumes `govengine>=0.1.7,<0.2` and `sclite-core>=0.5.1,<0.6`;
 - public install validation and Security Contract validation pass;
 - GovEngine/SCLite ticket and receipt-bounded-evidence surfaces are integrated into the public proof chain.
 
