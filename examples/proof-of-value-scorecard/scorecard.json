@@ -15,6 +15,10 @@
                 {
                     "path": "schemas/scope_fidelity_report.v0.1.schema.json",
                     "present": true
+                },
+                {
+                    "path": "schemas/scope_fidelity_report.v0.2.schema.json",
+                    "present": true
                 }
             ],
             "id": "scope_fidelity",

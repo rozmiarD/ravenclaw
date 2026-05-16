@@ -22,7 +22,12 @@ DIMENSIONS: list[dict[str, Any]] = [
     {
         'id': 'scope_fidelity',
         'title': 'Scope fidelity',
-        'evidence_paths': ['examples/scope-fidelity-report', 'scripts/build_scope_fidelity_report.py', 'schemas/scope_fidelity_report.v0.1.schema.json'],
+        'evidence_paths': [
+            'examples/scope-fidelity-report',
+            'scripts/build_scope_fidelity_report.py',
+            'schemas/scope_fidelity_report.v0.1.schema.json',
+            'schemas/scope_fidelity_report.v0.2.schema.json',
+        ],
         'claim': 'Target-binding/request-shape drift can be classified from local public-safe artifacts.',
         'non_claim': 'Does not scan hosts or infer authorization beyond supplied artifacts.',
     },

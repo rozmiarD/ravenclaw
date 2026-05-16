@@ -9,7 +9,7 @@ failed: `0`
 
 | Dimension | Status | Evidence | Non-claim |
 | --- | --- | --- | --- |
-| Scope fidelity | `passed` | `examples/scope-fidelity-report`<br>`scripts/build_scope_fidelity_report.py`<br>`schemas/scope_fidelity_report.v0.1.schema.json` | Does not scan hosts or infer authorization beyond supplied artifacts. |
+| Scope fidelity | `passed` | `examples/scope-fidelity-report`<br>`scripts/build_scope_fidelity_report.py`<br>`schemas/scope_fidelity_report.v0.1.schema.json`<br>`schemas/scope_fidelity_report.v0.2.schema.json` | Does not scan hosts or infer authorization beyond supplied artifacts. |
 | Policy decision clarity | `passed` | `schemas/policy_decision.v0.1.schema.json`<br>`references/policy-decision-v0.1.md`<br>`examples/security-contract-proof/policy_decision.json` | Does not prove every live policy configuration is correct. |
 | Execution spec accountability | `passed` | `schemas/approved_execution_spec.v0.1.schema.json`<br>`references/approved-execution-spec-v0.1.md`<br>`examples/security-contract-proof/approved_execution_spec.json` | Does not authorize live command execution. |
 | Dry-run/evidence separation | `passed` | `schemas/execution_receipt.v0.1.schema.json`<br>`schemas/evidence_bundle.v0.1.schema.json`<br>`examples/security-contract-proof/evidence_bundle.json` | Does not claim live vulnerability evidence. |
