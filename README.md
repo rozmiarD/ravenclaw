@@ -3,7 +3,7 @@
 [![CI: pytest](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml/badge.svg)](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml)
 [![Source: Ravenclaw 0.10.0](https://img.shields.io/badge/source-Ravenclaw%200.10.0-blueviolet.svg)](pyproject.toml)
 [![Python: 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
-[![Dependency: GovEngine >=0.1.7](https://img.shields.io/badge/dependency-GovEngine%20%3E%3D0.1.7-informational.svg)](https://github.com/rozmiarD/GovEngine)
+[![Dependency: GovEngine >=0.2.0](https://img.shields.io/badge/dependency-GovEngine%20%3E%3D0.2.0-informational.svg)](https://github.com/rozmiarD/GovEngine)
 [![Dependency: SCLite 0.5.1](https://img.shields.io/badge/dependency-SCLite%200.5.1-informational.svg)](https://github.com/rozmiarD/SCLite)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
