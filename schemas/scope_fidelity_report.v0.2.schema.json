@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sclite.local/schemas/scope_fidelity_report.v0.2.schema.json",
+  "title": "Security Contract Layer ScopeFidelityReport v0.2",
+  "description": "Lifecycle-aware, public-safe target-binding review artifact. This is static analysis only and does not execute tools or prove authorization.",
+  "type": "object",
+  "required": ["artifact_type", "schema_version", "schema_ref", "generated_at", "source_artifact", "verdict", "lifecycle_targets", "summary", "public_safety", "limitations"],
+  "properties": {
+    "artifact_type": {"const": "scope_fidelity_report"},
+    "schema_version": {"const": "v0.2"},
+    "schema_ref": {"const": "schemas/scope_fidelity_report.v0.2.schema.json"},
+    "generated_at": {"type": "string", "minLength": 1},
+    "source_artifact": {"type": "string"},
+    "verdict": {"enum": ["pass", "review", "fail"]},
+    "lifecycle_targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["role", "artifact_type", "target", "target_host", "source", "status"],
+        "properties": {
+          "role": {"type": "string", "minLength": 1},
+          "artifact_type": {"type": "string"},
+          "target": {"type": "string"},
+          "target_host": {"type": "string"},
+          "source": {"type": "string"},
+          "status": {"enum": ["explicit", "linked_no_explicit_target"]}
+        },
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["target_hosts", "mismatched_hosts_detected", "missing_roles", "lifecycle_target_status", "reason"],
+      "properties": {
+        "target_hosts": {"type": "array", "items": {"type": "string"}},
+        "mismatched_hosts_detected": {"type": "array", "items": {"type": "string"}},
+        "missing_roles": {"type": "array", "items": {"type": "string"}},
+        "lifecycle_target_status": {"enum": ["consistent", "cross_role_target_mismatch", "incomplete_lifecycle", "no_explicit_targets"]},
+        "reason": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "public_safety": {
+      "type": "object",
+      "required": ["live_target_execution", "protocol_adapter_work", "public_push", "static_analysis_only"],
+      "properties": {
+        "live_target_execution": {"const": false},
+        "protocol_adapter_work": {"const": false},
+        "public_push": {"const": false},
+        "static_analysis_only": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  },
+  "additionalProperties": false
+}

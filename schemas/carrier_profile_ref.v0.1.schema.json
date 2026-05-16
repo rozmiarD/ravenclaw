@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CarrierProfileRef v0.1",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "schema_ref",
+    "profile_ref_id",
+    "created_at",
+    "carrier_profile",
+    "links",
+    "reference",
+    "integrity",
+    "transport_boundary",
+    "non_claims"
+  ],
+  "properties": {
+    "artifact_type": {"const": "carrier_profile_ref"},
+    "schema_version": {"const": "v0.1"},
+    "schema_ref": {"const": "schemas/carrier_profile_ref.v0.1.schema.json"},
+    "profile_ref_id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "minLength": 1},
+    "carrier_profile": {
+      "type": "string",
+      "enum": ["local_file_bundle", "ci_artifact_bundle", "github_artifact", "govengine_bundle", "ravenclaw_review_bundle", "tecrax_review_bundle", "openclaw_carrier_payload", "mcp_message_ref", "a2a_message_ref"]
+    },
+    "links": {
+      "type": "object",
+      "required": ["subject"],
+      "properties": {
+        "subject": {"$ref": "#/$defs/artifact_link"}
+      },
+      "additionalProperties": true
+    },
+    "reference": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {"type": "string", "minLength": 1},
+        "uri": {"type": "string"},
+        "media_type": {"type": "string"},
+        "bundle_digest": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "integrity": {
+      "type": "object",
+      "required": ["subject_artifact_digest", "binding_mode"],
+      "properties": {
+        "subject_artifact_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "binding_mode": {"const": "subject_descriptor_digest"}
+      },
+      "additionalProperties": true
+    },
+    "transport_boundary": {
+      "type": "object",
+      "required": ["sclite_validates_digest_binding_only", "external_carrier_delivers_payload"],
+      "properties": {
+        "sclite_validates_digest_binding_only": {"const": true},
+        "external_carrier_delivers_payload": {"const": true}
+      },
+      "additionalProperties": true
+    },
+    "non_claims": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+  },
+  "$defs": {
+    "artifact_link": {
+      "type": "object",
+      "required": ["role", "descriptor"],
+      "properties": {
+        "role": {"type": "string", "minLength": 1},
+        "descriptor": {"$ref": "#/$defs/descriptor"}
+      },
+      "additionalProperties": true
+    },
+    "descriptor": {
+      "type": "object",
+      "required": ["artifact_type", "schema_version", "schema_ref", "canonicalization", "algorithm", "digest", "canonical_bytes"],
+      "properties": {
+        "artifact_type": {"type": "string", "minLength": 1},
+        "schema_version": {"type": "string", "minLength": 1},
+        "schema_ref": {"type": "string", "minLength": 1},
+        "canonicalization": {"type": "string", "minLength": 1},
+        "algorithm": {"const": "sha256"},
+        "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "canonical_bytes": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

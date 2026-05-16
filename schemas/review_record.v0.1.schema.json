@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sclite.local/schemas/review_record.v0.1.schema.json",
+  "title": "Security Contract Layer ReviewRecord v0.1",
+  "description": "Static lifecycle review aggregate. It summarizes local schema, chain, lifecycle, scope-fidelity, and ticket-use readiness checks without executing tools or deciding trust/authorization.",
+  "type": "object",
+  "required": ["artifact_type", "schema_version", "schema_ref", "generated_at", "review_id", "review_profile", "source_manifest", "verdict", "summary", "checks", "scope_fidelity_report", "public_safety", "non_claims"],
+  "properties": {
+    "artifact_type": {"const": "review_record"},
+    "schema_version": {"const": "v0.1"},
+    "schema_ref": {"const": "schemas/review_record.v0.1.schema.json"},
+    "generated_at": {"type": "string", "minLength": 1},
+    "review_id": {"type": "string", "minLength": 1},
+    "review_profile": {"type": "string", "minLength": 1},
+    "source_manifest": {"type": "string", "minLength": 1},
+    "verdict": {"enum": ["pass", "review", "fail"]},
+    "summary": {
+      "type": "object",
+      "required": ["artifact_count", "target_hosts", "root_chain_digest", "scope_fidelity_verdict"],
+      "properties": {
+        "artifact_count": {"type": "integer", "minimum": 0},
+        "target_hosts": {"type": "array", "items": {"type": "string"}},
+        "root_chain_digest": {"type": "string"},
+        "scope_fidelity_verdict": {"enum": ["pass", "review", "fail"]}
+      },
+      "additionalProperties": true
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status", "detail"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "status": {"enum": ["pass", "review", "fail"]},
+          "detail": {"type": "string"},
+          "count": {"type": "integer", "minimum": 0}
+        },
+        "additionalProperties": false
+      }
+    },
+    "scope_fidelity_report": {"type": "object"},
+    "public_safety": {
+      "type": "object",
+      "required": ["live_target_execution", "protocol_adapter_work", "trust_authority_decision", "public_push", "static_analysis_only"],
+      "properties": {
+        "live_target_execution": {"const": false},
+        "protocol_adapter_work": {"const": false},
+        "trust_authority_decision": {"const": false},
+        "public_push": {"const": false},
+        "static_analysis_only": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "non_claims": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  },
+  "additionalProperties": false
+}
