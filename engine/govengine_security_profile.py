@@ -5,10 +5,9 @@ from __future__ import annotations
 GovEngine 0.2.0 preserves ``govengine.security_profile`` and adds the initial
 kernel-boundary APIs while retaining SCLite `0.5.1`
 review-bundle bridges on top of the scoped-ticket gates. Ravenclaw's public package
-floor now expects that upstream facade, while this module keeps a small
-host-side compatibility seam for older local environments: use the upstream
-facade when it exists, otherwise expose the same discovery shape from the
-surface registry and direct module imports.
+floor now expects that upstream facade. This module keeps a small host-side
+diagnostic fallback for unsupported local environments, but public install
+validation requires the upstream `govengine.security_profile` source.
 """
 
 from dataclasses import dataclass, field

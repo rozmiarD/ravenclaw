@@ -38,9 +38,9 @@ def evaluate_govengine_control_gate(
 ) -> Dict[str, Any]:
     """Evaluate optional GovEngine artifact-governance execution gates.
 
-    This is a Ravenclaw host adapter seam. It consumes the GovEngine 0.1.3+
+    This is a Ravenclaw host adapter seam. It consumes published GovEngine
     artifact-governance gate objects and keeps a defensive unavailable fallback
-    for unsupported local environments.
+    only for unsupported local environment diagnostics.
     """
 
     if not require_execution_ticket:

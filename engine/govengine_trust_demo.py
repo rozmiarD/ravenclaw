@@ -2,9 +2,9 @@ from __future__ import annotations
 
 """Ravenclaw host-side demo trust helpers for GovEngine signing ports.
 
-This module keeps production PKI out of Ravenclaw/GovEngine. It uses the
-GovEngine demo signing ports when available, and a compatibility fallback with
-the same public-safe shape for environments pinned to an older GovEngine line.
+This module keeps production PKI out of Ravenclaw/GovEngine. Public validation
+expects the GovEngine demo signing ports from the published package; the local
+fallback remains only as a diagnostic path for unsupported environments.
 """
 
 from hashlib import sha256

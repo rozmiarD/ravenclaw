@@ -86,6 +86,8 @@ def test_control_gate_adapter_stays_out_when_ticket_gate_not_required() -> None:
 def test_control_gate_adapter_accepts_demo_signature_trust_port_shape() -> None:
     ticket, contract, ticket_gate = _ticket_and_contract()
     trust = demo_sign_execution_contract(artifact_descriptor(contract), signer_id="owner-demo")
+    assert trust["signature"]["source"] == "govengine_demo_ports"
+    assert trust["trust_decision"]["source"] == "govengine_demo_ports"
     ticket["signature"] = trust["signature"]
     ticket["trust_decision"] = trust["trust_decision"]
 

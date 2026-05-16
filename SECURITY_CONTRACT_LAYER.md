@@ -53,6 +53,8 @@ The reusable SCL implementation now lives in the external `sclite` package. Rave
 
 Ravenclaw also keeps `engine/govengine_boundary_profile.py` as a thin consumer for GovEngine's 0.2 kernel/profile boundary report. Public install validation now requires the published `govengine>=0.2.0,<0.3` package to expose `govengine.kernel_boundary_report` and reports failure if the boundary-profile check does not pass.
 
+The current GovEngine wrapper classification is tracked in `references/govengine-wrapper-audit.md`. Pure alias wrappers are retained for historical Ravenclaw imports; host-side seams remain only where Ravenclaw owns runtime/profile glue rather than reusable GovEngine behavior.
+
 A committed public-safe fixture lives at `examples/security-contract-proof/` and can be validated with `scripts/validate_security_contract_fixtures.py`. A replay fixture lives at `examples/replayable-truth-runtime/` and can be validated with `scripts/validate_replayable_truth_fixture.py`. The broader local/public-safe validation path is `scripts/run_security_contract_validation.py`, which emits a schema-backed `security_contract_validation_receipt` covering fixtures, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, replay fixture validation, and optional focused pytest.
 
 ## Relation to OpenClaw, MCP, and A2A

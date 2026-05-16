@@ -14,6 +14,8 @@ import govengine_security_profile as compat
 def test_security_profile_compat_index_is_json_safe() -> None:
     payload = compat.security_profile_index()
 
+    assert compat.govengine_security_profile_available() is True
+    assert payload['source'] == 'govengine.security_profile'
     assert payload['surface']['name'] == 'security_profile_helpers'
     assert payload['surface']['optional_profile'] is True
     assert [group['name'] for group in payload['groups']] == [
