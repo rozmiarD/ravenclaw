@@ -57,10 +57,11 @@ def test_boundary_report_evaluation_rejects_profile_drift() -> None:
     assert status['failed_checks'] == ['ravenclaw_profile_present']
 
 
-def test_boundary_report_unavailable_is_non_failing_readiness_state() -> None:
+def test_published_govengine_boundary_report_is_required() -> None:
     status = compat.ravenclaw_boundary_status()
 
-    assert status['status'] in {'unavailable', 'passed'}
-    if status['status'] == 'unavailable':
-        assert status['reason_code'] == 'govengine_boundary_report_unavailable'
-        assert status['expected_entrypoint'] == 'govengine.kernel_boundary_report'
+    assert status['status'] == 'passed'
+    assert status['source'] == 'govengine.kernel_boundary_report'
+    assert status['profile_names'] == ['ravenclaw']
+    assert status['surface_names'] == list(compat.EXPECTED_SURFACES)
+    assert status['failed_checks'] == []

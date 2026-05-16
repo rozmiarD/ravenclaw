@@ -26,7 +26,7 @@ def ravenclaw_boundary_status() -> dict[str, Any]:
             'reason_code': 'govengine_boundary_report_unavailable',
             'expected_entrypoint': 'govengine.kernel_boundary_report',
             'non_claims': [
-                'Does not require unreleased GovEngine main for public install validation.',
+                'Published GovEngine 0.2.0 is expected to expose the boundary report.',
                 'Does not authorize live execution or adapter work.',
             ],
         }

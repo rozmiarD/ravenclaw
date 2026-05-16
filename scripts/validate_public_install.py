@@ -215,7 +215,7 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
         failed.append(DependencyCheck('govengine-surfaces', 'govengine', 'govengine.surfaces.public_surface_index', False, None, 'failed', govengine_surface_registry.get('error') or 'surface registry check failed'))
     if govengine_security_profile['status'] != 'passed':
         failed.append(DependencyCheck('govengine-security-profile', 'govengine_security_profile', 'Ravenclaw GovEngine security-profile compatibility seam', False, None, 'failed', govengine_security_profile.get('error') or 'security-profile compatibility check failed'))
-    if govengine_boundary_profile['status'] == 'failed':
+    if govengine_boundary_profile['status'] != 'passed':
         failed.append(DependencyCheck('govengine-boundary-profile', 'govengine_boundary_profile', 'Ravenclaw GovEngine boundary-profile compatibility seam', False, None, 'failed', govengine_boundary_profile.get('error') or 'boundary-profile compatibility check failed'))
 
     return {
