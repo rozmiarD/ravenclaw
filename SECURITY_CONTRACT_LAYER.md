@@ -51,6 +51,8 @@ The contract layer should be extracted only from real artifacts already produced
 
 The reusable SCL implementation now lives in the external `sclite` package. Ravenclaw keeps only integration code: `engine/scl_ravenclaw_adapter.py` maps Ravenclaw runtime/policy output into SCLite artifacts, `engine/security_contract_layer.py` is the Ravenclaw compatibility wrapper, and `engine/public_demo_bundle.py` remains the demo bundle orchestration/CLI surface. Root `schemas/`, `examples/security-contract-proof/`, and `examples/contract-lifecycle-v0.2/` are public-review copies synchronized from SCLite so Ravenclaw snapshots remain self-describing.
 
+Ravenclaw also keeps `engine/govengine_boundary_profile.py` as a thin optional consumer for GovEngine's 0.2 kernel/profile boundary report. It does not require unreleased GovEngine APIs for public installation; it reports readiness once `govengine.kernel_boundary_report` is available from a published package.
+
 A committed public-safe fixture lives at `examples/security-contract-proof/` and can be validated with `scripts/validate_security_contract_fixtures.py`. A replay fixture lives at `examples/replayable-truth-runtime/` and can be validated with `scripts/validate_replayable_truth_fixture.py`. The broader local/public-safe validation path is `scripts/run_security_contract_validation.py`, which emits a schema-backed `security_contract_validation_receipt` covering fixtures, demo-bundle smoke, temporary public snapshot assembly, snapshot-local fixture validation, residue audit, replay fixture validation, and optional focused pytest.
 
 ## Relation to OpenClaw, MCP, and A2A

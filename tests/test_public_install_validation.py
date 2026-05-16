@@ -42,6 +42,9 @@ def test_public_install_validation_runtime_json() -> None:
     ]
     assert 'govengine.action_schema' in data['govengine_security_profile']['expected_modules']
     assert data['govengine_security_profile']['surface']['name'] == 'security_profile_helpers'
+    assert data['govengine_boundary_profile']['status'] in {'passed', 'unavailable'}
+    if data['govengine_boundary_profile']['status'] == 'unavailable':
+        assert data['govengine_boundary_profile']['reason_code'] == 'govengine_boundary_report_unavailable'
     assert any('live target execution' in item for item in data['non_claims'])
 
 
