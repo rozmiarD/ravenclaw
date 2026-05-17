@@ -107,7 +107,7 @@ Blocker: no OpenClaw adapter negative tests exist yet.
 | --- | --- | --- | --- | --- |
 | Scope/input | yes | no | `examples/security-contract-proof/input_scope.json` | public proof ready; OpenClaw UX missing |
 | `PolicyDecision` | yes | maybe later | `schemas/policy_decision.v0.1.schema.json` | preserve structured fields |
-| `PreparedExecutionSpec` / redacted prepared spec | yes | maybe later | `engine/execution_contracts.py` | must display as proposal, not approval |
+| `PreparedExecutionSpec` / redacted prepared spec | yes | maybe later | `govengine.contracts.execution` | must display as proposal, not approval |
 | `ApprovedExecutionSpec` | yes | no | `schemas/approved_execution_spec.v0.1.schema.json` | execution boundary |
 | `ExecutionReceipt` | yes | maybe later | `schemas/execution_receipt.v0.1.schema.json` | dry-run/live truth required |
 | `EvidenceBundle` | yes | maybe later | `schemas/evidence_bundle.v0.1.schema.json` | governance/evidence separation required |

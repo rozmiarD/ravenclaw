@@ -7,7 +7,7 @@ ENGINE_DIR = str(Path(__file__).resolve().parents[1])
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-from execution_contracts import (  # type: ignore
+from govengine.contracts.execution import (
     apply_request_decoration_to_args,
     build_execution_input_summaries_from_execution_spec,
     build_execution_input_summary_from_execution_spec,

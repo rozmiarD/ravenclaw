@@ -34,7 +34,7 @@ This document does **not**:
 | --- | --- | --- | --- |
 | Scope intake | Accept or reference explicit operator-authorized scope before any action proposal. | `scope/input` fixture fields, `campaign.md`, policy context | `examples/security-contract-proof/input_scope.json` |
 | Policy decision handoff | Preserve approval/rejection reason as structured data, not only prose. | `PolicyDecision` | `schemas/policy_decision.v0.1.schema.json`, `references/policy-decision-v0.1.md` |
-| Prepared spec boundary | Carry normalized tool intent and request-shape facts without treating LLM prose as executable authority. | `PreparedExecutionSpec` / redacted prepared spec | `engine/execution_contracts.py`, `examples/security-contract-proof/redacted_prepared_execution_spec.json` |
+| Prepared spec boundary | Carry normalized tool intent and request-shape facts without treating LLM prose as executable authority. | `PreparedExecutionSpec` / redacted prepared spec | `govengine.contracts.execution`, `examples/security-contract-proof/redacted_prepared_execution_spec.json` |
 | Approval boundary | Require an approved execution spec before execution-engine construction. | `ApprovedExecutionSpec` | `schemas/approved_execution_spec.v0.1.schema.json`, `references/approved-execution-spec-v0.1.md` |
 | Execution truth | Preserve whether the run was dry-run/local/mock/external/live and what command/spec was actually executed. | `ExecutionReceipt` | `schemas/execution_receipt.v0.1.schema.json`, `references/execution-receipt-v0.1.md` |
 | Evidence separation | Keep evidence summaries separate from dry-run receipts and explicit about what they do not prove. | `EvidenceBundle` | `schemas/evidence_bundle.v0.1.schema.json`, `references/evidence-bundle-v0.1.md` |

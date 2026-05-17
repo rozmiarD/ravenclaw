@@ -118,7 +118,7 @@ List the Security Contract Layer artifacts consumed and emitted.
 | --- | --- | --- | --- | --- |
 | Scope/input | `[ ]` | `[ ]` | `examples/security-contract-proof/input_scope.json` | |
 | `PolicyDecision` | `[ ]` | `[ ]` | `schemas/policy_decision.v0.1.schema.json` | |
-| `PreparedExecutionSpec` / redacted prepared spec | `[ ]` | `[ ]` | `engine/execution_contracts.py` | |
+| `PreparedExecutionSpec` / redacted prepared spec | `[ ]` | `[ ]` | `govengine.contracts.execution` | |
 | `ApprovedExecutionSpec` | `[ ]` | `[ ]` | `schemas/approved_execution_spec.v0.1.schema.json` | |
 | `ExecutionReceipt` | `[ ]` | `[ ]` | `schemas/execution_receipt.v0.1.schema.json` | |
 | `EvidenceBundle` | `[ ]` | `[ ]` | `schemas/evidence_bundle.v0.1.schema.json` | |

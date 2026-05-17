@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-from execution_contracts import build_approved_execution_spec, build_prepared_execution_spec  # type: ignore
+from govengine.contracts.execution import build_approved_execution_spec, build_prepared_execution_spec
 
 SCHEMA_PATH = ROOT / 'schemas' / 'approved_execution_spec.v0.1.schema.json'
 

@@ -9,7 +9,7 @@ It captures the execution shape that has passed policy/auditor review and can be
 ## Producer
 
 Current producer:
-- `build_approved_execution_spec(...)` in `engine/execution_contracts.py`
+- `build_approved_execution_spec(...)` in `govengine.contracts.execution`
 
 The producer starts from `PreparedExecutionSpec`, adds approval metadata, adds execution-truth summaries, and sets:
 
