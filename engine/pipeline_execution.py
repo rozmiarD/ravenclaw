@@ -3,9 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Dict, List
 
-from action_compiler import compile_action_spec  # type: ignore
 from campaign_utils import extract_host_from_url  # type: ignore
 from execution_contracts import apply_request_decoration_to_args  # type: ignore
+from govengine.action_compiler import compile_action_spec
 from paths import wp  # type: ignore
 
 

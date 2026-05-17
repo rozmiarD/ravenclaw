@@ -10,7 +10,7 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | --- | --- | --- | --- |
 | `engine/action_schema.py` | `govengine.action_schema` | keep thin alias | Preserves historical Ravenclaw imports for optional security-profile action shapes. |
 | `engine/action_validators.py` | `govengine.action_validators` | keep thin alias | Preserves historical action validation imports while behavior lives in GovEngine. |
-| `engine/action_compiler.py` | `govengine.action_compiler` | keep thin alias | Preserves historical compiler imports for Ravenclaw runtime code. |
+| `engine/action_compiler.py` | `govengine.action_compiler` | keep thin alias while runtime callers migrate | Historical tests and imports still cover the Ravenclaw module path; active execution callers now import the GovEngine compiler directly. |
 | `engine/capability_recipes.py` | `govengine.capability_recipes` | keep thin alias | Preserves capability recipe imports; GovEngine owns the reusable helper. |
 | `engine/tool_registry.py` | `govengine.tool_registry` | keep thin alias | Preserves registry imports and monkeypatch compatibility for existing tests. |
 | `engine/semantic_loss_policy.py` | `govengine.semantic_loss_policy` | keep thin alias | Preserves optional security-profile semantic-loss imports. |
