@@ -20,7 +20,7 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | `engine/signal_contract.py` | `govengine.contracts.signal` | removed | Ravenclaw active callers and tests import signal contract helpers from GovEngine directly. |
 | `engine/analysis_contract.py` | `govengine.contracts.analysis` | removed | Ravenclaw active callers and tests import analysis contract helpers from GovEngine directly. |
 | `engine/evidence_policy.py` | `govengine.contracts.evidence_policy` | removed | Ravenclaw active callers and tests import confirmation-evidence helpers from GovEngine directly. |
-| `engine/scl_ravenclaw_adapter.py` | `govengine.sclite_adapter` | keep thin alias | Preserves the Ravenclaw-to-SCLite adapter import while GovEngine owns the reusable adapter seam. |
+| `engine/scl_ravenclaw_adapter.py` | `govengine.sclite_adapter` | removed | Ravenclaw active callers and tests import the SCLite adapter seam from GovEngine directly. |
 | `engine/govengine_boundary_profile.py` | `govengine.kernel_boundary_report` | keep required host check | Ravenclaw validates the published 0.2 boundary report and profile non-claims during public install validation. |
 | `engine/govengine_security_profile.py` | `govengine.security_profile` | keep host entrypoint; fallback is legacy diagnostic only | Public validation requires the upstream facade; the fallback remains for clearer diagnostics in unsupported local environments. |
 | `engine/govengine_control_gate_adapter.py` | `govengine.core`, `govengine.execution.gate`, `govengine.sclite_contracts`, `govengine.signing`, `govengine.state_index` | keep host adapter | Ravenclaw owns host runner/profile selection while GovEngine owns reusable gate objects. |
@@ -34,8 +34,8 @@ historical `engine.*` alias should be deleted unless a concrete host-owned
 adapter need remains. Retired in cleanup passes: `action_schema`,
 `action_compiler`, `action_validators`, `analysis_contract`,
 `capability_recipes`, `evidence_policy`, `execution_contracts`,
-`policy_core`, `policy_gateway`, `semantic_loss_policy`, and
-`signal_contract`.
+`policy_core`, `policy_gateway`, `scl_ravenclaw_adapter`,
+`semantic_loss_policy`, and `signal_contract`.
 
 ## Validation Rule
 

@@ -66,13 +66,6 @@ def test_govengine_public_surface_imports_without_engine_path(tmp_path: Path) ->
     assert f'standalone_imports_ok:{len(STANDALONE_MODULES)}' in proc.stdout
 
 
-def test_remaining_ravenclaw_contract_modules_are_govengine_compat_aliases() -> None:
-    sys.path.insert(0, str(REPO_ROOT / 'engine'))
-    import scl_ravenclaw_adapter  # type: ignore
-
-    assert scl_ravenclaw_adapter.__name__ == 'govengine.sclite_adapter'
-
-
 def test_retired_ravenclaw_action_compat_modules_are_absent() -> None:
     sys.path.insert(0, str(REPO_ROOT / 'engine'))
     for module_name in (
@@ -85,6 +78,7 @@ def test_retired_ravenclaw_action_compat_modules_are_absent() -> None:
         'execution_contracts',
         'policy_gateway',
         'policy_core',
+        'scl_ravenclaw_adapter',
         'semantic_loss_policy',
         'signal_contract',
     ):

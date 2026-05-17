@@ -22,7 +22,7 @@ from sclite.scope_fidelity import (  # noqa: F401
     summarize_scope_fidelity,
     validate_scope_fidelity_report as _sclite_validate_scope_fidelity_report,
 )
-from scl_ravenclaw_adapter import (  # noqa: F401
+from govengine.sclite_adapter import (  # noqa: F401
     LIFECYCLE_TRACE_FILES_V02,
     build_evidence_contract_v02 as _build_evidence_contract_v02,
     build_execution_contract_v02,
@@ -123,4 +123,3 @@ def build_lifecycle_artifacts_v02(pipeline_data):
     ], chain_id=str(pipeline_data.get('run_id') or 'ravenclaw-sclite-v0.2-lifecycle'))
     artifacts['artifact_chain_manifest.json'] = manifest
     return artifacts
-

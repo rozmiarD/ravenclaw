@@ -10,7 +10,7 @@ if str(ENGINE_DIR) not in sys.path:
     sys.path.insert(0, str(ENGINE_DIR))
 
 import security_contract_layer as wrapper  # type: ignore
-import scl_ravenclaw_adapter as adapter  # type: ignore
+from govengine import sclite_adapter as adapter
 from sclite import artifacts as core_artifacts
 from sclite.integrity import artifact_descriptor, verify_artifact_chain_manifest
 
@@ -165,12 +165,10 @@ def test_adapter_generated_execution_ticket_passes_runtime_gate() -> None:
     assert result['execution_ticket_gate']['ticket_id'] == ticket['ticket_id']
 
 
-def test_scl_ravenclaw_adapter_is_govengine_compat_wrapper() -> None:
-    from govengine import sclite_adapter as gov_adapter
-
-    assert adapter.build_lifecycle_artifacts_v02 is gov_adapter.build_lifecycle_artifacts_v02
-    assert adapter.build_execution_ticket_v02 is gov_adapter.build_execution_ticket_v02
-    assert adapter.LIFECYCLE_TRACE_FILES_V02 == gov_adapter.LIFECYCLE_TRACE_FILES_V02
+def test_security_contract_layer_uses_govengine_sclite_adapter_directly() -> None:
+    assert wrapper.build_execution_contract_v02 is adapter.build_execution_contract_v02
+    assert wrapper.build_execution_ticket_v02 is adapter.build_execution_ticket_v02
+    assert wrapper.LIFECYCLE_TRACE_FILES_V02 == adapter.LIFECYCLE_TRACE_FILES_V02
 
 
 def test_wrapper_projects_compact_ooda_decisions_into_receipts_without_raw_telemetry() -> None:

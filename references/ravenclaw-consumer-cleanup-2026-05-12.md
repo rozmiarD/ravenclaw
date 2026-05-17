@@ -2,12 +2,12 @@
 
 ## Status
 
-Post-`govengine==0.1.5` consumer review. Recommendation: keep Ravenclaw as the reference runtime/control plane and avoid broad extraction. Only thin host-side projection/wrapper logic should remain in Ravenclaw.
+Post-`govengine==0.1.5` consumer review. This note is historical; later cleanup after `govengine==0.2.0` retired pure compatibility aliases once active Ravenclaw callers/tests migrated to direct GovEngine imports. The standing recommendation remains to keep Ravenclaw as the reference runtime/control plane and avoid broad extraction. Only true host-side projection/adapter logic should remain in Ravenclaw.
 
 ## Reviewed seams
 
 - `engine/govengine_security_profile.py`
-- `engine/scl_ravenclaw_adapter.py`
+- `govengine.sclite_adapter` direct imports, after retiring the former `engine/scl_ravenclaw_adapter.py` alias
 - `engine/security_contract_layer.py`
 - `engine/govengine_control_gate_adapter.py`
 - `scripts/validate_public_install.py`
@@ -28,9 +28,9 @@ These remain host/runtime-owned and should not be moved into GovEngine now:
 - OpenClaw/MCP/A2A carrier readiness documentation;
 - host-side redaction/output decisions for public artifacts.
 
-### Keep as thin compatibility seams
+### Historical compatibility posture
 
-- `engine/scl_ravenclaw_adapter.py` should remain a compatibility alias to GovEngine's SCLite adapter while public imports/tests still reference the Ravenclaw path.
+- `engine/scl_ravenclaw_adapter.py` was originally kept as a compatibility alias to GovEngine's SCLite adapter while public imports/tests still referenced the Ravenclaw path. It has since been retired; active code imports `govengine.sclite_adapter` directly.
 - `engine/govengine_security_profile.py` should remain as a defensive compatibility entrypoint. The current package floor expects `govengine.security_profile`, but the wrapper keeps older local environments from failing hard and makes Ravenclaw's expected optional profile explicit.
 - `engine/govengine_control_gate_adapter.py` remains appropriate because it assembles Ravenclaw host artifacts/context into GovEngine gate inputs without moving host policy/state ownership into GovEngine.
 - `engine/govengine_trust_demo.py` remains Ravenclaw-owned host projection glue: it exercises GovEngine signer/verifier ports in public demo artifacts while keeping PKI, CA, KMS, and key-store ownership out of GovEngine and Ravenclaw.
