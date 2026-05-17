@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, List
 from urllib.parse import urlparse
 
 from govengine.action_schema import ACTION_TYPE_TO_CAPABILITY, ACTION_TYPE_TO_EXPERIMENT_SHAPE, ALLOWED_EXPERIMENT_SHAPES
-from capability_recipes import (  # type: ignore
+from govengine.capability_recipes import (
     can_resolve_tool_from_capability,
     get_preferred_tools_for_task_family as recipe_preferred_tools,
     list_candidate_tools_for_capability,

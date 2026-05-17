@@ -68,12 +68,10 @@ def test_govengine_public_surface_imports_without_engine_path(tmp_path: Path) ->
 
 def test_remaining_ravenclaw_contract_modules_are_govengine_compat_aliases() -> None:
     sys.path.insert(0, str(REPO_ROOT / 'engine'))
-    import capability_recipes  # type: ignore
     import signal_contract  # type: ignore
     import analysis_contract  # type: ignore
     import evidence_policy  # type: ignore
 
-    assert capability_recipes.__name__ == 'govengine.capability_recipes'
     assert signal_contract.__name__ == 'govengine.contracts.signal'
     assert analysis_contract.__name__ == 'govengine.contracts.analysis'
     assert evidence_policy.__name__ == 'govengine.contracts.evidence_policy'
@@ -81,7 +79,7 @@ def test_remaining_ravenclaw_contract_modules_are_govengine_compat_aliases() -> 
 
 def test_retired_ravenclaw_action_compat_modules_are_absent() -> None:
     sys.path.insert(0, str(REPO_ROOT / 'engine'))
-    for module_name in ('action_schema', 'action_compiler', 'action_validators', 'semantic_loss_policy'):
+    for module_name in ('action_schema', 'action_compiler', 'action_validators', 'capability_recipes', 'semantic_loss_policy'):
         sys.modules.pop(module_name, None)
         try:
             __import__(module_name)

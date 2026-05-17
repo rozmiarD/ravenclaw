@@ -9,11 +9,7 @@ from typing import Any, Dict, List
 from .schema import validate_blueprint
 from .identity import build_planner_identity
 
-try:
-    from capability_recipes import suggest_capabilities_for_task_family  # type: ignore
-except Exception:  # pragma: no cover - fallback only
-    def suggest_capabilities_for_task_family(task_family: str) -> List[str]:
-        return []
+from govengine.capability_recipes import suggest_capabilities_for_task_family
 
 try:
     from runtime_task_schema import normalize_runtime_task_v2  # type: ignore

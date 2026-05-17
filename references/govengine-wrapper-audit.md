@@ -11,7 +11,7 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | `engine/action_schema.py` | `govengine.action_schema` | removed | Ravenclaw active callers and tests import action schema constants from GovEngine directly. |
 | `engine/action_validators.py` | `govengine.action_validators` | removed | Ravenclaw active callers and tests import validators from GovEngine directly. |
 | `engine/action_compiler.py` | `govengine.action_compiler` | removed | Ravenclaw active callers and tests import the compiler from GovEngine directly. |
-| `engine/capability_recipes.py` | `govengine.capability_recipes` | keep thin alias | Preserves capability recipe imports; GovEngine owns the reusable helper. |
+| `engine/capability_recipes.py` | `govengine.capability_recipes` | removed | Ravenclaw active callers and tests import capability helpers from GovEngine directly. |
 | `engine/tool_registry.py` | `govengine.tool_registry` | keep thin alias | Preserves registry imports and monkeypatch compatibility for existing tests. |
 | `engine/semantic_loss_policy.py` | `govengine.semantic_loss_policy` | removed | Ravenclaw active callers and tests import semantic-loss helpers from GovEngine directly. |
 | `engine/policy_core.py` | `govengine.policy.core` | keep thin alias | Preserves runtime policy helper imports. |
@@ -32,7 +32,8 @@ Compatibility wrappers are migrational, not a target architecture. Once active
 Ravenclaw callers and tests have migrated to `govengine.*` imports, the
 historical `engine.*` alias should be deleted unless a concrete host-owned
 adapter need remains. Retired in cleanup passes: `action_schema`,
-`action_compiler`, `action_validators`, and `semantic_loss_policy`.
+`action_compiler`, `action_validators`, `capability_recipes`, and
+`semantic_loss_policy`.
 
 ## Validation Rule
 

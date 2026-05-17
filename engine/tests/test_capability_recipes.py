@@ -7,7 +7,7 @@ ENGINE_DIR = str(Path(__file__).resolve().parents[1])
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-from capability_recipes import (  # type: ignore
+from govengine.capability_recipes import (
     get_preferred_tools_for_task_family,
     list_candidate_tools_for_capability,
     resolve_action_tooling,
