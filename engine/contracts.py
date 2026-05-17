@@ -4,9 +4,9 @@ import copy
 from typing import Any, Dict, Iterable, List, Tuple
 
 from policy_core import get_runtime_brain_allowed_tools, normalize_tool  # type: ignore
-from action_validators import validate_action_contract_v2, validate_probe_recipe  # type: ignore
 from action_schema import ACTION_TYPES, DEFAULT_ACTION_TYPE, ACTION_TYPE_TO_CAPABILITY  # type: ignore
 from capability_recipes import can_resolve_tool_from_capability  # type: ignore
+from govengine.action_validators import validate_action_contract_v2, validate_probe_recipe
 from tool_registry import get_capability_catalog, get_planner_visible_tools  # type: ignore
 
 ALLOWED_BRAIN_ALIGNMENT = {'aligned', 'override', 'unknown', 'partial'}
