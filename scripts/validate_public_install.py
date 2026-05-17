@@ -213,7 +213,7 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
     if govengine_security_profile['status'] != 'passed':
         failed.append(DependencyCheck('govengine-security-profile', 'govengine.security_profile', 'GovEngine security-profile facade', False, None, 'failed', govengine_security_profile.get('error') or 'security-profile check failed'))
     if govengine_boundary_profile['status'] != 'passed':
-        failed.append(DependencyCheck('govengine-boundary-profile', 'govengine_boundary_profile', 'Ravenclaw GovEngine boundary-profile compatibility seam', False, None, 'failed', govengine_boundary_profile.get('error') or 'boundary-profile compatibility check failed'))
+        failed.append(DependencyCheck('govengine-boundary-profile', 'govengine_boundary_profile', 'Ravenclaw GovEngine boundary-profile required check', False, None, 'failed', govengine_boundary_profile.get('error') or 'boundary-profile check failed'))
 
     return {
         'artifact_type': 'ravenclaw_public_install_validation',

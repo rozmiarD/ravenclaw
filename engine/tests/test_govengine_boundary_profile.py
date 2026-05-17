@@ -8,7 +8,7 @@ ENGINE_DIR = Path(__file__).resolve().parents[1]
 if str(ENGINE_DIR) not in sys.path:
     sys.path.insert(0, str(ENGINE_DIR))
 
-import govengine_boundary_profile as compat
+import govengine_boundary_profile as boundary_profile
 
 
 def _report() -> dict:
@@ -38,11 +38,11 @@ def _report() -> dict:
 
 
 def test_boundary_report_evaluation_accepts_govengine_report_shape() -> None:
-    status = compat.evaluate_boundary_report(_report(), source='fixture')
+    status = boundary_profile.evaluate_boundary_report(_report(), source='fixture')
 
     assert status['status'] == 'passed'
     assert status['profile_names'] == ['ravenclaw']
-    assert status['surface_names'] == list(compat.EXPECTED_SURFACES)
+    assert status['surface_names'] == list(boundary_profile.EXPECTED_SURFACES)
     assert status['failed_checks'] == []
     assert json.loads(json.dumps(status)) == status
 
@@ -51,17 +51,18 @@ def test_boundary_report_evaluation_rejects_profile_drift() -> None:
     report = _report()
     report['profiles'] = [{'name': 'tecrax'}]
 
-    status = compat.evaluate_boundary_report(report, source='fixture')
+    status = boundary_profile.evaluate_boundary_report(report, source='fixture')
 
     assert status['status'] == 'failed'
     assert status['failed_checks'] == ['ravenclaw_profile_present']
 
 
 def test_published_govengine_boundary_report_is_required() -> None:
-    status = compat.ravenclaw_boundary_status()
+    status = boundary_profile.ravenclaw_boundary_status()
 
+    assert boundary_profile.govengine_boundary_report_available() is True
     assert status['status'] == 'passed'
     assert status['source'] == 'govengine.kernel_boundary_report'
     assert status['profile_names'] == ['ravenclaw']
-    assert status['surface_names'] == list(compat.EXPECTED_SURFACES)
+    assert status['surface_names'] == list(boundary_profile.EXPECTED_SURFACES)
     assert status['failed_checks'] == []

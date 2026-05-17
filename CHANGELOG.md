@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Hardened Ravenclaw's GovEngine boundary-profile check so missing `govengine.kernel_boundary_report` fails at import/validation time instead of producing an `unavailable` compatibility status.
 - Retired the Ravenclaw `engine/govengine_security_profile.py` compatibility wrapper; public install validation and tests now consume the published `govengine.security_profile` facade directly.
 - Removed unsupported-environment fallback paths from the GovEngine control-gate adapter; Ravenclaw now requires the published GovEngine gate/signing ports for that host seam.
 - Raised the package chain to `govengine>=0.2.0,<0.3` and `sclite-core>=0.5.1,<0.6` after the GovEngine `0.2.0` and SCLite `0.5.1` releases; public install/demo validation now expects the review-bundle-capable GovEngine/SCLite line plus the GovEngine kernel-boundary profile.

@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-"""Ravenclaw compatibility check for GovEngine kernel/profile boundary reports."""
+"""Ravenclaw required check for GovEngine kernel/profile boundary reports."""
 
-from importlib import import_module
 from typing import Any, Mapping
+
+from govengine import kernel_boundary_report
 
 
 EXPECTED_SURFACES = (
@@ -14,23 +15,11 @@ EXPECTED_SURFACES = (
 
 
 def govengine_boundary_report_available() -> bool:
-    return _boundary_report_factory() is not None
+    return callable(kernel_boundary_report)
 
 
 def ravenclaw_boundary_status() -> dict[str, Any]:
-    factory = _boundary_report_factory()
-    if factory is None:
-        return {
-            'status': 'unavailable',
-            'source': None,
-            'reason_code': 'govengine_boundary_report_unavailable',
-            'expected_entrypoint': 'govengine.kernel_boundary_report',
-            'non_claims': [
-                'Published GovEngine 0.2.0 is expected to expose the boundary report.',
-                'Does not authorize live execution or adapter work.',
-            ],
-        }
-    report = factory()
+    report = kernel_boundary_report()
     payload = report.as_dict() if hasattr(report, 'as_dict') else dict(report)
     return evaluate_boundary_report(payload, source='govengine.kernel_boundary_report')
 
@@ -64,11 +53,3 @@ def evaluate_boundary_report(report: Mapping[str, Any], *, source: str) -> dict[
             'Boundary report consumption does not authorize live execution or adapter work.',
         ],
     }
-
-
-def _boundary_report_factory():
-    try:
-        govengine = import_module('govengine')
-    except ModuleNotFoundError:
-        return None
-    return getattr(govengine, 'kernel_boundary_report', None)

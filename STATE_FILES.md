@@ -326,7 +326,7 @@ Purpose:
 - selected planner tooling profile / registry UI state
 
 Typical owner:
-- `engine/tool_registry.py`
+- `govengine.tool_registry` plus Logdash tool-registry surfaces
 - Logdash tool-registry surfaces
 
 ---

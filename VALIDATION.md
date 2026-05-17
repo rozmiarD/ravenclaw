@@ -39,9 +39,9 @@ or, for dev/test installs:
 ravenclaw_public_install_validation:dev:passed
 ```
 
-This checks Python version, importability/version visibility for `PyYAML`, `govengine`, `sclite-core`, and — with `--dev` — `pytest` and `Flask`; verifies the GovEngine public surface registry expected by Ravenclaw (`artifact_governance_core`, `controlled_execution_core`, `security_profile_helpers`); then runs `python -m pip check`. Public install validation also reports Ravenclaw's compatibility entrypoint for the optional `govengine.security_profile` facade, expected from the published `govengine==0.2.0` line while retaining a defensive fallback for older local environments. The focused GovEngine seam tests cover the same compatibility path. These checks do not prove production deployment readiness or validate private operator overlays.
+This checks Python version, importability/version visibility for `PyYAML`, `govengine`, `sclite-core`, and — with `--dev` — `pytest` and `Flask`; verifies the GovEngine public surface registry expected by Ravenclaw (`artifact_governance_core`, `controlled_execution_core`, `security_profile_helpers`); validates the published `govengine.security_profile` facade directly; then runs `python -m pip check`. The focused GovEngine seam tests cover the same package-boundary path. These checks do not prove production deployment readiness or validate private operator overlays.
 
-With the current published `govengine==0.2.0` package, public install validation also reports Ravenclaw's boundary-profile readiness through `engine/govengine_boundary_profile.py`. That check validates `govengine.kernel_boundary_report`, the Ravenclaw profile contract, the public surface index, and the expected non-claims around live execution and carrier-adapter ownership.
+With the current published `govengine==0.2.0` package, public install validation also requires Ravenclaw's boundary-profile readiness through `engine/govengine_boundary_profile.py`. That check validates `govengine.kernel_boundary_report`, the Ravenclaw profile contract, the public surface index, and the expected non-claims around live execution and carrier-adapter ownership.
 
 ## Public validation surface index
 
