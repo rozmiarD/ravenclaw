@@ -26,7 +26,7 @@ from runtime_campaign_state import resolve_campaign_key  # type: ignore
 from runtime_plan_service import load_planner_ui_state  # type: ignore
 from runtime_agent_io import ask_json  # type: ignore
 from runtime_signal_eval import high_signal, interesting_http_signal, evaluate_success_criteria  # type: ignore
-from action_schema import ACTION_TYPE_TO_CAPABILITY, ACTION_TYPE_TO_EXPERIMENT_SHAPE  # type: ignore
+from govengine.action_schema import ACTION_TYPE_TO_CAPABILITY, ACTION_TYPE_TO_EXPERIMENT_SHAPE
 from policy_core import get_runtime_brain_allowed_tools  # type: ignore
 from capability_recipes import can_resolve_tool_from_capability  # type: ignore
 from execution_contracts import build_prepared_execution_spec, build_approved_execution_spec, redact_prepared_execution_spec_for_auditor  # type: ignore

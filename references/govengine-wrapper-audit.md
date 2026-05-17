@@ -8,7 +8,7 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 
 | Module | Upstream surface | Status | Rationale |
 | --- | --- | --- | --- |
-| `engine/action_schema.py` | `govengine.action_schema` | keep thin alias | Preserves historical Ravenclaw imports for optional security-profile action shapes. |
+| `engine/action_schema.py` | `govengine.action_schema` | removed | Ravenclaw active callers and tests import action schema constants from GovEngine directly. |
 | `engine/action_validators.py` | `govengine.action_validators` | removed | Ravenclaw active callers and tests import validators from GovEngine directly. |
 | `engine/action_compiler.py` | `govengine.action_compiler` | removed | Ravenclaw active callers and tests import the compiler from GovEngine directly. |
 | `engine/capability_recipes.py` | `govengine.capability_recipes` | keep thin alias | Preserves capability recipe imports; GovEngine owns the reusable helper. |
@@ -31,8 +31,8 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 Compatibility wrappers are migrational, not a target architecture. Once active
 Ravenclaw callers and tests have migrated to `govengine.*` imports, the
 historical `engine.*` alias should be deleted unless a concrete host-owned
-adapter need remains. Retired in the first cleanup pass: `action_compiler`,
-`action_validators`, and `semantic_loss_policy`.
+adapter need remains. Retired in cleanup passes: `action_schema`,
+`action_compiler`, `action_validators`, and `semantic_loss_policy`.
 
 ## Validation Rule
 
