@@ -7,7 +7,7 @@ ENGINE_DIR = str(Path(__file__).resolve().parents[1])
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-from action_validators import validate_probe_recipe  # type: ignore
+from govengine.action_validators import validate_probe_recipe
 
 
 def test_validate_probe_recipe_accepts_bounded_semantic_actions() -> None:

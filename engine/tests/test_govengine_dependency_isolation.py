@@ -66,22 +66,28 @@ def test_govengine_public_surface_imports_without_engine_path(tmp_path: Path) ->
     assert f'standalone_imports_ok:{len(STANDALONE_MODULES)}' in proc.stdout
 
 
-def test_ravenclaw_action_modules_are_govengine_compat_aliases() -> None:
+def test_remaining_ravenclaw_contract_modules_are_govengine_compat_aliases() -> None:
     sys.path.insert(0, str(REPO_ROOT / 'engine'))
-    import action_compiler  # type: ignore
     import action_schema  # type: ignore
-    import action_validators  # type: ignore
     import capability_recipes  # type: ignore
-    import semantic_loss_policy  # type: ignore
     import signal_contract  # type: ignore
     import analysis_contract  # type: ignore
     import evidence_policy  # type: ignore
 
     assert action_schema.__name__ == 'govengine.action_schema'
-    assert action_validators.__name__ == 'govengine.action_validators'
-    assert action_compiler.__name__ == 'govengine.action_compiler'
     assert capability_recipes.__name__ == 'govengine.capability_recipes'
-    assert semantic_loss_policy.__name__ == 'govengine.semantic_loss_policy'
     assert signal_contract.__name__ == 'govengine.contracts.signal'
     assert analysis_contract.__name__ == 'govengine.contracts.analysis'
     assert evidence_policy.__name__ == 'govengine.contracts.evidence_policy'
+
+
+def test_retired_ravenclaw_action_compat_modules_are_absent() -> None:
+    sys.path.insert(0, str(REPO_ROOT / 'engine'))
+    for module_name in ('action_compiler', 'action_validators', 'semantic_loss_policy'):
+        sys.modules.pop(module_name, None)
+        try:
+            __import__(module_name)
+        except ModuleNotFoundError as exc:
+            assert exc.name == module_name
+        else:  # pragma: no cover
+            raise AssertionError(f'{module_name} compatibility alias should be retired')

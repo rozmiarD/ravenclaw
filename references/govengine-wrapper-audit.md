@@ -9,11 +9,11 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | Module | Upstream surface | Status | Rationale |
 | --- | --- | --- | --- |
 | `engine/action_schema.py` | `govengine.action_schema` | keep thin alias | Preserves historical Ravenclaw imports for optional security-profile action shapes. |
-| `engine/action_validators.py` | `govengine.action_validators` | keep thin alias while runtime callers migrate | Historical tests and imports still cover the Ravenclaw module path; `engine/contracts.py` now imports validators from GovEngine directly. |
-| `engine/action_compiler.py` | `govengine.action_compiler` | keep thin alias while runtime callers migrate | Historical tests and imports still cover the Ravenclaw module path; active execution callers now import the GovEngine compiler directly. |
+| `engine/action_validators.py` | `govengine.action_validators` | removed | Ravenclaw active callers and tests import validators from GovEngine directly. |
+| `engine/action_compiler.py` | `govengine.action_compiler` | removed | Ravenclaw active callers and tests import the compiler from GovEngine directly. |
 | `engine/capability_recipes.py` | `govengine.capability_recipes` | keep thin alias | Preserves capability recipe imports; GovEngine owns the reusable helper. |
 | `engine/tool_registry.py` | `govengine.tool_registry` | keep thin alias | Preserves registry imports and monkeypatch compatibility for existing tests. |
-| `engine/semantic_loss_policy.py` | `govengine.semantic_loss_policy` | keep thin alias while runtime callers migrate | Historical tests and imports still cover the Ravenclaw module path; `engine/decision_quality.py` and `engine/run_pipeline.py` now import semantic-loss helpers from GovEngine directly. |
+| `engine/semantic_loss_policy.py` | `govengine.semantic_loss_policy` | removed | Ravenclaw active callers and tests import semantic-loss helpers from GovEngine directly. |
 | `engine/policy_core.py` | `govengine.policy.core` | keep thin alias | Preserves runtime policy helper imports. |
 | `engine/policy_gateway.py` | `govengine.policy.gateway` | keep thin alias | Preserves policy decision imports and v0 compatibility helpers. |
 | `engine/execution_contracts.py` | `govengine.contracts.execution` | keep thin alias | Preserves execution contract helper imports. |
@@ -28,10 +28,11 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 
 ## Removal Candidates
 
-No wrapper is removed in this audit. Removal should wait until runtime imports,
-public demo paths, and reviewer docs no longer reference historical `engine.*`
-module names. The safest next removal candidates are the pure `sys.modules`
-aliases once their import callers have been migrated to `govengine.*` directly.
+Compatibility wrappers are migrational, not a target architecture. Once active
+Ravenclaw callers and tests have migrated to `govengine.*` imports, the
+historical `engine.*` alias should be deleted unless a concrete host-owned
+adapter need remains. Retired in the first cleanup pass: `action_compiler`,
+`action_validators`, and `semantic_loss_policy`.
 
 ## Validation Rule
 

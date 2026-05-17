@@ -7,7 +7,7 @@ ENGINE_DIR = str(Path(__file__).resolve().parents[1])
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-from semantic_loss_policy import classify_semantic_loss, semantic_loss_runtime_gate  # type: ignore
+from govengine.semantic_loss_policy import classify_semantic_loss, semantic_loss_runtime_gate
 
 
 def test_classify_semantic_loss_marks_bounded_lowering() -> None:

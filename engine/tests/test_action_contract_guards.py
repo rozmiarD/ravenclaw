@@ -8,7 +8,7 @@ if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
 from contracts import remap_aggression_for_policy, sanitize_action_spec, sanitize_action_spec_auth_modes, validate_action_spec  # type: ignore
-from action_compiler import compile_action_spec  # type: ignore
+from govengine.action_compiler import compile_action_spec
 
 
 def test_validate_action_spec_allows_capability_resolved_tool_and_rejects_invalid_prefer_tool() -> None:
