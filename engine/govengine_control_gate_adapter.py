@@ -13,10 +13,6 @@ def _dict(value: Any) -> Dict[str, Any]:
     return dict(value) if isinstance(value, Mapping) else {}
 
 
-def _list(value: Any) -> List[Any]:
-    return list(value) if isinstance(value, list) else []
-
-
 def _not_required() -> Dict[str, Any]:
     return {
         'status': 'not_required',
@@ -33,7 +29,7 @@ def evaluate_govengine_control_gate(
     execution_ticket: Mapping[str, Any] | None,
     execution_contract: Mapping[str, Any] | None,
 ) -> Dict[str, Any]:
-    """Evaluate optional GovEngine artifact-governance execution gates.
+    """Evaluate GovEngine artifact-governance execution gates for Ravenclaw.
 
     This is a Ravenclaw host adapter seam. It consumes published GovEngine
     artifact-governance gate objects while Ravenclaw supplies host artifacts,

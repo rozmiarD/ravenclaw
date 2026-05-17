@@ -12,9 +12,9 @@ from govengine.core import ArtifactDescriptor
 from govengine.signing import DemoDigestSigner, DemoDigestVerifier, SigningRequest
 
 
-def _artifact_descriptor_from_sclite(descriptor: Mapping[str, Any], *, fallback_type: str = 'artifact') -> ArtifactDescriptor:
+def _artifact_descriptor_from_sclite(descriptor: Mapping[str, Any], *, default_artifact_type: str = 'artifact') -> ArtifactDescriptor:
     return ArtifactDescriptor(
-        artifact_type=str(descriptor.get('artifact_type') or fallback_type),
+        artifact_type=str(descriptor.get('artifact_type') or default_artifact_type),
         schema_version=str(descriptor.get('schema_version') or ''),
         digest=str(descriptor.get('digest') or ''),
     )
@@ -33,7 +33,7 @@ def demo_sign_execution_contract(
     trust example only; it does not prove real-world signer identity.
     """
 
-    descriptor = _artifact_descriptor_from_sclite(execution_contract_descriptor, fallback_type='execution_contract')
+    descriptor = _artifact_descriptor_from_sclite(execution_contract_descriptor, default_artifact_type='execution_contract')
     signer = DemoDigestSigner(signer_id=signer_id)
     signing = signer.sign(SigningRequest(descriptor=descriptor, purpose=purpose, metadata={'demo_only': True}))
     verification = DemoDigestVerifier(verifier_id=verifier_id, allowed_signer_ids=(signer_id,)).verify(descriptor, signing.signature)

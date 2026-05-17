@@ -44,11 +44,11 @@ from ooda_receipts import (  # type: ignore
 
 
 def repo_root() -> Path:
-    """Return the Ravenclaw compatibility repo root through GovEngine context."""
+    """Return the Ravenclaw repo root through GovEngine context."""
     return _CONTEXT.repo_root
 
 def validate_scope_fidelity_report(report, root: Path | None = None) -> None:
-    """Compatibility wrapper for pre-SCLite Ravenclaw callers."""
+    """Validate a Scope Fidelity report through the SCLite package surface."""
     _sclite_validate_scope_fidelity_report(report)
 
 

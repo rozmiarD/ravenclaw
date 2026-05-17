@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Clarified the remaining Ravenclaw-owned GovEngine/SCLite host seams by removing leftover compatibility/fallback wording from trust, control-gate, and security-contract-layer projection helpers.
 - Hardened Ravenclaw's GovEngine boundary-profile check so missing `govengine.kernel_boundary_report` fails at import/validation time instead of producing an `unavailable` compatibility status.
 - Retired the Ravenclaw `engine/govengine_security_profile.py` compatibility wrapper; public install validation and tests now consume the published `govengine.security_profile` facade directly.
 - Removed unsupported-environment fallback paths from the GovEngine control-gate adapter; Ravenclaw now requires the published GovEngine gate/signing ports for that host seam.
