@@ -21,7 +21,7 @@ from status_utils import normalize_pipeline_status, normalize_engine_status, nor
 from aggression_policy import clamp_aggression  # type: ignore
 from contracts import remap_aggression_for_policy, sanitize_action_spec, sanitize_action_spec_auth_modes, validate_action_spec, validate_auditor_payload  # type: ignore
 from paths import wp, ep, rsp, REPORTS_DIR, LOGDASH_DIR  # type: ignore
-from policy_gateway import evaluate_action_spec  # type: ignore
+from govengine.policy.gateway import evaluate_action_spec
 from runtime_campaign_state import resolve_campaign_key  # type: ignore
 from runtime_plan_service import load_planner_ui_state  # type: ignore
 from runtime_agent_io import ask_json  # type: ignore

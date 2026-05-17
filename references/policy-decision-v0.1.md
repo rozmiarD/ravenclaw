@@ -9,7 +9,7 @@ In v0.1 this is a compatibility artifact around the legacy `{pass, reason}` resu
 ## Producer
 
 Current producer:
-- `normalize_policy_decision_v0(...)` in `engine/policy_gateway.py`
+- `normalize_policy_decision_v0(...)` in `govengine.policy.gateway`
 
 Public demo bundle producer path:
 - `build_policy_decision_artifact(...)` in `engine/public_demo_bundle.py`

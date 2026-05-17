@@ -7,9 +7,7 @@ ENGINE_DIR = Path(__file__).resolve().parents[1]
 if str(ENGINE_DIR) not in sys.path:
     sys.path.insert(0, str(ENGINE_DIR))
 
-import policy_gateway as engine_gateway  # type: ignore
 import tool_registry as engine_registry  # type: ignore
-from govengine.policy import gateway as gov_gateway
 from govengine import tool_registry as gov_registry
 
 
@@ -17,12 +15,6 @@ def test_tool_registry_wrapper_aliases_govengine_module() -> None:
     assert engine_registry is gov_registry
     assert engine_registry.get_tool_catalog is gov_registry.get_tool_catalog
     assert engine_registry.REGISTRY_PATH == gov_registry.REGISTRY_PATH
-
-
-def test_policy_gateway_wrapper_aliases_govengine_module() -> None:
-    assert engine_gateway is gov_gateway
-    assert engine_gateway.normalize_policy_decision_v0 is gov_gateway.normalize_policy_decision_v0
-    assert engine_gateway.evaluate_action_spec is gov_gateway.evaluate_action_spec
 
 
 def test_tool_registry_state_monkeypatch_compatibility(tmp_path: Path, monkeypatch) -> None:

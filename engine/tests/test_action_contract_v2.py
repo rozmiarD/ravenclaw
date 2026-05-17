@@ -7,10 +7,10 @@ ENGINE_DIR = str(Path(__file__).resolve().parents[1])
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-import policy_gateway as pg  # type: ignore
+from govengine.policy import gateway as pg
 from govengine.action_compiler import compile_action_spec
 from contracts import validate_action_spec  # type: ignore
-from policy_gateway import evaluate_action_spec  # type: ignore
+from govengine.policy.gateway import evaluate_action_spec
 
 
 def test_validate_action_spec_accepts_v2_fields_and_infers_capability_when_missing() -> None:

@@ -7,7 +7,7 @@ ENGINE_DIR = str(Path(__file__).resolve().parents[1])
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-import policy_gateway as pg  # type: ignore
+from govengine.policy import gateway as pg
 
 
 def test_normalize_policy_decision_v0_preserves_legacy_compatibility() -> None:

@@ -83,6 +83,7 @@ def test_retired_ravenclaw_action_compat_modules_are_absent() -> None:
         'capability_recipes',
         'evidence_policy',
         'execution_contracts',
+        'policy_gateway',
         'semantic_loss_policy',
         'signal_contract',
     ):

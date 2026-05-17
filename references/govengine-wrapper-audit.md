@@ -15,7 +15,7 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | `engine/tool_registry.py` | `govengine.tool_registry` | keep thin alias | Preserves registry imports and monkeypatch compatibility for existing tests. |
 | `engine/semantic_loss_policy.py` | `govengine.semantic_loss_policy` | removed | Ravenclaw active callers and tests import semantic-loss helpers from GovEngine directly. |
 | `engine/policy_core.py` | `govengine.policy.core` | keep thin alias | Preserves runtime policy helper imports. |
-| `engine/policy_gateway.py` | `govengine.policy.gateway` | keep thin alias | Preserves policy decision imports and v0 compatibility helpers. |
+| `engine/policy_gateway.py` | `govengine.policy.gateway` | removed | Ravenclaw active callers and tests import policy gateway helpers from GovEngine directly. |
 | `engine/execution_contracts.py` | `govengine.contracts.execution` | removed | Ravenclaw active callers and tests import execution contract helpers from GovEngine directly. |
 | `engine/signal_contract.py` | `govengine.contracts.signal` | removed | Ravenclaw active callers and tests import signal contract helpers from GovEngine directly. |
 | `engine/analysis_contract.py` | `govengine.contracts.analysis` | removed | Ravenclaw active callers and tests import analysis contract helpers from GovEngine directly. |
@@ -34,7 +34,7 @@ historical `engine.*` alias should be deleted unless a concrete host-owned
 adapter need remains. Retired in cleanup passes: `action_schema`,
 `action_compiler`, `action_validators`, `analysis_contract`,
 `capability_recipes`, `evidence_policy`, `execution_contracts`,
-`semantic_loss_policy`, and `signal_contract`.
+`policy_gateway`, `semantic_loss_policy`, and `signal_contract`.
 
 ## Validation Rule
 
