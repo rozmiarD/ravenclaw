@@ -24,7 +24,7 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | `engine/govengine_boundary_profile.py` | `govengine.kernel_boundary_report` | keep required host check | Ravenclaw validates the published 0.2 boundary report and profile non-claims during public install validation. |
 | `engine/govengine_security_profile.py` | `govengine.security_profile` | keep host entrypoint; fallback is legacy diagnostic only | Public validation requires the upstream facade; the fallback remains for clearer diagnostics in unsupported local environments. |
 | `engine/govengine_control_gate_adapter.py` | `govengine.core`, `govengine.execution.gate`, `govengine.sclite_contracts`, `govengine.signing`, `govengine.state_index` | keep host adapter | Ravenclaw owns host runner/profile selection while GovEngine owns reusable gate objects. |
-| `engine/govengine_trust_demo.py` | `govengine.signing` demo ports | keep host demo helper; fallback is legacy diagnostic only | Public validation expects GovEngine demo ports from the published package; fallback code is not a release claim. |
+| `engine/govengine_trust_demo.py` | `govengine.signing` demo ports | keep host demo helper; no local signing fallback | Public validation expects GovEngine demo ports from the published package; Ravenclaw only projects the demo trust result into public-safe artifacts. |
 
 ## Removal Candidates
 

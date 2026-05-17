@@ -2,16 +2,14 @@ from __future__ import annotations
 
 """Ravenclaw host-side demo trust helpers for GovEngine signing ports.
 
-This module keeps production PKI out of Ravenclaw/GovEngine. Public validation
-expects the GovEngine demo signing ports from the published package; the local
-fallback remains only as a diagnostic path for unsupported environments.
+This module keeps production PKI out of Ravenclaw/GovEngine. The current
+published GovEngine package owns the demo signer/verifier ports; Ravenclaw only
+projects their public-safe result into demo artifacts.
 """
-
-from hashlib import sha256
 from typing import Any, Mapping
 
 from govengine.core import ArtifactDescriptor
-from govengine.signing import SignatureEnvelope, SigningRequest, SigningResult, VerificationResult
+from govengine.signing import DemoDigestSigner, DemoDigestVerifier, SigningRequest
 
 
 def _artifact_descriptor_from_sclite(descriptor: Mapping[str, Any], *, fallback_type: str = 'artifact') -> ArtifactDescriptor:
@@ -20,32 +18,6 @@ def _artifact_descriptor_from_sclite(descriptor: Mapping[str, Any], *, fallback_
         schema_version=str(descriptor.get('schema_version') or ''),
         digest=str(descriptor.get('digest') or ''),
     )
-
-
-def _fallback_demo_sign_and_verify(
-    descriptor: ArtifactDescriptor,
-    *,
-    purpose: str,
-    signer_id: str,
-    verifier_id: str,
-) -> tuple[SigningResult, VerificationResult]:
-    payload = f"{descriptor.digest}|{signer_id}|{purpose}".encode('utf-8')
-    signature = SignatureEnvelope(
-        mode='detached_demo_digest',
-        signer_id=signer_id,
-        signature='demo:' + sha256(payload).hexdigest(),
-        binds_digest=descriptor.digest,
-        algorithm='demo-sha256-digest-binding',
-        metadata={'purpose': purpose, 'demo_only': True, 'source': 'ravenclaw_compat_demo'},
-    )
-    signing = SigningResult(status='signed', signature=signature)
-    verification = VerificationResult(
-        status='passed',
-        trust_status='trusted',
-        verifier_id=verifier_id,
-        metadata={'demo_only': True, 'signer_id': signer_id, 'purpose': purpose, 'source': 'ravenclaw_compat_demo'},
-    )
-    return signing, verification
 
 
 def demo_sign_execution_contract(
@@ -62,21 +34,14 @@ def demo_sign_execution_contract(
     """
 
     descriptor = _artifact_descriptor_from_sclite(execution_contract_descriptor, fallback_type='execution_contract')
-    source = 'ravenclaw_compat_demo'
-    try:
-        from govengine.signing import DemoDigestSigner, DemoDigestVerifier  # type: ignore
-
-        signer = DemoDigestSigner(signer_id=signer_id)
-        signing = signer.sign(SigningRequest(descriptor=descriptor, purpose=purpose, metadata={'demo_only': True}))
-        verification = DemoDigestVerifier(verifier_id=verifier_id, allowed_signer_ids=(signer_id,)).verify(descriptor, signing.signature)
-        source = 'govengine_demo_ports'
-    except (ImportError, AttributeError):
-        signing, verification = _fallback_demo_sign_and_verify(descriptor, purpose=purpose, signer_id=signer_id, verifier_id=verifier_id)
+    signer = DemoDigestSigner(signer_id=signer_id)
+    signing = signer.sign(SigningRequest(descriptor=descriptor, purpose=purpose, metadata={'demo_only': True}))
+    verification = DemoDigestVerifier(verifier_id=verifier_id, allowed_signer_ids=(signer_id,)).verify(descriptor, signing.signature)
 
     signature = signing.signature.as_dict()
     trust = verification.as_dict()
-    signature['source'] = source
-    trust['source'] = source
+    signature['source'] = 'govengine_demo_ports'
+    trust['source'] = 'govengine_demo_ports'
     return {
         'signature': signature,
         'trust_decision': trust,

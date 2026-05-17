@@ -81,7 +81,7 @@ Running the suite exercises public-visible correctness signals across areas such
 - planner and runtime contracts
 - policy and approval behavior
 - execution contract shaping
-- demo-only GovEngine signer/verifier trust-port binding for lifecycle tickets (no PKI/key ownership claim)
+- demo-only GovEngine signer/verifier trust-port binding for lifecycle tickets, using the published GovEngine demo ports rather than a Ravenclaw-local signing fallback (no PKI/key ownership claim)
 - Logdash control and state projection behavior
 - runtime recovery truth
 - evaluation and replay semantics
