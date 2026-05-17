@@ -12,7 +12,7 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | `engine/action_validators.py` | `govengine.action_validators` | removed | Ravenclaw active callers and tests import validators from GovEngine directly. |
 | `engine/action_compiler.py` | `govengine.action_compiler` | removed | Ravenclaw active callers and tests import the compiler from GovEngine directly. |
 | `engine/capability_recipes.py` | `govengine.capability_recipes` | removed | Ravenclaw active callers and tests import capability helpers from GovEngine directly. |
-| `engine/tool_registry.py` | `govengine.tool_registry` | keep thin alias | Preserves registry imports and monkeypatch compatibility for existing tests. |
+| `engine/tool_registry.py` | `govengine.tool_registry` | removed | Ravenclaw active callers and tests import tool-registry helpers from GovEngine directly; mutable state tests monkeypatch the GovEngine module itself. |
 | `engine/semantic_loss_policy.py` | `govengine.semantic_loss_policy` | removed | Ravenclaw active callers and tests import semantic-loss helpers from GovEngine directly. |
 | `engine/policy_core.py` | `govengine.policy.core` | removed | Ravenclaw active callers and tests import runtime policy helpers from GovEngine directly. |
 | `engine/policy_gateway.py` | `govengine.policy.gateway` | removed | Ravenclaw active callers and tests import policy gateway helpers from GovEngine directly. |
@@ -35,7 +35,7 @@ adapter need remains. Retired in cleanup passes: `action_schema`,
 `action_compiler`, `action_validators`, `analysis_contract`,
 `capability_recipes`, `evidence_policy`, `execution_contracts`,
 `policy_core`, `policy_gateway`, `scl_ravenclaw_adapter`,
-`semantic_loss_policy`, and `signal_contract`.
+`semantic_loss_policy`, `signal_contract`, and `tool_registry`.
 
 ## Validation Rule
 

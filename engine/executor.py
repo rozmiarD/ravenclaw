@@ -20,7 +20,7 @@ from govengine.execution.command_shape import (
 )
 from govengine.scope import FunctionalScopePort
 from govengine_control_gate_adapter import evaluate_govengine_control_gate  # type: ignore
-from tool_registry import get_tool_catalog  # type: ignore
+from govengine.tool_registry import get_tool_catalog
 
 
 class ExecutionEngine:

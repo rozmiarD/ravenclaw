@@ -9,9 +9,9 @@ if ENGINE_DIR not in sys.path:
 
 import yaml
 
-import tool_registry as tr  # type: ignore
+from govengine import tool_registry as tr
 from govengine.policy.core import get_runtime_allowed_tools, get_runtime_brain_allowed_tools  # type: ignore
-from tool_registry import (  # type: ignore
+from govengine.tool_registry import (
     get_active_planner_profile_state,
     get_execution_allowed_tools,
     get_planner_visible_tools,

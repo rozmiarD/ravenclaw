@@ -81,6 +81,7 @@ def test_retired_ravenclaw_action_compat_modules_are_absent() -> None:
         'scl_ravenclaw_adapter',
         'semantic_loss_policy',
         'signal_contract',
+        'tool_registry',
     ):
         sys.modules.pop(module_name, None)
         try:

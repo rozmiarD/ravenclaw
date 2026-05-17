@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-from tool_registry import (
+from govengine.tool_registry import (
     get_all_planner_visible_tools,
     get_capability_catalog,
     get_capability_tool_coverage,
