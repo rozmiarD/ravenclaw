@@ -7,7 +7,7 @@ ENGINE_DIR = str(Path(__file__).resolve().parents[1])
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-from analysis_contract import build_analysis_contract  # type: ignore
+from govengine.contracts.analysis import build_analysis_contract  # type: ignore
 
 
 def test_build_analysis_contract_maps_success_semantics() -> None:

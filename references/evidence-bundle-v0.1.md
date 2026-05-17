@@ -80,4 +80,4 @@ A v0.1 public demo evidence bundle must not claim:
 
 ## Compatibility notes
 
-This is not yet the full runtime qualification/evidence schema used for live campaigns. It is a public-stable demo proof artifact. A later schema can extend this toward qualification outputs from `engine/vuln_qualification.py` and policy checks from `engine/evidence_policy.py` without weakening the public safety guarantees here.
+This is not yet the full runtime qualification/evidence schema used for live campaigns. It is a public-stable demo proof artifact. A later schema can extend this toward qualification outputs from `engine/vuln_qualification.py` and GovEngine confirmation-evidence policy checks without weakening the public safety guarantees here.

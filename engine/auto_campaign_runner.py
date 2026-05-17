@@ -110,7 +110,7 @@ import auto_campaign_reporting as acr  # type: ignore
 import auto_campaign_state as acst  # type: ignore
 import vuln_qualification as vq  # type: ignore
 import auto_campaign_controls as acc  # type: ignore
-import evidence_policy as evp  # type: ignore
+import govengine.contracts.evidence_policy as evp  # type: ignore
 OPENCLAW = "openclaw"
 RUN_PIPE = str(ep("run_pipeline.py"))
 OUT_PATH = str(REPORTS_DIR / "auto-campaign-latest.json")

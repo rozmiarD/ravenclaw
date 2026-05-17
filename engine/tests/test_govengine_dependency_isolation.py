@@ -68,18 +68,25 @@ def test_govengine_public_surface_imports_without_engine_path(tmp_path: Path) ->
 
 def test_remaining_ravenclaw_contract_modules_are_govengine_compat_aliases() -> None:
     sys.path.insert(0, str(REPO_ROOT / 'engine'))
-    import signal_contract  # type: ignore
-    import analysis_contract  # type: ignore
-    import evidence_policy  # type: ignore
+    import execution_contracts  # type: ignore
+    import scl_ravenclaw_adapter  # type: ignore
 
-    assert signal_contract.__name__ == 'govengine.contracts.signal'
-    assert analysis_contract.__name__ == 'govengine.contracts.analysis'
-    assert evidence_policy.__name__ == 'govengine.contracts.evidence_policy'
+    assert execution_contracts.__name__ == 'govengine.contracts.execution'
+    assert scl_ravenclaw_adapter.__name__ == 'govengine.sclite_adapter'
 
 
 def test_retired_ravenclaw_action_compat_modules_are_absent() -> None:
     sys.path.insert(0, str(REPO_ROOT / 'engine'))
-    for module_name in ('action_schema', 'action_compiler', 'action_validators', 'capability_recipes', 'semantic_loss_policy'):
+    for module_name in (
+        'action_schema',
+        'action_compiler',
+        'action_validators',
+        'analysis_contract',
+        'capability_recipes',
+        'evidence_policy',
+        'semantic_loss_policy',
+        'signal_contract',
+    ):
         sys.modules.pop(module_name, None)
         try:
             __import__(module_name)

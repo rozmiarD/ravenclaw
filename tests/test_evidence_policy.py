@@ -1,4 +1,4 @@
-from engine.evidence_policy import can_be_confirmed
+from govengine.contracts.evidence_policy import can_be_confirmed
 
 
 def test_confirmed_requires_repro_and_controls():

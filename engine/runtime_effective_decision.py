@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable
 
 from learning_store import top_progression_hints, top_transition_action_hints
-from signal_contract import success_outcome_status, workflow_promotion_status, signal_contract_workflow_promotable  # type: ignore
+from govengine.contracts.signal import success_outcome_status, workflow_promotion_status, signal_contract_workflow_promotable  # type: ignore
 from runtime_decision_contracts import canonical_action_flags_from_mapping  # type: ignore
 
 

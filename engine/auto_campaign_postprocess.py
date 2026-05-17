@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Callable, Dict
 
 from auto_campaign_targets import host_from_target  # type: ignore
-from analysis_contract import build_analysis_contract  # type: ignore
+from govengine.contracts.analysis import build_analysis_contract  # type: ignore
 from auto_campaign_health_policy import apply_transport_cooldowns  # type: ignore
 
 

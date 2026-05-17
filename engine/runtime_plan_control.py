@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-from signal_contract import (  # type: ignore
+from govengine.contracts.signal import (  # type: ignore
     signal_contract_adaptation_positive,
     signal_contract_planner_reconsult_worthy,
     success_outcome_status,

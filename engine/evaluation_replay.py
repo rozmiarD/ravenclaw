@@ -5,7 +5,7 @@ from typing import Any, Dict
 from evaluation_bundle import validate_replay_bundle  # type: ignore
 from runtime_effective_decision import branch_lifecycle, branch_thread_identity  # type: ignore
 from runtime_plan_control import recon_to_exploit_synthesis  # type: ignore
-from signal_contract import adaptation_feedback_status, finding_signal_status, success_outcome_status, workflow_promotion_status  # type: ignore
+from govengine.contracts.signal import adaptation_feedback_status, finding_signal_status, success_outcome_status, workflow_promotion_status  # type: ignore
 
 
 REPLAY_RESULT_SCHEMA_VERSION = 'phase5-replay-result-v1'

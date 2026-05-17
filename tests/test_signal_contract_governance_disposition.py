@@ -1,4 +1,4 @@
-from engine.signal_contract import build_signal_contract
+from govengine.contracts.signal import build_signal_contract
 
 
 def test_signal_contract_carries_governance_blocked_qualification_disposition() -> None:

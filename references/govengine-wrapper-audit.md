@@ -17,9 +17,9 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | `engine/policy_core.py` | `govengine.policy.core` | keep thin alias | Preserves runtime policy helper imports. |
 | `engine/policy_gateway.py` | `govengine.policy.gateway` | keep thin alias | Preserves policy decision imports and v0 compatibility helpers. |
 | `engine/execution_contracts.py` | `govengine.contracts.execution` | keep thin alias | Preserves execution contract helper imports. |
-| `engine/signal_contract.py` | `govengine.contracts.signal` | keep thin alias | Preserves signal contract imports. |
-| `engine/analysis_contract.py` | `govengine.contracts.analysis` | keep thin alias | Preserves analysis contract imports. |
-| `engine/evidence_policy.py` | `govengine.contracts.evidence_policy` | keep thin alias | Preserves confirmation-evidence policy imports. |
+| `engine/signal_contract.py` | `govengine.contracts.signal` | removed | Ravenclaw active callers and tests import signal contract helpers from GovEngine directly. |
+| `engine/analysis_contract.py` | `govengine.contracts.analysis` | removed | Ravenclaw active callers and tests import analysis contract helpers from GovEngine directly. |
+| `engine/evidence_policy.py` | `govengine.contracts.evidence_policy` | removed | Ravenclaw active callers and tests import confirmation-evidence helpers from GovEngine directly. |
 | `engine/scl_ravenclaw_adapter.py` | `govengine.sclite_adapter` | keep thin alias | Preserves the Ravenclaw-to-SCLite adapter import while GovEngine owns the reusable adapter seam. |
 | `engine/govengine_boundary_profile.py` | `govengine.kernel_boundary_report` | keep required host check | Ravenclaw validates the published 0.2 boundary report and profile non-claims during public install validation. |
 | `engine/govengine_security_profile.py` | `govengine.security_profile` | keep host entrypoint; fallback is legacy diagnostic only | Public validation requires the upstream facade; the fallback remains for clearer diagnostics in unsupported local environments. |
@@ -32,8 +32,9 @@ Compatibility wrappers are migrational, not a target architecture. Once active
 Ravenclaw callers and tests have migrated to `govengine.*` imports, the
 historical `engine.*` alias should be deleted unless a concrete host-owned
 adapter need remains. Retired in cleanup passes: `action_schema`,
-`action_compiler`, `action_validators`, `capability_recipes`, and
-`semantic_loss_policy`.
+`action_compiler`, `action_validators`, `analysis_contract`,
+`capability_recipes`, `evidence_policy`, `semantic_loss_policy`, and
+`signal_contract`.
 
 ## Validation Rule
 
