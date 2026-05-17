@@ -9,11 +9,11 @@ It is intentionally practical: Ravenclaw is only credible if its safety story de
 
 The public trusted core should be read as these layers:
 
-- policy and scope boundary logic in `engine/policy_core.py` and `engine/policy_gateway.py`;
-- execution-contract shaping in `engine/execution_contracts.py` and related schema/reference surfaces;
+- policy and scope boundary logic consumed from `govengine.policy.core` and `govengine.policy.gateway`;
+- execution-contract shaping consumed from `govengine.contracts.execution` and related schema/reference surfaces;
 - execution-time enforcement in `engine/executor.py`;
 - dry-run/public-safe demo and proof fixtures under `examples/`;
-- reusable governed-execution helpers consumed from `govengine>=0.1.7,<0.2`;
+- reusable governed-execution helpers consumed from `govengine>=0.2.0,<0.3`;
 - contract lifecycle schemas, validators, and hash-chain verification consumed from `sclite-core>=0.5.1,<0.6`.
 
 These layers must remain defensible even when:

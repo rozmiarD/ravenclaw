@@ -99,7 +99,7 @@ def check_govengine_surface_registry() -> dict[str, Any]:
         }
 
 
-def check_govengine_security_profile_compat() -> dict[str, Any]:
+def check_govengine_security_profile() -> dict[str, Any]:
     expected_groups = ['action_tooling', 'policy_scope', 'review_contracts']
     expected_modules = [
         'govengine.action_schema',
@@ -107,12 +107,11 @@ def check_govengine_security_profile_compat() -> dict[str, Any]:
         'govengine.contracts.signal',
     ]
     try:
-        import govengine_security_profile as security_profile  # type: ignore
+        from govengine import security_profile  # type: ignore
     except Exception as exc:  # pragma: no cover - defensive diagnostic path
         return {
             'status': 'failed',
             'source': None,
-            'upstream_available': False,
             'expected_groups': expected_groups,
             'actual_groups': [],
             'expected_modules': expected_modules,
@@ -136,19 +135,17 @@ def check_govengine_security_profile_compat() -> dict[str, Any]:
         )
         return {
             'status': 'passed' if passed else 'failed',
-            'source': payload.get('source'),
-            'upstream_available': bool(security_profile.govengine_security_profile_available()),
+            'source': payload.get('entrypoint'),
             'expected_groups': expected_groups,
             'actual_groups': groups,
             'expected_modules': expected_modules,
             'surface': payload.get('surface'),
-            'error': None if passed else 'unexpected GovEngine security-profile compatibility shape',
+            'error': None if passed else 'unexpected GovEngine security-profile shape',
         }
     except Exception as exc:  # pragma: no cover - defensive diagnostic path
         return {
             'status': 'failed',
             'source': None,
-            'upstream_available': bool(security_profile.govengine_security_profile_available()),
             'expected_groups': expected_groups,
             'actual_groups': [],
             'expected_modules': expected_modules,
@@ -202,7 +199,7 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
     dependencies = [check_dependency(*spec) for spec in dependency_specs]
     pip_check = None if skip_pip_check else run_pip_check()
     govengine_surface_registry = check_govengine_surface_registry()
-    govengine_security_profile = check_govengine_security_profile_compat()
+    govengine_security_profile = check_govengine_security_profile()
     govengine_boundary_profile = check_govengine_boundary_profile()
     python_ok = sys.version_info >= (3, 11)
 
@@ -214,7 +211,7 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
     if govengine_surface_registry['status'] != 'passed':
         failed.append(DependencyCheck('govengine-surfaces', 'govengine', 'govengine.surfaces.public_surface_index', False, None, 'failed', govengine_surface_registry.get('error') or 'surface registry check failed'))
     if govengine_security_profile['status'] != 'passed':
-        failed.append(DependencyCheck('govengine-security-profile', 'govengine_security_profile', 'Ravenclaw GovEngine security-profile compatibility seam', False, None, 'failed', govengine_security_profile.get('error') or 'security-profile compatibility check failed'))
+        failed.append(DependencyCheck('govengine-security-profile', 'govengine.security_profile', 'GovEngine security-profile facade', False, None, 'failed', govengine_security_profile.get('error') or 'security-profile check failed'))
     if govengine_boundary_profile['status'] != 'passed':
         failed.append(DependencyCheck('govengine-boundary-profile', 'govengine_boundary_profile', 'Ravenclaw GovEngine boundary-profile compatibility seam', False, None, 'failed', govengine_boundary_profile.get('error') or 'boundary-profile compatibility check failed'))
 

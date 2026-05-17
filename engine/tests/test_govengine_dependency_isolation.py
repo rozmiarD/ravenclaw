@@ -76,6 +76,7 @@ def test_retired_ravenclaw_action_compat_modules_are_absent() -> None:
         'capability_recipes',
         'evidence_policy',
         'execution_contracts',
+        'govengine_security_profile',
         'policy_gateway',
         'policy_core',
         'scl_ravenclaw_adapter',

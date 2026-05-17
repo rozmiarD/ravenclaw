@@ -2,6 +2,12 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Mapping
 
+from govengine.core import ArtifactState
+from govengine.execution.gate import ExecutionGate, ExecutionGateInput, RunnerProfile
+from govengine.sclite_contracts import descriptor_from_artifact
+from govengine.signing import DemoDigestVerifier, SigningPolicy, TrustPolicy, signature_envelope_from_artifact, signature_transition_decision
+from govengine.state_index import ArtifactStateIndex
+
 
 def _dict(value: Any) -> Dict[str, Any]:
     return dict(value) if isinstance(value, Mapping) else {}
@@ -19,15 +25,6 @@ def _not_required() -> Dict[str, Any]:
     }
 
 
-def _unavailable(exc: Exception) -> Dict[str, Any]:
-    return {
-        'status': 'not_available',
-        'reason_code': 'govengine_control_gates_unavailable',
-        'available': False,
-        'error': exc.__class__.__name__,
-    }
-
-
 def evaluate_govengine_control_gate(
     *,
     dry_run: bool,
@@ -39,21 +36,12 @@ def evaluate_govengine_control_gate(
     """Evaluate optional GovEngine artifact-governance execution gates.
 
     This is a Ravenclaw host adapter seam. It consumes published GovEngine
-    artifact-governance gate objects and keeps a defensive unavailable fallback
-    only for unsupported local environment diagnostics.
+    artifact-governance gate objects while Ravenclaw supplies host artifacts,
+    runner-profile selection, and dry-run/live context.
     """
 
     if not require_execution_ticket:
         return _not_required()
-
-    try:
-        from govengine.core import ArtifactState
-        from govengine.execution.gate import ExecutionGate, ExecutionGateInput, RunnerProfile
-        from govengine.sclite_contracts import descriptor_from_artifact
-        from govengine.signing import SigningPolicy, TrustPolicy, signature_envelope_from_artifact, signature_transition_decision
-        from govengine.state_index import ArtifactStateIndex
-    except Exception as exc:  # pragma: no cover - defensive fallback for unsupported local environments
-        return _unavailable(exc)
 
     ticket_gate = _dict(execution_ticket_gate)
     ticket = _dict(execution_ticket)
@@ -77,24 +65,10 @@ def evaluate_govengine_control_gate(
         allowed_modes = ('not_signed_integrity_only', 'detached_signature', 'detached_demo_digest')
         if signature.mode == 'detached_demo_digest':
             contract_descriptor = descriptor_from_artifact(contract, role='execution_contract') if contract else ticket_descriptor
-            try:
-                from govengine.signing import DemoDigestVerifier  # type: ignore
-
-                verification = DemoDigestVerifier(
-                    verifier_id=str(((ticket.get('trust_decision') or {}) if isinstance(ticket.get('trust_decision'), dict) else {}).get('verifier_id') or 'ravenclaw-demo-verifier'),
-                    allowed_signer_ids=(str(signature.signer_id),) if signature.signer_id else (),
-                ).verify(contract_descriptor, signature)
-            except (ImportError, AttributeError):
-                trust = (ticket.get('trust_decision') or {}) if isinstance(ticket.get('trust_decision'), dict) else {}
-                from govengine.signing import VerificationResult
-
-                verification = VerificationResult(
-                    status=str(trust.get('status') or 'missing'),
-                    trust_status=str(trust.get('trust_status') or 'unknown'),
-                    reason_code=str(trust.get('reason_code') or ''),
-                    verifier_id=str(trust.get('verifier_id') or 'ravenclaw-compat-verifier'),
-                    metadata={'source': 'ticket_trust_decision_fallback'},
-                )
+            verification = DemoDigestVerifier(
+                verifier_id=str(((ticket.get('trust_decision') or {}) if isinstance(ticket.get('trust_decision'), dict) else {}).get('verifier_id') or 'ravenclaw-demo-verifier'),
+                allowed_signer_ids=(str(signature.signer_id),) if signature.signer_id else (),
+            ).verify(contract_descriptor, signature)
             require_signature = True
             ticket_descriptor = contract_descriptor
         signature_decision = signature_transition_decision(

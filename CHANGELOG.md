@@ -1,16 +1,18 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
-- Raised the package chain to `govengine>=0.1.7,<0.2` and `sclite-core>=0.5.1,<0.6` after the GovEngine `0.1.7` and SCLite `0.5.1` releases; public install/demo validation now expects the review-bundle-capable GovEngine/SCLite line.
+- Retired the Ravenclaw `engine/govengine_security_profile.py` compatibility wrapper; public install validation and tests now consume the published `govengine.security_profile` facade directly.
+- Removed unsupported-environment fallback paths from the GovEngine control-gate adapter; Ravenclaw now requires the published GovEngine gate/signing ports for that host seam.
+- Raised the package chain to `govengine>=0.2.0,<0.3` and `sclite-core>=0.5.1,<0.6` after the GovEngine `0.2.0` and SCLite `0.5.1` releases; public install/demo validation now expects the review-bundle-capable GovEngine/SCLite line plus the GovEngine kernel-boundary profile.
 - Made the Ravenclaw runtime/demo root explicitly configurable through `RAVENCLAW_WORKSPACE`, removed portable-doc references to the historical operator-home path, and added a public-safe Ravenclaw -> GovEngine -> SCLite demo scenario that generates and validates contract-chain evidence.
 - Polished broader public documentation wording to use simpler terms for install maturity, reviewer non-claims, proof-of-value limits, replay scope, carrier readiness, and audience fit.
 - Cleaned README badge order, removed personal ownership copy from public-facing docs, completed package metadata fields, and tightened install/environment/docs-map wording around the public-safe dry-run support boundary.
 - Polished public-facing docs to use plainer wording and keep claim/non-claim boundaries aligned with the current GovEngine `0.1.5` and SCLite `0.2.1` package state.
-- Raised the GovEngine dependency floor to `govengine>=0.1.5,<0.2` after the security-profile facade line was published and verified from PyPI; public install validation now expects the upstream `govengine.security_profile` path while retaining a defensive compatibility fallback for older local environments.
-- Added a Ravenclaw compatibility entrypoint for GovEngine's optional security-profile facade so Ravenclaw can consume `govengine.security_profile` when available while retaining a fallback for older local environments; public install validation now reports that compatibility seam.
+- Raised the GovEngine dependency floor to `govengine>=0.1.5,<0.2` after the security-profile facade line was published and verified from PyPI; public install validation expected the upstream `govengine.security_profile` path.
+- Added a Ravenclaw compatibility entrypoint for GovEngine's optional security-profile facade. This entrypoint was later retired once Ravenclaw moved to direct `govengine.security_profile` imports.
 - Raised the GovEngine dependency floor to `govengine>=0.1.4,<0.2` after the public surface registry line was published and verified from PyPI; public install validation now checks the expected GovEngine surface registry shape.
 - Raised the GovEngine dependency floor to `govengine>=0.1.3,<0.2` after the artifact-governance control-gate line was published and verified from PyPI.
-- Added a GovEngine artifact-governance control-gate adapter for the approved-spec execution path, consuming GovEngine lifecycle/signing/state/execution gates while retaining a defensive unavailable fallback for unsupported local environments.
+- Added a GovEngine artifact-governance control-gate adapter for the approved-spec execution path, consuming GovEngine lifecycle/signing/state/execution gates.
 - Moved Ravenclaw signal, analysis, and evidence-policy seams behind GovEngine compatibility aliases; the then-current GovEngine dependency floor was `govengine>=0.1.5,<0.2`.
 - Added public install validation via `scripts/validate_public_install.py`, clarified runtime-only vs dev/test install paths, and wired the public demo doctor to report dependency readiness.
 - Added `references/public-safe-proof-walkthrough.md` plus a refreshed public `THREAT_MODEL.md` so reviewers can follow the dry-run proof trace, trusted-core boundaries, and non-claims from committed artifacts.

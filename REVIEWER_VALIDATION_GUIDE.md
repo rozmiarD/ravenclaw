@@ -48,7 +48,7 @@ done
 What this supports:
 - broad regression confidence across public runtime, policy, Logdash, and proof surfaces;
 - package-chain readiness for `sclite-core` and `govengine`;
-- visibility into the GovEngine public surface registry and Ravenclaw's security-profile compatibility seam.
+- visibility into the GovEngine public surface registry, security-profile facade, and Ravenclaw boundary-profile check.
 
 What it does not prove:
 - live deployment readiness, exhaustive security assurance, complete architecture stability, or readiness of a future package release.

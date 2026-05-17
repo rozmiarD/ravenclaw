@@ -34,7 +34,6 @@ def test_public_install_validation_runtime_json() -> None:
     assert data['govengine_surface_registry']['optional_profile']['security_profile_helpers'] is True
     assert data['govengine_security_profile']['status'] == 'passed'
     assert data['govengine_security_profile']['source'] == 'govengine.security_profile'
-    assert data['govengine_security_profile']['upstream_available'] is True
     assert data['govengine_security_profile']['actual_groups'] == [
         'action_tooling',
         'policy_scope',

@@ -53,15 +53,14 @@ The exact count will evolve, but the important signal is structural: this repo a
 
 Ravenclaw consumes reusable package surfaces instead of carrying every contract helper in-tree:
 - `sclite-core>=0.5.1,<0.6`
-- `govengine>=0.1.7,<0.2`
+- `govengine>=0.2.0,<0.3`
 
-The public install validator checks that the active environment resolves that package chain, imports the expected modules, verifies the GovEngine public surface registry, and reports Ravenclaw's security-profile compatibility seam through the published `govengine.security_profile` facade.
+The public install validator checks that the active environment resolves that package chain, imports the expected modules, verifies the GovEngine public surface registry, and validates the published `govengine.security_profile` facade directly.
 
 Concrete entry points:
 - `scripts/validate_public_install.py`
-- `engine/govengine_security_profile.py`
 - `tests/test_public_install_validation.py`
-- `engine/tests/test_govengine_security_profile_compat.py`
+- `engine/tests/test_govengine_security_profile.py`
 
 This matters because package-boundary drift is tested directly rather than assumed from docs.
 
@@ -125,7 +124,7 @@ Taken together, these signals support the following public claims:
 - important runtime and UI truth surfaces are tested
 - the public repo is being separated from private operator state through explicit publication boundaries
 - governance and operator-visibility behavior are treated as real correctness concerns
-- the public dependency chain through GovEngine and SCLite is validated as an install/import surface, including the GovEngine security-profile compatibility seam
+- the public dependency chain through GovEngine and SCLite is validated as an install/import surface, including the GovEngine security-profile facade
 - the SCLite-backed Security Contract Layer is grounded in Ravenclaw Runtime artifacts, not protocol-first marketing
 - the Replayable Truth Runtime proof path can evaluate preserved decisions without live target execution by default
 - the Scope Fidelity report can deterministically classify target-binding/request-shape drift without executing against live targets
