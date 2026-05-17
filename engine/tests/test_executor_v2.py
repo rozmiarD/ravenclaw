@@ -11,7 +11,7 @@ if ENGINE_DIR not in sys.path:
 
 from executor import ExecutionEngine  # type: ignore
 from sclite.integrity import artifact_descriptor  # type: ignore
-from policy_core import get_approved_spec_allowed_tools, get_runtime_allowed_tools  # type: ignore
+from govengine.policy.core import get_approved_spec_allowed_tools, get_runtime_allowed_tools  # type: ignore
 
 
 

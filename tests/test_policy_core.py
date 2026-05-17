@@ -1,4 +1,4 @@
-from engine.policy_core import contains_banned_patterns, contains_tool_restricted_patterns, check_credentials_policy, parse_auth_usage
+from govengine.policy.core import contains_banned_patterns, contains_tool_restricted_patterns, check_credentials_policy, parse_auth_usage
 
 
 def test_contains_banned_patterns_detects_pattern():

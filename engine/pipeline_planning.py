@@ -11,7 +11,7 @@ from govengine.capability_recipes import (
     list_candidate_tools_for_capability,
 )
 from campaign_utils import extract_host_from_url  # type: ignore
-from policy_core import get_runtime_allowed_tools, get_runtime_brain_allowed_tools  # type: ignore
+from govengine.policy.core import get_runtime_allowed_tools, get_runtime_brain_allowed_tools  # type: ignore
 from tool_registry import get_capability_catalog, get_tool_catalog  # type: ignore
 
 

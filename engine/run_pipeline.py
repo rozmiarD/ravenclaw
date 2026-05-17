@@ -28,7 +28,7 @@ from runtime_agent_io import ask_json  # type: ignore
 from runtime_signal_eval import high_signal, interesting_http_signal, evaluate_success_criteria  # type: ignore
 from govengine.action_schema import ACTION_TYPE_TO_CAPABILITY, ACTION_TYPE_TO_EXPERIMENT_SHAPE
 from govengine.capability_recipes import can_resolve_tool_from_capability
-from policy_core import get_runtime_brain_allowed_tools  # type: ignore
+from govengine.policy.core import get_runtime_brain_allowed_tools  # type: ignore
 from govengine.contracts.execution import build_prepared_execution_spec, build_approved_execution_spec, redact_prepared_execution_spec_for_auditor
 from govengine.semantic_loss_policy import semantic_loss_runtime_gate
 from public_delivery import apply_delivery_profile_to_pipeline, resolve_delivery_profile, run_auditor_adapter, run_brain_adapter, run_execution_adapter  # type: ignore
