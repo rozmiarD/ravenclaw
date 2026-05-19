@@ -65,7 +65,7 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'title': 'Security Contract validation receipt',
         'command': 'python scripts/run_security_contract_validation.py --include-pytest',
         'paths': ['scripts/run_security_contract_validation.py', 'schemas/security_contract_validation_receipt.v0.1.schema.json'],
-        'claim': 'Machine-readable receipt for public-safe fixture, snapshot, residue, focused pytest, and CI parity checks.',
+        'claim': 'Machine-readable receipt for public-safe fixture, snapshot, residue, focused pytest, and CI parity checks; use --structural-only when demo runtime generation must be skipped.',
         'non_claim': 'Does not authorize publication, protocol adapter work, or live target testing.',
     },
     {

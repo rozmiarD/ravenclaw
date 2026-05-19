@@ -21,6 +21,7 @@ def test_security_contract_validation_runner_lists_core_checks() -> None:
         'public_validation_surface_index',
         'demo_bundle_smoke',
         'assemble_public_snapshot',
+        'demo_scenario_package_chain',
         'snapshot_fixture_validation',
         'snapshot_residue_audit',
         'snapshot_replayable_truth_fixture',
@@ -35,6 +36,7 @@ def test_security_contract_validation_runner_can_include_focused_pytest() -> Non
     ids = runner.list_check_ids(include_pytest=True)
     assert ids[-1] == 'focused_pytest'
     assert 'tests/test_public_snapshot_manifest.py' in runner.FOCUSED_PYTEST_TARGETS
+    assert 'tests/test_demo_scenario.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_reviewer_validation_guide.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_proof_of_value_framing.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_proof_of_value_scorecard.py' in runner.FOCUSED_PYTEST_TARGETS
@@ -42,6 +44,20 @@ def test_security_contract_validation_runner_can_include_focused_pytest() -> Non
     assert 'engine/tests/test_security_contract_fixtures.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_public_snapshot_residue_audit.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_replayable_truth_fixture.py' in runner.FOCUSED_PYTEST_TARGETS
+
+
+def test_security_contract_validation_runner_can_skip_demo_runtime_checks() -> None:
+    ids = runner.list_check_ids(include_pytest=True, include_demo_runtime=False)
+    assert 'demo_bundle_smoke' not in ids
+    assert 'demo_scenario_package_chain' not in ids
+    assert ids[-1] == 'focused_pytest'
+
+
+def test_focused_pytest_targets_can_skip_demo_runtime_tests() -> None:
+    targets = runner._focused_pytest_targets(include_demo_runtime=False)
+    assert 'engine/tests/test_public_demo_bundle.py' not in targets
+    assert 'tests/test_demo_scenario.py' not in targets
+    assert 'tests/test_public_snapshot_manifest.py' in targets
 
 
 def test_security_contract_validation_runner_can_include_github_actions_matrix() -> None:
@@ -130,3 +146,40 @@ def test_security_contract_validation_runner_list_checks_cli() -> None:
     lines = proc.stdout.strip().splitlines()
     assert lines[0] == 'fixture_validation'
     assert lines[-2:] == ['focused_pytest', 'github_actions_pytest_matrix']
+
+
+def test_security_contract_validation_runner_structural_list_checks_cli() -> None:
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPTS_DIR / 'run_security_contract_validation.py'),
+            '--list-checks',
+            '--include-pytest',
+            '--structural-only',
+        ],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    lines = proc.stdout.strip().splitlines()
+    assert 'demo_bundle_smoke' not in lines
+    assert 'demo_scenario_package_chain' not in lines
+    assert lines[-1] == 'focused_pytest'
+
+
+def test_security_contract_validation_runner_rejects_matrix_without_demo_runtime() -> None:
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPTS_DIR / 'run_security_contract_validation.py'),
+            '--list-checks',
+            '--include-github-actions-matrix',
+            '--no-demo-runtime',
+        ],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode != 0
+    assert 'requires demo runtime checks' in proc.stderr

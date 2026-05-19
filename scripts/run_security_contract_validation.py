@@ -41,11 +41,22 @@ FOCUSED_PYTEST_TARGETS = [
     'tests/test_scope_fidelity_cli.py',
     'tests/test_public_validation_surface_index.py',
     'tests/test_public_snapshot_manifest.py',
+    'tests/test_demo_scenario.py',
     'tests/test_reviewer_validation_guide.py',
     'tests/test_proof_of_value_framing.py',
     'tests/test_proof_of_value_scorecard.py',
     'tests/test_proof_of_value_scorecard_fixture.py',
 ]
+
+DEMO_RUNTIME_CHECK_IDS = {
+    'demo_bundle_smoke',
+    'demo_scenario_package_chain',
+}
+
+DEMO_RUNTIME_PYTEST_TARGETS = {
+    'engine/tests/test_public_demo_bundle.py',
+    'tests/test_demo_scenario.py',
+}
 
 
 @dataclass(frozen=True)
@@ -160,6 +171,24 @@ def _assemble_snapshot_check(snapshot_dir: Path) -> ValidationCheck:
     )
 
 
+def _demo_scenario_package_chain_check(snapshot_dir: Path, output_dir: Path) -> ValidationCheck:
+    return ValidationCheck(
+        check_id='demo_scenario_package_chain',
+        description='Run the public-safe Ravenclaw/GovEngine/SCLite demo scenario from an assembled public snapshot.',
+        command=[
+            'bash',
+            '-lc',
+            'scripts/assemble_public_snapshot.sh "$DEMO_SCENARIO_REPO" >/dev/null && cd "$DEMO_SCENARIO_REPO" && "$PYTHON_BIN" scripts/run_demo_scenario.py --output-dir "$DEMO_SCENARIO_OUTPUT"',
+        ],
+        cwd=ROOT,
+        env={
+            'DEMO_SCENARIO_REPO': str(snapshot_dir),
+            'DEMO_SCENARIO_OUTPUT': str(output_dir),
+            'PYTHON_BIN': sys.executable,
+        },
+    )
+
+
 def _snapshot_fixture_check(snapshot_dir: Path) -> ValidationCheck:
     return ValidationCheck(
         check_id='snapshot_fixture_validation',
@@ -237,7 +266,13 @@ def _github_actions_pytest_matrix_check(matrix_repo: Path) -> ValidationCheck:
     )
 
 
-def _focused_pytest_check(pytest_repo: Path) -> ValidationCheck:
+def _focused_pytest_targets(*, include_demo_runtime: bool) -> List[str]:
+    if include_demo_runtime:
+        return list(FOCUSED_PYTEST_TARGETS)
+    return [target for target in FOCUSED_PYTEST_TARGETS if target not in DEMO_RUNTIME_PYTEST_TARGETS]
+
+
+def _focused_pytest_check(pytest_repo: Path, *, include_demo_runtime: bool = True) -> ValidationCheck:
     return ValidationCheck(
         check_id='focused_pytest',
         description='Run focused Security Contract/public snapshot regression tests from a disposable public snapshot.',
@@ -246,7 +281,7 @@ def _focused_pytest_check(pytest_repo: Path) -> ValidationCheck:
             '-lc',
             'scripts/assemble_public_snapshot.sh "$PYTEST_REPO" >/dev/null && cd "$PYTEST_REPO" && "$PYTHON_BIN" -m pytest -q "$@"',
             'focused_pytest',
-            *FOCUSED_PYTEST_TARGETS,
+            *_focused_pytest_targets(include_demo_runtime=include_demo_runtime),
         ],
         cwd=ROOT,
         env={'PYTEST_REPO': str(pytest_repo), 'PYTHON_BIN': sys.executable},
@@ -260,12 +295,17 @@ def validate_receipt_schema(receipt: Mapping[str, Any]) -> None:
     scl.validate_schema_ref(RECEIPT_SCHEMA_REF, receipt, root=ROOT)
 
 
-def list_check_ids(include_pytest: bool, include_github_actions_matrix: bool = False) -> List[str]:
+def list_check_ids(
+    include_pytest: bool,
+    include_github_actions_matrix: bool = False,
+    include_demo_runtime: bool = True,
+) -> List[str]:
     ids = [
         'fixture_validation',
         'public_validation_surface_index',
         'demo_bundle_smoke',
         'assemble_public_snapshot',
+        'demo_scenario_package_chain',
         'snapshot_fixture_validation',
         'snapshot_residue_audit',
         'snapshot_replayable_truth_fixture',
@@ -274,6 +314,8 @@ def list_check_ids(include_pytest: bool, include_github_actions_matrix: bool = F
         'proof_of_value_scorecard',
         'proof_of_value_scorecard_fixture',
     ]
+    if not include_demo_runtime:
+        ids = [check_id for check_id in ids if check_id not in DEMO_RUNTIME_CHECK_IDS]
     if include_pytest:
         ids.append('focused_pytest')
     if include_github_actions_matrix:
@@ -285,6 +327,7 @@ def _build_receipt(
     checks: Sequence[CheckReceipt],
     include_pytest: bool,
     include_github_actions_matrix: bool = False,
+    include_demo_runtime: bool = True,
 ) -> Dict[str, Any]:
     failed = [check for check in checks if check.status != 'passed']
     receipt = {
@@ -300,7 +343,7 @@ def _build_receipt(
             'public_push': False,
         },
         'validated_trace': VALIDATED_TRACE,
-        'checks_requested': list_check_ids(include_pytest, include_github_actions_matrix),
+        'checks_requested': list_check_ids(include_pytest, include_github_actions_matrix, include_demo_runtime),
         'checks_passed': [check.check_id for check in checks if check.status == 'passed'],
         'checks_failed': [check.check_id for check in failed],
         'checks': [asdict(check) for check in checks],
@@ -343,7 +386,11 @@ def _print_markdown(receipt: Mapping[str, Any]) -> None:
                     print('```')
 
 
-def run_validation(include_pytest: bool, include_github_actions_matrix: bool = False) -> Dict[str, Any]:
+def run_validation(
+    include_pytest: bool,
+    include_github_actions_matrix: bool = False,
+    include_demo_runtime: bool = True,
+) -> Dict[str, Any]:
     receipts: List[CheckReceipt] = []
     with tempfile.TemporaryDirectory(prefix='ravenclaw-contract-validation.') as tmp:
         tmp_path = Path(tmp)
@@ -351,7 +398,6 @@ def run_validation(include_pytest: bool, include_github_actions_matrix: bool = F
         checks = [
             _fixture_check(),
             _public_validation_surface_index_check(),
-            _demo_bundle_check(tmp_path / 'demo-output', tmp_path / 'demo-repo'),
             _assemble_snapshot_check(snapshot_dir),
             _snapshot_fixture_check(snapshot_dir),
             _snapshot_residue_check(snapshot_dir),
@@ -361,8 +407,11 @@ def run_validation(include_pytest: bool, include_github_actions_matrix: bool = F
             _proof_of_value_scorecard_check(snapshot_dir),
             _proof_of_value_scorecard_fixture_check(snapshot_dir),
         ]
+        if include_demo_runtime:
+            checks.insert(2, _demo_bundle_check(tmp_path / 'demo-output', tmp_path / 'demo-repo'))
+            checks.insert(4, _demo_scenario_package_chain_check(tmp_path / 'demo-scenario-repo', tmp_path / 'demo-scenario-output'))
         if include_pytest:
-            checks.append(_focused_pytest_check(tmp_path / 'pytest-repo'))
+            checks.append(_focused_pytest_check(tmp_path / 'pytest-repo', include_demo_runtime=include_demo_runtime))
         if include_github_actions_matrix:
             checks.append(_github_actions_pytest_matrix_check(tmp_path / 'github-actions-pytest-repo'))
 
@@ -375,6 +424,7 @@ def run_validation(include_pytest: bool, include_github_actions_matrix: bool = F
         receipts,
         include_pytest=include_pytest,
         include_github_actions_matrix=include_github_actions_matrix,
+        include_demo_runtime=include_demo_runtime,
     )
 
 
@@ -387,13 +437,24 @@ def main(argv: Sequence[str] | None = None) -> int:
         help='also run the full GitHub Actions pytest slice matrix from a disposable public snapshot',
     )
     parser.add_argument('--list-checks', action='store_true', help='print planned check identifiers and exit')
+    parser.add_argument(
+        '--no-demo-runtime',
+        '--structural-only',
+        dest='no_demo_runtime',
+        action='store_true',
+        help='skip demo bundle/scenario checks that execute the Ravenclaw demo planner/pipeline',
+    )
     parser.add_argument('--format', choices=['json', 'markdown'], default='json', help='receipt output format')
     args = parser.parse_args(argv)
+
+    if args.no_demo_runtime and args.include_github_actions_matrix:
+        parser.error('--include-github-actions-matrix requires demo runtime checks; omit --no-demo-runtime/--structural-only')
 
     if args.list_checks:
         for check_id in list_check_ids(
             include_pytest=args.include_pytest,
             include_github_actions_matrix=args.include_github_actions_matrix,
+            include_demo_runtime=not args.no_demo_runtime,
         ):
             print(check_id)
         return 0
@@ -401,6 +462,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     receipt = run_validation(
         include_pytest=args.include_pytest,
         include_github_actions_matrix=args.include_github_actions_matrix,
+        include_demo_runtime=not args.no_demo_runtime,
     )
     if args.format == 'markdown':
         _print_markdown(receipt)

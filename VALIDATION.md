@@ -162,6 +162,14 @@ python scripts/run_security_contract_validation.py --include-pytest
 
 Expected result: JSON with `artifact_type: security_contract_validation_receipt`, `schema_version: v0.1`, and `status: passed`. This runner validates the public validation surface index, validates the public snapshot manifest, validates the committed fixtures, generates the demo bundle from a disposable public snapshot, assembles a temporary public snapshot, validates copied fixtures inside that snapshot, audits snapshot residue, validates the public-safe Replayable Truth Runtime fixture and Scope Fidelity fixtures, and optionally runs the focused Security Contract/public snapshot pytest slice. The receipt is produced through SCLite validation helpers, schema-backed by `schemas/security_contract_validation_receipt.v0.1.schema.json`, and described in `references/security-contract-validation-receipt-v0.1.md`.
 
+For quick structural diagnostics in automation that must not execute the Ravenclaw demo planner/pipeline, use:
+
+```bash
+python scripts/run_security_contract_validation.py --structural-only --include-pytest
+```
+
+This structural profile skips demo bundle and demo scenario checks, and omits focused pytest targets that generate demo runtime artifacts. It is suitable for fast package-boundary and fixture hygiene checks. Use the full command above for reviewer/release validation when demo runtime artifact generation is intentional.
+
 ## What not to assume
 
 Passing tests does **not** mean:
