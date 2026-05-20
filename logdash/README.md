@@ -94,7 +94,7 @@ pip install -r requirements.txt
 python app.py --port 9091
 ```
 
-If the runtime root should differ from the script checkout, export `RAVENCLAW_WORKSPACE=/path/to/workspace` before starting the app.
+If the runtime root should differ from the script checkout, export `RAVENCLAW_WORKSPACE=/path/to/workspace` before starting the app. Use `RAVENCLAW_REPORTS_DIR=/path/to/reports`, `RAVENCLAW_LOGDASH_DB=/path/to/logs.db`, and `RAVENCLAW_PIPELINE_CONFIG=/path/to/pipeline_config.json` when runtime state, SQLite storage, or pipeline configuration must live outside the checkout.
 
 By default it binds to `127.0.0.1:9091`.
 

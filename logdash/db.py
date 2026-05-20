@@ -1,11 +1,21 @@
 from __future__ import annotations
 
 import sqlite3
+import os
 from pathlib import Path
 from typing import Iterable, Tuple
 
 BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR / "logs.db"
+
+
+def _default_db_path() -> Path:
+    configured = os.getenv("RAVENCLAW_LOGDASH_DB")
+    if configured:
+        return Path(configured).expanduser().resolve()
+    return BASE_DIR / "logs.db"
+
+
+DB_PATH = _default_db_path()
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS logs (
@@ -23,6 +33,7 @@ CREATE TABLE IF NOT EXISTS logs (
 
 
 def get_conn() -> sqlite3.Connection:
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn

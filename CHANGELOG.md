@@ -1,6 +1,9 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+
+## 0.16.0 / 2026-05-20
+- Prepared the first Ravenclaw PyPI package line as `ravenclaw==0.16.0`, exposing narrow public security-profile and OpenClaw readiness helper APIs while keeping the full runtime, demo, Logdash, and validation fixtures source/reference-owned.
 - Added OpenClaw command-authority and rollback/stop negative contracts, proving chat/model prose, missing approvals, prepared-spec aliasing, and validation failures remain blocked before any carrier implementation.
 - Added OpenClaw readiness contracts for redaction/output channels and approval UX ordering, keeping future carrier work docs/contracts-only until command-authority and rollback tests exist.
 - Added a Ravenclaw security-profile manifest and current OpenClaw adapter-readiness packet for the 0.16 profile boundary, validating that Ravenclaw is a security runtime/profile over GovEngine + SCLite without implementing carriers or expanding live execution authority.

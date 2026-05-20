@@ -1,7 +1,7 @@
 # PUBLISHING.md
 
 This file is the short final publication checklist for Ravenclaw.
-Use it before any real public GitHub push.
+Use it before any real public GitHub push or PyPI release.
 
 ## Identity guard
 
@@ -233,6 +233,58 @@ The safest current release posture is:
 - keep the public explanation architecture-first, governance-first, and accurate
 - do not wait for perfect visual/demo polish if the goal is a useful technical public repo
 - do not overclaim ease, maturity, or deployment simplicity
+
+## PyPI release procedure
+
+Ravenclaw's first PyPI line is `0.16.x`. It is intentionally pre-1.0 and
+packages the public profile/readiness helper API, not the complete source
+runtime runner.
+
+Before uploading:
+
+1. Keep `pyproject.toml`, `README.md`, `INSTALL.md`, `PUBLIC_STATUS.md`,
+   `VALIDATION.md`, `VERSION_ROADMAP.md`, `PUBLISHING.md`, and `CHANGELOG.md`
+   aligned with the exact version.
+2. Run focused package tests:
+
+```bash
+python -m pytest -q tests/test_ravenclaw_package.py engine/tests/test_ravenclaw_security_profile.py engine/tests/test_openclaw_adapter_readiness.py
+```
+
+3. Run public install validation and the structural Security Contract receipt:
+
+```bash
+python scripts/validate_public_install.py --dev
+python scripts/run_security_contract_validation.py --structural-only --include-pytest
+```
+
+4. Build and check distributions:
+
+```bash
+python -m build
+python -m twine check dist/*
+```
+
+5. Test a clean wheel install and verify:
+
+```bash
+python -m venv /tmp/ravenclaw-wheel-venv
+/tmp/ravenclaw-wheel-venv/bin/python -m pip install dist/ravenclaw-0.16.0-py3-none-any.whl
+/tmp/ravenclaw-wheel-venv/bin/python -m pip check
+/tmp/ravenclaw-wheel-venv/bin/python - <<'PY'
+import importlib.metadata as metadata
+import ravenclaw
+from ravenclaw.security_profile import security_profile_manifest
+print(metadata.version("ravenclaw"))
+print(ravenclaw.__version__)
+print(security_profile_manifest()["profile"]["name"])
+PY
+```
+
+6. Commit, push, create an annotated version tag, then upload only with
+   operator approval and configured PyPI credentials.
+
+Never print, inspect, or commit PyPI credentials.
 
 ## Short version
 

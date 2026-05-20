@@ -259,8 +259,13 @@ def build_proof_bundles(vectors: list[RuntimeVector], branch_campaignlets: Proof
 
 
 def persist_runtime_state_artifacts(*, reports_dir: Path, artifacts: dict[str, ProofArtifact]) -> None:
-    runtime_state_dir = reports_dir.parent / 'state'
+    runtime_state_dir = reports_dir / 'state'
+    legacy_runtime_state_dir = reports_dir.parent / 'state'
     for name, payload in artifacts.items():
-        for path in {rsp(name), runtime_state_dir / name}:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding='utf-8')
+        for path in {rsp(name), runtime_state_dir / name, legacy_runtime_state_dir / name}:
+            try:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding='utf-8')
+            except OSError:
+                if path == runtime_state_dir / name:
+                    raise

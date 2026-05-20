@@ -21,12 +21,13 @@ from govengine.execution.command_shape import (
 from govengine.scope import FunctionalScopePort
 from govengine_control_gate_adapter import evaluate_govengine_control_gate  # type: ignore
 from govengine.tool_registry import get_tool_catalog
+from paths import TMP_DIR
 
 
 class ExecutionEngine:
     def __init__(self) -> None:
         self.scope_domains = load_scope_domains()
-        self.artifacts_root = Path.cwd() / 'tmp' / 'engine-handoffs'
+        self.artifacts_root = TMP_DIR / 'engine-handoffs'
         self.tool_catalog = get_tool_catalog()
         self.scope_port = FunctionalScopePort(extract_host_from_url, host_in_scope)
 

@@ -66,7 +66,7 @@ def _detect_app_version() -> str:
 
 WORKSPACE_ROOT = Path(os.getenv("RAVENCLAW_WORKSPACE") or str(Path(__file__).resolve().parents[1])).resolve()
 ENGINE_DIR = WORKSPACE_ROOT / "engine"
-REPORTS_DIR = WORKSPACE_ROOT / "reports"
+REPORTS_DIR = Path(os.getenv("RAVENCLAW_REPORTS_DIR") or str(WORKSPACE_ROOT / "reports")).expanduser().resolve()
 SCOPE_DIR = WORKSPACE_ROOT / "scope"
 if str(ENGINE_DIR) not in sys.path:
     sys.path.insert(0, str(ENGINE_DIR))
@@ -91,7 +91,7 @@ from runtime_campaign_state import (
 )
 PLANNER_REGISTRY_ROOT = REPORTS_DIR / "campaign_registry"
 OPENCLAW_CONFIG_PATH = PATHS_OPENCLAW_CONFIG_PATH
-PIPELINE_CONFIG_PATH = ENGINE_DIR / "pipeline_config.json"
+PIPELINE_CONFIG_PATH = Path(os.getenv("RAVENCLAW_PIPELINE_CONFIG") or str(ENGINE_DIR / "pipeline_config.json")).expanduser().resolve()
 FEATURE_FLAGS_PATH = ENGINE_DIR / "feature_flags.py"
 CAMPAIGN_SETTINGS_PATH = REPORTS_DIR / ".campaign.settings.json"
 QUEUE_STATE_PATH = REPORTS_DIR / ".auto_campaign.queues.json"

@@ -6,10 +6,11 @@
 import sys
 import argparse
 import datetime
+import os
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent / "logs.db"
+DB_PATH = Path(os.getenv("RAVENCLAW_LOGDASH_DB") or Path(__file__).resolve().parent / "logs.db").expanduser().resolve()
 
 def main():
     parser = argparse.ArgumentParser(description="Insert a logdash service entry (pipeline/logger event)")
@@ -44,6 +45,7 @@ def main():
         agent = args.agent or ''
 
     now = datetime.datetime.now(datetime.UTC).isoformat()
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute(

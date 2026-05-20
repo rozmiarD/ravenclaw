@@ -1,0 +1,8 @@
+include LICENSE
+include README.md
+include pyproject.toml
+graft ravenclaw
+prune engine
+prune tests
+global-exclude __pycache__
+global-exclude *.py[cod]

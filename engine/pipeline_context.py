@@ -14,7 +14,7 @@ from govengine.policy.core import get_runtime_brain_allowed_tools  # type: ignor
 from runtime_campaign_state import credentials_runtime_policy, resolve_campaign_key  # type: ignore
 from runtime_plan_service import load_active_campaign_blueprint  # type: ignore
 
-PIPELINE_CONFIG_PATH = str(ep('pipeline_config.json'))
+PIPELINE_CONFIG_PATH = str(Path(os.getenv('RAVENCLAW_PIPELINE_CONFIG') or str(ep('pipeline_config.json'))).expanduser().resolve())
 HOST_TOKEN_RE = re.compile(r"(https?://[^\s\"'<>]+)|\b((?:[a-z0-9-]+\.)+[a-z]{2,})\b", re.IGNORECASE)
 
 
@@ -178,9 +178,14 @@ def _context_read_path() -> Path:
 
 
 def _write_context_payload(payload: str) -> None:
-    for path in (CONTEXT_SUMMARY_PATH, LEGACY_CONTEXT_SUMMARY_PATH):
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(payload, encoding='utf-8')
+    CONTEXT_SUMMARY_PATH.parent.mkdir(parents=True, exist_ok=True)
+    CONTEXT_SUMMARY_PATH.write_text(payload, encoding='utf-8')
+    if LEGACY_CONTEXT_SUMMARY_PATH != CONTEXT_SUMMARY_PATH:
+        try:
+            LEGACY_CONTEXT_SUMMARY_PATH.parent.mkdir(parents=True, exist_ok=True)
+            LEGACY_CONTEXT_SUMMARY_PATH.write_text(payload, encoding='utf-8')
+        except OSError:
+            pass
 
 
 

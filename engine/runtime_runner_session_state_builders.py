@@ -30,11 +30,11 @@ def build_runtime_session_state_from_bootstrap(*, runtime_session_state_cls, boo
 
 
 def build_runtime_session_state(*, reports_dir, validate_campaign_fn: Callable[[str], dict], selected_scope_path_fn: Callable[[], Any], runtime_session_state_cls, load_runtime_session_bootstrap_fn: Callable[[], Any], build_runtime_session_state_from_bootstrap_fn: Callable[..., Any]) -> tuple[dict, Any, datetime, int, int, int, str, int]:
-    reports_dir.mkdir(parents=True, exist_ok=True)
     campaign_validation = validate_campaign_fn(str(selected_scope_path_fn()))
     if not campaign_validation.get('ok'):
         return campaign_validation, runtime_session_state_cls(runs=[], history=[], host_state={}, curated_plan=[], runtime_plan_meta={}, host_dns_cache={}, toggles={}, planner_hints_cache={}), datetime.now(timezone.utc), 0, 0, 0, 'balanced', 0
 
+    reports_dir.mkdir(parents=True, exist_ok=True)
     bootstrap = load_runtime_session_bootstrap_fn()
     state = build_runtime_session_state_from_bootstrap_fn(bootstrap=bootstrap)
     return campaign_validation, state, bootstrap.run_started, int(bootstrap.max_runs), int(bootstrap.target_load_limit), int(bootstrap.time_budget_min), str(bootstrap.retry_policy), int(bootstrap.retry_limit)

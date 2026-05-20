@@ -1,7 +1,7 @@
 # RAVENCLAW
 
 [![CI: pytest](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml/badge.svg)](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml)
-[![Source: Ravenclaw 0.10.0](https://img.shields.io/badge/source-Ravenclaw%200.10.0-blueviolet.svg)](pyproject.toml)
+[![Source: Ravenclaw 0.16.0](https://img.shields.io/badge/source-Ravenclaw%200.16.0-blueviolet.svg)](pyproject.toml)
 [![Python: 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
 [![Dependency: GovEngine >=0.7.0](https://img.shields.io/badge/dependency-GovEngine%20%3E%3D0.7.0-informational.svg)](https://github.com/rozmiarD/GovEngine)
 [![Dependency: SCLite 0.5.1](https://img.shields.io/badge/dependency-SCLite%200.5.1-informational.svg)](https://github.com/rozmiarD/SCLite)
@@ -43,6 +43,11 @@ In short, Ravenclaw optimizes for useful actions that stay within policy, scope,
 Ravenclaw now consumes **GovEngine** for reusable governed-runtime kernel mechanics and **SCLite** for contract lifecycle artifacts.
 
 The current reusable direction is a small **Security Contract Layer** backed by Ravenclaw Runtime artifacts: scope binding, policy decisions, prepared/approved execution specs, execution receipts, evidence summaries, and runtime truth. The reusable contract core is now the standalone `sclite` package/repo, while Ravenclaw is being shaped as the reference security-research runtime/profile over GovEngine + SCLite. OpenClaw, MCP, and A2A are potential later carriers for these contracts, not new protocols Ravenclaw is trying to own.
+
+The first PyPI package line is `ravenclaw==0.16.0`. It exposes the public
+Ravenclaw security-profile and OpenClaw readiness contract helpers. The full
+runtime, demo, Logdash, and validation surfaces remain source/reference
+repository workflows in this release.
 
 ## Safe quickstart
 

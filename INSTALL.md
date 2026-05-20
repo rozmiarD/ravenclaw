@@ -49,6 +49,24 @@ pip install -e .
 python scripts/validate_public_install.py
 ```
 
+PyPI package install for the public contract/profile helpers:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install ravenclaw==0.16.0
+python - <<'PY'
+import ravenclaw
+from ravenclaw.security_profile import security_profile_manifest
+print(ravenclaw.__version__)
+print(security_profile_manifest()["profile"]["name"])
+PY
+```
+
+The `0.16.0` wheel is intentionally a narrow public contract/profile package.
+Use the repository install path above for the full source/reference runtime,
+demo scripts, Logdash, and validation fixtures.
+
 Manual dev/test install for validation, demos, Logdash, and pytest:
 
 ```bash
@@ -57,6 +75,12 @@ source .venv/bin/activate
 pip install -e '.[dev]'
 python scripts/validate_public_install.py --dev
 ```
+
+For read-only checkouts or external runtime state, set
+`RAVENCLAW_REPORTS_DIR=/path/to/reports`, `RAVENCLAW_TMP_DIR=/path/to/tmp`, and
+`RAVENCLAW_LOGDASH_DB=/path/to/logs.db` before running the full test suite or
+Logdash. Set `RAVENCLAW_PIPELINE_CONFIG=/path/to/pipeline_config.json` when
+pipeline configuration should also be written outside the checkout.
 
 If editable install is not suitable in your environment, install the same explicit package dependencies:
 

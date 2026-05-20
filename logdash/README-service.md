@@ -8,7 +8,7 @@ This file documents how the Flask/SQLite log dashboard is managed as a user-leve
 - Virtualenv Python: `<workspace>/logdash/.venv/bin/python`
 - Port: `9091` (loopback-only, use SSH tunnel if you need remote access)
 
-If the runtime root should differ from the unit checkout path, set `RAVENCLAW_WORKSPACE=/path/to/workspace` in the systemd unit environment.
+If the runtime root should differ from the unit checkout path, set `RAVENCLAW_WORKSPACE=/path/to/workspace` in the systemd unit environment. If runtime state, SQLite storage, or pipeline configuration must live elsewhere, also set `RAVENCLAW_REPORTS_DIR=/path/to/reports`, `RAVENCLAW_LOGDASH_DB=/path/to/logs.db`, and `RAVENCLAW_PIPELINE_CONFIG=/path/to/pipeline_config.json`.
 
 ## Managing the service
 ```bash
@@ -32,6 +32,6 @@ The unit is enabled, so it auto-starts when the user session comes up. Service r
 - Ensure `curl -I http://127.0.0.1:9091` returns `200 OK`.
 - If the port is busy, check for old processes (`ps -ef | grep app.py`).
 - For permission/logging issues, inspect `journalctl --user -u logdash.service`.
-- If the service fails repeatedly, check the SQLite file `logs.db` for corruption (`sqlite3 logs.db "PRAGMA integrity_check;"`).
+- If the service fails repeatedly, check the configured SQLite file for corruption (`sqlite3 "$RAVENCLAW_LOGDASH_DB" "PRAGMA integrity_check;"`, or `logs.db` when no override is set).
 
 Keep this README alongside the Flask app so anyone touching LogDash knows how it's kept alive.
