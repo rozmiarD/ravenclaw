@@ -16,7 +16,7 @@ def _report() -> dict:
         'artifact_type': 'govengine_boundary_report',
         'summary': {
             'profile_count': 1,
-            'surface_count': 5,
+            'surface_count': 6,
             'forbidden_profile_ownership_count': 5,
         },
         'boundary': {
@@ -33,6 +33,7 @@ def _report() -> dict:
             {'name': 'artifact_governance_core'},
             {'name': 'planning_contracts_core'},
             {'name': 'admission_policy_core'},
+            {'name': 'evidence_review_core'},
             {'name': 'controlled_execution_core'},
             {'name': 'security_profile_helpers'},
         ],

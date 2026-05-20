@@ -8,7 +8,7 @@ Current public source version: `0.10.0`.
 Current dependency baseline:
 
 ```text
-Ravenclaw -> govengine>=0.6.0,<0.7 -> sclite-core>=0.5.1,<0.6
+Ravenclaw -> govengine>=0.7.0,<0.8 -> sclite-core>=0.5.1,<0.6
 ```
 
 Use this as a milestone map, not as a promise that every milestone will become a PyPI/runtime release. Ravenclaw remains a source/reference security runtime until install, profile, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
@@ -139,10 +139,10 @@ Intent:
 
 Current baseline:
 
-- Ravenclaw consumes `govengine>=0.6.0,<0.7` and `sclite-core>=0.5.1,<0.6`;
+- Ravenclaw consumes `govengine>=0.7.0,<0.8` and `sclite-core>=0.5.1,<0.6`;
 - public install validation and Security Contract validation pass;
 - GovEngine/SCLite ticket and receipt-bounded-evidence surfaces are integrated into the public proof chain.
-- GovEngine 0.6 kernel/profile boundary, runtime-shell, planning-contract, admission-policy, and runner-supervision validation is required by public install validation and focused projection tests.
+- GovEngine 0.7 kernel/profile boundary, runtime-shell, planning-contract, admission-policy, runner-supervision, and evidence-review validation is required by public install validation and focused projection tests.
 - The structural Security Contract validation profile is available for automation that must not execute demo runtime checks.
 
 Exit criteria:
@@ -281,6 +281,12 @@ Definition of done:
 - Ravenclaw evidence pipeline consumes GovEngine review contracts;
 - SCLite review-bundle validation remains the proof boundary;
 - public proof narrative is clearer and less Ravenclaw-specific.
+
+Current status: the first 0.15 adapter slice is implemented through
+`engine/govengine_review_projection.py`, backed by GovEngine 0.7 `review`
+validators and focused tests. It projects receipt-bounded evidence claims and
+review results while keeping Ravenclaw finding taxonomy and SCLite review-bundle
+verdict authority outside GovEngine.
 
 ## `0.16.x` — Security profile packaging and adapter readiness
 

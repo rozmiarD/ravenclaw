@@ -30,6 +30,7 @@ def test_public_install_validation_runtime_json() -> None:
         'artifact_governance_core',
         'planning_contracts_core',
         'admission_policy_core',
+        'evidence_review_core',
         'controlled_execution_core',
         'security_profile_helpers',
     ]

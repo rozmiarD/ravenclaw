@@ -1,6 +1,6 @@
 # GovEngine Wrapper Audit
 
-Ravenclaw consumes GovEngine as the package `govengine>=0.6.0,<0.7`.
+Ravenclaw consumes GovEngine as the package `govengine>=0.7.0,<0.8`.
 This file records which `engine/` modules are compatibility wrappers over
 GovEngine and which host-side seams remain Ravenclaw-owned.
 
@@ -26,6 +26,7 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | `engine/govengine_planning_projection.py` | `govengine.planning` | keep host adapter | Ravenclaw owns projection from planner/runtime task semantics into redacted GovEngine task and plan-intent contracts while keeping security planning semantics host-owned. |
 | `engine/govengine_admission_projection.py` | `govengine.admission` | keep host adapter | Ravenclaw owns projection from runtime admission/execution-gate decisions into redacted GovEngine admission, policy, approval, and audit records while keeping security policy semantics, approval workflow, and audit storage host-owned. |
 | `engine/govengine_runner_supervision_projection.py` | `govengine.execution.supervision` | keep host adapter | Ravenclaw owns projection from approved-spec runner boundaries into GovEngine supervision plans, leases, and receipts while keeping concrete tool adapters and live backend authority host-owned. |
+| `engine/govengine_review_projection.py` | `govengine.review` | keep host adapter | Ravenclaw owns projection from receipt-bounded evidence review into GovEngine requirement, claim, qualification, and review-result shapes while keeping finding taxonomy and SCLite review-bundle verdicts outside GovEngine. |
 | `engine/govengine_security_profile.py` | `govengine.security_profile` | removed | Public validation and tests import the published GovEngine facade directly; no Ravenclaw host logic remained. |
 | `engine/govengine_control_gate_adapter.py` | `govengine.core`, `govengine.execution.gate`, `govengine.sclite_contracts`, `govengine.signing`, `govengine.state_index` | keep host adapter; no missing-GovEngine fallback | Ravenclaw owns host runner/profile selection while GovEngine owns reusable gate and signing objects. |
 | `engine/govengine_trust_demo.py` | `govengine.signing` demo ports | keep host demo helper; no local signing fallback | Public validation expects GovEngine demo ports from the published package; Ravenclaw only projects the demo trust result into public-safe artifacts. |
