@@ -8,7 +8,7 @@ Current public source version: `0.10.0`.
 Current dependency baseline:
 
 ```text
-Ravenclaw -> govengine>=0.5.0,<0.6 -> sclite-core>=0.5.1,<0.6
+Ravenclaw -> govengine>=0.6.0,<0.7 -> sclite-core>=0.5.1,<0.6
 ```
 
 Use this as a milestone map, not as a promise that every milestone will become a PyPI/runtime release. Ravenclaw remains a source/reference security runtime until install, profile, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
@@ -139,10 +139,10 @@ Intent:
 
 Current baseline:
 
-- Ravenclaw consumes `govengine>=0.5.0,<0.6` and `sclite-core>=0.5.1,<0.6`;
+- Ravenclaw consumes `govengine>=0.6.0,<0.7` and `sclite-core>=0.5.1,<0.6`;
 - public install validation and Security Contract validation pass;
 - GovEngine/SCLite ticket and receipt-bounded-evidence surfaces are integrated into the public proof chain.
-- GovEngine 0.5 kernel/profile boundary, runtime-shell, planning-contract, and admission-policy validation is required by public install validation and focused projection tests.
+- GovEngine 0.6 kernel/profile boundary, runtime-shell, planning-contract, admission-policy, and runner-supervision validation is required by public install validation and focused projection tests.
 - The structural Security Contract validation profile is available for automation that must not execute demo runtime checks.
 
 Exit criteria:
@@ -256,6 +256,12 @@ Definition of done:
 - live backend is blocked by default and negative-tested;
 - local-lab/controlled-live paths require explicit operator approval and receipts;
 - no raw prompt/tool execution path bypasses GovEngine.
+
+Current status: the first 0.14 adapter slice is implemented through
+`engine/govengine_runner_supervision_projection.py`, backed by GovEngine 0.6
+`execution.supervision` validators and focused tests. It projects approved-spec
+runner requests, supervision plans, leases, and receipts while leaving concrete
+tool execution and live backend authority in Ravenclaw.
 
 ## `0.15.x` — Evidence/review migration
 

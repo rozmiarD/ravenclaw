@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Updated Ravenclaw to consume the GovEngine 0.6 runner-supervision surface, projecting approved-spec runner requests, supervision plans, leases, and receipts while keeping concrete tool adapters and live backend authority host-owned.
 - Updated Ravenclaw to consume the GovEngine 0.5 admission-policy surface, projecting runtime admission and execution-gate decisions into redacted `GovAdmissionDecision`, `GovPolicyDecision`, `GovApprovalRequest`, and `GovAuditRecord` shapes while keeping Ravenclaw security policy semantics host-owned.
 - Updated Ravenclaw to consume the GovEngine 0.4 planning-contract surface, projecting planner/runtime task semantics into redacted `GovTaskContract`, `GovPlanIntentContract`, and `PlannerPort` shapes while keeping Ravenclaw security planning semantics host-owned.
 - Updated Ravenclaw to consume the GovEngine 0.3 runtime-shell surface for state/control projections, mapping current runtime state, queue summaries, runtime snapshots, and Logdash control actions into `GovControlAction`, `GovQueueSnapshot`, and `GovRuntimeSnapshot` shapes.
