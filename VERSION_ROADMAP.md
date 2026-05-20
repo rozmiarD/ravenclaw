@@ -8,7 +8,7 @@ Current public source version: `0.10.0`.
 Current dependency baseline:
 
 ```text
-Ravenclaw -> govengine>=0.4.0,<0.5 -> sclite-core>=0.5.1,<0.6
+Ravenclaw -> govengine>=0.5.0,<0.6 -> sclite-core>=0.5.1,<0.6
 ```
 
 Use this as a milestone map, not as a promise that every milestone will become a PyPI/runtime release. Ravenclaw remains a source/reference security runtime until install, profile, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
@@ -139,10 +139,10 @@ Intent:
 
 Current baseline:
 
-- Ravenclaw consumes `govengine>=0.4.0,<0.5` and `sclite-core>=0.5.1,<0.6`;
+- Ravenclaw consumes `govengine>=0.5.0,<0.6` and `sclite-core>=0.5.1,<0.6`;
 - public install validation and Security Contract validation pass;
 - GovEngine/SCLite ticket and receipt-bounded-evidence surfaces are integrated into the public proof chain.
-- GovEngine 0.3 kernel/profile boundary and runtime-shell validation is required by public install validation and focused state/control projection tests.
+- GovEngine 0.5 kernel/profile boundary, runtime-shell, planning-contract, and admission-policy validation is required by public install validation and focused projection tests.
 - The structural Security Contract validation profile is available for automation that must not execute demo runtime checks.
 
 Exit criteria:
@@ -224,6 +224,11 @@ Definition of done:
 - Ravenclaw can ask GovEngine whether a task may continue, must dry-run, requires approval/replan, or is blocked;
 - security-specific policy remains profile-owned;
 - public docs accurately describe non-claims and approval boundaries.
+
+Current status: the first 0.13 adapter slice is implemented through
+`engine/govengine_admission_projection.py`, backed by GovEngine 0.5
+`admission` validators and focused tests. Raw Ravenclaw hosts/targets are
+hashed into redacted `subject_ref` values before entering GovEngine contracts.
 
 ## `0.14.x` — Execution supervision and Controlled Live Mode groundwork
 

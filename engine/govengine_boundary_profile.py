@@ -10,6 +10,7 @@ from govengine import kernel_boundary_report
 EXPECTED_SURFACES = (
     'artifact_governance_core',
     'planning_contracts_core',
+    'admission_policy_core',
     'controlled_execution_core',
     'security_profile_helpers',
 )
