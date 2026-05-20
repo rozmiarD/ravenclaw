@@ -52,7 +52,8 @@ Start with:
 11. `references/carrier-readiness-checklist.md`
 12. `references/carrier-readiness-packet-template.md`
 13. `references/openclaw-carrier-readiness-packet-2026-05-12.md`
-14. `references/ravenclaw-consumer-cleanup-2026-05-12.md`
+14. `references/runtime-state-control-govengine-map.md`
+15. `references/ravenclaw-consumer-cleanup-2026-05-12.md`
 
 ## If you want proof-of-value context
 
@@ -102,6 +103,17 @@ Start with:
 7. `DEMO.md`
 
 This direction keeps Ravenclaw Runtime as the proof/reference implementation, consumes SCLite as the reusable contract-core dependency, and treats OpenClaw, MCP, and A2A as later carriers, not new protocols. For the first future carrier boundary, read `references/openclaw-adapter-contract-map.md`; before implementation planning, use `references/carrier-readiness-checklist.md` and fill `references/carrier-readiness-packet-template.md`.
+
+## If you want the GovEngine migration roadmap
+
+Start with:
+1. `VERSION_ROADMAP.md`
+2. `references/govengine-wrapper-audit.md`
+3. `references/runtime-state-control-govengine-map.md`
+4. `references/runtime-artifact-ownership.md`
+5. `STATE_FILES.md`
+
+This path separates current Ravenclaw-owned runtime/control state from candidate GovEngine-compatible projections for later package work.
 
 ## If you want contributor / publication workflow
 

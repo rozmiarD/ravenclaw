@@ -157,6 +157,10 @@ Intent:
 
 Map Ravenclaw runtime/control state onto GovEngine-compatible models while preserving Logdash behavior.
 
+Current mapping source:
+
+- `references/runtime-state-control-govengine-map.md`
+
 Planned work:
 
 - map `.auto_campaign.state.json` to `GovRunState`;
