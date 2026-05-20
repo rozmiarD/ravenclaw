@@ -54,7 +54,7 @@ PyPI package install for the public contract/profile helpers:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install ravenclaw==0.16.0
+pip install ravenclaw-security==0.16.1
 python - <<'PY'
 import ravenclaw
 from ravenclaw.security_profile import security_profile_manifest
@@ -63,7 +63,7 @@ print(security_profile_manifest()["profile"]["name"])
 PY
 ```
 
-The `0.16.0` wheel is intentionally a narrow public contract/profile package.
+The `0.16.1` wheel is intentionally a narrow public contract/profile package.
 Use the repository install path above for the full source/reference runtime,
 demo scripts, Logdash, and validation fixtures.
 

@@ -90,7 +90,8 @@ def security_profile_manifest() -> dict[str, Any]:
             'runtime_owner': 'ravenclaw',
         },
         'package_chain': {
-            'ravenclaw': '0.16.0',
+            'ravenclaw': '0.16.1',
+            'ravenclaw_distribution': 'ravenclaw-security',
             'govengine': '>=0.7.0,<0.8',
             'sclite-core': '>=0.5.1,<0.6',
         },

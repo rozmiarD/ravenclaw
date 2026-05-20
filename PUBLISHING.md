@@ -236,9 +236,9 @@ The safest current release posture is:
 
 ## PyPI release procedure
 
-Ravenclaw's first PyPI line is `0.16.x`. It is intentionally pre-1.0 and
-packages the public profile/readiness helper API, not the complete source
-runtime runner.
+Ravenclaw's first PyPI line is `ravenclaw-security` `0.16.x`, importing as
+`ravenclaw`. It is intentionally pre-1.0 and packages the public
+profile/readiness helper API, not the complete source runtime runner.
 
 Before uploading:
 
@@ -269,13 +269,13 @@ python -m twine check dist/*
 
 ```bash
 python -m venv /tmp/ravenclaw-wheel-venv
-/tmp/ravenclaw-wheel-venv/bin/python -m pip install dist/ravenclaw-0.16.0-py3-none-any.whl
+/tmp/ravenclaw-wheel-venv/bin/python -m pip install dist/ravenclaw_security-0.16.1-py3-none-any.whl
 /tmp/ravenclaw-wheel-venv/bin/python -m pip check
 /tmp/ravenclaw-wheel-venv/bin/python - <<'PY'
 import importlib.metadata as metadata
 import ravenclaw
 from ravenclaw.security_profile import security_profile_manifest
-print(metadata.version("ravenclaw"))
+print(metadata.version("ravenclaw-security"))
 print(ravenclaw.__version__)
 print(security_profile_manifest()["profile"]["name"])
 PY

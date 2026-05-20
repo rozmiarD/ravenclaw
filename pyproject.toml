@@ -3,8 +3,8 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ravenclaw"
-version = "0.16.0"
+name = "ravenclaw-security"
+version = "0.16.1"
 description = "Governance-first security research runtime with policy-gated execution and public-safe proof artifacts"
 readme = "README.md"
 requires-python = ">=3.11"
