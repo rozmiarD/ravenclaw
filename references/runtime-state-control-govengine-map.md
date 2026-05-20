@@ -4,11 +4,11 @@ This note is the 0.11 planning map for projecting Ravenclaw runtime state and
 Logdash control semantics onto GovEngine-compatible contracts.
 
 It is not an implementation claim. Ravenclaw still owns local state storage,
-Logdash behavior, campaign UX, and security-runtime semantics. GovEngine 0.2
-currently provides generic governance context, transition decisions, execution
-gate inputs, runner receipts, artifact state indexes, and controlled-execution
-dry-run helpers. It does not yet own Ravenclaw's runtime persistence, queues,
-Logdash UI state, or campaign lifecycle.
+Logdash behavior, campaign UX, and security-runtime semantics. GovEngine 0.3
+provides the runtime-shell validation surface for neutral control actions,
+queue snapshots, runtime snapshots, and scheduler-tick metadata. It still does
+not own Ravenclaw's runtime persistence, queue mutation, Logdash UI state, or
+campaign lifecycle.
 
 ## Current validation baseline
 
@@ -18,7 +18,7 @@ Before this map was written, these gates passed in a clean validation virtualenv
 - `python scripts/run_security_contract_validation.py --structural-only --include-pytest`
 - `python -m pytest -q engine/tests/test_runtime_loop_control.py engine/tests/test_runtime_plan_control.py engine/tests/test_runtime_override_control.py engine/tests/test_runtime_runner_controls.py engine/tests/test_runtime_session_state.py engine/tests/test_runtime_runner_session_state_builders.py tests/test_logdash_control_paths.py tests/test_logdash_services_state_view.py`
 
-The installed package boundary was `govengine==0.2.0` and
+The initial mapping baseline used `govengine==0.2.0` and
 `sclite-core==0.5.1`.
 
 ## Ownership rules
@@ -35,12 +35,12 @@ The installed package boundary was `govengine==0.2.0` and
 
 ## State file map
 
-| Ravenclaw source | Current owner | 0.11 projected shape | GovEngine 0.2 fit | Next action |
+| Ravenclaw source | Current owner | 0.11 projected shape | GovEngine 0.3 fit | Next action |
 | --- | --- | --- | --- | --- |
-| `reports/.auto_campaign.state.json` | `engine/runtime_campaign_state.py`, runtime loop, Logdash control | `GovRunState` | Partial via `TransitionDecision`; no dedicated run-state model yet | Add Ravenclaw adapter/test first; consider GovEngine 0.3 model only after field parity is clear |
+| `reports/.auto_campaign.state.json` | `engine/runtime_campaign_state.py`, runtime loop, Logdash control | runtime-shell state projection | Fits through `GovRuntimeSnapshot.state` plus host metadata | Keep persistence Ravenclaw-owned |
 | `reports/.orchestrator.state.json` | `engine/runtime_campaign_state.py`, Logdash selected-campaign state | `GovOrchestratorState` | Partial via `GovernanceContext.metadata`; no canonical orchestrator-state model | Keep selected-campaign persistence Ravenclaw-owned; define neutral projection fields |
-| `reports/.auto_campaign.queues.json` | `engine/auto_campaign_state.py`, `logdash/services.py` | `GovQueueSnapshot` | Gap; GovEngine 0.2 has no queue snapshot type | Map lane/count/preview semantics in Ravenclaw before proposing generic GovEngine queue fields |
-| `reports/.runtime_snapshot.json` | `engine/auto_campaign_state.py`, `logdash/services.py` | `GovRuntimeSnapshot` | Partial through `ArtifactStateIndex` for governed artifact state only | Keep campaign/host/security telemetry Ravenclaw-owned; project only neutral status/queue/control summary |
+| `reports/.auto_campaign.queues.json` | `engine/auto_campaign_state.py`, `logdash/services.py` | `GovQueueSnapshot` | Fits through redaction-bounded lane previews | Keep queue mutation Ravenclaw-owned |
+| `reports/.runtime_snapshot.json` | `engine/auto_campaign_state.py`, `logdash/services.py` | `GovRuntimeSnapshot` | Fits for neutral state/control/queue projection | Keep campaign/host/security telemetry Ravenclaw-owned |
 | `reports/.runtime_plan.meta.json` | `engine/runtime_plan_service.py` | `GovPlanState` or runtime snapshot sub-block | Gap; current GovEngine task/planning contract is not the owner of Ravenclaw plan metadata | Wait for 0.12 task-contract mapping before extracting |
 | `reports/.campaign.settings.json` | Logdash/runtime campaign settings | Host policy/profile settings | Not a GovEngine state model | Keep in Ravenclaw; pass selected booleans into GovEngine gate/context only when needed |
 | `reports/.host_state.json` and `reports/learning_store.json` | Ravenclaw runtime learning and host heuristics | Security profile telemetry | Not a GovEngine state model | Keep in Ravenclaw security profile; do not extract generic state prematurely |
@@ -50,15 +50,19 @@ The installed package boundary was `govengine==0.2.0` and
 
 | Logdash/runtime action | Current behavior | 0.11 GovEngine-compatible projection | Notes |
 | --- | --- | --- | --- |
-| `start` | Validates selected runtime plan, spawns runtime when not alive, persists running state | `TransitionDecision(status="allowed", from_state="idle", to_state="running")` plus context metadata | Spawning remains Ravenclaw-owned |
-| `pause` | Requires live runtime, writes paused control state, runtime loop polls and blocks | `TransitionDecision(status="allowed", to_state="paused")` | Pause is control evidence, not a GovEngine scheduler |
-| `resume` | Clears paused state or reports existing live runtime as resumed | `TransitionDecision(status="allowed", from_state="paused", to_state="running")` | Preserve no-spawn resume semantics for already-live runtime |
-| `stop` | Sets stopped state and terminates live runtime when present; clean stop allowed without live PID | `TransitionDecision(status="allowed", to_state="stopped")` | Termination remains Ravenclaw host authority |
-| `cancel` / archive-style cleanup | Removes or archives local generated state depending on endpoint | `TransitionDecision(status="allowed", to_state="cancelled")` when lifecycle-backed | Must not erase durable planner history |
-| `replan` / activate blueprint | Resets selected campaign to idle and regenerates/activates runtime plan | `TransitionDecision(status="requires_replan", to_state="idle")` | Planning semantics defer to 0.12 task-contract work |
-| cooldown / skip / gate block | Runtime loop records skip/gate/cooldown summaries and host counters | `TransitionDecision(status="blocked" or "degraded", reason_code=...)` | Generic reason codes may belong in GovEngine 0.3 if repeated across profiles |
+| `start` | Validates selected runtime plan, spawns runtime when not alive, persists running state | `GovControlAction(action="start", requested_state="running")` | Spawning remains Ravenclaw-owned |
+| `pause` | Requires live runtime, writes paused control state, runtime loop polls and blocks | `GovControlAction(action="pause", requested_state="paused")` | Pause is control evidence, not a GovEngine scheduler |
+| `resume` | Clears paused state or reports existing live runtime as resumed | `GovControlAction(action="resume", requested_state="running")` | Preserve no-spawn resume semantics for already-live runtime |
+| `stop` | Sets stopped state and terminates live runtime when present; clean stop allowed without live PID | `GovControlAction(action="stop", requested_state="stopped")` | Termination remains Ravenclaw host authority |
+| `cancel` / archive-style cleanup | Removes or archives local generated state depending on endpoint | `GovControlAction(action="cancel", requested_state="cancelled")` when lifecycle-backed | Must not erase durable planner history |
+| `replan` / activate blueprint | Resets selected campaign to idle and regenerates/activates runtime plan | `GovControlAction(action="replan", requested_state="idle")` | Planning semantics defer to 0.12 task-contract work |
+| cooldown / skip / gate block | Runtime loop records skip/gate/cooldown summaries and host counters | `GovControlAction(action="cooldown", requested_state="cooldown")` | Host still owns cooldown counters and queue behavior |
 
 ## First implementation slice
+
+Status: implemented as the Ravenclaw-owned helper
+`engine/govengine_state_control_projection.py` with focused tests in
+`engine/tests/test_govengine_state_control_projection.py`.
 
 The smallest useful 0.11 code change is a Ravenclaw-owned projection helper with
 focused tests:
@@ -72,24 +76,26 @@ focused tests:
 3. Test parity against existing Logdash control behavior and runtime snapshot
    fields.
 
+The helper now validates the control/queue/runtime projection against GovEngine
+0.3 `runtime_shell` shapes. Earlier 0.2 projection gaps for `stopped`, `start`,
+`resume`, `stop`, `cancel`, `replan`, `archive`, and `cooldown` are resolved as
+first-class neutral control/state records.
+
 Stop if the projection requires moving Logdash behavior, live process control,
 host-learning internals, or local state persistence into GovEngine.
 
-## GovEngine 0.3 candidates
+## GovEngine 0.3 outcome
 
-Only promote a shape into GovEngine after the Ravenclaw projection proves stable:
+The initial promoted surface is `govengine.runtime_shell`:
 
-- `GovRunState`: neutral lifecycle state, pid/process presence, paused/stopped
-  flags, selected run/campaign id, updated timestamp.
-- `GovOrchestratorState`: selected work id, active plan id/hash, lifecycle
-  marker, updated timestamp.
-- `GovQueueSnapshot`: lanes, counts, preview items, saved timestamp, redaction
-  boundary.
-- `GovRuntimeSnapshot`: run summary, queue summary, artifact state summary,
-  latest transition decision, non-claims.
-- `GovControlAction`: `start`, `pause`, `resume`, `stop`, `cancel`,
-  `replan`, `cooldown`, with deterministic allow/block/requires-review
-  outcomes.
+- `GovControlAction`: `start`, `pause`, `resume`, `stop`, `cancel`, `replan`,
+  `degrade_to_dry_run`, `cooldown`, `retry`, `archive`, and `record_only`.
+- `GovQueueSnapshot`: lanes, counts, redaction-bounded preview items, saved
+  timestamp, telemetry, and host metadata.
+- `GovRuntimeSnapshot`: neutral state, control actions, queue snapshot,
+  updated timestamp, non-claims, and host metadata.
+- `GovSchedulerTick`: deterministic tick metadata without becoming a scheduler.
 
-The promotion criterion is reuse across more than Ravenclaw. Until then, these
-remain Ravenclaw projection names, not public GovEngine API claims.
+The remaining non-promoted areas are orchestrator-specific selected campaign
+state and task-plan semantics; those defer to later mapping work rather than
+being forced into GovEngine 0.3.

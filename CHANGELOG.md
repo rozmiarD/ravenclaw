@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Updated Ravenclaw to consume the GovEngine 0.3 runtime-shell surface for state/control projections, mapping current runtime state, queue summaries, runtime snapshots, and Logdash control actions into `GovControlAction`, `GovQueueSnapshot`, and `GovRuntimeSnapshot` shapes.
 - Clarified the remaining Ravenclaw-owned GovEngine/SCLite host seams by removing leftover compatibility/fallback wording from trust, control-gate, and security-contract-layer projection helpers.
 - Hardened Ravenclaw's GovEngine boundary-profile check so missing `govengine.kernel_boundary_report` fails at import/validation time instead of producing an `unavailable` compatibility status.
 - Retired the Ravenclaw `engine/govengine_security_profile.py` compatibility wrapper; public install validation and tests now consume the published `govengine.security_profile` facade directly.

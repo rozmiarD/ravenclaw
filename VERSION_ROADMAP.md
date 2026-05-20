@@ -8,7 +8,7 @@ Current public source version: `0.10.0`.
 Current dependency baseline:
 
 ```text
-Ravenclaw -> govengine>=0.2.0,<0.3 -> sclite-core>=0.5.1,<0.6
+Ravenclaw -> govengine>=0.3.0,<0.4 -> sclite-core>=0.5.1,<0.6
 ```
 
 Use this as a milestone map, not as a promise that every milestone will become a PyPI/runtime release. Ravenclaw remains a source/reference security runtime until install, profile, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
@@ -139,10 +139,10 @@ Intent:
 
 Current baseline:
 
-- Ravenclaw consumes `govengine>=0.2.0,<0.3` and `sclite-core>=0.5.1,<0.6`;
+- Ravenclaw consumes `govengine>=0.3.0,<0.4` and `sclite-core>=0.5.1,<0.6`;
 - public install validation and Security Contract validation pass;
 - GovEngine/SCLite ticket and receipt-bounded-evidence surfaces are integrated into the public proof chain.
-- GovEngine 0.2 kernel/profile boundary validation is required by public install validation.
+- GovEngine 0.3 kernel/profile boundary and runtime-shell validation is required by public install validation and focused state/control projection tests.
 - The structural Security Contract validation profile is available for automation that must not execute demo runtime checks.
 
 Exit criteria:
@@ -163,7 +163,7 @@ Current mapping source:
 
 Planned work:
 
-- map `.auto_campaign.state.json` to `GovRunState`;
+- map `.auto_campaign.state.json` to a GovEngine runtime-shell state projection;
 - map `.orchestrator.state.json` to `GovOrchestratorState`;
 - map `.auto_campaign.queues.json` or current queue snapshots to `GovQueueSnapshot`;
 - map `.runtime_snapshot.json` or equivalent status projections to `GovRuntimeSnapshot`;
@@ -176,6 +176,10 @@ Definition of done:
 - GovEngine-compatible state/control adapters have focused tests;
 - no Logdash UI behavior is moved into GovEngine;
 - public docs explain canonical vs compatibility state paths.
+
+Current status: the first 0.11 adapter slice is implemented through
+`engine/govengine_state_control_projection.py`, backed by GovEngine 0.3
+`runtime_shell` validators and focused tests.
 
 ## `0.12.x` — Planning and runtime task contract migration
 
