@@ -20,6 +20,8 @@ REQUIRED_GOVENGINE_SURFACES = (
     'planning_contracts_core',
     'admission_policy_core',
     'evidence_review_core',
+    'domain_profile_sdk',
+    'runtime_contract_proofs',
     'controlled_execution_core',
     'security_profile_helpers',
 )
@@ -92,7 +94,7 @@ def security_profile_manifest() -> dict[str, Any]:
         'package_chain': {
             'ravenclaw': '0.16.1',
             'ravenclaw_distribution': 'ravenclaw-security',
-            'govengine': '>=0.7.0,<0.8',
+            'govengine': '>=0.10.0a0,<0.11',
             'sclite-core': '>=0.5.1,<0.6',
         },
         'required_govengine_surfaces': list(REQUIRED_GOVENGINE_SURFACES),
@@ -132,7 +134,7 @@ def evaluate_security_profile_manifest(
         'schema_version': manifest.get('schema_version') == SCHEMA_VERSION,
         'profile_name': profile.get('name') == PROFILE_NAME,
         'profile_domain': profile.get('domain') == PROFILE_DOMAIN,
-        'package_chain': package_chain.get('govengine') == '>=0.7.0,<0.8'
+        'package_chain': package_chain.get('govengine') == '>=0.10.0a0,<0.11'
         and package_chain.get('sclite-core') == '>=0.5.1,<0.6',
         'govengine_surfaces': list(manifest.get('required_govengine_surfaces', [])) == list(REQUIRED_GOVENGINE_SURFACES),
         'ravenclaw_owned_semantics': set(OWNED_SEMANTICS).issubset(set(str(item) for item in manifest.get('owned_semantics', []))),

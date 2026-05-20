@@ -20,7 +20,7 @@ if str(ENGINE_DIR) not in sys.path:
 REQUIRED_RUNTIME = [
     ('PyYAML', 'yaml', 'PyYAML>=6,<7'),
     ('sclite-core', 'sclite', 'sclite-core>=0.5.1,<0.6'),
-    ('govengine', 'govengine', 'govengine>=0.7.0,<0.8'),
+    ('govengine', 'govengine', 'govengine>=0.10.0a0,<0.11'),
 ]
 
 REQUIRED_DEV = [
@@ -72,6 +72,8 @@ def check_govengine_surface_registry() -> dict[str, Any]:
         'planning_contracts_core',
         'admission_policy_core',
         'evidence_review_core',
+        'domain_profile_sdk',
+        'runtime_contract_proofs',
         'controlled_execution_core',
         'security_profile_helpers',
     ]

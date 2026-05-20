@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Updated Ravenclaw public dependency and validation surfaces for the GovEngine `0.10.0-alpha` line, including the Domain Profile SDK and runtime contract proof surfaces, while keeping carrier adapters, credentials, and live execution out of scope.
+
 ## 0.16.1 / 2026-05-20
 - Switched the first PyPI distribution line to `ravenclaw-security==0.16.1` after PyPI rejected uploads to the externally controlled `ravenclaw` project name; the import package remains `ravenclaw`.
 

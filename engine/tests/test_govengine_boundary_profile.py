@@ -16,8 +16,8 @@ def _report() -> dict:
         'artifact_type': 'govengine_boundary_report',
         'summary': {
             'profile_count': 1,
-            'surface_count': 6,
-            'forbidden_profile_ownership_count': 5,
+            'surface_count': 8,
+            'forbidden_profile_ownership_count': 7,
         },
         'boundary': {
             'forbidden_profile_ownership': [
@@ -26,6 +26,8 @@ def _report() -> dict:
                 'live_execution_authority',
                 'credential_or_key_store',
                 'carrier_adapter_ownership',
+                'pki_or_kms_ownership',
+                'product_ux_ownership',
             ],
         },
         'profiles': [{'name': 'ravenclaw'}],
@@ -34,6 +36,8 @@ def _report() -> dict:
             {'name': 'planning_contracts_core'},
             {'name': 'admission_policy_core'},
             {'name': 'evidence_review_core'},
+            {'name': 'domain_profile_sdk'},
+            {'name': 'runtime_contract_proofs'},
             {'name': 'controlled_execution_core'},
             {'name': 'security_profile_helpers'},
         ],
