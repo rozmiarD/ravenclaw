@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added OpenClaw command-authority and rollback/stop negative contracts, proving chat/model prose, missing approvals, prepared-spec aliasing, and validation failures remain blocked before any carrier implementation.
 - Added OpenClaw readiness contracts for redaction/output channels and approval UX ordering, keeping future carrier work docs/contracts-only until command-authority and rollback tests exist.
 - Added a Ravenclaw security-profile manifest and current OpenClaw adapter-readiness packet for the 0.16 profile boundary, validating that Ravenclaw is a security runtime/profile over GovEngine + SCLite without implementing carriers or expanding live execution authority.
 - Updated Ravenclaw to consume the GovEngine 0.7 evidence-review surface, projecting receipt-bounded evidence claims and review results while keeping finding taxonomy and SCLite review-bundle verdicts outside GovEngine.

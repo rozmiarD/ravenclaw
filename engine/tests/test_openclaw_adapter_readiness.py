@@ -57,6 +57,93 @@ def test_openclaw_readiness_status_rejects_adapter_or_redaction_drift() -> None:
     assert 'public_outputs_block_secrets' in status['failed_checks']
 
 
+def test_command_authority_policy_blocks_chat_text_and_missing_boundaries() -> None:
+    policy = readiness.openclaw_command_authority_policy()
+    decision = readiness.evaluate_command_authority_request({
+        'chat_text_contains_command': True,
+        'policy_decision': 'approved',
+        'prepared_spec_ref': 'prepared-1',
+        'approved_spec_ref': 'approved-1',
+        'runner_supervision_status': 'ready',
+    })
+    missing = readiness.evaluate_command_authority_request({
+        'chat_text_contains_command': False,
+        'policy_decision': 'approved',
+        'prepared_spec_ref': 'prepared-1',
+        'runner_supervision_status': 'ready',
+    })
+
+    assert policy['adapter_status'] == 'not_implemented'
+    assert decision['status'] == 'blocked'
+    assert decision['stop_reasons'] == ['chat_text_contains_command']
+    assert missing['status'] == 'blocked'
+    assert 'missing_approved_spec' in missing['stop_reasons']
+
+
+def test_command_authority_policy_allows_only_complete_structured_chain() -> None:
+    decision = readiness.evaluate_command_authority_request({
+        'chat_text_contains_command': False,
+        'policy_decision': 'approved',
+        'prepared_spec_ref': 'prepared-1',
+        'approved_spec_ref': 'approved-1',
+        'runner_supervision_status': 'ready',
+    })
+
+    assert decision['status'] == 'ready_for_ravenclaw_execution_engine'
+    assert decision['stop_reasons'] == []
+
+
+def test_command_authority_rejects_prepared_spec_as_approval_alias() -> None:
+    decision = readiness.evaluate_command_authority_request({
+        'chat_text_contains_command': False,
+        'policy_decision': 'approved',
+        'prepared_spec_ref': 'spec-1',
+        'approved_spec_ref': 'spec-1',
+        'runner_supervision_status': 'ready',
+    })
+
+    assert decision['status'] == 'blocked'
+    assert 'prepared_spec_treated_as_approved' in decision['stop_reasons']
+
+
+def test_rollback_stop_contract_requires_operator_visible_structured_reason() -> None:
+    contract = readiness.openclaw_rollback_stop_contract()
+    blocked = readiness.evaluate_rollback_stop_signal({
+        'state': 'pause_requested',
+        'operator_visible': False,
+        'reason_code': '',
+    })
+    propagated = readiness.evaluate_rollback_stop_signal({
+        'state': 'abort_requested',
+        'operator_visible': True,
+        'reason_code': 'operator_abort',
+    })
+
+    assert contract['adapter_status'] == 'not_implemented'
+    assert blocked['status'] == 'blocked'
+    assert set(blocked['failed_checks']) == {'not_operator_visible', 'missing_structured_reason'}
+    assert propagated['status'] == 'propagated'
+    assert propagated['failed_checks'] == []
+
+
+def test_validation_failure_stop_requires_receipt_reference() -> None:
+    blocked = readiness.evaluate_rollback_stop_signal({
+        'state': 'validation_failed',
+        'operator_visible': True,
+        'reason_code': 'public_validation_failed',
+    })
+    propagated = readiness.evaluate_rollback_stop_signal({
+        'state': 'validation_failed',
+        'operator_visible': True,
+        'reason_code': 'public_validation_failed',
+        'validation_receipt_ref': 'receipt-1',
+    })
+
+    assert blocked['status'] == 'blocked'
+    assert 'missing_validation_receipt_ref' in blocked['failed_checks']
+    assert propagated['status'] == 'propagated'
+
+
 def test_openclaw_readiness_status_passes_for_current_contracts() -> None:
     status = readiness.openclaw_readiness_status()
 

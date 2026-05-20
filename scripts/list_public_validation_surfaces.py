@@ -48,8 +48,8 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'id': 'openclaw_readiness_contracts',
         'title': 'OpenClaw readiness contracts',
         'command': 'python -m pytest -q engine/tests/test_openclaw_adapter_readiness.py',
-        'paths': ['engine/openclaw_adapter_readiness.py', 'engine/tests/test_openclaw_adapter_readiness.py', 'references/openclaw-redaction-output-matrix.md', 'references/openclaw-approval-ux-sketch.md', 'references/openclaw-adapter-readiness-packet-2026-05-20.md'],
-        'claim': 'Validates docs/contracts-only OpenClaw redaction/output and approval-UX boundaries before any adapter implementation.',
+        'paths': ['engine/openclaw_adapter_readiness.py', 'engine/tests/test_openclaw_adapter_readiness.py', 'references/openclaw-redaction-output-matrix.md', 'references/openclaw-approval-ux-sketch.md', 'references/openclaw-command-authority-and-rollback-tests.md', 'references/openclaw-adapter-readiness-packet-2026-05-20.md'],
+        'claim': 'Validates docs/contracts-only OpenClaw redaction/output, approval-UX, command-authority, and rollback/stop boundaries before any adapter implementation.',
         'non_claim': 'Does not exercise an OpenClaw runtime, implement a carrier, or authorize live target execution.',
     },
     {

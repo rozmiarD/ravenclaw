@@ -42,9 +42,8 @@ Still blocked before implementation:
 - OpenClaw-specific scope display/refusal UX is only sketched, not implemented;
 - OpenClaw channel redaction/output behavior is contract-tested, but not tested
   against a real carrier implementation;
-- no negative tests prove an OpenClaw carrier cannot widen command authority;
-- no OpenClaw rollback/stop control has been demonstrated back into Ravenclaw
-  runtime state;
+- command-authority widening and rollback/stop propagation are contract-tested,
+  but not demonstrated through a real OpenClaw carrier;
 - no public/private output matrix has been exercised against OpenClaw runtime
   channels.
 
@@ -135,8 +134,10 @@ Evidence today:
 - `engine/govengine_runner_supervision_projection.py`
 - `engine/tests/test_govengine_control_gate_adapter.py`
 - `engine/tests/test_govengine_runner_supervision_projection.py`
+- `references/openclaw-command-authority-and-rollback-tests.md`
+- `engine/tests/test_openclaw_adapter_readiness.py`
 
-Blocker: no OpenClaw adapter negative tests exist yet.
+Blocker: no real OpenClaw adapter negative tests exist yet.
 
 ## Contracts consumed and emitted
 
@@ -164,7 +165,7 @@ python -m pytest -q engine/tests/test_govengine_runner_supervision_projection.py
 python scripts/run_security_contract_validation.py --structural-only --include-pytest
 ```
 
-Required future OpenClaw-specific tests:
+Required future OpenClaw-specific implementation tests:
 
 - scope display/refusal behavior;
 - prepared-vs-approved spec separation;
@@ -192,7 +193,7 @@ Pause or roll back adapter work if any of these appear:
 ## Decision
 
 OpenClaw remains the first future carrier candidate. The next action is still
-not implementation. The next useful implementation-prep slice is carrier
-negative tests around command-authority widening and rollback/stop propagation,
-backed by the redaction/output matrix and approval UX sketch added in this
-packet.
+not implementation. The next useful implementation-prep slice is an
+OpenClaw-runtime-facing fixture or mock carrier harness proving these contracts
+against actual carrier-shaped inputs, without registering tools or executing
+commands.

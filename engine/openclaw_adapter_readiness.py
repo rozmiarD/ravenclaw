@@ -65,6 +65,26 @@ REQUIRED_NON_CLAIMS = (
     'does_not_implement_openclaw_mcp_or_a2a_adapter',
 )
 
+COMMAND_AUTHORITY_STOP_REASONS = (
+    'chat_text_contains_command',
+    'missing_policy_decision',
+    'missing_prepared_spec',
+    'missing_approved_spec',
+    'prepared_spec_treated_as_approved',
+    'missing_runner_supervision',
+)
+
+ROLLBACK_STOP_STATES = (
+    'scope_ambiguity',
+    'owner_review_required',
+    'pause_requested',
+    'abort_requested',
+    'cooldown_required',
+    'validation_failed',
+    'redaction_failed',
+    'dry_run_live_truth_ambiguous',
+)
+
 
 def openclaw_redaction_matrix() -> dict[str, Any]:
     outputs = []
@@ -142,6 +162,92 @@ def openclaw_approval_ux_sketch() -> dict[str, Any]:
     }
 
 
+def openclaw_command_authority_policy() -> dict[str, Any]:
+    return {
+        'artifact_type': 'openclaw_command_authority_policy',
+        'schema_version': 'v0.1',
+        'target_carrier': 'openclaw',
+        'adapter_status': 'not_implemented',
+        'required_authority_chain': [
+            'operator_scope',
+            'policy_decision',
+            'prepared_execution_spec',
+            'approved_execution_spec',
+            'runner_supervision',
+            'execution_receipt',
+        ],
+        'blocked_inputs': [
+            'chat_text_command',
+            'model_prose_command',
+            'raw_shell_snippet',
+            'unapproved_tool_call',
+            'prepared_spec_without_approval',
+        ],
+        'stop_reasons': list(COMMAND_AUTHORITY_STOP_REASONS),
+        'non_claims': list(REQUIRED_NON_CLAIMS),
+    }
+
+
+def evaluate_command_authority_request(request: Mapping[str, Any]) -> dict[str, Any]:
+    reasons: list[str] = []
+    if request.get('chat_text_contains_command') is True:
+        reasons.append('chat_text_contains_command')
+    if request.get('policy_decision') != 'approved':
+        reasons.append('missing_policy_decision')
+    if not request.get('prepared_spec_ref'):
+        reasons.append('missing_prepared_spec')
+    if not request.get('approved_spec_ref'):
+        reasons.append('missing_approved_spec')
+    if request.get('prepared_spec_ref') and request.get('prepared_spec_ref') == request.get('approved_spec_ref'):
+        reasons.append('prepared_spec_treated_as_approved')
+    if request.get('runner_supervision_status') != 'ready':
+        reasons.append('missing_runner_supervision')
+    return {
+        'status': 'blocked' if reasons else 'ready_for_ravenclaw_execution_engine',
+        'stop_reasons': reasons,
+        'non_claims': list(REQUIRED_NON_CLAIMS),
+    }
+
+
+def openclaw_rollback_stop_contract() -> dict[str, Any]:
+    return {
+        'artifact_type': 'openclaw_rollback_stop_contract',
+        'schema_version': 'v0.1',
+        'target_carrier': 'openclaw',
+        'adapter_status': 'not_implemented',
+        'states': list(ROLLBACK_STOP_STATES),
+        'required_propagation': [
+            'surface_to_operator',
+            'preserve_structured_reason',
+            'block_execution_until_reviewed',
+            'record_validation_receipt_ref',
+        ],
+        'non_claims': list(REQUIRED_NON_CLAIMS),
+    }
+
+
+def evaluate_rollback_stop_signal(signal: Mapping[str, Any]) -> dict[str, Any]:
+    state = str(signal.get('state') or '').strip()
+    receipt_ref = str(signal.get('validation_receipt_ref') or '').strip()
+    operator_visible = signal.get('operator_visible') is True
+    structured_reason = str(signal.get('reason_code') or '').strip()
+    failed = []
+    if state not in ROLLBACK_STOP_STATES:
+        failed.append('unknown_stop_state')
+    if not operator_visible:
+        failed.append('not_operator_visible')
+    if not structured_reason:
+        failed.append('missing_structured_reason')
+    if state == 'validation_failed' and not receipt_ref:
+        failed.append('missing_validation_receipt_ref')
+    return {
+        'status': 'propagated' if not failed else 'blocked',
+        'failed_checks': failed,
+        'state': state,
+        'non_claims': list(REQUIRED_NON_CLAIMS),
+    }
+
+
 def evaluate_openclaw_readiness(
     matrix: Mapping[str, Any],
     ux: Mapping[str, Any],
@@ -171,6 +277,18 @@ def evaluate_openclaw_readiness(
         < step_order.index('show_approved_spec_as_authority_boundary')
         if set(('show_prepared_spec_as_proposal', 'show_approved_spec_as_authority_boundary')).issubset(step_order)
         else False,
+        'command_policy_blocks_chat_authority': evaluate_command_authority_request({
+            'chat_text_contains_command': True,
+            'policy_decision': 'approved',
+            'prepared_spec_ref': 'prepared-1',
+            'approved_spec_ref': 'approved-1',
+            'runner_supervision_status': 'ready',
+        })['status'] == 'blocked',
+        'rollback_contract_requires_operator_visibility': evaluate_rollback_stop_signal({
+            'state': 'abort_requested',
+            'reason_code': 'operator_abort',
+            'operator_visible': False,
+        })['status'] == 'blocked',
     }
     failed = [name for name, passed in checks.items() if not passed]
     return {
