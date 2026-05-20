@@ -39,13 +39,14 @@ Ready today:
 
 Still blocked before implementation:
 
-- no OpenClaw-specific scope display/refusal UX is tested;
-- no OpenClaw channel redaction matrix exists for direct chat, group chat,
-  files, embeds, or attachments;
+- OpenClaw-specific scope display/refusal UX is only sketched, not implemented;
+- OpenClaw channel redaction/output behavior is contract-tested, but not tested
+  against a real carrier implementation;
 - no negative tests prove an OpenClaw carrier cannot widen command authority;
 - no OpenClaw rollback/stop control has been demonstrated back into Ravenclaw
   runtime state;
-- no public/private output matrix exists for OpenClaw channels.
+- no public/private output matrix has been exercised against OpenClaw runtime
+  channels.
 
 ## Explicit non-goals
 
@@ -78,7 +79,13 @@ Evidence today:
 - `references/openclaw-adapter-contract-map.md`
 - `engine/govengine_admission_projection.py`
 
-Blocker: OpenClaw-specific scope UI/UX is not implemented or tested.
+Evidence slice:
+
+- `references/openclaw-approval-ux-sketch.md`
+- `engine/openclaw_adapter_readiness.py`
+- `engine/tests/test_openclaw_adapter_readiness.py`
+
+Blocker: OpenClaw-specific scope UI/UX is not implemented in a carrier.
 
 ## Secrets and redaction
 
@@ -99,7 +106,13 @@ Evidence today:
 - `schemas/evidence_bundle.v0.1.schema.json`
 - `examples/security-contract-proof/evidence_bundle.json`
 
-Blocker: no OpenClaw channel-output redaction test matrix exists.
+Evidence slice:
+
+- `references/openclaw-redaction-output-matrix.md`
+- `engine/openclaw_adapter_readiness.py`
+- `engine/tests/test_openclaw_adapter_readiness.py`
+
+Blocker: no real OpenClaw channel-output implementation has been tested.
 
 ## Command authority boundary
 
@@ -146,6 +159,7 @@ Blocker: no OpenClaw adapter negative tests exist yet.
 ```bash
 python scripts/validate_public_install.py --dev
 python -m pytest -q engine/tests/test_ravenclaw_security_profile.py
+python -m pytest -q engine/tests/test_openclaw_adapter_readiness.py
 python -m pytest -q engine/tests/test_govengine_runner_supervision_projection.py engine/tests/test_govengine_review_projection.py
 python scripts/run_security_contract_validation.py --structural-only --include-pytest
 ```
@@ -178,6 +192,7 @@ Pause or roll back adapter work if any of these appear:
 ## Decision
 
 OpenClaw remains the first future carrier candidate. The next action is still
-not implementation. The next useful implementation-prep slice is an
-OpenClaw-specific redaction/output test matrix and approval UX sketch, backed
-by Ravenclaw security-profile manifest validation.
+not implementation. The next useful implementation-prep slice is carrier
+negative tests around command-authority widening and rollback/stop propagation,
+backed by the redaction/output matrix and approval UX sketch added in this
+packet.

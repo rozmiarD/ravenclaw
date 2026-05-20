@@ -72,6 +72,11 @@ Required gates before implementation:
 - rollback;
 - public/private boundary.
 
+Current readiness-contract docs:
+
+- `references/openclaw-redaction-output-matrix.md`
+- `references/openclaw-approval-ux-sketch.md`
+
 MCP stays later and policy-gated. A2A stays last or example-first.
 
 ## Validation
@@ -80,6 +85,7 @@ Focused profile validation:
 
 ```bash
 python -m pytest -q engine/tests/test_ravenclaw_security_profile.py
+python -m pytest -q engine/tests/test_openclaw_adapter_readiness.py
 ```
 
 Public install validation also checks this profile boundary:

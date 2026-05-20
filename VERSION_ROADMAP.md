@@ -310,8 +310,10 @@ Definition of done:
 Current status: the first 0.16 profile-boundary slice is implemented through
 `engine/ravenclaw_security_profile.py`, focused profile tests, and
 `references/openclaw-adapter-readiness-packet-2026-05-20.md`. Ravenclaw is now
-validated as the security runtime/profile over GovEngine + SCLite while OpenClaw
-remains readiness-packet only; MCP and A2A remain deferred.
+validated as the security runtime/profile over GovEngine + SCLite. The second
+0.16 prep slice adds `engine/openclaw_adapter_readiness.py`, redaction/output
+matrix tests, and an approval UX sketch; OpenClaw remains readiness-contracts
+only, while MCP and A2A remain deferred.
 
 ## Future `1.0` bar
 

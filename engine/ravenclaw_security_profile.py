@@ -27,6 +27,8 @@ REQUIRED_GOVENGINE_SURFACES = (
 REQUIRED_REFERENCE_PATHS = (
     'references/ravenclaw-security-profile-boundary.md',
     'references/openclaw-adapter-readiness-packet-2026-05-20.md',
+    'references/openclaw-redaction-output-matrix.md',
+    'references/openclaw-approval-ux-sketch.md',
     'references/carrier-readiness-checklist.md',
     'references/openclaw-adapter-contract-map.md',
 )

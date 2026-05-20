@@ -40,9 +40,17 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'id': 'ravenclaw_security_profile_boundary',
         'title': 'Ravenclaw security profile boundary',
         'command': 'python -m pytest -q engine/tests/test_ravenclaw_security_profile.py',
-        'paths': ['engine/ravenclaw_security_profile.py', 'engine/tests/test_ravenclaw_security_profile.py', 'references/ravenclaw-security-profile-boundary.md', 'references/openclaw-adapter-readiness-packet-2026-05-20.md'],
+        'paths': ['engine/ravenclaw_security_profile.py', 'engine/tests/test_ravenclaw_security_profile.py', 'references/ravenclaw-security-profile-boundary.md', 'references/openclaw-adapter-readiness-packet-2026-05-20.md', 'references/openclaw-redaction-output-matrix.md', 'references/openclaw-approval-ux-sketch.md'],
         'claim': 'Validates Ravenclaw as the security runtime/profile over GovEngine and SCLite, with OpenClaw held at readiness-packet status rather than adapter implementation.',
         'non_claim': 'Does not implement a carrier adapter, authorize live execution, or claim production deployment readiness.',
+    },
+    {
+        'id': 'openclaw_readiness_contracts',
+        'title': 'OpenClaw readiness contracts',
+        'command': 'python -m pytest -q engine/tests/test_openclaw_adapter_readiness.py',
+        'paths': ['engine/openclaw_adapter_readiness.py', 'engine/tests/test_openclaw_adapter_readiness.py', 'references/openclaw-redaction-output-matrix.md', 'references/openclaw-approval-ux-sketch.md', 'references/openclaw-adapter-readiness-packet-2026-05-20.md'],
+        'claim': 'Validates docs/contracts-only OpenClaw redaction/output and approval-UX boundaries before any adapter implementation.',
+        'non_claim': 'Does not exercise an OpenClaw runtime, implement a carrier, or authorize live target execution.',
     },
     {
         'id': 'repo_pytest',
