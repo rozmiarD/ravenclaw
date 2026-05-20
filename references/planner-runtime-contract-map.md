@@ -3,6 +3,13 @@
 Status: active
 Purpose: show which fields are authoritative in planner output, which ones are normalized by runtime, and where each field is consumed.
 
+2026-05-20 update: Ravenclaw now has a GovEngine 0.4 planning-contract
+projection helper at `engine/govengine_planning_projection.py`. The helper
+hashes raw targets into redacted `target_ref` values and validates
+planner/runtime task handoffs through `GovTaskContract`,
+`GovPlanIntentContract`, and `PlannerPort` without moving Ravenclaw security
+planning semantics into GovEngine.
+
 ## Canonical planner output contract (experiment intent)
 Primary source after this slice:
 - `engine/planer/planner_intent_contract.py`

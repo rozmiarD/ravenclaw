@@ -1,6 +1,6 @@
 # GovEngine Wrapper Audit
 
-Ravenclaw consumes GovEngine as the package `govengine>=0.3.0,<0.4`.
+Ravenclaw consumes GovEngine as the package `govengine>=0.4.0,<0.5`.
 This file records which `engine/` modules are compatibility wrappers over
 GovEngine and which host-side seams remain Ravenclaw-owned.
 

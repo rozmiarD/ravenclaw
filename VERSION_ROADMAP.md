@@ -8,7 +8,7 @@ Current public source version: `0.10.0`.
 Current dependency baseline:
 
 ```text
-Ravenclaw -> govengine>=0.3.0,<0.4 -> sclite-core>=0.5.1,<0.6
+Ravenclaw -> govengine>=0.4.0,<0.5 -> sclite-core>=0.5.1,<0.6
 ```
 
 Use this as a milestone map, not as a promise that every milestone will become a PyPI/runtime release. Ravenclaw remains a source/reference security runtime until install, profile, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
@@ -139,7 +139,7 @@ Intent:
 
 Current baseline:
 
-- Ravenclaw consumes `govengine>=0.3.0,<0.4` and `sclite-core>=0.5.1,<0.6`;
+- Ravenclaw consumes `govengine>=0.4.0,<0.5` and `sclite-core>=0.5.1,<0.6`;
 - public install validation and Security Contract validation pass;
 - GovEngine/SCLite ticket and receipt-bounded-evidence surfaces are integrated into the public proof chain.
 - GovEngine 0.3 kernel/profile boundary and runtime-shell validation is required by public install validation and focused state/control projection tests.
@@ -200,6 +200,11 @@ Definition of done:
 - RuntimeTaskContract v2 is backed by or convertible to GovEngine task contracts;
 - planner intent contracts can be validated through GovEngine-compatible paths;
 - existing public demo and targeted runtime-plan tests remain green.
+
+Current status: the first 0.12 adapter slice is implemented through
+`engine/govengine_planning_projection.py`, backed by GovEngine 0.4
+`planning` validators and focused tests. Raw Ravenclaw targets are hashed into
+redacted `target_ref` values before entering GovEngine contracts.
 
 ## `0.13.x` — Admission, audit, policy, and approval migration
 

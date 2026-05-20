@@ -20,7 +20,7 @@ if str(ENGINE_DIR) not in sys.path:
 REQUIRED_RUNTIME = [
     ('PyYAML', 'yaml', 'PyYAML>=6,<7'),
     ('sclite-core', 'sclite', 'sclite-core>=0.5.1,<0.6'),
-    ('govengine', 'govengine', 'govengine>=0.3.0,<0.4'),
+    ('govengine', 'govengine', 'govengine>=0.4.0,<0.5'),
 ]
 
 REQUIRED_DEV = [
@@ -67,7 +67,7 @@ def check_dependency(distribution: str, import_name: str, requirement: str) -> D
 
 
 def check_govengine_surface_registry() -> dict[str, Any]:
-    expected = ['artifact_governance_core', 'controlled_execution_core', 'security_profile_helpers']
+    expected = ['artifact_governance_core', 'planning_contracts_core', 'controlled_execution_core', 'security_profile_helpers']
     try:
         from govengine import public_surface_index  # type: ignore
     except Exception as exc:  # pragma: no cover - defensive diagnostic path
