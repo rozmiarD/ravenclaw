@@ -1,6 +1,7 @@
 # RAVENCLAW — CHANGELOG.md
 
 ## Unreleased
+- Added a Ravenclaw security-profile manifest and current OpenClaw adapter-readiness packet for the 0.16 profile boundary, validating that Ravenclaw is a security runtime/profile over GovEngine + SCLite without implementing carriers or expanding live execution authority.
 - Updated Ravenclaw to consume the GovEngine 0.7 evidence-review surface, projecting receipt-bounded evidence claims and review results while keeping finding taxonomy and SCLite review-bundle verdicts outside GovEngine.
 - Updated Ravenclaw to consume the GovEngine 0.6 runner-supervision surface, projecting approved-spec runner requests, supervision plans, leases, and receipts while keeping concrete tool adapters and live backend authority host-owned.
 - Updated Ravenclaw to consume the GovEngine 0.5 admission-policy surface, projecting runtime admission and execution-gate decisions into redacted `GovAdmissionDecision`, `GovPolicyDecision`, `GovApprovalRequest`, and `GovAuditRecord` shapes while keeping Ravenclaw security policy semantics host-owned.

@@ -182,6 +182,28 @@ def check_govengine_boundary_profile() -> dict[str, Any]:
         }
 
 
+def check_ravenclaw_security_profile() -> dict[str, Any]:
+    try:
+        import ravenclaw_security_profile as security_profile  # type: ignore
+    except Exception as exc:  # pragma: no cover - defensive diagnostic path
+        return {
+            'status': 'failed',
+            'available': False,
+            'error': f'{type(exc).__name__}: {exc}',
+        }
+
+    try:
+        status = dict(security_profile.ravenclaw_security_profile_status(root=ROOT))
+        status['available'] = True
+        return status
+    except Exception as exc:  # pragma: no cover - defensive diagnostic path
+        return {
+            'status': 'failed',
+            'available': False,
+            'error': f'{type(exc).__name__}: {exc}',
+        }
+
+
 def run_pip_check() -> dict[str, Any]:
     proc = subprocess.run(
         [sys.executable, '-m', 'pip', 'check'],
@@ -208,6 +230,7 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
     govengine_surface_registry = check_govengine_surface_registry()
     govengine_security_profile = check_govengine_security_profile()
     govengine_boundary_profile = check_govengine_boundary_profile()
+    ravenclaw_security_profile = check_ravenclaw_security_profile()
     python_ok = sys.version_info >= (3, 11)
 
     failed = [dep for dep in dependencies if dep.status != 'passed']
@@ -221,6 +244,8 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
         failed.append(DependencyCheck('govengine-security-profile', 'govengine.security_profile', 'GovEngine security-profile facade', False, None, 'failed', govengine_security_profile.get('error') or 'security-profile check failed'))
     if govengine_boundary_profile['status'] != 'passed':
         failed.append(DependencyCheck('govengine-boundary-profile', 'govengine_boundary_profile', 'Ravenclaw GovEngine boundary-profile required check', False, None, 'failed', govengine_boundary_profile.get('error') or 'boundary-profile check failed'))
+    if ravenclaw_security_profile['status'] != 'passed':
+        failed.append(DependencyCheck('ravenclaw-security-profile', 'ravenclaw_security_profile', 'Ravenclaw security-profile manifest required check', False, None, 'failed', ravenclaw_security_profile.get('error') or 'security-profile manifest check failed'))
 
     return {
         'artifact_type': 'ravenclaw_public_install_validation',
@@ -238,6 +263,7 @@ def build_report(include_dev: bool, skip_pip_check: bool) -> dict[str, Any]:
         'govengine_surface_registry': govengine_surface_registry,
         'govengine_security_profile': govengine_security_profile,
         'govengine_boundary_profile': govengine_boundary_profile,
+        'ravenclaw_security_profile': ravenclaw_security_profile,
         'non_claims': [
             'Does not prove production deployment readiness.',
             'Does not authorize live target execution.',
@@ -265,6 +291,7 @@ def main() -> int:
         print(f"{report['govengine_surface_registry']['status']} govengine_surface_registry")
         print(f"{report['govengine_security_profile']['status']} govengine_security_profile source={report['govengine_security_profile'].get('source')}")
         print(f"{report['govengine_boundary_profile']['status']} govengine_boundary_profile source={report['govengine_boundary_profile'].get('source')}")
+        print(f"{report['ravenclaw_security_profile']['status']} ravenclaw_security_profile profile={report['ravenclaw_security_profile'].get('profile_name')}")
     return 0 if report['status'] == 'passed' else 1
 
 

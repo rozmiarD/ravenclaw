@@ -307,6 +307,12 @@ Definition of done:
 - OpenClaw adapter work has a readiness packet, not implementation sprawl;
 - no carrier bypasses GovEngine or SCLite.
 
+Current status: the first 0.16 profile-boundary slice is implemented through
+`engine/ravenclaw_security_profile.py`, focused profile tests, and
+`references/openclaw-adapter-readiness-packet-2026-05-20.md`. Ravenclaw is now
+validated as the security runtime/profile over GovEngine + SCLite while OpenClaw
+remains readiness-packet only; MCP and A2A remain deferred.
+
 ## Future `1.0` bar
 
 Ravenclaw should not claim `1.0` maturity until all of the following are true:

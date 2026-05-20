@@ -48,6 +48,11 @@ def test_public_install_validation_runtime_json() -> None:
     assert data['govengine_boundary_profile']['available'] is True
     assert data['govengine_boundary_profile']['source'] == 'govengine.kernel_boundary_report'
     assert data['govengine_boundary_profile']['failed_checks'] == []
+    assert data['ravenclaw_security_profile']['status'] == 'passed'
+    assert data['ravenclaw_security_profile']['available'] is True
+    assert data['ravenclaw_security_profile']['profile_name'] == 'ravenclaw-security'
+    assert data['ravenclaw_security_profile']['checks']['adapter_readiness_packet_only'] is True
+    assert data['ravenclaw_security_profile']['failed_checks'] == []
     assert any('live target execution' in item for item in data['non_claims'])
 
 
