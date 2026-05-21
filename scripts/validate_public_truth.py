@@ -148,13 +148,13 @@ def collect_errors() -> list[str]:
 
     _require(errors, 'README.md', readme, f'Source: Ravenclaw {version}')
     _require(errors, 'README.md', readme, f'ravenclaw-security=={version}')
-    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.10.0-alpha')
-    _require(errors, 'README.md', readme, 'Dependency: SCLite >=0.5.1')
+    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.10.1-alpha')
+    _require(errors, 'README.md', readme, 'Dependency: SCLite >=0.6.0a0')
     _require(errors, 'INSTALL.md', _read('INSTALL.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'narrow public profile/readiness package')
     _require(errors, 'PUBLIC_STATUS.md', public_status, f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'full runtime remains source/reference')
-    _require(errors, 'VALIDATION.md', validation, 'GovEngine `0.10.0-alpha`')
+    _require(errors, 'VALIDATION.md', validation, 'GovEngine `0.10.1-alpha`')
     _require(errors, '.github/workflows/pytest.yml', workflow, 'python scripts/validate_public_truth.py')
     _require(errors, '.github/workflows/pytest.yml', workflow, 'govengine @ git+https://github.com/rozmiarD/GovEngine.git@main')
 

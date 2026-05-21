@@ -9,6 +9,12 @@
   public-safe inputs, redacts sensitive fixture fields, and preserves Ravenclaw
   command-authority boundaries without implementing a carrier adapter.
 
+## 0.16.3 / 2026-05-21
+
+- Updated the public helper package chain to `govengine>=0.10.1a0,<0.11` and `sclite-core>=0.6.0a0,<0.7`.
+- Synced README, public status, validation docs, quality signals, roadmap, profile manifest, and public truth validators with the new GovEngine/SCLite alpha substrate.
+- Kept this as a dependency/documentation/validation release without adding carrier adapters, credentials, live execution, production-runtime claims, or GovEngine ownership over Ravenclaw runtime behavior.
+
 ## 0.16.2 / 2026-05-21
 
 - Updated Ravenclaw public dependency and validation surfaces for the GovEngine `0.10.0-alpha` line, including the Domain Profile SDK and runtime contract proof surfaces, while keeping carrier adapters, credentials, and live execution out of scope.

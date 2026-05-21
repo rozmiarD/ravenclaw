@@ -21,8 +21,8 @@ if str(ENGINE_DIR) not in sys.path:
 
 REQUIRED_RUNTIME = [
     ('PyYAML', 'yaml', 'PyYAML>=6,<7'),
-    ('sclite-core', 'sclite', 'sclite-core>=0.5.1,<0.6'),
-    ('govengine', 'govengine', 'govengine>=0.10.0a0,<0.11'),
+    ('sclite-core', 'sclite', 'sclite-core>=0.6.0a0,<0.7'),
+    ('govengine', 'govengine', 'govengine>=0.10.1a0,<0.11'),
 ]
 
 REQUIRED_DEV = [

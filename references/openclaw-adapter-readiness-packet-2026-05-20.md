@@ -24,8 +24,8 @@ discovery.
 
 Ready today:
 
-- Ravenclaw public `main` consumes `govengine>=0.10.0a0,<0.11` and
-  `sclite-core>=0.5.1,<0.6`;
+- Ravenclaw public `main` consumes `govengine>=0.10.1a0,<0.11` and
+  `sclite-core>=0.6.0a0,<0.7`;
 - GovEngine surfaces validated by Ravenclaw include runtime shell, planning,
   admission, runner supervision, evidence review, the Domain Profile SDK, and
   runtime contract proofs;

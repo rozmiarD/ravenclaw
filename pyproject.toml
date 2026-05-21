@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ravenclaw-security"
-version = "0.16.2"
+version = "0.16.3"
 description = "Governance-first security research runtime with policy-gated execution and public-safe proof artifacts"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -24,8 +24,8 @@ classifiers = [
 ]
 dependencies = [
   "PyYAML>=6,<7",
-  "sclite-core>=0.5.1,<0.6",
-  "govengine>=0.10.0a0,<0.11",
+  "sclite-core>=0.6.0a0,<0.7",
+  "govengine>=0.10.1a0,<0.11",
 ]
 
 [project.urls]
