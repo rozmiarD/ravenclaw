@@ -111,7 +111,8 @@ Start with:
 2. `references/govengine-wrapper-audit.md`
 3. `references/runtime-state-control-govengine-map.md`
 4. `references/runtime-artifact-ownership.md`
-5. `STATE_FILES.md`
+5. `references/govengine-extraction-readiness-roadmap.md`
+6. `STATE_FILES.md`
 
 This path separates current Ravenclaw-owned runtime/control state from candidate GovEngine-compatible projections for later package work.
 

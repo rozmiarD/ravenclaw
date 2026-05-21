@@ -9,13 +9,17 @@ from typing import Iterable, Mapping
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE_DIR = ROOT / 'engine'
+SCRIPTS_DIR = ROOT / 'scripts'
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 if str(ENGINE_DIR) not in sys.path:
     sys.path.insert(0, str(ENGINE_DIR))
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
 import ravenclaw  # noqa: E402
 import ravenclaw_security_profile as security_profile  # noqa: E402
+import validate_extraction_roadmap as extraction_roadmap  # noqa: E402
 
 
 EXPECTED_GOVENGINE_SURFACES = (
@@ -38,6 +42,7 @@ CURRENT_DEPENDENCY_DOCS = (
     'references/ravenclaw-security-profile-boundary.md',
     'references/openclaw-adapter-readiness-packet-2026-05-20.md',
     'references/govengine-wrapper-audit.md',
+    'references/govengine-extraction-readiness-roadmap.md',
 )
 
 PUBLIC_TRUTH_DOCS = (
@@ -51,6 +56,7 @@ PUBLIC_TRUTH_DOCS = (
     'SECURITY_CONTRACT_LAYER.md',
     'references/ravenclaw-security-profile-boundary.md',
     'references/openclaw-adapter-readiness-packet-2026-05-20.md',
+    'references/govengine-extraction-readiness-roadmap.md',
 )
 
 FORBIDDEN_IMPLEMENTATION_CLAIMS = (
@@ -152,6 +158,7 @@ def collect_errors() -> list[str]:
 
     errors.extend(stale_current_dependency_errors({path: _read(path) for path in CURRENT_DEPENDENCY_DOCS}, govengine_dep))
     errors.extend(forbidden_claim_errors(PUBLIC_TRUTH_DOCS))
+    errors.extend(f'extraction_roadmap:{error}' for error in extraction_roadmap.collect_errors())
 
     for path in PUBLIC_TRUTH_DOCS:
         text = _read(path)

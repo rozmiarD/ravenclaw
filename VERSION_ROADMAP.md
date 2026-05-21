@@ -80,6 +80,12 @@ Extract contracts and adapters, not files.
 
 Do not mechanically move `engine/auto_campaign_runner.py` or other Ravenclaw modules into GovEngine. Define neutral GovEngine contracts first, route Ravenclaw through compatibility wrappers, validate parity, then thin legacy paths.
 
+For the current extraction-readiness audit, use
+`references/govengine-extraction-readiness-roadmap.md`. That roadmap classifies
+which Ravenclaw concepts are already covered by GovEngine projection adapters,
+which candidates are deferred until Tecrax proves the same need, and which
+implementation behavior must remain Ravenclaw-owned.
+
 ## Ravenclaw Security Profile shape
 
 Future profile-oriented structure should converge toward:
