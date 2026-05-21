@@ -132,7 +132,7 @@ This structure is directional. It should emerge through compatibility layers and
 
 ## `0.10.x` — package-chain and public-safe proof stabilization
 
-Current line.
+Delivered foundation line.
 
 Intent:
 
@@ -320,6 +320,83 @@ validated as the security runtime/profile over GovEngine + SCLite. The second
 0.16 prep slice adds `engine/openclaw_adapter_readiness.py`, redaction/output
 matrix tests, and an approval UX sketch; OpenClaw remains readiness-contracts
 only, while MCP and A2A remain deferred.
+
+## `0.17.x` — Runtime/profile consolidation over landed projections
+
+Intent:
+
+Use the GovEngine contracts already projected in Ravenclaw before requesting
+more kernel breadth. This is a runtime adoption and boundary-hardening line,
+not a new protocol or adapter line.
+
+Planned work:
+
+- audit active runtime/control paths against the already-landed state/control,
+  planning, admission, runner-supervision, and review projections;
+- keep projection adapters where Ravenclaw owns host semantics, and remove
+  wrapper layers that only duplicate direct GovEngine/SCLite package surfaces;
+- narrow Ravenclaw dependence on GovEngine `security_profile_helpers` when the
+  behavior is security-profile meaning, demo narration, or readiness UX that
+  Ravenclaw can own directly;
+- keep Logdash state/control truth aligned with persisted runtime-state docs and
+  machine checks;
+- keep public helper-package claims narrow while source/runtime install and
+  validation boundaries are clarified.
+
+Already covered by GovEngine; maintain Ravenclaw projection adapters unless a
+compatibility test proves a thinner path:
+
+- `engine/govengine_state_control_projection.py`;
+- `engine/govengine_planning_projection.py`;
+- `engine/govengine_admission_projection.py`;
+- `engine/govengine_runner_supervision_projection.py`;
+- `engine/govengine_review_projection.py`.
+
+Definition of done:
+
+- changed runtime seams have focused compatibility tests and public truth/state
+  validators still pass;
+- Ravenclaw retains security task families, finding taxonomy, execution engine,
+  auto-campaign behavior, Logdash, and operator UX ownership;
+- no new GovEngine extraction is proposed from a single Ravenclaw-only shape
+  when a projection adapter is already sufficient;
+- public docs do not overclaim full PyPI runtime readiness, carrier
+  implementation, or live target authority.
+
+## `0.18.x` — Package/runtime readiness checkpoint
+
+Intent:
+
+Decide what the public Ravenclaw distribution should actually promise after
+0.17 consolidation.
+
+Candidate work:
+
+- map the minimum installable public runtime subset, if one exists, without
+  publishing operator overlay or local state assumptions;
+- keep the existing `ravenclaw-security` helper distribution narrow if source
+  runtime boundaries are still the truthful contract;
+- build package/snapshot/public-install checks that fail on missing dependency,
+  state-path, fixture, residue, and maturity truth;
+- revisit a first OpenClaw fixture presenter only after this package/runtime
+  checkpoint and the carrier readiness gates remain green.
+
+Entry criteria:
+
+- 0.17 runtime/profile consolidation did not expose unresolved ownership drift;
+- docs, state truth, residue audit, public install validation, and security
+  contract validation agree on what is source runtime versus public package;
+- a carrier or installability slice can be validated with no credentials, live
+  targets, or external side effects.
+
+Definition of done:
+
+- Ravenclaw either has a validated, bounded next package promise or an explicit
+  decision to keep the full runtime source/reference-owned;
+- OpenClaw/MCP/A2A implementation remains out of scope unless a separate
+  approved carrier packet proves its authority boundary;
+- GovEngine and SCLite stay upstream dependencies rather than hidden Ravenclaw
+  copies.
 
 ## Future `1.0` bar
 
