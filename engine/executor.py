@@ -7,7 +7,7 @@ from typing import Any, Dict, List
 
 from campaign_utils import extract_host_from_url, host_in_scope, load_scope_domains  # type: ignore
 from govengine.action_compiler import compile_action_spec
-from govengine.policy.core import get_approved_spec_allowed_tools, get_runtime_allowed_tools, contains_tool_restricted_patterns, normalize_tool  # type: ignore
+from govengine_security_helpers import get_approved_spec_allowed_tools, get_runtime_allowed_tools, contains_tool_restricted_patterns, normalize_tool  # type: ignore
 from govengine.execution.approved_spec import approved_execution_steps, validate_approved_execution_spec
 from govengine.execution.ticket_gate import validate_execution_ticket_gate
 from govengine.execution.runner import approved_spec_compiled_action, approved_spec_dry_run_result, legacy_action_spec_dry_run_result
@@ -18,9 +18,9 @@ from govengine.execution.command_shape import (
     extract_hosts_from_text,
     normalize_argv,
 )
-from govengine.scope import FunctionalScopePort
+from govengine.scope_ports import FunctionalScopePort
 from govengine_control_gate_adapter import evaluate_govengine_control_gate  # type: ignore
-from govengine.tool_registry import get_tool_catalog
+from govengine_security_helpers import get_tool_catalog
 from paths import TMP_DIR
 
 

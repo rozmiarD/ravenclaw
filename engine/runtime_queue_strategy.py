@@ -5,7 +5,7 @@ from typing import Any, Callable
 
 from learning_store import top_archetype_hints, top_branch_hints, top_transition_action_hints
 from runtime_archetype_inference import infer_runtime_archetypes
-from govengine.contracts.signal import signal_contract_workflow_promotable  # type: ignore
+from govengine_security_helpers import signal_contract_workflow_promotable  # type: ignore
 
 
 def _learning_excluded(run: dict) -> bool:

@@ -6,7 +6,7 @@ import vuln_qualification as vq  # type: ignore
 from runtime_decision_contracts import DecisionOutcome, QualificationSummary, RuntimeDecisionRecord
 from runtime_economics import compute_runtime_economics  # type: ignore
 from runtime_explain import build_compact_explain  # type: ignore
-from govengine.contracts.signal import success_outcome_status, workflow_promotion_status, finding_signal_status  # type: ignore
+from govengine_security_helpers import success_outcome_status, workflow_promotion_status, finding_signal_status  # type: ignore
 
 
 BLOCKED_AUDITOR_DECISIONS = {"blocked", "deny", "reject", "owner_approval_required"}

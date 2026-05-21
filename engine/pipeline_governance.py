@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from govengine.policy.gateway import evaluate_action_spec
+from govengine_security_helpers import evaluate_action_spec
 
 
 

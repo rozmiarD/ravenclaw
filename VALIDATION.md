@@ -17,11 +17,15 @@ Persisted runtime state truth is checked separately with:
 
 ```bash
 python scripts/validate_runtime_state_truth.py
+python scripts/validate_govengine_helper_boundary.py
 ```
 
-That local validator compares the state manifest, canonical path helpers,
-`STATE_FILES.md`, and the GovEngine state/control projection map. It does not
-read live targets, mutate state, or start Logdash.
+The runtime-state validator compares the state manifest, canonical path
+helpers, `STATE_FILES.md`, and the GovEngine state/control projection map. The
+GovEngine helper-boundary validator rejects new direct runtime imports of
+optional GovEngine security-profile helpers outside
+`engine/govengine_security_helpers.py`, so the host-owned narrowing point stays
+visible. Neither validator reads live targets, mutates state, or starts Logdash.
 
 ## Install validation
 

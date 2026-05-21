@@ -7,7 +7,7 @@ from typing import Any
 from auto_campaign_targets import host_from_target  # type: ignore
 from paths import rsp  # type: ignore
 from semantic_lineage import ensure_semantic_lineage, ensure_semantic_lineage_summary  # type: ignore
-from govengine.contracts.signal import adaptation_feedback_status, finding_signal_status, success_outcome_status, workflow_promotion_status  # type: ignore
+from govengine_security_helpers import adaptation_feedback_status, finding_signal_status, success_outcome_status, workflow_promotion_status  # type: ignore
 
 
 ProofArtifact = dict[str, object]

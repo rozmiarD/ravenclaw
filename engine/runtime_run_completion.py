@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Callable, Dict
 
 from runtime_runner_deps import RuntimeRunnerDeps  # type: ignore
-from govengine.contracts.signal import signal_contract_planner_reconsult_worthy  # type: ignore
+from govengine_security_helpers import signal_contract_planner_reconsult_worthy  # type: ignore
 
 
 def complete_runtime_run(

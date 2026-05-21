@@ -10,7 +10,7 @@ from evaluation_metrics import aggregate_replay_metrics  # type: ignore
 from evaluation_replay import replay_dataset  # type: ignore
 from offensive_reporting_artifacts import build_branch_campaignlets, build_exploit_motif_memory, build_proof_bundles, persist_runtime_state_artifacts  # type: ignore
 from runtime_economics_aggregate import aggregate_runtime_economics  # type: ignore
-from govengine.contracts.signal import adaptation_feedback_status, finding_signal_status, success_outcome_status, workflow_promotion_status  # type: ignore
+from govengine_security_helpers import adaptation_feedback_status, finding_signal_status, success_outcome_status, workflow_promotion_status  # type: ignore
 from semantic_lineage import ensure_semantic_lineage, ensure_semantic_lineage_summary  # type: ignore
 
 

@@ -363,6 +363,13 @@ Definition of done:
 - public docs do not overclaim full PyPI runtime readiness, carrier
   implementation, or live target authority.
 
+Current status: the first `0.17.x` consolidation slice routes active runtime
+imports of optional GovEngine security-profile helpers through
+`engine/govengine_security_helpers.py` and validates that boundary with
+`scripts/validate_govengine_helper_boundary.py`. Ravenclaw still owns the
+runtime semantics behind those calls; this is a narrowing point, not a new
+GovEngine extraction.
+
 ## `0.18.x` — Package/runtime readiness checkpoint
 
 Intent:
@@ -397,6 +404,11 @@ Definition of done:
   approved carrier packet proves its authority boundary;
 - GovEngine and SCLite stay upstream dependencies rather than hidden Ravenclaw
   copies.
+
+Current decision: keep the public distribution as the bounded
+`ravenclaw-security` helper/profile package until a public runtime subset can
+pass the install, state-path, residue, and public-safety checks without operator
+overlay assumptions.
 
 ## Future `1.0` bar
 

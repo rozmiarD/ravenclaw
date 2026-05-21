@@ -10,7 +10,7 @@ from campaign_utils import extract_host_from_url  # type: ignore
 from feature_flags import PIPELINE_FLAG_DEFAULTS, normalize_pipeline_flags  # type: ignore
 from govengine.capability_recipes import resolve_contextual_planner_profiles
 from paths import CONTEXT_SUMMARY_PATH, LEGACY_CONTEXT_SUMMARY_PATH, ep, first_existing  # type: ignore
-from govengine.policy.core import get_runtime_brain_allowed_tools  # type: ignore
+from govengine_security_helpers import get_runtime_brain_allowed_tools  # type: ignore
 from runtime_campaign_state import credentials_runtime_policy, resolve_campaign_key  # type: ignore
 from runtime_plan_service import load_active_campaign_blueprint  # type: ignore
 

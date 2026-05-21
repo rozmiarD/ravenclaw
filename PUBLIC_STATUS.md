@@ -27,6 +27,7 @@ These areas are real and important, but should still be treated as actively evol
 - public onboarding, quickstart, and demo ergonomics
 - public proof presentation and trust documentation, including demo signing/trust-port evidence, even though the underlying validation surfaces are now more explicit
 - the current PyPI helper package release, `ravenclaw-security==0.16.3`, which publishes narrow profile/readiness helper APIs while the full runtime remains a source/reference workflow
+- the current runtime consolidation seam through `engine/govengine_security_helpers.py`, which keeps optional GovEngine security-helper use local and reviewable while Ravenclaw keeps the security semantics
 - adapter/carrier ideas such as an OpenClaw Skill, MCP Policy Gateway, and A2A security metadata profile; these should follow stable contract proof rather than lead it. The docs/contracts-only OpenClaw boundary is mapped in `references/openclaw-adapter-contract-map.md`; future carrier gates are listed in `references/carrier-readiness-checklist.md`, and proposal packets should use `references/carrier-readiness-packet-template.md`.
 
 In other words, the system is real, but not every surface should be read as frozen.

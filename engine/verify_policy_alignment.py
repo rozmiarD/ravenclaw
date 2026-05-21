@@ -3,10 +3,10 @@ from __future__ import annotations
 
 import yaml
 
-from govengine.policy.core import ALLOWED_TOOLS, get_runtime_allowed_tools, get_runtime_brain_allowed_tools  # type: ignore
+from govengine_security_helpers import ALLOWED_TOOLS, get_runtime_allowed_tools, get_runtime_brain_allowed_tools  # type: ignore
 from contracts import get_contract_allowed_tools  # type: ignore
 from paths import WORKSPACE
-from govengine.tool_registry import get_execution_allowed_tools, get_planner_visible_tools, get_active_planner_profile_state
+from govengine_security_helpers import get_execution_allowed_tools, get_planner_visible_tools, get_active_planner_profile_state
 
 WHITELIST_PATH = WORKSPACE / 'whitelist.yaml'
 

@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, Tuple
 from auto_campaign_targets import host_from_target  # type: ignore
 from auto_campaign_qualification import compute_signal_assessment  # type: ignore
 from runtime_decision_engine import build_runtime_decision  # type: ignore
-from govengine.contracts.signal import (  # type: ignore
+from govengine_security_helpers import (  # type: ignore
     build_signal_contract,
     signal_contract_adaptation_positive,
     signal_contract_host_promise_positive,

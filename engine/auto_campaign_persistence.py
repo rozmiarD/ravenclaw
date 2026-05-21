@@ -9,7 +9,7 @@ from decision_quality import compute_decision_quality, aggregate_campaign_learni
 from runtime_utility import compute_runtime_utility  # type: ignore
 from campaign_state_machine import derive_family_state, derive_host_stage  # type: ignore
 from runtime_adaptation_engine import build_adaptation_signal  # type: ignore
-from govengine.contracts.signal import (  # type: ignore
+from govengine_security_helpers import (  # type: ignore
     signal_contract_host_promise_positive,
     signal_contract_signal_positive,
     signal_contract_workflow_promotable,
