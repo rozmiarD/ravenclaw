@@ -28,7 +28,7 @@ def test_govengine_helper_boundary_validator_passes() -> None:
         check=True,
     )
 
-    assert proc.stdout.strip() == 'govengine_helper_boundary_ok:engine_imports=wrapper_only'
+    assert proc.stdout.strip() == 'govengine_helper_boundary_ok:runtime_imports=wrapper_only'
 
 
 def test_govengine_helper_boundary_rejects_direct_runtime_import() -> None:
@@ -40,3 +40,14 @@ def test_govengine_helper_boundary_rejects_direct_runtime_import() -> None:
     )
 
     assert errors == ['engine/fixture_runtime.py:direct_optional_helper_import:govengine.policy.core']
+
+
+def test_govengine_helper_boundary_rejects_direct_logdash_import() -> None:
+    validator = _load_validator()
+
+    errors = validator._source_errors(
+        ROOT / 'logdash' / 'fixture_api.py',
+        'from govengine.tool_registry import get_tool_catalog\n',
+    )
+
+    assert errors == ['logdash/fixture_api.py:direct_optional_helper_import:govengine.tool_registry']

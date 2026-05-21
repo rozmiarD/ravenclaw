@@ -1,7 +1,7 @@
 version: 1
 defaults:
   planner_profile: core
-  planner_profiles_env: RAVENCLAW_BRAIN_TOOL_PROFILES
+  planner_profiles_env: GOVENGINE_TOOL_PROFILES
 profiles:
   core:
     description: Low-noise web-first offensive baseline for default public-safe campaigns.

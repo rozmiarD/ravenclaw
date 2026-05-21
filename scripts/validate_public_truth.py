@@ -156,6 +156,7 @@ def collect_errors() -> list[str]:
     _require(errors, 'PUBLIC_STATUS.md', public_status, f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'full runtime remains source/reference')
     _require(errors, 'VALIDATION.md', validation, 'GovEngine `0.10.1-alpha`')
+    _require(errors, 'engine/tool_registry.yaml', _read('engine/tool_registry.yaml'), 'planner_profiles_env: GOVENGINE_TOOL_PROFILES')
     _require(errors, '.github/workflows/pytest.yml', workflow, 'python scripts/validate_public_truth.py')
     _require(errors, '.github/workflows/pytest.yml', workflow, 'sclite-core @ git+https://github.com/rozmiarD/SCLite.git@main')
     _require(errors, '.github/workflows/pytest.yml', workflow, 'govengine @ git+https://github.com/rozmiarD/GovEngine.git@main')

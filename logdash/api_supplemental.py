@@ -22,8 +22,7 @@ from evaluation_replay import replay_decision_bundle  # type: ignore
 from runtime_economics_aggregate import aggregate_runtime_economics  # type: ignore
 from runtime_trace_normalization import flatten_reason_map as normalize_trace_reason_map, list_preview as normalize_trace_list_preview, resolve_trace_decision, resolve_trace_ladder  # type: ignore
 from semantic_lineage import ensure_semantic_lineage_summary  # type: ignore
-from govengine.tool_registry import get_active_planner_profile_state, get_planner_visible_tools, get_tool_catalog, get_tool_registry_ui_state, save_tool_registry_state
-from govengine.policy.core import get_runtime_tool_policy  # type: ignore
+from govengine_security_helpers import get_active_planner_profile_state, get_planner_visible_tools, get_runtime_tool_policy, get_tool_catalog, get_tool_registry_ui_state, save_tool_registry_state  # type: ignore
 from services import build_evaluation_summary_payload  # type: ignore
 from context_contract import require_ctx
 from json_state_io import safe_load_json_object  # type: ignore

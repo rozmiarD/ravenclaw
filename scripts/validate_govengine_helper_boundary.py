@@ -9,6 +9,7 @@ from typing import Iterable
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE = ROOT / 'engine'
+LOGDASH = ROOT / 'logdash'
 WRAPPER = ENGINE / 'govengine_security_helpers.py'
 
 OPTIONAL_HELPER_MODULES = (
@@ -42,6 +43,11 @@ def runtime_source_paths() -> Iterable[Path]:
         if path == WRAPPER or 'tests' in path.parts or path.name == '__init__.py':
             continue
         yield path
+    if LOGDASH.exists():
+        for path in sorted(LOGDASH.rglob('*.py')):
+            if 'tests' in path.parts or path.name == '__init__.py':
+                continue
+            yield path
 
 
 def collect_errors() -> list[str]:
@@ -59,7 +65,7 @@ def main() -> int:
         for error in errors:
             print(error, file=sys.stderr)
         return 1
-    print('govengine_helper_boundary_ok:engine_imports=wrapper_only')
+    print('govengine_helper_boundary_ok:runtime_imports=wrapper_only')
     return 0
 
 

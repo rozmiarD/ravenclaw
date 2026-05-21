@@ -8,6 +8,9 @@
 - Added an OpenClaw fixture presenter harness that accepts carrier-shaped
   public-safe inputs, redacts sensitive fixture fields, and preserves Ravenclaw
   command-authority boundaries without implementing a carrier adapter.
+- Routed Logdash's optional GovEngine security-helper imports through
+  `engine/govengine_security_helpers.py` and switched Ravenclaw's planner
+  profile setting to the neutral `GOVENGINE_TOOL_PROFILES` name.
 
 ## 0.16.3 / 2026-05-21
 

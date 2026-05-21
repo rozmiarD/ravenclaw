@@ -63,6 +63,13 @@ def test_resolve_planner_profiles_expands_inheritance() -> None:
     assert resolve_planner_profiles('lab') == ['core', 'extended', 'specialized', 'lab']
 
 
+def test_tool_registry_uses_neutral_govengine_profile_env_name() -> None:
+    text = (ROOT / 'engine' / 'tool_registry.yaml').read_text(encoding='utf-8')
+
+    assert 'planner_profiles_env: GOVENGINE_TOOL_PROFILES' in text
+    assert 'planner_profiles_env: RAVENCLAW_BRAIN_TOOL_PROFILES' not in text
+
+
 def test_save_tool_registry_state_persists_selected_profile(tmp_path: Path, monkeypatch) -> None:
     state_path = tmp_path / '.tool_registry.state.json'
     monkeypatch.setattr(tr, 'TOOL_REGISTRY_STATE_PATH', state_path)
