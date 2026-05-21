@@ -95,6 +95,8 @@ python scripts/run_pytest_slice.py runtime_runner
 
 The slices are coverage-preserving partitions of the current suite, intended to keep broad validation reproducible even when one giant batch is more fragile than the underlying tests.
 
+The public GitHub Actions slice workflow installs the current SCLite and GovEngine source lines before Ravenclaw test dependencies. That keeps Ravenclaw source CI deterministic across coordinated prerelease pushes while package-index propagation is still catching up; package publication still has to be verified separately with the clean PyPI install checks below.
+
 ## What this validates
 
 Running the suite exercises public-visible correctness signals across areas such as:
