@@ -20,6 +20,7 @@ if str(SCRIPTS_DIR) not in sys.path:
 import ravenclaw  # noqa: E402
 import ravenclaw_security_profile as security_profile  # noqa: E402
 import validate_extraction_roadmap as extraction_roadmap  # noqa: E402
+import validate_runtime_state_truth as runtime_state_truth  # noqa: E402
 
 
 EXPECTED_GOVENGINE_SURFACES = (
@@ -165,6 +166,7 @@ def collect_errors() -> list[str]:
     errors.extend(stale_current_dependency_errors({path: _read(path) for path in CURRENT_DEPENDENCY_DOCS}, govengine_dep))
     errors.extend(forbidden_claim_errors(PUBLIC_TRUTH_DOCS))
     errors.extend(f'extraction_roadmap:{error}' for error in extraction_roadmap.collect_errors())
+    errors.extend(f'runtime_state_truth:{error}' for error in runtime_state_truth.collect_errors())
 
     for path in PUBLIC_TRUTH_DOCS:
         text = _read(path)

@@ -4,6 +4,10 @@ This document catalogs the main persisted state and artifact files used by the l
 
 Goal: make it clear which files are authoritative, what they are for, and which component is expected to read/write them.
 
+The public state-truth manifest is `engine/runtime_state_truth.py`.
+`python scripts/validate_runtime_state_truth.py` checks this catalog against
+that manifest, canonical path helpers, and the GovEngine projection map.
+
 ---
 
 ## 1. State-file design rules

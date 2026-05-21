@@ -41,8 +41,9 @@ Ready today:
 Still blocked before implementation:
 
 - OpenClaw-specific scope display/refusal UX is only sketched, not implemented;
-- OpenClaw channel redaction/output behavior is contract-tested, but not tested
-  against a real carrier implementation;
+- OpenClaw channel redaction/output behavior is contract-tested and now exercised
+  through a public-safe fixture presenter harness, but not tested against a real
+  carrier implementation;
 - command-authority widening and rollback/stop propagation are contract-tested,
   but not demonstrated through a real OpenClaw carrier;
 - no public/private output matrix has been exercised against OpenClaw runtime
@@ -111,6 +112,7 @@ Evidence slice:
 - `references/openclaw-redaction-output-matrix.md`
 - `engine/openclaw_adapter_readiness.py`
 - `engine/tests/test_openclaw_adapter_readiness.py`
+- `ravenclaw.openclaw_readiness.build_openclaw_fixture_packet()`
 
 Blocker: no real OpenClaw channel-output implementation has been tested.
 
@@ -193,8 +195,8 @@ Pause or roll back adapter work if any of these appear:
 
 ## Decision
 
-OpenClaw remains the first future carrier candidate. The next action is still
-not implementation. The next useful implementation-prep slice is an
-OpenClaw-runtime-facing fixture or mock carrier harness proving these contracts
-against actual carrier-shaped inputs, without registering tools or executing
-commands.
+OpenClaw remains the first future carrier candidate. The fixture presenter
+harness now proves redaction and command-authority boundaries against
+carrier-shaped inputs without registering tools or executing commands. The next
+action is a bounded operator review of that harness before any real Skill/plugin
+implementation branch.

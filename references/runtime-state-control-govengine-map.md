@@ -81,6 +81,13 @@ The helper now validates the control/queue/runtime projection against GovEngine
 `resume`, `stop`, `cancel`, `replan`, `archive`, and `cooldown` are resolved as
 first-class neutral control/state records.
 
+The code names of the current host projections are
+`gov_run_state_projection`, `gov_orchestrator_state_projection`,
+`gov_queue_snapshot_projection`, and `gov_runtime_snapshot_projection`.
+`engine/runtime_state_truth.py` and
+`scripts/validate_runtime_state_truth.py` keep these projected state sources
+aligned with `STATE_FILES.md` without moving persistence into GovEngine.
+
 Stop if the projection requires moving Logdash behavior, live process control,
 host-learning internals, or local state persistence into GovEngine.
 

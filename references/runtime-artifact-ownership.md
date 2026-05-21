@@ -6,6 +6,8 @@ Use this when deciding where new runtime state should live, or when reading code
 ## Canonical rule
 Generated runtime artifacts should use canonical paths from `engine/paths.py`.
 Do not hard-code `engine/` artifact paths as preferred read/write targets.
+`engine/runtime_state_truth.py` is the public manifest for the persisted state
+and compatibility paths that the docs must continue to describe.
 
 Primary canonical examples:
 - runtime task list: `reports/state/public_targets_plan.json`

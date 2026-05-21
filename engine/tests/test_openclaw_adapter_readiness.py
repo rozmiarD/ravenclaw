@@ -144,6 +144,59 @@ def test_validation_failure_stop_requires_receipt_reference() -> None:
     assert propagated['status'] == 'propagated'
 
 
+def test_fixture_packet_redacts_sensitive_carrier_input_and_blocks_handoff() -> None:
+    packet = readiness.build_openclaw_fixture_packet({
+        'scope_ref': 'scope-1',
+        'policy_decision': 'approved',
+        'prepared_spec_ref': 'prepared-1',
+        'approved_spec_ref': 'approved-1',
+        'runner_supervision_status': 'ready',
+        'execution_truth_label': 'dry_run',
+        'tokens': 'secret-token',
+    })
+
+    assert packet['adapter_status'] == 'not_implemented'
+    assert packet['fixture_mode'] == 'presenter_only'
+    assert packet['status'] == 'blocked'
+    assert packet['redacted_input_fields'] == ['tokens']
+    assert 'secret-token' not in str(packet)
+    assert 'sensitive_fields_redacted' in packet['failed_checks']
+
+
+def test_fixture_packet_preserves_authority_boundary_without_execution_claim() -> None:
+    packet = readiness.build_openclaw_fixture_packet({
+        'scope_ref': 'scope-1',
+        'policy_decision': 'approved',
+        'prepared_spec_ref': 'prepared-1',
+        'approved_spec_ref': 'approved-1',
+        'runner_supervision_status': 'ready',
+        'runner_receipt_ref': 'receipt-1',
+        'execution_truth_label': 'dry_run',
+        'validation_receipt_ref': 'validation-1',
+    })
+
+    assert packet['status'] == 'presentable_fixture_packet'
+    assert packet['authority_decision']['status'] == 'ready_for_ravenclaw_execution_engine'
+    assert packet['public_summary']['execution_truth_label'] == 'dry_run'
+    assert packet['public_summary']['non_claims'] == list(readiness.REQUIRED_NON_CLAIMS)
+    assert 'execution_command' not in str(packet)
+
+
+def test_fixture_packet_blocks_chat_command_authority() -> None:
+    packet = readiness.build_openclaw_fixture_packet({
+        'scope_ref': 'scope-1',
+        'policy_decision': 'approved',
+        'prepared_spec_ref': 'prepared-1',
+        'approved_spec_ref': 'approved-1',
+        'runner_supervision_status': 'ready',
+        'chat_text_contains_command': True,
+    })
+
+    assert packet['status'] == 'blocked'
+    assert 'authority_chain_blocked' in packet['failed_checks']
+    assert packet['authority_decision']['stop_reasons'] == ['chat_text_contains_command']
+
+
 def test_openclaw_readiness_status_passes_for_current_contracts() -> None:
     status = readiness.openclaw_readiness_status()
 

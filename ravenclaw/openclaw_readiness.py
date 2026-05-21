@@ -46,6 +46,13 @@ PUBLIC_SAFE_FIELDS = (
     'non_claims',
 )
 
+FIXTURE_INPUT_FIELDS = PUBLIC_SAFE_FIELDS + (
+    'policy_decision',
+    'runner_supervision_status',
+    'chat_text_contains_command',
+    'stop_signal',
+)
+
 APPROVAL_UX_STEPS = (
     'show_scope_before_action',
     'show_policy_decision',
@@ -222,6 +229,44 @@ def openclaw_rollback_stop_contract() -> dict[str, Any]:
             'block_execution_until_reviewed',
             'record_validation_receipt_ref',
         ],
+        'non_claims': list(REQUIRED_NON_CLAIMS),
+    }
+
+
+def build_openclaw_fixture_packet(carrier_input: Mapping[str, Any]) -> dict[str, Any]:
+    """Project carrier-shaped fixture input into a public-safe presenter packet."""
+
+    raw = dict(carrier_input)
+    public_summary = {
+        field: raw[field]
+        for field in PUBLIC_SAFE_FIELDS
+        if field in raw and field != 'non_claims'
+    }
+    authority = evaluate_command_authority_request(raw)
+    redacted_fields = sorted(str(field) for field in ALWAYS_REDACT if field in raw)
+    stop_signal = raw.get('stop_signal') if isinstance(raw.get('stop_signal'), Mapping) else None
+    stop_state = evaluate_rollback_stop_signal(stop_signal) if stop_signal is not None else None
+    failed_checks = []
+    if redacted_fields:
+        failed_checks.append('sensitive_fields_redacted')
+    if authority['status'] == 'blocked':
+        failed_checks.append('authority_chain_blocked')
+    if stop_state is not None and stop_state['status'] != 'propagated':
+        failed_checks.append('stop_signal_blocked')
+    public_summary['non_claims'] = list(REQUIRED_NON_CLAIMS)
+    return {
+        'artifact_type': 'openclaw_fixture_presenter_packet',
+        'schema_version': 'v0.1',
+        'target_carrier': 'openclaw',
+        'adapter_status': 'not_implemented',
+        'fixture_mode': 'presenter_only',
+        'status': 'blocked' if failed_checks else 'presentable_fixture_packet',
+        'accepted_input_fields': sorted(str(field) for field in raw if field in FIXTURE_INPUT_FIELDS),
+        'redacted_input_fields': redacted_fields,
+        'public_summary': public_summary,
+        'authority_decision': authority,
+        'stop_signal_decision': stop_state,
+        'failed_checks': failed_checks,
         'non_claims': list(REQUIRED_NON_CLAIMS),
     }
 

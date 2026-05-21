@@ -2,14 +2,27 @@ from __future__ import annotations
 
 import importlib.metadata as metadata
 import json
+from pathlib import Path
+import tomllib
 
 import ravenclaw
 from ravenclaw import openclaw_readiness, security_profile
 
 
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def _distribution_or_source_version() -> str:
+    try:
+        return metadata.version('ravenclaw-security')
+    except metadata.PackageNotFoundError:
+        pyproject = tomllib.loads((ROOT / 'pyproject.toml').read_text(encoding='utf-8'))
+        return str(pyproject['project']['version'])
+
+
 def test_ravenclaw_package_version_matches_distribution() -> None:
     assert ravenclaw.__version__ == '0.16.2'
-    assert metadata.version('ravenclaw-security') == '0.16.2'
+    assert _distribution_or_source_version() == '0.16.2'
 
 
 def test_ravenclaw_package_exposes_public_profile_contracts() -> None:

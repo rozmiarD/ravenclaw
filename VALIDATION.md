@@ -13,6 +13,16 @@ pytest -q
 
 `validate_public_install.py` confirms that the public dependency chain resolves from the active Python environment before tests run. `pytest -q` remains the primary repo-wide validation command exposed publicly today.
 
+Persisted runtime state truth is checked separately with:
+
+```bash
+python scripts/validate_runtime_state_truth.py
+```
+
+That local validator compares the state manifest, canonical path helpers,
+`STATE_FILES.md`, and the GovEngine state/control projection map. It does not
+read live targets, mutate state, or start Logdash.
+
 ## Install validation
 
 Runtime-only install check:

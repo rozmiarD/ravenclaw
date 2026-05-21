@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Added a persisted runtime-state truth manifest plus local validator so state
+  docs, canonical path helpers, and GovEngine state/control projections cannot
+  drift silently.
+- Added an OpenClaw fixture presenter harness that accepts carrier-shaped
+  public-safe inputs, redacts sensitive fixture fields, and preserves Ravenclaw
+  command-authority boundaries without implementing a carrier adapter.
+
 ## 0.16.2 / 2026-05-21
 
 - Updated Ravenclaw public dependency and validation surfaces for the GovEngine `0.10.0-alpha` line, including the Domain Profile SDK and runtime contract proof surfaces, while keeping carrier adapters, credentials, and live execution out of scope.

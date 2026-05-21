@@ -28,6 +28,12 @@ Highest-value future candidate: a runtime-owned artifact descriptor contract,
 but only after Tecrax proves the same need. Until then, Ravenclaw's state-file
 model remains Ravenclaw-specific evidence, not neutral core truth.
 
+Wave C checkpoint: the first Tecrax local-fixture host slice can use existing
+GovEngine profile/planning/supervision/review contracts plus SCLite artifact
+descriptors without a new GovEngine surface. The next bounded work stays in
+Ravenclaw as an OpenClaw fixture presenter harness; it is not a carrier adapter
+implementation.
+
 GovEngine boundary health: healthy. GovEngine owns deterministic contracts and
 validators. Ravenclaw owns security runtime behavior, Logdash, state files,
 queue mutation, concrete execution, findings, and operator UX. SCLite owns
