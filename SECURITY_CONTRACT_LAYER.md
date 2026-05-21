@@ -51,7 +51,7 @@ The contract layer should be extracted only from real artifacts already produced
 
 The reusable SCL implementation now lives in the external `sclite` package, with lifecycle projection helpers consumed through `govengine.sclite_adapter`. Ravenclaw keeps only integration code: `engine/security_contract_layer.py` adds host-owned OODA/demo projection around the GovEngine/SCLite adapter, and `engine/public_demo_bundle.py` remains the demo bundle orchestration/CLI surface. Root `schemas/`, `examples/security-contract-proof/`, and `examples/contract-lifecycle-v0.2/` are public-review copies synchronized from SCLite so Ravenclaw snapshots remain self-describing.
 
-Ravenclaw also keeps `engine/govengine_boundary_profile.py` as a thin consumer for GovEngine's 0.2 kernel/profile boundary report. Public install validation now requires the published `govengine>=0.2.0,<0.3` package to expose `govengine.kernel_boundary_report` and reports failure if the boundary-profile check does not pass.
+Ravenclaw also keeps `engine/govengine_boundary_profile.py` as a thin consumer for GovEngine's kernel/profile boundary report. Public install validation now requires the active package chain, `govengine>=0.10.0a0,<0.11` and `sclite-core>=0.5.1,<0.6`, to expose `govengine.kernel_boundary_report`, the Domain Profile SDK, and runtime contract proof surfaces, and reports failure if the boundary-profile check does not pass.
 
 The current GovEngine wrapper classification is tracked in `references/govengine-wrapper-audit.md`. Pure alias wrappers are retired after Ravenclaw callers/tests migrate to direct package imports; host-side seams remain only where Ravenclaw owns runtime/profile glue rather than reusable GovEngine behavior.
 
