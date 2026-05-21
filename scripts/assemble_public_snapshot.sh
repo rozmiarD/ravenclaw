@@ -95,6 +95,7 @@ copy_path scripts/run_demo_scenario.py
 cp "$ROOT/scripts/prepare_public_examples.md" "$OUT/scripts/prepare_public_examples.md"
 copy_path scripts/audit_public_snapshot_residue.py
 copy_path scripts/validate_security_contract_fixtures.py
+copy_path scripts/validate_clean_public_install.py
 copy_path scripts/validate_public_install.py
 copy_path scripts/run_security_contract_validation.py
 copy_path scripts/validate_replayable_truth_fixture.py

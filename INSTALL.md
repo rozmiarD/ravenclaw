@@ -76,6 +76,16 @@ pip install -e '.[dev]'
 python scripts/validate_public_install.py --dev
 ```
 
+For release-readiness checks, prefer a disposable clean virtual environment so
+`pip check` is scoped to Ravenclaw's dependency chain rather than any unrelated
+packages installed in the operator's global interpreter:
+
+```bash
+python scripts/validate_clean_public_install.py \
+  --venv /tmp/ravenclaw-clean-public-install \
+  --dev
+```
+
 For read-only checkouts or external runtime state, set
 `RAVENCLAW_REPORTS_DIR=/path/to/reports`, `RAVENCLAW_TMP_DIR=/path/to/tmp`, and
 `RAVENCLAW_LOGDASH_DB=/path/to/logs.db` before running the full test suite or

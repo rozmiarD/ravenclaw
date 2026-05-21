@@ -11,7 +11,31 @@ python scripts/validate_public_install.py --dev
 pytest -q
 ```
 
-`validate_public_install.py` confirms that the public dependency chain resolves from the active Python environment before tests run. `pytest -q` remains the primary repo-wide validation command exposed publicly today.
+`validate_public_install.py` confirms that the public dependency chain resolves
+from the active Python environment before tests run. For release readiness,
+run it inside a clean virtual environment; a broad system interpreter can fail
+`pip check` because unrelated installed tools are dependency-inconsistent.
+`pytest -q` remains the primary repo-wide validation command exposed publicly
+today.
+
+For a repeatable clean-env validation from this checkout, use:
+
+```bash
+python scripts/validate_clean_public_install.py \
+  --venv /tmp/ravenclaw-clean-public-install \
+  --dev
+```
+
+For coordinated source-chain validation before a cross-repo push, install the
+local SCLite and GovEngine trees into the clean venv before Ravenclaw:
+
+```bash
+python scripts/validate_clean_public_install.py \
+  --venv /tmp/ravenclaw-clean-source-chain \
+  --dev \
+  --sclite-source /path/to/SCLite \
+  --govengine-source /path/to/GovEngine
+```
 
 Persisted runtime state truth is checked separately with:
 
@@ -64,6 +88,12 @@ ravenclaw_public_install_validation:dev:passed
 ```
 
 This checks Python version, importability/version visibility for `PyYAML`, `govengine`, `sclite-core`, and — with `--dev` — `pytest` and `Flask`; verifies the GovEngine public surface registry expected by Ravenclaw (`artifact_governance_core`, `planning_contracts_core`, `admission_policy_core`, `evidence_review_core`, `domain_profile_sdk`, `runtime_contract_proofs`, `controlled_execution_core`, `security_profile_helpers`); validates the published `govengine.security_profile` facade directly; validates Ravenclaw's own security-profile manifest and OpenClaw readiness-packet boundary; then runs `python -m pip check`. The focused GovEngine seam tests cover the same package-boundary path. These checks do not prove production deployment readiness or validate private operator overlays.
+
+`scripts/validate_clean_public_install.py` is a wrapper around the same
+validation surface. It creates a new virtual environment, installs the chosen
+package/source chain, and then runs `validate_public_install.py`, so `pip check`
+is scoped to the install under validation rather than the operator machine's
+global Python environment.
 
 With the current GovEngine `0.10.1-alpha` source/package line, Ravenclaw's source dependency baseline is `govengine>=0.10.1a0,<0.11` and `sclite-core>=0.6.0a0,<0.7`. Public install validation also requires Ravenclaw's boundary-profile readiness through `engine/govengine_boundary_profile.py`. That check validates `govengine.kernel_boundary_report`, the Ravenclaw profile contract, the public surface index, and the expected non-claims around live execution and carrier-adapter ownership. Ravenclaw's focused state/control projection tests validate the GovEngine runtime-shell surface for host control actions, queue snapshots, and runtime snapshots; focused planning projection tests validate the GovEngine planning-contract surface for redacted planner/runtime task handoffs; focused admission projection tests validate the GovEngine admission-policy surface for redacted go/no-go, policy, approval, and audit records; focused runner-supervision projection tests validate approved-spec runner requests, supervision plans, leases, and receipts; focused review projection tests validate receipt-bounded evidence claims and review results; focused security-profile tests validate that Ravenclaw is documented as a security runtime/profile over GovEngine + SCLite while OpenClaw remains at readiness-packet status; focused OpenClaw readiness tests validate redaction/output, approval-UX, command-authority, and rollback/stop boundaries before any carrier implementation.
 

@@ -31,8 +31,8 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
     {
         'id': 'public_install_validation',
         'title': 'Public install validation',
-        'command': 'python scripts/validate_public_install.py --dev',
-        'paths': ['scripts/validate_public_install.py', 'INSTALL.md', 'VALIDATION.md', 'engine/ravenclaw_security_profile.py'],
+        'command': 'python scripts/validate_clean_public_install.py --venv /tmp/ravenclaw-clean-public-install --dev',
+        'paths': ['scripts/validate_clean_public_install.py', 'scripts/validate_public_install.py', 'INSTALL.md', 'VALIDATION.md', 'engine/ravenclaw_security_profile.py'],
         'claim': 'Checks that the active Python environment resolves Ravenclaw public runtime and dev/test dependencies from the package chain, exposes the expected GovEngine public surface registry, and validates the GovEngine security-profile facade plus Ravenclaw boundary-profile and security-profile readiness.',
         'non_claim': 'Does not prove production deployment readiness or validate private operator overlays.',
     },

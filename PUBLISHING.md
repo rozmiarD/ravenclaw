@@ -109,6 +109,7 @@ The Security Contract Layer proof fixture is intentionally publishable when pres
 At minimum, run in the snapshot after a dev/test install:
 
 ```bash
+python scripts/validate_clean_public_install.py --venv /tmp/ravenclaw-clean-public-install --dev
 python scripts/validate_public_install.py --dev
 pytest -q
 ```
@@ -254,6 +255,7 @@ python -m pytest -q tests/test_ravenclaw_package.py engine/tests/test_ravenclaw_
 3. Run public install validation and the structural Security Contract receipt:
 
 ```bash
+python scripts/validate_clean_public_install.py --venv /tmp/ravenclaw-clean-public-install --dev
 python scripts/validate_public_install.py --dev
 python scripts/run_security_contract_validation.py --structural-only --include-pytest
 ```
