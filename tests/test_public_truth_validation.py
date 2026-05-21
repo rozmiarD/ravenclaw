@@ -28,7 +28,7 @@ def test_public_truth_validator_passes() -> None:
         check=True,
     )
 
-    assert proc.stdout.strip().startswith('public_truth_ok:ravenclaw-security==0.16.1:govengine>=0.10.0a0,<0.11:')
+    assert proc.stdout.strip().startswith('public_truth_ok:ravenclaw-security==0.16.2:govengine>=0.10.0a0,<0.11:')
 
 
 def test_public_truth_validator_negative_case_catches_stale_current_govengine_dependency() -> None:

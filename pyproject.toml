@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ravenclaw-security"
-version = "0.16.1"
+version = "0.16.2"
 description = "Governance-first security research runtime with policy-gated execution and public-safe proof artifacts"
 readme = "README.md"
 requires-python = ">=3.11"

@@ -35,7 +35,9 @@ EXPECTED_GOVENGINE_SURFACES = (
 
 CURRENT_DEPENDENCY_DOCS = (
     'README.md',
+    'INSTALL.md',
     'QUALITY_SIGNALS.md',
+    'THREAT_MODEL.md',
     'VALIDATION.md',
     'VERSION_ROADMAP.md',
     'SECURITY_CONTRACT_LAYER.md',
@@ -47,11 +49,13 @@ CURRENT_DEPENDENCY_DOCS = (
 
 PUBLIC_TRUTH_DOCS = (
     'README.md',
+    'INSTALL.md',
     'PUBLIC_STATUS.md',
     'VALIDATION.md',
     'QUALITY_SIGNALS.md',
     'PROOF_OF_VALUE.md',
     'ARCHITECTURE_OVERVIEW.md',
+    'THREAT_MODEL.md',
     'VERSION_ROADMAP.md',
     'SECURITY_CONTRACT_LAYER.md',
     'references/ravenclaw-security-profile-boundary.md',
@@ -142,10 +146,12 @@ def collect_errors() -> list[str]:
     workflow = _read('.github/workflows/pytest.yml')
 
     _require(errors, 'README.md', readme, f'Source: Ravenclaw {version}')
-    _require(errors, 'README.md', readme, 'ravenclaw-security==0.16.1')
+    _require(errors, 'README.md', readme, f'ravenclaw-security=={version}')
     _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.10.0-alpha')
     _require(errors, 'README.md', readme, 'Dependency: SCLite >=0.5.1')
+    _require(errors, 'INSTALL.md', _read('INSTALL.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'narrow public profile/readiness package')
+    _require(errors, 'PUBLIC_STATUS.md', public_status, f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'full runtime remains source/reference')
     _require(errors, 'VALIDATION.md', validation, 'GovEngine `0.10.0-alpha`')
     _require(errors, '.github/workflows/pytest.yml', workflow, 'python scripts/validate_public_truth.py')

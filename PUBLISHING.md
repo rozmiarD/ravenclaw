@@ -269,7 +269,7 @@ python -m twine check dist/*
 
 ```bash
 python -m venv /tmp/ravenclaw-wheel-venv
-/tmp/ravenclaw-wheel-venv/bin/python -m pip install dist/ravenclaw_security-0.16.1-py3-none-any.whl
+/tmp/ravenclaw-wheel-venv/bin/python -m pip install dist/ravenclaw_security-0.16.2-py3-none-any.whl
 /tmp/ravenclaw-wheel-venv/bin/python -m pip check
 /tmp/ravenclaw-wheel-venv/bin/python - <<'PY'
 import importlib.metadata as metadata

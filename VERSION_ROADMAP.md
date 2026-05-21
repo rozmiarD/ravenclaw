@@ -4,14 +4,14 @@
 
 This file defines Ravenclaw's version roadmap after the GovEngine/SCLite package-chain stabilization.
 
-Current public source/package version: `0.16.1`.
+Current public source/package version: `0.16.2`.
 Current dependency baseline:
 
 ```text
 Ravenclaw -> govengine>=0.10.0a0,<0.11 -> sclite-core>=0.5.1,<0.6
 ```
 
-Use this as a milestone map, not as a promise that every milestone will become a full PyPI/runtime release. The first PyPI package line is `ravenclaw-security==0.16.1`, carrying public profile/readiness helpers under the `ravenclaw` import package; Ravenclaw remains a source/reference security runtime until install, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
+Use this as a milestone map, not as a promise that every milestone will become a full PyPI/runtime release. The current PyPI helper package release is `ravenclaw-security==0.16.2`, carrying public profile/readiness helpers under the `ravenclaw` import package; Ravenclaw remains a source/reference security runtime until install, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
 
 ## Architecture direction
 

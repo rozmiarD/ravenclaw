@@ -26,7 +26,7 @@ These areas are real and important, but should still be treated as actively evol
 - some planner-to-runtime semantics that have recently been hardened but are still being refined
 - public onboarding, quickstart, and demo ergonomics
 - public proof presentation and trust documentation, including demo signing/trust-port evidence, even though the underlying validation surfaces are now more explicit
-- the first PyPI package line, `ravenclaw-security==0.16.1`, which publishes narrow profile/readiness helper APIs while the full runtime remains a source/reference workflow
+- the current PyPI helper package release, `ravenclaw-security==0.16.2`, which publishes narrow profile/readiness helper APIs while the full runtime remains a source/reference workflow
 - adapter/carrier ideas such as an OpenClaw Skill, MCP Policy Gateway, and A2A security metadata profile; these should follow stable contract proof rather than lead it. The docs/contracts-only OpenClaw boundary is mapped in `references/openclaw-adapter-contract-map.md`; future carrier gates are listed in `references/carrier-readiness-checklist.md`, and proposal packets should use `references/carrier-readiness-packet-template.md`.
 
 In other words, the system is real, but not every surface should be read as frozen.
@@ -47,8 +47,8 @@ Public readers should evaluate Ravenclaw from the intentionally published surfac
 
 Ravenclaw does **not** currently promise:
 - an easy consumer install experience
-- a complete PyPI-published Ravenclaw runtime runner; `ravenclaw-security==0.16.1` is a narrow public profile/readiness package, while the full runtime remains source/reference
-- a fully stable package/distribution shape beyond the documented `0.16.1` helper APIs
+- a complete PyPI-published Ravenclaw runtime runner; `ravenclaw-security==0.16.2` is a narrow public profile/readiness package, while the full runtime remains source/reference
+- a fully stable package/distribution shape beyond the documented `0.16.2` helper APIs
 - that every internal subsystem is final
 - that the public checkout equals the operator's full live environment
 - that public docs already cover every advanced runtime seam equally well
