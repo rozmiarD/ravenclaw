@@ -42,6 +42,7 @@ CURRENT_DEPENDENCY_DOCS = (
     'THREAT_MODEL.md',
     'VALIDATION.md',
     'VERSION_ROADMAP.md',
+    'PUBLISHING.md',
     'SECURITY_CONTRACT_LAYER.md',
     'references/ravenclaw-security-profile-boundary.md',
     'references/openclaw-adapter-readiness-packet-2026-05-20.md',
@@ -59,6 +60,7 @@ PUBLIC_TRUTH_DOCS = (
     'ARCHITECTURE_OVERVIEW.md',
     'THREAT_MODEL.md',
     'VERSION_ROADMAP.md',
+    'PUBLISHING.md',
     'SECURITY_CONTRACT_LAYER.md',
     'references/ravenclaw-security-profile-boundary.md',
     'references/openclaw-adapter-readiness-packet-2026-05-20.md',
@@ -156,6 +158,8 @@ def collect_errors() -> list[str]:
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'narrow public profile/readiness package')
     _require(errors, 'PUBLIC_STATUS.md', public_status, f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'full runtime remains source/reference')
+    _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw-security=={version}')
+    _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw_security-{version}-py3-none-any.whl')
     _require(errors, 'VALIDATION.md', validation, 'GovEngine `0.10.2-alpha`')
     _require(
         errors,

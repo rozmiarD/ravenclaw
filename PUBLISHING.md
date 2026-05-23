@@ -237,9 +237,10 @@ The safest current release posture is:
 
 ## PyPI release procedure
 
-Ravenclaw's first PyPI line is `ravenclaw-security` `0.16.x`, importing as
-`ravenclaw`. It is intentionally pre-1.0 and packages the public
-profile/readiness helper API, not the complete source runtime runner.
+Ravenclaw's current PyPI helper package line is `ravenclaw-security==0.17.0`,
+importing as `ravenclaw`, and depending on `govengine>=0.10.2a0,<0.11` and
+`sclite-core>=0.7.0a0,<0.8`. It is intentionally pre-1.0 and packages the
+public profile/readiness helper API, not the complete source runtime runner.
 
 Before uploading:
 
@@ -271,7 +272,7 @@ python -m twine check dist/*
 
 ```bash
 python -m venv /tmp/ravenclaw-wheel-venv
-/tmp/ravenclaw-wheel-venv/bin/python -m pip install dist/ravenclaw_security-0.16.2-py3-none-any.whl
+/tmp/ravenclaw-wheel-venv/bin/python -m pip install dist/ravenclaw_security-0.17.0-py3-none-any.whl
 /tmp/ravenclaw-wheel-venv/bin/python -m pip check
 /tmp/ravenclaw-wheel-venv/bin/python - <<'PY'
 import importlib.metadata as metadata
