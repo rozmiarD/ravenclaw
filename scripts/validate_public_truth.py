@@ -146,6 +146,7 @@ def collect_errors() -> list[str]:
     public_status = _read('PUBLIC_STATUS.md')
     validation = _read('VALIDATION.md')
     workflow = _read('.github/workflows/pytest.yml')
+    stack_workflow = _read('.github/workflows/stack-compatibility.yml')
 
     _require(errors, 'README.md', readme, f'Source: Ravenclaw {version}')
     _require(errors, 'README.md', readme, f'ravenclaw-security=={version}')
@@ -160,6 +161,19 @@ def collect_errors() -> list[str]:
     _require(errors, '.github/workflows/pytest.yml', workflow, 'python scripts/validate_public_truth.py')
     _require(errors, '.github/workflows/pytest.yml', workflow, 'sclite-core @ git+https://github.com/rozmiarD/SCLite.git@main')
     _require(errors, '.github/workflows/pytest.yml', workflow, 'govengine @ git+https://github.com/rozmiarD/GovEngine.git@main')
+    _require(errors, '.github/workflows/pytest.yml', workflow, 'public-helper-smoke:')
+    _require(errors, '.github/workflows/pytest.yml', workflow, 'package-dry-run:')
+    _require(errors, '.github/workflows/pytest.yml', workflow, 'RAVENCLAW_REPORTS_DIR: ${{ runner.temp }}/ravenclaw-reports')
+    _require(errors, '.github/workflows/pytest.yml', workflow, 'RAVENCLAW_LOGDASH_DB: ${{ runner.temp }}/ravenclaw-logdash/logs.db')
+    _require(errors, '.github/workflows/pytest.yml', workflow, 'rm -rf dist build *.egg-info')
+    _require(errors, '.github/workflows/pytest.yml', workflow, 'python -m twine check dist/*')
+    _require(errors, '.github/workflows/pytest.yml', workflow, 'python -m pip check')
+    _require(errors, '.github/workflows/stack-compatibility.yml', stack_workflow, 'workflow_dispatch:')
+    _require(errors, '.github/workflows/stack-compatibility.yml', stack_workflow, 'schedule:')
+    _require(errors, '.github/workflows/stack-compatibility.yml', stack_workflow, 'sclite-core @ git+https://github.com/rozmiarD/SCLite.git@main')
+    _require(errors, '.github/workflows/stack-compatibility.yml', stack_workflow, 'govengine @ git+https://github.com/rozmiarD/GovEngine.git@main')
+    _require(errors, '.github/workflows/stack-compatibility.yml', stack_workflow, 'RAVENCLAW_REPORTS_DIR: ${{ runner.temp }}/ravenclaw-reports')
+    _require(errors, '.github/workflows/stack-compatibility.yml', stack_workflow, 'engine/tests/test_govengine_dependency_isolation.py')
 
     for path in CURRENT_DEPENDENCY_DOCS:
         text = _read(path)

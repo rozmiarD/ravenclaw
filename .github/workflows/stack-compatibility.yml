@@ -1,0 +1,66 @@
+name: Stack compatibility
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 4 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ravenclaw-govengine-sclite:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install current source stack
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "sclite-core @ git+https://github.com/rozmiarD/SCLite.git@main"
+          python -m pip install "govengine @ git+https://github.com/rozmiarD/GovEngine.git@main"
+          python -m pip install -e '.[dev]'
+      - name: Validate public stack truth
+        run: |
+          python scripts/validate_public_truth.py
+          python scripts/validate_extraction_roadmap.py
+          python scripts/validate_govengine_helper_boundary.py
+      - name: Run GovEngine projection compatibility tests
+        env:
+          RAVENCLAW_WORKSPACE: ${{ github.workspace }}
+          RAVENCLAW_REPORTS_DIR: ${{ runner.temp }}/ravenclaw-reports
+          RAVENCLAW_TMP_DIR: ${{ runner.temp }}/ravenclaw-tmp
+          RAVENCLAW_LOGDASH_DB: ${{ runner.temp }}/ravenclaw-logdash/logs.db
+          RAVENCLAW_PIPELINE_CONFIG: ${{ runner.temp }}/ravenclaw-pipeline.json
+          RAVENCLAW_CONTEXT_SUMMARY_PATH: ${{ runner.temp }}/ravenclaw-reports/cache/context_summary.json
+        run: |
+          python -m pytest -q \
+            engine/tests/test_govengine_admission_projection.py \
+            engine/tests/test_govengine_boundary_profile.py \
+            engine/tests/test_govengine_control_gate_adapter.py \
+            engine/tests/test_govengine_dependency_isolation.py \
+            engine/tests/test_govengine_execution_seam.py \
+            engine/tests/test_govengine_planning_projection.py \
+            engine/tests/test_govengine_review_projection.py \
+            engine/tests/test_govengine_runner_supervision_projection.py \
+            engine/tests/test_govengine_security_profile.py \
+            engine/tests/test_govengine_state_control_projection.py
+      - name: Run public integration slice
+        env:
+          RAVENCLAW_WORKSPACE: ${{ github.workspace }}
+          RAVENCLAW_REPORTS_DIR: ${{ runner.temp }}/ravenclaw-reports
+          RAVENCLAW_TMP_DIR: ${{ runner.temp }}/ravenclaw-tmp
+          RAVENCLAW_LOGDASH_DB: ${{ runner.temp }}/ravenclaw-logdash/logs.db
+          RAVENCLAW_PIPELINE_CONFIG: ${{ runner.temp }}/ravenclaw-pipeline.json
+          RAVENCLAW_CONTEXT_SUMMARY_PATH: ${{ runner.temp }}/ravenclaw-reports/cache/context_summary.json
+        run: python scripts/run_pytest_slice.py misc_public
