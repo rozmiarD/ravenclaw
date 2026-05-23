@@ -10,7 +10,6 @@ ROOT = Path(__file__).resolve().parents[2]
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-import public_demo_bundle as pdb  # type: ignore
 import security_contract_layer as scl  # type: ignore
 
 
@@ -68,22 +67,22 @@ def _demo_pipeline_data() -> Dict[str, Any]:
 
 
 def test_policy_decision_artifact_matches_schema() -> None:
-    artifacts = pdb.build_proof_trace_artifacts(_demo_pipeline_data())
+    artifacts = scl.build_proof_trace_artifacts(_demo_pipeline_data())
     _validate_schema('policy_decision.v0.1.schema.json', artifacts['policy_decision.json'])
 
 
 def test_execution_receipt_artifact_matches_schema() -> None:
-    artifacts = pdb.build_proof_trace_artifacts(_demo_pipeline_data())
+    artifacts = scl.build_proof_trace_artifacts(_demo_pipeline_data())
     _validate_schema('execution_receipt.v0.1.schema.json', artifacts['execution_receipt.json'])
 
 
 def test_evidence_bundle_artifact_matches_schema() -> None:
-    artifacts = pdb.build_proof_trace_artifacts(_demo_pipeline_data())
+    artifacts = scl.build_proof_trace_artifacts(_demo_pipeline_data())
     _validate_schema('evidence_bundle.v0.1.schema.json', artifacts['evidence_bundle.json'])
 
 
 def test_policy_decision_schema_rejects_unknown_decision() -> None:
-    artifact = pdb.build_proof_trace_artifacts(_demo_pipeline_data())['policy_decision.json']
+    artifact = scl.build_proof_trace_artifacts(_demo_pipeline_data())['policy_decision.json']
     artifact['decision'] = 'maybe'
     try:
         _validate_schema('policy_decision.v0.1.schema.json', artifact)
@@ -94,7 +93,7 @@ def test_policy_decision_schema_rejects_unknown_decision() -> None:
 
 
 def test_execution_receipt_schema_rejects_raw_receipt_without_artifact_type() -> None:
-    artifact = pdb.build_proof_trace_artifacts(_demo_pipeline_data())['execution_receipt.json']
+    artifact = scl.build_proof_trace_artifacts(_demo_pipeline_data())['execution_receipt.json']
     artifact.pop('artifact_type')
     try:
         _validate_schema('execution_receipt.v0.1.schema.json', artifact)
@@ -105,7 +104,7 @@ def test_execution_receipt_schema_rejects_raw_receipt_without_artifact_type() ->
 
 
 def test_evidence_bundle_schema_requires_public_safety_non_claims() -> None:
-    artifact = pdb.build_proof_trace_artifacts(_demo_pipeline_data())['evidence_bundle.json']
+    artifact = scl.build_proof_trace_artifacts(_demo_pipeline_data())['evidence_bundle.json']
     artifact['public_safety']['raw_live_evidence_included'] = True
     try:
         _validate_schema('evidence_bundle.v0.1.schema.json', artifact)
@@ -116,7 +115,7 @@ def test_evidence_bundle_schema_requires_public_safety_non_claims() -> None:
 
 
 def test_demo_evidence_summary_states_dry_run_contract_proof_without_live_claims() -> None:
-    summary = pdb.build_evidence_summary_markdown(_demo_pipeline_data())
+    summary = scl.build_evidence_summary_markdown(_demo_pipeline_data())
     assert 'success_status: `dry_run_contract_proof`' in summary
     assert 'demo_runtime_mode' in summary
     assert 'dry_run_receipt_recorded' in summary
@@ -125,8 +124,8 @@ def test_demo_evidence_summary_states_dry_run_contract_proof_without_live_claims
 
 
 def test_proof_trace_includes_evidence_bundle_before_summary() -> None:
-    assert 'evidence_bundle.json' in pdb.PROOF_TRACE_FILES
-    assert pdb.PROOF_TRACE_FILES.index('evidence_bundle.json') < pdb.PROOF_TRACE_FILES.index('evidence_summary.md')
+    assert 'evidence_bundle.json' in scl.PROOF_TRACE_FILES
+    assert scl.PROOF_TRACE_FILES.index('evidence_bundle.json') < scl.PROOF_TRACE_FILES.index('evidence_summary.md')
 
 
 def test_security_contract_layer_manifest_tracks_schema_backed_artifacts() -> None:

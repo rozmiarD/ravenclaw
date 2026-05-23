@@ -17,9 +17,9 @@ def test_security_profile_manifest_is_json_safe_and_current() -> None:
 
     assert manifest['profile']['name'] == 'ravenclaw-security'
     assert manifest['profile']['domain'] == 'security-research-runtime'
-    assert manifest['package_chain']['ravenclaw'] == '0.16.3'
-    assert manifest['package_chain']['govengine'] == '>=0.10.1a0,<0.11'
-    assert manifest['package_chain']['sclite-core'] == '>=0.6.0a0,<0.7'
+    assert manifest['package_chain']['ravenclaw'] == '0.17.0'
+    assert manifest['package_chain']['govengine'] == '>=0.10.2a0,<0.11'
+    assert manifest['package_chain']['sclite-core'] == '>=0.7.0a0,<0.8'
     assert manifest['required_govengine_surfaces'] == list(profile.REQUIRED_GOVENGINE_SURFACES)
     assert json.loads(json.dumps(manifest)) == manifest
 

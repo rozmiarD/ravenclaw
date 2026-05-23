@@ -32,7 +32,7 @@ from govengine_security_helpers import get_runtime_brain_allowed_tools  # type: 
 from govengine.contracts.execution import build_prepared_execution_spec, build_approved_execution_spec, redact_prepared_execution_spec_for_auditor
 from govengine.semantic_loss_policy import semantic_loss_runtime_gate
 from public_delivery import apply_delivery_profile_to_pipeline, resolve_delivery_profile, run_auditor_adapter, run_brain_adapter, run_execution_adapter  # type: ignore
-from govengine.sclite_adapter import build_lifecycle_artifacts_v02
+from govengine.sclite_adapter import build_current_lifecycle_artifacts
 
 
 def _selected_scope_path() -> Path:
@@ -1643,12 +1643,12 @@ def execute_flow(
         output['planned_command'] = built_cmd or None
 
     try:
-        lifecycle_artifacts_v0_2 = build_lifecycle_artifacts_v02(output)
-        output['scl_lifecycle_artifacts_v0_2'] = lifecycle_artifacts_v0_2
-        output['execution_contract_v0_2'] = lifecycle_artifacts_v0_2.get('execution_contract.json')
-        output['execution_ticket_v0_2'] = lifecycle_artifacts_v0_2.get('execution_ticket.json')
-        output['artifact_chain_manifest_v0_2'] = lifecycle_artifacts_v0_2.get('artifact_chain_manifest.json')
-        log_stage('ENGINE', 'execution_ticket_gate_prepare', 'success', 'sclite_v0_2_execution_ticket_ready')
+        lifecycle_artifacts = build_current_lifecycle_artifacts(output)
+        output['scl_lifecycle_artifacts'] = lifecycle_artifacts
+        output['execution_contract'] = lifecycle_artifacts.get('execution_contract.json')
+        output['execution_ticket'] = lifecycle_artifacts.get('execution_ticket.json')
+        output['artifact_chain_manifest'] = lifecycle_artifacts.get('artifact_chain_manifest.json')
+        log_stage('ENGINE', 'execution_ticket_gate_prepare', 'success', 'sclite_v0_3_scoped_execution_ticket_ready')
     except Exception as exc:
         log_stage('ENGINE', 'execution_ticket_gate_prepare', 'failed', str(exc))
         output['engine'] = {
@@ -1671,8 +1671,8 @@ def execute_flow(
             return engine.execute_approved_spec(
                 output['approved_execution_spec'],
                 dry_run=effective_dry_run,
-                execution_ticket=output.get('execution_ticket_v0_2'),
-                execution_contract=output.get('execution_contract_v0_2'),
+                execution_ticket=output.get('execution_ticket'),
+                execution_contract=output.get('execution_contract'),
                 require_execution_ticket=True,
             )
 

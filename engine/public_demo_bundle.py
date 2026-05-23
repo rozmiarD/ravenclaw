@@ -11,17 +11,12 @@ from typing import Any, Dict, List
 
 import demo_entry  # type: ignore
 from security_contract_layer import (  # type: ignore
-    LIFECYCLE_TRACE_FILES_V02,
-    PROOF_TRACE_FILES,
-    assert_public_proof_trace_artifacts,
-    build_evidence_bundle_artifact,
-    build_evidence_summary_markdown,
-    build_lifecycle_artifacts_v02,
-    build_policy_decision_artifact,
-    build_proof_trace_artifacts,
+    CURRENT_LIFECYCLE_TRACE_FILES,
+    build_current_lifecycle_artifacts,
     repo_root,
     sanitize_public_artifact,
 )
+from sclite.bundles import REVIEW_BUNDLE_REQUIRED_FILES, materialize_review_bundle  # type: ignore
 from sclite.integrity import verify_artifact_chain_manifest  # type: ignore
 
 
@@ -66,8 +61,8 @@ def build_bundle_summary(*, plan_data: Dict[str, Any], pipeline_data: Dict[str, 
         'integration_adapters': adapters,
         'plan_summary': plan_summary,
         'planned_command': sanitize_public_artifact(list(pipeline_data.get('planned_command') or [])),
-        'proof_trace_files': list(PROOF_TRACE_FILES),
-        'lifecycle_trace_files_v0_2': list(LIFECYCLE_TRACE_FILES_V02),
+        'lifecycle_trace_files': list(CURRENT_LIFECYCLE_TRACE_FILES),
+        'review_bundle_dir': 'review_bundle',
         'demo_commands': sanitize_public_artifact([list(cmd) for cmd in commands]),
     }
 
@@ -89,12 +84,6 @@ def build_bundle_markdown(summary: Dict[str, Any]) -> str:
         '',
         '- `plan_campaign.demo.json`',
         '- `run_pipeline.demo.json`',
-        '- `policy_decision.json`',
-        '- `prepared_execution_spec.redacted.json`',
-        '- `approved_execution_spec.json`',
-        '- `execution_receipt.json`',
-        '- `evidence_bundle.json`',
-        '- `evidence_summary.md`',
         '- `intent_contract.json`',
         '- `policy_decision.v0.2.json`',
         '- `execution_contract.json`',
@@ -102,16 +91,14 @@ def build_bundle_markdown(summary: Dict[str, Any]) -> str:
         '- `execution_receipt.v0.2.json`',
         '- `evidence_contract.json`',
         '- `artifact_chain_manifest.json`',
+        '- `review_bundle/verification_receipt.json`',
+        '- `review_bundle/REVIEW.md`',
         '- `bundle_summary.json`',
         '- `bundle_summary.md`',
         '',
-        '## Proof trace',
+        '## SCLite current lifecycle and review bundle',
         '',
-        '`scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence bundle/summary`',
-        '',
-        '## SCLite v0.2 lifecycle chain',
-        '',
-        '`intent -> policy decision -> execution contract -> execution ticket -> execution receipt -> evidence contract -> artifact chain manifest`',
+        '`intent -> policy decision -> execution contract -> scoped execution ticket -> execution receipt -> evidence contract -> artifact chain manifest -> review bundle`',
     ]
     return '\n'.join(lines) + '\n'
 
@@ -127,28 +114,36 @@ def generate_bundle(*, output_dir: str = DEFAULT_OUTPUT_DIR, python_bin: str | N
     plan_data = _run_json_command(commands[0], cwd=root, env=env)
     pipeline_data = _run_json_command(commands[1], cwd=root, env=env)
     summary = build_bundle_summary(plan_data=plan_data, pipeline_data=pipeline_data, commands=commands)
-    proof_trace = build_proof_trace_artifacts(pipeline_data)
-    assert_public_proof_trace_artifacts(proof_trace)
-    lifecycle_trace = build_lifecycle_artifacts_v02(pipeline_data)
+    lifecycle_trace = build_current_lifecycle_artifacts(pipeline_data)
     markdown = build_bundle_markdown(summary)
 
     (out_dir / 'plan_campaign.demo.json').write_text(json.dumps(sanitize_public_artifact(plan_data), ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     (out_dir / 'run_pipeline.demo.json').write_text(json.dumps(sanitize_public_artifact(pipeline_data), ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    for filename, artifact in proof_trace.items():
-        if filename.endswith('.md'):
-            (out_dir / filename).write_text(str(artifact), encoding='utf-8')
-        else:
-            (out_dir / filename).write_text(json.dumps(artifact, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     for filename, artifact in lifecycle_trace.items():
         (out_dir / filename).write_text(json.dumps(artifact, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     verify_artifact_chain_manifest(lifecycle_trace['artifact_chain_manifest.json'], root=out_dir)
+    review_record = materialize_review_bundle(
+        out_dir / 'review_bundle',
+        {
+            'intent_contract': lifecycle_trace['intent_contract.json'],
+            'policy_decision': lifecycle_trace['policy_decision.v0.2.json'],
+            'execution_contract': lifecycle_trace['execution_contract.json'],
+            'execution_ticket': lifecycle_trace['execution_ticket.json'],
+            'execution_receipt': lifecycle_trace['execution_receipt.v0.2.json'],
+            'evidence_contract': lifecycle_trace['evidence_contract.json'],
+        },
+        chain_id=str(pipeline_data.get('run_id') or 'ravenclaw-current-review-bundle'),
+        generated_at=str(summary['generated_at']),
+    )
+    if review_record.get('verdict') != 'pass':
+        raise RuntimeError(f"current_review_bundle_not_passed:{review_record.get('verdict')}")
     (out_dir / 'bundle_summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     (out_dir / 'bundle_summary.md').write_text(markdown, encoding='utf-8')
     files = [
         str(out_dir / 'plan_campaign.demo.json'),
         str(out_dir / 'run_pipeline.demo.json'),
-        *[str(out_dir / name) for name in PROOF_TRACE_FILES],
-        *[str(out_dir / name) for name in LIFECYCLE_TRACE_FILES_V02],
+        *[str(out_dir / name) for name in CURRENT_LIFECYCLE_TRACE_FILES],
+        *[str(out_dir / 'review_bundle' / name) for name in (*REVIEW_BUNDLE_REQUIRED_FILES.values(), 'artifact_chain_manifest.json', 'verification_receipt.json', 'REVIEW.md')],
         str(out_dir / 'bundle_summary.json'),
         str(out_dir / 'bundle_summary.md'),
     ]

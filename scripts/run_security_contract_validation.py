@@ -174,7 +174,7 @@ def _assemble_snapshot_check(snapshot_dir: Path) -> ValidationCheck:
 def _demo_scenario_package_chain_check(snapshot_dir: Path, output_dir: Path) -> ValidationCheck:
     return ValidationCheck(
         check_id='demo_scenario_package_chain',
-        description='Run the public-safe Ravenclaw/GovEngine/SCLite demo scenario from an assembled public snapshot.',
+        description='Run the public-safe Ravenclaw/GovEngine/SCLite demo scenario and record versions of the executed imported modules from an assembled public snapshot.',
         command=[
             'bash',
             '-lc',

@@ -70,11 +70,11 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
     },
     {
         'id': 'security_contract_fixture',
-        'title': 'Security Contract proof fixture',
+        'title': 'Legacy Security Contract proof fixture',
         'command': 'PYTHONDONTWRITEBYTECODE=1 python scripts/validate_security_contract_fixtures.py examples/security-contract-proof',
         'paths': ['examples/security-contract-proof', 'scripts/validate_security_contract_fixtures.py', 'schemas', 'references/public-safe-proof-walkthrough.md'],
-        'claim': 'Schema-backed dry-run proof trace from scope/input through evidence summary.',
-        'non_claim': 'Does not claim live vulnerability evidence.',
+        'claim': 'Validates retained v0.1 compatibility fixtures while active runtime proof moves through the lifecycle/review-bundle surface.',
+        'non_claim': 'Does not define the current runtime integration contract or claim live vulnerability evidence.',
     },
     {
         'id': 'security_contract_validation_receipt',
@@ -86,11 +86,19 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
     },
     {
         'id': 'sclite_v02_lifecycle_chain',
-        'title': 'SCLite v0.2 lifecycle chain fixture',
+        'title': 'SCLite lifecycle chain fixture',
         'command': 'sclite validate-chain examples/contract-lifecycle-v0.2/artifact_chain_manifest.json',
         'paths': ['examples/contract-lifecycle-v0.2', 'schemas/artifact_chain_manifest.v0.2.schema.json'],
         'claim': 'Verifies the public-safe intent-to-evidence lifecycle fixture with a hash-linked artifact chain.',
         'non_claim': 'Does not prove signer identity, legal authorization, live execution, or transparency-log inclusion.',
+    },
+    {
+        'id': 'current_review_bundle_demo',
+        'title': 'Current SCLite review-bundle demo path',
+        'command': 'bin/demo-bundle --output-dir demo-output && sclite review demo-output/review_bundle --format summary --fail-on review',
+        'paths': ['engine/public_demo_bundle.py', 'engine/security_contract_layer.py', 'DEMO.md'],
+        'claim': 'Builds the active Ravenclaw scoped-ticket lifecycle and validates its canonical SCLite review bundle.',
+        'non_claim': 'Does not execute a live target, establish signer trust, or transfer runtime ownership to SCLite.',
     },
     {
         'id': 'replayable_truth_runtime_fixture',

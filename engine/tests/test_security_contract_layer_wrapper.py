@@ -21,6 +21,7 @@ def test_engine_security_contract_layer_delegates_generic_helpers_to_scl() -> No
     assert wrapper.build_execution_receipt_artifact is core_artifacts.build_execution_receipt_artifact
     assert wrapper.build_evidence_bundle_artifact is core_artifacts.build_evidence_bundle_artifact
     assert wrapper.proof_trace_manifest is core_artifacts.proof_trace_manifest
+    assert 'import *' not in (ROOT / 'engine' / 'security_contract_layer.py').read_text(encoding='utf-8')
 
 
 def test_engine_security_contract_layer_uses_ravenclaw_adapter_for_core_artifacts() -> None:
@@ -117,6 +118,14 @@ def test_wrapper_keeps_integrity_only_signature_outside_demo_runtime_mode() -> N
     artifacts = wrapper.build_lifecycle_artifacts_v02(pipeline_data)
 
     assert artifacts['execution_ticket.json']['signature']['mode'] == 'not_signed_integrity_only'
+
+
+def test_current_wrapper_lifecycle_uses_scoped_ticket_semantics() -> None:
+    artifacts = wrapper.build_current_lifecycle_artifacts(_demo_pipeline_data())
+
+    assert artifacts['execution_ticket.json']['schema_version'] == 'v0.3'
+    assert artifacts['execution_ticket.json']['ticket_profile'] == 'scoped_execution_ticket'
+    assert 'legacy_v0_1_descriptor' not in artifacts['policy_decision.v0.2.json']
 
 def test_root_schema_fixture_copies_remain_in_parity_with_sclite_dependency() -> None:
     for schema_file in core_artifacts.SCHEMA_FILES.values():

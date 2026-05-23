@@ -13,7 +13,23 @@ from paths import configured_workspace  # type: ignore
 _CONTEXT = ravenclaw_context(configured_workspace(_BOOTSTRAP_ROOT))
 ROOT = _CONTEXT.repo_root
 
-from sclite.artifacts import *  # noqa: F401,F403
+from sclite.artifacts import (  # Legacy fixture compatibility only.
+    APPROVED_EXECUTION_SPEC_VERSION,
+    EVIDENCE_BUNDLE_SCHEMA_VERSION,
+    EXECUTION_RECEIPT_ARTIFACT_TYPE,
+    POLICY_DECISION_SCHEMA_VERSION,
+    PROOF_TRACE_FILES,
+    JsonSchemaValidationError,
+    ProofTraceInvariantError,
+    assert_public_proof_trace_artifacts,
+    build_evidence_bundle_artifact,
+    build_evidence_summary_markdown,
+    build_execution_receipt_artifact,
+    proof_trace_manifest,
+    validate_json_schema_value,
+    validate_public_proof_trace_artifacts,
+    validate_schema_ref,
+)
 from sclite.integrity import artifact_descriptor
 from sclite.redaction import sanitize_public_artifact  # noqa: F401
 from sclite.scope_fidelity import (  # noqa: F401
@@ -23,11 +39,13 @@ from sclite.scope_fidelity import (  # noqa: F401
     validate_scope_fidelity_report as _sclite_validate_scope_fidelity_report,
 )
 from govengine.sclite_adapter import (  # noqa: F401
+    CURRENT_LIFECYCLE_TRACE_FILES,
     LIFECYCLE_TRACE_FILES_V02,
     build_evidence_contract_v02 as _build_evidence_contract_v02,
     build_execution_contract_v02,
     build_execution_receipt_v02 as _build_execution_receipt_v02,
     build_execution_ticket_v02,
+    build_scoped_execution_ticket_v03,
     build_intent_contract_v02,
     build_policy_decision_artifact,
     build_policy_decision_artifact_v02,
@@ -53,7 +71,7 @@ def validate_scope_fidelity_report(report, root: Path | None = None) -> None:
 
 
 def build_proof_trace_artifacts(pipeline_data):
-    """Build v0.1 proof artifacts and project compact OODA summaries when present."""
+    """Build the retained legacy v0.1 compatibility trace."""
     artifacts = _build_proof_trace_artifacts(pipeline_data)
     if compact_ooda_control_decisions(pipeline_data):
         artifacts['execution_receipt.json'] = add_ooda_to_execution_receipt(artifacts['execution_receipt.json'], pipeline_data)
@@ -121,5 +139,43 @@ def build_lifecycle_artifacts_v02(pipeline_data):
         {'role': 'execution_receipt', 'path': 'execution_receipt.v0.2.json', 'value': receipt},
         {'role': 'evidence_contract', 'path': 'evidence_contract.json', 'value': evidence},
     ], chain_id=str(pipeline_data.get('run_id') or 'ravenclaw-sclite-v0.2-lifecycle'))
+    artifacts['artifact_chain_manifest.json'] = manifest
+    return artifacts
+
+
+def build_current_lifecycle_artifacts(pipeline_data):
+    """Build the current scoped-ticket lifecycle for runtime/demo review."""
+    intent = build_intent_contract_v02(pipeline_data)
+    policy = build_policy_decision_artifact_v02(pipeline_data, intent)
+    contract = build_execution_contract_v02(pipeline_data, intent, policy)
+    ticket = build_scoped_execution_ticket_v03(pipeline_data, policy, contract)
+    if str(((pipeline_data.get('settings') or {}) if isinstance(pipeline_data.get('settings'), dict) else {}).get('runtime_mode') or '') == 'demo':
+        trust = demo_sign_execution_contract(artifact_descriptor(contract), purpose='execution_contract_ticket_binding')
+        ticket['signature'] = trust['signature']
+        ticket['trust_decision'] = trust['trust_decision']
+        ticket['non_claims'] = list(dict.fromkeys(list(ticket.get('non_claims') or []) + trust['non_claims']))
+    receipt = build_execution_receipt_v02(pipeline_data, ticket, contract)
+    evidence = build_evidence_contract_v02(pipeline_data, receipt, ticket)
+    from sclite.tickets import verify_ticket_use
+
+    verify_ticket_use(ticket, contract, receipt, evidence)
+    from sclite.integrity import build_artifact_chain_manifest
+
+    artifacts = {
+        'intent_contract.json': intent,
+        'policy_decision.v0.2.json': policy,
+        'execution_contract.json': contract,
+        'execution_ticket.json': ticket,
+        'execution_receipt.v0.2.json': receipt,
+        'evidence_contract.json': evidence,
+    }
+    manifest = build_artifact_chain_manifest([
+        {'role': 'intent_contract', 'path': 'intent_contract.json', 'value': intent},
+        {'role': 'policy_decision', 'path': 'policy_decision.v0.2.json', 'value': policy},
+        {'role': 'execution_contract', 'path': 'execution_contract.json', 'value': contract},
+        {'role': 'execution_ticket', 'path': 'execution_ticket.json', 'value': ticket},
+        {'role': 'execution_receipt', 'path': 'execution_receipt.v0.2.json', 'value': receipt},
+        {'role': 'evidence_contract', 'path': 'evidence_contract.json', 'value': evidence},
+    ], chain_id=str(pipeline_data.get('run_id') or 'ravenclaw-sclite-current-lifecycle'))
     artifacts['artifact_chain_manifest.json'] = manifest
     return artifacts

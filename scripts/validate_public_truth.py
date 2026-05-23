@@ -150,13 +150,38 @@ def collect_errors() -> list[str]:
 
     _require(errors, 'README.md', readme, f'Source: Ravenclaw {version}')
     _require(errors, 'README.md', readme, f'ravenclaw-security=={version}')
-    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.10.1-alpha')
-    _require(errors, 'README.md', readme, 'Dependency: SCLite >=0.6.0a0')
+    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.10.2-alpha')
+    _require(errors, 'README.md', readme, 'Dependency: SCLite >=0.7.0a0')
     _require(errors, 'INSTALL.md', _read('INSTALL.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'narrow public profile/readiness package')
     _require(errors, 'PUBLIC_STATUS.md', public_status, f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'full runtime remains source/reference')
-    _require(errors, 'VALIDATION.md', validation, 'GovEngine `0.10.1-alpha`')
+    _require(errors, 'VALIDATION.md', validation, 'GovEngine `0.10.2-alpha`')
+    _require(
+        errors,
+        'references/ravenclaw-security-profile-boundary.md',
+        _read('references/ravenclaw-security-profile-boundary.md'),
+        'current 0.17 boundary',
+    )
+    _require(
+        errors,
+        'references/repository-publication-readiness-2026-05-08.md',
+        _read('references/repository-publication-readiness-2026-05-08.md'),
+        'Historical record:',
+    )
+    security_contract = _read('engine/security_contract_layer.py')
+    public_demo = _read('engine/public_demo_bundle.py')
+    demo_scenario = _read('scripts/run_demo_scenario.py')
+    _require(errors, 'VALIDATION.md', validation, 'canonical `review_bundle/`')
+    _require(errors, 'engine/security_contract_layer.py', security_contract, 'def build_current_lifecycle_artifacts(')
+    _require(errors, 'engine/public_demo_bundle.py', public_demo, 'materialize_review_bundle')
+    _require(errors, 'scripts/run_demo_scenario.py', demo_scenario, "'version_source': 'executed_import_modules'")
+    if 'from sclite.artifacts import *' in security_contract:
+        errors.append('engine/security_contract_layer.py:wildcard_legacy_import')
+    if 'build_proof_trace_artifacts' in public_demo:
+        errors.append('engine/public_demo_bundle.py:legacy_proof_in_active_demo')
+    if 'metadata.version' in demo_scenario:
+        errors.append('scripts/run_demo_scenario.py:distribution_metadata_used_for_executed_source_truth')
     _require(errors, 'engine/tool_registry.yaml', _read('engine/tool_registry.yaml'), 'planner_profiles_env: GOVENGINE_TOOL_PROFILES')
     _require(errors, '.github/workflows/pytest.yml', workflow, 'python scripts/validate_public_truth.py')
     _require(errors, '.github/workflows/pytest.yml', workflow, 'sclite-core @ git+https://github.com/rozmiarD/SCLite.git@main')

@@ -1,6 +1,6 @@
 # GovEngine Wrapper Audit
 
-Ravenclaw consumes GovEngine as the package `govengine>=0.10.1a0,<0.11` alongside `sclite-core>=0.6.0a0,<0.7`.
+Ravenclaw consumes GovEngine as the package `govengine>=0.10.2a0,<0.11` alongside `sclite-core>=0.7.0a0,<0.8`.
 This file records which `engine/` modules are compatibility wrappers over
 GovEngine and which host-side seams remain Ravenclaw-owned.
 

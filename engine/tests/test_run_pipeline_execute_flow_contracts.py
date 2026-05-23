@@ -300,10 +300,11 @@ def test_execute_flow_prefers_approved_execution_spec_path_even_if_raw_execute_e
     assert final_summary == 'ok'
     assert output['engine']['status'] == 'success'
     assert output['approved_execution_spec']['approval']['decision'] == 'approve'
-    assert output['execution_ticket_v0_2']['artifact_type'] == 'execution_ticket'
-    assert output['execution_contract_v0_2']['artifact_type'] == 'execution_contract'
-    assert output['artifact_chain_manifest_v0_2']['artifact_type'] == 'artifact_chain_manifest'
-    assert output['artifact_chain_manifest_v0_2']['root_chain_digest']
+    assert output['execution_ticket']['artifact_type'] == 'execution_ticket'
+    assert output['execution_ticket']['schema_version'] == 'v0.3'
+    assert output['execution_contract']['artifact_type'] == 'execution_contract'
+    assert output['artifact_chain_manifest']['artifact_type'] == 'artifact_chain_manifest'
+    assert output['artifact_chain_manifest']['root_chain_digest']
     assert output['execution_lineage']['approved_command_preview'][0] == 'curl'
 
 

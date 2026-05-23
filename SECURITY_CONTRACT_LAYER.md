@@ -2,17 +2,17 @@
 
 ## Status
 
-Draft v0.2 direction. The reusable contract/schema core lives in the standalone public **SCLite** package/repository (`https://github.com/rozmiarD/SCLite`) and Ravenclaw consumes it as a pinned dependency. Ravenclaw Runtime remains the governed reference/proof implementation; SCLite remains a contract lifecycle, validation, redaction, integrity-chain, and public-safe fixture layer — not a new protocol.
+Current runtime/profile consolidation direction. The reusable contract/schema core lives in the standalone public **SCLite** package/repository (`https://github.com/rozmiarD/SCLite`) and Ravenclaw consumes it as a pinned dependency. Ravenclaw Runtime remains the governed reference/proof implementation; SCLite remains a contract lifecycle, validation, redaction, integrity-chain, and public-safe fixture layer, not a new protocol.
 
 ## What it is
 
 The Security Contract Layer is the small set of structured artifacts Ravenclaw uses to carry security-critical truth through a governed workflow.
 
-Legacy v0.1 proof trace:
+Legacy v0.1 proof trace, retained for compatibility fixture validation:
 
 `scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run/execution receipt -> evidence summary`
 
-SCLite v0.2 lifecycle chain:
+Current SCLite lifecycle chain:
 
 `intent -> policy decision -> execution contract -> execution ticket -> execution receipt -> evidence contract -> artifact chain manifest`
 
@@ -51,7 +51,7 @@ The contract layer should be extracted only from real artifacts already produced
 
 The reusable SCL implementation now lives in the external `sclite` package, with lifecycle projection helpers consumed through `govengine.sclite_adapter`. Ravenclaw keeps only integration code: `engine/security_contract_layer.py` adds host-owned OODA/demo projection around the GovEngine/SCLite adapter, and `engine/public_demo_bundle.py` remains the demo bundle orchestration/CLI surface. Root `schemas/`, `examples/security-contract-proof/`, and `examples/contract-lifecycle-v0.2/` are public-review copies synchronized from SCLite so Ravenclaw snapshots remain self-describing.
 
-Ravenclaw also keeps `engine/govengine_boundary_profile.py` as a thin consumer for GovEngine's kernel/profile boundary report. Public install validation now requires the active package chain, `govengine>=0.10.1a0,<0.11` and `sclite-core>=0.6.0a0,<0.7`, to expose `govengine.kernel_boundary_report`, the Domain Profile SDK, and runtime contract proof surfaces, and reports failure if the boundary-profile check does not pass.
+Ravenclaw also keeps `engine/govengine_boundary_profile.py` as a thin consumer for GovEngine's kernel/profile boundary report. Public install validation now requires the active package chain, `govengine>=0.10.2a0,<0.11` and `sclite-core>=0.7.0a0,<0.8`, to expose `govengine.kernel_boundary_report`, the Domain Profile SDK, and runtime contract proof surfaces, and reports failure if the boundary-profile check does not pass.
 
 The current GovEngine wrapper classification is tracked in `references/govengine-wrapper-audit.md`. Pure alias wrappers are retired after Ravenclaw callers/tests migrate to direct package imports; host-side seams remain only where Ravenclaw owns runtime/profile glue rather than reusable GovEngine behavior.
 
@@ -65,17 +65,17 @@ A committed public-safe fixture lives at `examples/security-contract-proof/` and
 
 No adapter should be promoted before the public proof bundle and schema validation are credible.
 
-## v0.2 lifecycle artifacts
+## Current lifecycle artifacts
 
 | Artifact | Current implementation status | Producer | Consumer | Notes |
 |---|---|---|---|---|
 | `IntentContract` | Implemented as public-safe SCLite v0.2 adapter output | `govengine.sclite_adapter` via `engine/security_contract_layer.py` | reviewer/public demo bundle, chain verifier | Records what Ravenclaw intended before authority exists. |
-| `PolicyDecision` v0.2 | Implemented alongside legacy v0.1 decision | `govengine.sclite_adapter` via `engine/security_contract_layer.py` | lifecycle chain, reviewer | Links to the exact intent descriptor. |
+| `PolicyDecision` v0.2 | Implemented in the active lifecycle; legacy v0.1 remains compatibility-only | `govengine.sclite_adapter` via `engine/security_contract_layer.py` | lifecycle chain, reviewer | Links to the exact intent descriptor without embedding a legacy descriptor in current output. |
 | `ExecutionContract` | Implemented as v0.2 lifecycle execution-shape artifact | `govengine.sclite_adapter` via `engine/security_contract_layer.py` | execution ticket, reviewer | Captures target binding, execution shape, and bounds. |
-| `ExecutionTicket` | Implemented as integrity-bound v0.2 ticket and enforced on the local approved-spec runtime path; demo mode adds GovEngine signer/verifier-port trust metadata | `govengine.sclite_adapter` plus demo projection in `engine/security_contract_layer.py` / `engine/govengine_trust_demo.py`; gate in `engine/executor.py` and `engine/govengine_control_gate_adapter.py` | lifecycle chain, local execution gate, reviewer | Binds to the exact execution contract digest. Demo signatures are fixture/reviewer evidence only; signer identity, PKI, CA, KMS, and key-store ownership are not claimed in core. |
+| `ExecutionTicket` | Implemented as scoped `execution_ticket.v0.3` and enforced on the active local approved-spec runtime path; demo mode adds GovEngine signer/verifier-port trust metadata | `govengine.sclite_adapter` plus demo projection in `engine/security_contract_layer.py` / `engine/govengine_trust_demo.py`; gate in `engine/executor.py` and `engine/govengine_control_gate_adapter.py` | lifecycle chain, local execution gate, reviewer | Binds to the exact execution contract digest. Demo signatures are fixture/reviewer evidence only; signer identity, PKI, CA, KMS, and key-store ownership are not claimed in core. |
 | `ExecutionReceipt` v0.2 | Implemented as lifecycle receipt | `govengine.sclite_adapter` via `engine/security_contract_layer.py` | evidence contract, reviewer | Records what Ravenclaw dry-ran/executed in compact public-safe form. |
 | `EvidenceContract` | Implemented as v0.2 claims/non-claims artifact | `govengine.sclite_adapter` via `engine/security_contract_layer.py` | reviewer/public bundle | Links evidence claims to the exact receipt/ticket. |
-| `ArtifactChainManifest` | Implemented and verified by SCLite | `sclite.integrity.build_artifact_chain_manifest(...)` via Ravenclaw adapter | `sclite validate-chain` / `sclite verify-lifecycle` / public demo bundle | Lightweight hash-linked integrity chain plus semantic lifecycle binding checks, not PKI or legal authorization proof. |
+| `ArtifactChainManifest` / `ReviewBundle` | Implemented and verified by SCLite | `sclite.integrity.build_artifact_chain_manifest(...)` and `sclite.bundles.materialize_review_bundle(...)` via Ravenclaw adapter | `sclite validate-chain` / `sclite verify-lifecycle` / `sclite review` / public demo bundle | Lightweight hash-linked integrity chain plus semantic lifecycle and canonical review-bundle checks, not PKI or legal authorization proof. |
 
 ## v0.1 compatibility artifacts
 

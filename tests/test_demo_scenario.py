@@ -21,9 +21,9 @@ def test_demo_scenario_markdown_surfaces_package_chain_truth() -> None:
                 'engine_status': 'dry-run',
                 'execution_adapter': 'mock',
             },
-            'package_chain': {'govengine': '0.10.1a0', 'sclite-core': '0.6.0a0'},
+            'package_chain': {'version_source': 'executed_import_modules', 'govengine': '0.10.2a0', 'sclite-core': '0.7.0a0'},
             'govengine': {'surface': 'security_profile_helpers', 'groups': ['action_tooling', 'policy_scope']},
-            'sclite': {'artifact_chain_status': 'passed', 'checked_entries': ['intent_contract', 'execution_receipt']},
+            'sclite': {'artifact_chain_status': 'passed', 'review_bundle_verdict': 'pass', 'checked_entries': ['intent_contract', 'execution_receipt']},
             'reviewer_commands': ['./scripts/bootstrap_public_demo.sh scenario', 'sclite verify-lifecycle demo-output/demo-scenario/artifact_chain_manifest.json'],
             'artifact_paths': {
                 'demo_scenario_summary.json': 'demo-output/demo-scenario/demo_scenario_summary.json',
@@ -35,10 +35,11 @@ def test_demo_scenario_markdown_surfaces_package_chain_truth() -> None:
 
     assert '# Ravenclaw Demo Scenario Summary' in text
     assert 'execution_adapter: `mock`' in text
-    assert 'govengine_version: `0.10.1a0`' in text
-    assert 'sclite_core_version: `0.6.0a0`' in text
+    assert 'govengine_version: `0.10.2a0`' in text
+    assert 'sclite_core_version: `0.7.0a0`' in text
     assert 'govengine_surface: `security_profile_helpers`' in text
     assert 'sclite_chain_status: `passed`' in text
+    assert 'sclite_review_bundle_verdict: `pass`' in text
     assert 'artifact chain manifest' in text
     assert './scripts/bootstrap_public_demo.sh scenario' in text
     assert 'demo_scenario_summary.json' in text

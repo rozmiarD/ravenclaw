@@ -6,7 +6,7 @@
 
 It answers a narrow question:
 
-> Did the current public-safe proof path validate, and which checks produced that answer?
+> Did the requested public-safe validation surfaces validate, and which checks produced that answer?
 
 The receipt is intended to be machine-readable enough for CI, publication prep, and later adapter surfaces while staying clear about its authority boundaries.
 
@@ -36,8 +36,9 @@ Schema version:
 
 The default runner covers:
 
-- committed Security Contract proof fixture validation;
-- public demo-bundle smoke from a disposable public snapshot;
+- committed legacy Security Contract proof fixture validation;
+- current lifecycle/review-bundle public demo smoke from a disposable public snapshot;
+- current Ravenclaw/GovEngine/SCLite demo scenario with versions taken from the modules actually executed;
 - temporary public snapshot assembly;
 - snapshot-local fixture validation;
 - public snapshot residue audit.
@@ -77,6 +78,12 @@ This makes the receipt useful as evidence of validation without implying permiss
 ## Semantics
 
 A `passed` receipt means all checks that actually ran completed with return code `0`.
+
+`validated_trace` names the retained v0.1 compatibility fixture validated by
+`fixture_validation`; it is not a claim that the active demo emits that trace.
+The current scoped-ticket lifecycle/review-bundle path is covered by
+`demo_bundle_smoke` and `demo_scenario_package_chain` when demo-runtime checks
+are enabled.
 
 A `failed` receipt may be partial: the runner stops after the first failed check and emits the checks completed up to that point.
 

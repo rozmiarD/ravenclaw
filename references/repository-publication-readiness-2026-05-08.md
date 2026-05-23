@@ -2,6 +2,10 @@
 
 ## Purpose
 
+Historical record: this document captures the publication decision state on
+2026-05-08. It is not the current package-chain truth source; use `README.md`,
+`PUBLIC_STATUS.md`, `VALIDATION.md`, and `VERSION_ROADMAP.md` for current claims.
+
 Status update: this note began as a readiness analysis. Since then, SCLite has been published as `sclite-core==0.2.1`, GovEngine has been published as `govengine==0.1.0`, and Ravenclaw public dependency metadata now consumes those package ranges instead of Git URL pins.
 
 This note captures a publication-readiness pass across the current public repository family:

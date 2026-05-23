@@ -95,7 +95,7 @@ package/source chain, and then runs `validate_public_install.py`, so `pip check`
 is scoped to the install under validation rather than the operator machine's
 global Python environment.
 
-With the current GovEngine `0.10.1-alpha` source/package line, Ravenclaw's source dependency baseline is `govengine>=0.10.1a0,<0.11` and `sclite-core>=0.6.0a0,<0.7`. Public install validation also requires Ravenclaw's boundary-profile readiness through `engine/govengine_boundary_profile.py`. That check validates `govengine.kernel_boundary_report`, the Ravenclaw profile contract, the public surface index, and the expected non-claims around live execution and carrier-adapter ownership. Ravenclaw's focused state/control projection tests validate the GovEngine runtime-shell surface for host control actions, queue snapshots, and runtime snapshots; focused planning projection tests validate the GovEngine planning-contract surface for redacted planner/runtime task handoffs; focused admission projection tests validate the GovEngine admission-policy surface for redacted go/no-go, policy, approval, and audit records; focused runner-supervision projection tests validate approved-spec runner requests, supervision plans, leases, and receipts; focused review projection tests validate receipt-bounded evidence claims and review results; focused security-profile tests validate that Ravenclaw is documented as a security runtime/profile over GovEngine + SCLite while OpenClaw remains at readiness-packet status; focused OpenClaw readiness tests validate redaction/output, approval-UX, command-authority, and rollback/stop boundaries before any carrier implementation.
+With the current GovEngine `0.10.2-alpha` source/package line, Ravenclaw's source dependency baseline is `govengine>=0.10.2a0,<0.11` and `sclite-core>=0.7.0a0,<0.8`. Public install validation also requires Ravenclaw's boundary-profile readiness through `engine/govengine_boundary_profile.py`. That check validates `govengine.kernel_boundary_report`, the Ravenclaw profile contract, the public surface index, and the expected non-claims around live execution and carrier-adapter ownership. Ravenclaw's focused state/control projection tests validate the GovEngine runtime-shell surface for host control actions, queue snapshots, and runtime snapshots; focused planning projection tests validate the GovEngine planning-contract surface for redacted planner/runtime task handoffs; focused admission projection tests validate the GovEngine admission-policy surface for redacted go/no-go, policy, approval, and audit records; focused runner-supervision projection tests validate approved-spec runner requests, supervision plans, leases, and receipts; focused review projection tests validate receipt-bounded evidence claims and review results; focused security-profile tests validate that Ravenclaw is documented as a security runtime/profile over GovEngine + SCLite while OpenClaw remains at readiness-packet status; focused OpenClaw readiness tests validate redaction/output, approval-UX, command-authority, and rollback/stop boundaries before any carrier implementation.
 
 ## Public validation surface index
 
@@ -176,7 +176,7 @@ For the compact reviewer-facing Ravenclaw -> GovEngine -> SCLite scenario, run:
 ./scripts/bootstrap_public_demo.sh scenario
 ```
 
-This writes `demo-output/demo-scenario/demo_scenario_summary.json` and `.md`, validates generated SCLite lifecycle artifacts, verifies the artifact-chain manifest, and records the GovEngine `security_profile` boundary. It remains local/demo-safe and dry-run/mock only.
+This writes `demo-output/demo-scenario/demo_scenario_summary.json` and `.md`, validates generated SCLite lifecycle artifacts, verifies the artifact-chain manifest, and records the GovEngine `security_profile` boundary. Its version summary is taken from the GovEngine and SCLite modules actually executed in the scenario; distribution metadata resolution remains the job of the clean public-install gate. It remains local/demo-safe and dry-run/mock only.
 
 ## Security Contract proof fixture validation
 
@@ -200,11 +200,12 @@ For the generated public demo bundle path, run:
 bin/demo-bundle --print-summary
 ```
 
-The demo bundle now emits both the legacy v0.1 proof trace and a SCLite v0.2 lifecycle chain. To verify the generated v0.2 lifecycle chain, run:
+The active demo bundle emits a current SCLite lifecycle using a scoped `execution_ticket.v0.3` and materializes a canonical `review_bundle/`. Legacy v0.1 proof fixtures remain available only for compatibility validation. To verify the generated current lifecycle and review bundle, run:
 
 ```bash
 sclite validate-chain demo-output/artifact_chain_manifest.json
 sclite verify-lifecycle demo-output/artifact_chain_manifest.json
+sclite review demo-output/review_bundle --format summary --fail-on review
 ```
 
 The SCLite verifier checks the hash chain and semantic lifecycle bindings: canonical role order, ticket -> execution contract, receipt -> ticket, evidence -> receipt, and manifest path containment.

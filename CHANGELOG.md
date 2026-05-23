@@ -1,7 +1,11 @@
 # RAVENCLAW — CHANGELOG.md
 
-## Unreleased
+## 0.17.0 / 2026-05-23
 
+- Updated the package chain to `govengine>=0.10.2a0,<0.11` and `sclite-core>=0.7.0a0,<0.8`.
+- Migrated the active public demo/runtime proof path to current SCLite lifecycle artifacts with a scoped `execution_ticket.v0.3` and canonical review bundle.
+- Kept legacy v0.1 proof generation as explicit compatibility-fixture coverage only and removed wildcard SCLite artifact imports from the active wrapper.
+- Added validation and focused tests that reject reintroducing legacy proof output into the active public demo or widening GovEngine/SCLite ownership claims.
 - Added a persisted runtime-state truth manifest plus local validator so state
   docs, canonical path helpers, and GovEngine state/control projections cannot
   drift silently.

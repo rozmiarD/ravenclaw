@@ -4,14 +4,14 @@
 
 This file defines Ravenclaw's version roadmap after the GovEngine/SCLite package-chain stabilization.
 
-Current public source/package version: `0.16.3`.
+Current public source/package version: `0.17.0`.
 Current dependency baseline:
 
 ```text
-Ravenclaw -> govengine>=0.10.1a0,<0.11 -> sclite-core>=0.6.0a0,<0.7
+Ravenclaw -> govengine>=0.10.2a0,<0.11 -> sclite-core>=0.7.0a0,<0.8
 ```
 
-Use this as a milestone map, not as a promise that every milestone will become a full PyPI/runtime release. The current PyPI helper package release is `ravenclaw-security==0.16.3`, carrying public profile/readiness helpers under the `ravenclaw` import package; Ravenclaw remains a source/reference security runtime until install, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
+Use this as a milestone map, not as a promise that every milestone will become a full PyPI/runtime release. The current PyPI helper package release is `ravenclaw-security==0.17.0`, carrying public profile/readiness helpers under the `ravenclaw` import package; Ravenclaw remains a source/reference security runtime until install, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
 
 ## Architecture direction
 
@@ -145,11 +145,12 @@ Intent:
 
 Current baseline:
 
-- Ravenclaw consumes `govengine>=0.10.1a0,<0.11` and `sclite-core>=0.6.0a0,<0.7`;
+- Ravenclaw consumes `govengine>=0.10.2a0,<0.11` and `sclite-core>=0.7.0a0,<0.8`;
 - public install validation and Security Contract validation pass;
 - GovEngine/SCLite ticket and receipt-bounded-evidence surfaces are integrated into the public proof chain.
 - GovEngine 0.10 alpha kernel/profile boundary, runtime-shell, planning-contract, admission-policy, runner-supervision, evidence-review, Domain Profile SDK, and runtime contract proof validation is required by public install validation and focused projection tests.
 - The structural Security Contract validation profile is available for automation that must not execute demo runtime checks.
+- The active public proof path emits the current scoped-ticket lifecycle and a canonical SCLite review bundle; legacy v0.1 proof trace generation is compatibility-fixture validation only.
 
 Exit criteria:
 
