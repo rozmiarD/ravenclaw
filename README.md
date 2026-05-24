@@ -45,7 +45,7 @@ The current source dependency baseline is `govengine>=0.11.0a0,<0.12` and `sclit
 
 The current reusable direction is a small **Security Contract Layer** backed by Ravenclaw Runtime artifacts: intent and scope binding, policy decisions, execution contracts, scoped execution tickets, execution receipts, evidence contracts, review bundles, and runtime truth. Ravenclaw owns the host-side lifecycle projection; SCLite owns lifecycle/review integrity and GovEngine owns neutral governed-runtime contracts. OpenClaw, MCP, and A2A are potential later carriers for these contracts, not new protocols Ravenclaw is trying to own.
 
-The current public helper package candidate is `ravenclaw-security==0.18.0`. It exposes the public
+The current published public helper package is `ravenclaw-security==0.18.0`. It exposes the public
 Ravenclaw security-profile and OpenClaw readiness contract helpers. The full
 runtime, demo, Logdash, and validation surfaces remain source/reference
 repository workflows in this package line.
