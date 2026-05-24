@@ -134,6 +134,24 @@ def active_readiness_legacy_path_errors(text_by_path: Mapping[str, str]) -> list
     return errors
 
 
+def host_owned_gateway_doc_errors(text_by_path: Mapping[str, str]) -> list[str]:
+    required_claims = {
+        'ARCHITECTURE.md': '`engine/security_policy_gateway.py`',
+        'PUBLIC_STATUS.md': '`engine/security_policy_gateway.py`',
+        'VALIDATION.md': '`engine/security_policy_gateway.py`',
+        'references/govengine-wrapper-audit.md': 'host-owned active replacement',
+        'references/ravenclaw-security-profile-boundary.md': '`engine/security_policy_gateway.py`',
+    }
+    errors: list[str] = []
+    for path, text in text_by_path.items():
+        required = required_claims.get(path)
+        if required and required not in text:
+            errors.append(f'{path}:missing_host_owned_gateway_claim:{required}')
+        if path == 'ARCHITECTURE.md' and '- `govengine.policy.gateway`' in text:
+            errors.append('ARCHITECTURE.md:upstream_gateway_listed_as_active_main_file')
+    return errors
+
+
 def collect_errors() -> list[str]:
     errors: list[str] = []
     project = _pyproject()
@@ -195,6 +213,13 @@ def collect_errors() -> list[str]:
     adapter_contract_map = _read('references/openclaw-adapter-contract-map.md')
     scope_fidelity_reference = _read('references/scope-fidelity-report-v0.1.md')
     demo_scenario = _read('scripts/run_demo_scenario.py')
+    errors.extend(host_owned_gateway_doc_errors({
+        'ARCHITECTURE.md': _read('ARCHITECTURE.md'),
+        'PUBLIC_STATUS.md': public_status,
+        'VALIDATION.md': validation,
+        'references/govengine-wrapper-audit.md': _read('references/govengine-wrapper-audit.md'),
+        'references/ravenclaw-security-profile-boundary.md': _read('references/ravenclaw-security-profile-boundary.md'),
+    }))
     _require(errors, 'VALIDATION.md', validation, 'canonical `review_bundle/`')
     _require(errors, 'engine/security_contract_layer.py', security_contract, 'def build_current_lifecycle_artifacts(')
     _require(errors, 'engine/sclite_lifecycle_projection.py', lifecycle_projection, 'def build_current_lifecycle_artifacts(')

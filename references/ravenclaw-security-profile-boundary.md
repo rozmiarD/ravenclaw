@@ -19,6 +19,8 @@ Ravenclaw owns:
 - Logdash/operator visibility;
 - public demo and snapshot projection;
 - host-side projection adapters into GovEngine contracts.
+- the active security policy/scope gateway in
+  `engine/security_policy_gateway.py`, using Ravenclaw scope state.
 
 GovEngine owns reusable governed-runtime mechanics:
 
@@ -26,6 +28,10 @@ GovEngine owns reusable governed-runtime mechanics:
 - runtime shell, planning, admission, runner supervision, and evidence-review
   validators;
 - optional `govengine.security_profile` helper facade.
+
+`govengine.policy.gateway` remains part of that optional published
+compatibility facade, but Ravenclaw no longer uses it as its active runtime
+decision gateway.
 
 SCLite owns:
 

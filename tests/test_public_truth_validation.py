@@ -68,3 +68,16 @@ def test_public_truth_validator_rejects_legacy_fixture_in_active_scope_reference
     assert errors == [
         'references/scope-fidelity-report-v0.1.md:legacy_proof_fixture_advertised_in_active_readiness_doc'
     ]
+
+
+def test_public_truth_validator_rejects_upstream_gateway_as_active_architecture() -> None:
+    validator = _load_validator()
+
+    errors = validator.host_owned_gateway_doc_errors({
+        'ARCHITECTURE.md': 'Main files:\n- `govengine.policy.gateway`\n',
+    })
+
+    assert errors == [
+        'ARCHITECTURE.md:missing_host_owned_gateway_claim:`engine/security_policy_gateway.py`',
+        'ARCHITECTURE.md:upstream_gateway_listed_as_active_main_file',
+    ]

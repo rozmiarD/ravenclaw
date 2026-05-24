@@ -122,8 +122,10 @@ Pipeline stages:
 Runtime enforcement primitives and tool/scope/auth rules.
 
 Main files:
-- `govengine.policy.core`
-- `govengine.policy.gateway`
+- `engine/security_policy_gateway.py`
+- `engine/campaign_utils.py`
+- `govengine.policy.core` / `govengine.tool_registry` (contained compatibility
+  helpers pending separate ownership migration)
 - `policy.yaml`
 - `whitelist.yaml`
 - `campaign.md`

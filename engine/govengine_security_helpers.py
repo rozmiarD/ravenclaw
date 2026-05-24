@@ -28,6 +28,9 @@ from govengine.contracts.analysis import *  # noqa: F401,F403
 from govengine.contracts.evidence_policy import can_be_confirmed  # noqa: F401
 from govengine.contracts.signal import *  # noqa: F401,F403
 from govengine.policy.core import *  # noqa: F401,F403
-from govengine.policy.gateway import evaluate_action_spec  # noqa: F401
 from govengine.semantic_loss_policy import semantic_loss_penalty, semantic_loss_runtime_gate  # noqa: F401
 from govengine.tool_registry import *  # noqa: F401,F403
+
+# The executed policy gateway is Ravenclaw-owned because it consumes host scope
+# state; remaining optional helper symbols above stay visible through this seam.
+from security_policy_gateway import evaluate_action_spec  # noqa: F401,E402

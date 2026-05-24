@@ -379,6 +379,14 @@ Ravenclaw-owned seam. This closes an observability gap; it does not yet decide
 which helper groups should later be re-owned by Ravenclaw or retained as
 GovEngine compatibility.
 
+Current ownership-narrowing slice: Ravenclaw now executes the security
+policy/scope gate in `engine/security_policy_gateway.py`, using its existing
+host-owned `engine/campaign_utils.py` scope truth. The optional upstream
+`govengine.policy.gateway` remains compatibility API for the published
+dependency line, but it is no longer the active Ravenclaw runtime decision
+path. Action/tooling and review-contract helper ownership remain separate
+follow-up decisions.
+
 ## `0.18.x` — Package/runtime readiness checkpoint
 
 Intent:

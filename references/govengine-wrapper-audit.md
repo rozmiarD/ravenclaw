@@ -15,7 +15,7 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | `engine/tool_registry.py` | `govengine.tool_registry` | removed; contained consumption | Active runtime/Logdash callers consume this optional stateful helper through the checked Ravenclaw seam; ownership remains a later migration decision. |
 | `engine/semantic_loss_policy.py` | `govengine.semantic_loss_policy` | removed; contained consumption | Active runtime callers consume this optional helper through the checked Ravenclaw seam; focused tests may import upstream directly. |
 | `engine/policy_core.py` | `govengine.policy.core` | removed; contained consumption | Active runtime callers consume this optional policy helper through the checked Ravenclaw seam; ownership remains a later migration decision. |
-| `engine/policy_gateway.py` | `govengine.policy.gateway` | removed; contained consumption | Active runtime callers consume this optional policy helper through the checked Ravenclaw seam; ownership remains a later migration decision. |
+| `engine/security_policy_gateway.py` | `govengine.policy.gateway` | host-owned active replacement; upstream compatibility retained | Ravenclaw now owns executed security scope/policy decisions and obtains scope truth from `engine/campaign_utils.py`; remaining action/tool dependencies still pass through the checked compatibility seam. |
 | `engine/execution_contracts.py` | `govengine.contracts.execution` | removed | Ravenclaw active callers and tests import execution contract helpers from GovEngine directly. |
 | `engine/signal_contract.py` | `govengine.contracts.signal` | removed; contained consumption | Active runtime callers consume this optional contract helper through the checked Ravenclaw seam; whether it should become neutral is not decided by this routing change. |
 | `engine/analysis_contract.py` | `govengine.contracts.analysis` | removed; contained consumption | Active runtime callers consume this optional contract helper through the checked Ravenclaw seam; whether it should become neutral is not decided by this routing change. |
@@ -54,4 +54,6 @@ optional module allowlist from GovEngine's public `security_profile_helpers`
 registry and reject active runtime/Logdash imports of any registered optional
 module outside `engine/govengine_security_helpers.py`. This containment is a
 migration checkpoint, not evidence that those helper responsibilities belong
-permanently in GovEngine.
+permanently in GovEngine. It must also reject reintroduction of
+`govengine.policy.gateway` into that seam after Ravenclaw moved the active
+security scope/policy decision to `engine/security_policy_gateway.py`.

@@ -42,6 +42,13 @@ Ravenclaw also owns projection of its host/runtime payloads into current
 lifecycle artifacts; that projection is no longer a GovEngine host-shaped
 adapter and it does not reintroduce SCLite's retired proof-trace product path.
 
+Current ownership result: after containing the optional helper surface,
+Ravenclaw returned the executed policy/scope gateway to
+`engine/security_policy_gateway.py`, backed by its existing host-owned scope
+state. The published `govengine.policy.gateway` remains a compatibility
+surface for now; this result does not yet decide ownership of action/tooling
+or review-contract helpers.
+
 ## Already Covered By GovEngine
 
 These are not new extraction targets. Ravenclaw should maintain projection
@@ -125,6 +132,9 @@ Immediate low-risk work:
 3. Keep this roadmap under `scripts/validate_public_truth.py`.
 4. Add negative tests when adapters touch raw targets, commands, credentials,
    storage paths, carrier payloads, or live-execution flags.
+5. Keep the active security scope/policy decision in
+   `engine/security_policy_gateway.py` and reject runtime reintroduction of
+   `govengine.policy.gateway`.
 
 Medium-term work:
 

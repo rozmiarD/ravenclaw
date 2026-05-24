@@ -60,3 +60,15 @@ def test_govengine_helper_boundary_covers_full_registered_optional_surface() -> 
     assert validator._is_optional_helper_module('govengine.capability_recipes')
     assert validator._is_optional_helper_module('govengine.semantic_loss_policy')
     assert validator._is_optional_helper_module('govengine.contracts.evidence_policy')
+
+
+def test_govengine_helper_boundary_rejects_reintroduced_host_owned_gateway() -> None:
+    validator = _load_validator()
+
+    errors = validator._wrapper_migration_errors(
+        'from govengine.policy.gateway import evaluate_action_spec\n',
+    )
+
+    assert errors == [
+        'engine/govengine_security_helpers.py:reintroduced_host_owned_import:govengine.policy.gateway',
+    ]

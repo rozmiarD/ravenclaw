@@ -12,6 +12,11 @@
   `security_profile_helpers` now route through the Ravenclaw-owned
   `engine/govengine_security_helpers.py` seam, and its validator derives the
   checked module set from GovEngine's public registry.
+- Returned the executed security policy/scope gate to Ravenclaw through
+  `engine/security_policy_gateway.py`, backed by Ravenclaw scope state, while
+  retaining GovEngine's optional gateway only as upstream compatibility; the
+  helper-boundary validator now rejects reintroduction of that upstream gate
+  into the runtime seam.
 
 ## 0.18.0 / 2026-05-24
 
