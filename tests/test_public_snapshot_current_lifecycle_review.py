@@ -62,9 +62,20 @@ def test_public_snapshot_generates_and_reviews_current_lifecycle_bundle(tmp_path
     for rel in excluded_paths:
         assert not (out / rel).exists(), rel
 
-    env = {**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'}
+    bundle_dir = out / 'demo-output'
+    runtime_dir = tmp_path / 'snapshot-runtime'
+    env = {
+        **os.environ,
+        'PYTHONDONTWRITEBYTECODE': '1',
+        'RAVENCLAW_WORKSPACE': str(out),
+        'RAVENCLAW_REPORTS_DIR': str(runtime_dir / 'reports'),
+        'RAVENCLAW_TMP_DIR': str(runtime_dir / 'tmp'),
+        'RAVENCLAW_LOGDASH_DB': str(runtime_dir / 'logdash' / 'logs.db'),
+        'RAVENCLAW_PIPELINE_CONFIG': str(runtime_dir / 'pipeline_config.json'),
+        'RAVENCLAW_CONTEXT_SUMMARY_PATH': str(runtime_dir / 'reports' / 'cache' / 'context_summary.json'),
+    }
     subprocess.run(
-        [sys.executable, str(out / 'bin' / 'demo-bundle'), '--output-dir', 'demo-output', '--print-summary'],
+        [sys.executable, str(out / 'bin' / 'demo-bundle'), '--output-dir', str(bundle_dir), '--print-summary'],
         cwd=str(out),
         env=env,
         capture_output=True,
@@ -72,7 +83,7 @@ def test_public_snapshot_generates_and_reviews_current_lifecycle_bundle(tmp_path
         check=True,
     )
     review = subprocess.run(
-        [sys.executable, '-m', 'sclite.cli', 'review', 'demo-output/review_bundle', '--format', 'summary', '--fail-on', 'review'],
+        [sys.executable, '-m', 'sclite.cli', 'review', str(bundle_dir / 'review_bundle'), '--format', 'summary', '--fail-on', 'review'],
         cwd=str(out),
         env=env,
         capture_output=True,
