@@ -24,8 +24,8 @@ discovery.
 
 Ready today:
 
-- Ravenclaw public `main` consumes `govengine>=0.10.2a0,<0.11` and
-  `sclite-core>=0.7.0a0,<0.8`;
+- Ravenclaw public `main` consumes `govengine>=0.11.0a0,<0.12` and
+  `sclite-core>=0.8.0a0,<0.9`;
 - GovEngine surfaces validated by Ravenclaw include runtime shell, planning,
   admission, runner supervision, evidence review, the Domain Profile SDK, and
   runtime contract proofs;
@@ -75,8 +75,8 @@ Required before implementation:
 
 Evidence today:
 
-- `examples/security-contract-proof/input_scope.json`
-- `schemas/policy_decision.v0.1.schema.json`
+- generated `demo-output/intent_contract.json`
+- `schemas/policy_decision.v0.2.schema.json`
 - `references/openclaw-adapter-contract-map.md`
 - `engine/govengine_admission_projection.py`
 
@@ -104,8 +104,8 @@ Evidence today:
 - `engine/ooda_receipts.py`
 - `engine/govengine_review_projection.py`
 - `references/ooda-receipt-evidence-notes.md`
-- `schemas/evidence_bundle.v0.1.schema.json`
-- `examples/security-contract-proof/evidence_bundle.json`
+- `schemas/evidence_contract.v0.2.schema.json`
+- generated `demo-output/review_bundle/06_evidence_contract.json`
 
 Evidence slice:
 
@@ -122,10 +122,11 @@ Required before implementation:
 
 - OpenClaw may carry requests and display decisions, but must not construct shell
   commands directly;
-- Ravenclaw policy/auditor and execution-engine-approved specs remain the
-  authority boundary;
-- only approved execution specs can reach execution-engine construction;
-- model/chat text cannot bypass prepared/approved spec separation;
+- Ravenclaw policy/auditor decisions plus the execution-contract/scoped-ticket
+  binding remain the carrier-visible authority boundary;
+- only a valid scoped ticket may authorize Ravenclaw's existing internal
+  approved-spec execution path;
+- model/chat text cannot bypass the contract/ticket authority boundary;
 - GovEngine runner-supervision contracts must be preserved before any host
   runner action.
 
@@ -146,14 +147,14 @@ Blocker: no real OpenClaw adapter negative tests exist yet.
 
 | Artifact | Consumed | Emitted | Schema/reference | Readiness |
 | --- | --- | --- | --- | --- |
-| Scope/input | yes | no | `examples/security-contract-proof/input_scope.json` | public proof ready; OpenClaw UX missing |
-| `PolicyDecision` | yes | maybe later | `schemas/policy_decision.v0.1.schema.json` | preserve structured fields |
-| Prepared/redacted execution spec | yes | maybe later | `govengine.contracts.execution` | must display as proposal, not approval |
-| Approved execution spec | yes | no | `schemas/approved_execution_spec.v0.1.schema.json` | execution boundary |
+| Intent contract | yes | no | `schemas/intent_contract.v0.2.schema.json`, generated `demo-output/intent_contract.json` | public proof ready; OpenClaw UX missing |
+| `PolicyDecision` | yes | maybe later | `schemas/policy_decision.v0.2.schema.json` | preserve structured fields |
+| Execution contract | yes | maybe later | `schemas/execution_contract.v0.2.schema.json` | proposed action and bounds; not authority alone |
+| Scoped execution ticket | yes | no | `schemas/execution_ticket.v0.3.schema.json` | public authority boundary; bound to execution contract |
 | Runner supervision plan/lease/receipt | yes | maybe later | `govengine.execution.supervision` | no live backend by default |
-| Execution receipt | yes | maybe later | `schemas/execution_receipt.v0.1.schema.json` | dry-run/live truth required |
+| Execution receipt | yes | maybe later | `schemas/execution_receipt.v0.2.schema.json` | dry-run/live truth required |
 | Evidence qualification/review result | yes | maybe later | `govengine.review` | dry-run evidence must not become live-vulnerability proof |
-| Evidence bundle | yes | maybe later | `schemas/evidence_bundle.v0.1.schema.json` | governance/evidence separation required |
+| Evidence contract | yes | maybe later | `schemas/evidence_contract.v0.2.schema.json` | governance/evidence separation required |
 | SCLite review bundle | yes | no | `sclite review` / review-bundle docs | SCLite owns verdict authority |
 | Validation receipt | yes | no | `schemas/security_contract_validation_receipt.v0.1.schema.json` | public-safe validation pointer |
 | Public snapshot manifest | yes | no | `schemas/public_snapshot_manifest.v0.1.schema.json` | publication/snapshot review pointer |
@@ -171,7 +172,7 @@ python scripts/run_security_contract_validation.py --structural-only --include-p
 Required future OpenClaw-specific implementation tests:
 
 - scope display/refusal behavior;
-- prepared-vs-approved spec separation;
+- execution-contract/scoped-ticket authority separation;
 - no direct shell command construction from chat/model prose;
 - deterministic redaction across direct/group/file/embed outputs;
 - dry-run/live truth labeling;
@@ -184,7 +185,7 @@ Pause or roll back adapter work if any of these appear:
 
 - scope ambiguity;
 - missing policy decision;
-- missing approved execution spec;
+- missing scoped execution ticket or ticket/contract binding;
 - command authority ambiguity;
 - raw logs/private state in OpenClaw output;
 - dry-run/live truth ambiguity;

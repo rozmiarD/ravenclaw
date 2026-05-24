@@ -1,6 +1,6 @@
 # GovEngine Wrapper Audit
 
-Ravenclaw consumes GovEngine as the package `govengine>=0.10.2a0,<0.11` alongside `sclite-core>=0.7.0a0,<0.8`.
+Ravenclaw consumes GovEngine as the package `govengine>=0.11.0a0,<0.12` alongside `sclite-core>=0.8.0a0,<0.9`.
 This file records which `engine/` modules are compatibility wrappers over
 GovEngine and which host-side seams remain Ravenclaw-owned.
 
@@ -20,7 +20,7 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | `engine/signal_contract.py` | `govengine.contracts.signal` | removed | Ravenclaw active callers and tests import signal contract helpers from GovEngine directly. |
 | `engine/analysis_contract.py` | `govengine.contracts.analysis` | removed | Ravenclaw active callers and tests import analysis contract helpers from GovEngine directly. |
 | `engine/evidence_policy.py` | `govengine.contracts.evidence_policy` | removed | Ravenclaw active callers and tests import confirmation-evidence helpers from GovEngine directly. |
-| `engine/scl_ravenclaw_adapter.py` | `govengine.sclite_adapter` | removed | Ravenclaw active callers and tests import the SCLite adapter seam from GovEngine directly. |
+| `engine/scl_ravenclaw_adapter.py` | `govengine.sclite_adapter` | removed | Ravenclaw uses `engine/security_contract_layer.py` as the host-owned current lifecycle projection over GovEngine/SCLite primitives; active runtime and demo callers do not publish directly through the neutral-kernel dependency. |
 | `engine/govengine_boundary_profile.py` | `govengine.kernel_boundary_report` | keep required host check; no unavailable fallback | Ravenclaw validates the GovEngine boundary report and profile non-claims during public install validation. |
 | `engine/govengine_state_control_projection.py` | `govengine.runtime_shell` | keep host adapter | Ravenclaw owns projection from Logdash/runtime state into GovEngine `GovControlAction`, `GovQueueSnapshot`, and `GovRuntimeSnapshot` shapes while keeping UI, storage, process control, and campaign semantics host-owned. |
 | `engine/govengine_planning_projection.py` | `govengine.planning` | keep host adapter | Ravenclaw owns projection from planner/runtime task semantics into redacted GovEngine task and plan-intent contracts while keeping security planning semantics host-owned. |

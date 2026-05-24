@@ -11,9 +11,9 @@ Ravenclaw is a governance-first runtime where planning, authorization, execution
 
 `scope / operator input -> planner -> policy gate / auditor -> prepared execution spec -> approved execution spec -> execution engine -> analysis / qualification -> operator visibility`
 
-The emerging contract proof trace makes that flow explicit as artifacts:
+The current public lifecycle/review path makes the governed handoff explicit as artifacts:
 
-`scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary`
+`runtime projection -> policy decision -> execution contract -> scoped execution ticket -> execution receipt -> evidence contract -> review bundle`
 
 ## Major components
 

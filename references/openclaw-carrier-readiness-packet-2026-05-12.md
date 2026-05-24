@@ -2,6 +2,11 @@
 
 ## Status
 
+Historical/superseded readiness record. Its legacy fixture references document
+the evidence available on 2026-05-12; they are not current public validation
+surfaces. The active readiness record is
+`references/openclaw-adapter-readiness-packet-2026-05-20.md`.
+
 Readiness review only. Recommendation: **do not start adapter implementation yet**; keep OpenClaw at docs/contracts-only prep until the remaining blockers below are closed.
 
 This packet does not authorize live target execution, OpenClaw plugin/Skill implementation, MCP/A2A work, production-readiness claims, or live vulnerability discovery.

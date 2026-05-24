@@ -27,18 +27,18 @@
             "title": "Scope fidelity"
         },
         {
-            "claim": "Approval/rejection semantics are structured and inspectable in the public proof trace.",
+            "claim": "Approval/rejection semantics are structured and inspectable in the current lifecycle/review-bundle path.",
             "evidence_paths": [
                 {
-                    "path": "schemas/policy_decision.v0.1.schema.json",
+                    "path": "schemas/policy_decision.v0.2.schema.json",
                     "present": true
                 },
                 {
-                    "path": "references/policy-decision-v0.1.md",
+                    "path": "engine/public_demo_bundle.py",
                     "present": true
                 },
                 {
-                    "path": "examples/security-contract-proof/policy_decision.json",
+                    "path": "SECURITY_CONTRACT_LAYER.md",
                     "present": true
                 }
             ],
@@ -48,18 +48,18 @@
             "title": "Policy decision clarity"
         },
         {
-            "claim": "The approved execution spec can be reviewed without trusting free-form model text.",
+            "claim": "The execution contract and scoped ticket can be reviewed without trusting free-form model text.",
             "evidence_paths": [
                 {
-                    "path": "schemas/approved_execution_spec.v0.1.schema.json",
+                    "path": "schemas/execution_contract.v0.2.schema.json",
                     "present": true
                 },
                 {
-                    "path": "references/approved-execution-spec-v0.1.md",
+                    "path": "schemas/execution_ticket.v0.3.schema.json",
                     "present": true
                 },
                 {
-                    "path": "examples/security-contract-proof/approved_execution_spec.json",
+                    "path": "engine/public_demo_bundle.py",
                     "present": true
                 }
             ],
@@ -69,18 +69,18 @@
             "title": "Execution spec accountability"
         },
         {
-            "claim": "Dry-run receipts and public evidence bundles explicitly separate illustrative proof from live evidence.",
+            "claim": "Current lifecycle receipts and evidence contracts explicitly separate illustrative proof from live evidence.",
             "evidence_paths": [
                 {
-                    "path": "schemas/execution_receipt.v0.1.schema.json",
+                    "path": "schemas/execution_receipt.v0.2.schema.json",
                     "present": true
                 },
                 {
-                    "path": "schemas/evidence_bundle.v0.1.schema.json",
+                    "path": "schemas/evidence_contract.v0.2.schema.json",
                     "present": true
                 },
                 {
-                    "path": "examples/security-contract-proof/evidence_bundle.json",
+                    "path": "engine/public_demo_bundle.py",
                     "present": true
                 }
             ],

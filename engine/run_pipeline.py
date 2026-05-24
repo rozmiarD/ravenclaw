@@ -32,7 +32,7 @@ from govengine_security_helpers import get_runtime_brain_allowed_tools  # type: 
 from govengine.contracts.execution import build_prepared_execution_spec, build_approved_execution_spec, redact_prepared_execution_spec_for_auditor
 from govengine.semantic_loss_policy import semantic_loss_runtime_gate
 from public_delivery import apply_delivery_profile_to_pipeline, resolve_delivery_profile, run_auditor_adapter, run_brain_adapter, run_execution_adapter  # type: ignore
-from govengine.sclite_adapter import build_current_lifecycle_artifacts
+from security_contract_layer import build_current_lifecycle_artifacts  # type: ignore
 
 
 def _selected_scope_path() -> Path:

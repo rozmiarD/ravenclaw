@@ -33,12 +33,12 @@ def test_openclaw_adapter_contract_map_preserves_non_implementation_boundary() -
 def test_openclaw_adapter_contract_map_covers_canonical_security_contract_trace() -> None:
     text = _map_text()
     required_artifacts = [
-        'scope/input',
+        'intent-contract scope fields',
         'PolicyDecision',
-        'PreparedExecutionSpec',
-        'ApprovedExecutionSpec',
+        'ExecutionContract',
+        'ExecutionTicket',
         'ExecutionReceipt',
-        'EvidenceBundle',
+        'EvidenceContract',
         'scripts/run_security_contract_validation.py',
         'scripts/build_public_snapshot_manifest.py',
         'scripts/build_proof_of_value_scorecard.py',

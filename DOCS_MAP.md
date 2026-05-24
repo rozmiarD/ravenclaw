@@ -96,13 +96,21 @@ Start with:
 Start with:
 1. `references/public-safe-proof-walkthrough.md`
 2. `SECURITY_CONTRACT_LAYER.md`
-3. `schemas/approved_execution_spec.v0.1.schema.json`
-4. `references/approved-execution-spec-v0.1.md`
-5. `examples/security-contract-proof/`
-6. `examples/contract-lifecycle-v0.2/`
-7. `DEMO.md`
+3. `engine/public_demo_bundle.py`
+4. `schemas/execution_ticket.v0.3.schema.json`
+5. `schemas/evidence_contract.v0.2.schema.json`
+6. `DEMO.md`
+7. `VALIDATION.md`
 
-This direction keeps Ravenclaw Runtime as the proof/reference implementation, consumes SCLite as the reusable contract-core dependency, and treats OpenClaw, MCP, and A2A as later carriers, not new protocols. For the first future carrier boundary, read `references/openclaw-adapter-contract-map.md`; before implementation planning, use `references/carrier-readiness-checklist.md` and fill `references/carrier-readiness-packet-template.md`.
+Run `bin/demo-bundle --output-dir demo-output --print-summary` to generate the
+current scoped-ticket lifecycle and `review_bundle/`. Legacy proof-trace
+fixtures remain migration/history material and are not this current entry
+path. This direction keeps Ravenclaw Runtime as the proof/reference
+implementation, consumes SCLite as the reusable contract-core dependency, and
+treats OpenClaw, MCP, and A2A as later carriers, not new protocols. For the
+first future carrier boundary, read `references/openclaw-adapter-contract-map.md`;
+before implementation planning, use `references/carrier-readiness-checklist.md`
+and fill `references/carrier-readiness-packet-template.md`.
 
 ## If you want the GovEngine migration roadmap
 

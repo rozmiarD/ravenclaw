@@ -14,7 +14,7 @@ def test_proof_of_value_links_public_evidence_surfaces() -> None:
     text = _text()
     required = [
         'SECURITY_CONTRACT_LAYER.md',
-        'examples/security-contract-proof/',
+        'bin/demo-bundle',
         'scripts/run_security_contract_validation.py',
         'schemas/security_contract_validation_receipt.v0.1.schema.json',
         'scripts/build_public_snapshot_manifest.py',

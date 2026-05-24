@@ -21,8 +21,8 @@ def _distribution_or_source_version() -> str:
 
 
 def test_ravenclaw_package_version_matches_distribution() -> None:
-    assert ravenclaw.__version__ == '0.17.0'
-    assert _distribution_or_source_version() == '0.17.0'
+    assert ravenclaw.__version__ == '0.18.0'
+    assert _distribution_or_source_version() == '0.18.0'
 
 
 def test_ravenclaw_package_exposes_public_profile_contracts() -> None:
@@ -30,7 +30,7 @@ def test_ravenclaw_package_exposes_public_profile_contracts() -> None:
     readiness = openclaw_readiness.openclaw_readiness_status()
 
     assert manifest['artifact_type'] == 'ravenclaw_security_profile_manifest'
-    assert manifest['package_chain']['ravenclaw'] == '0.17.0'
+    assert manifest['package_chain']['ravenclaw'] == '0.18.0'
     assert manifest['package_chain']['ravenclaw_distribution'] == 'ravenclaw-security'
     assert readiness['status'] == 'passed'
     assert json.loads(json.dumps(manifest)) == manifest

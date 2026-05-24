@@ -40,7 +40,7 @@ def test_public_validation_surface_index_lists_core_surfaces() -> None:
         'openclaw_readiness_contracts',
         'repo_pytest',
         'github_actions_pytest_matrix',
-        'security_contract_fixture',
+        'current_review_bundle_demo',
         'security_contract_validation_receipt',
         'replayable_truth_runtime_fixture',
         'scope_fidelity_fixture',
@@ -49,6 +49,8 @@ def test_public_validation_surface_index_lists_core_surfaces() -> None:
         'public_snapshot_manifest',
         'proof_of_value_scorecard',
     } <= ids
+    assert 'security_contract_fixture' not in ids
+    assert 'sclite_v02_lifecycle_chain' not in ids
     assert index['summary']['public_safe_surface_count'] == index['summary']['surface_count']
 
 

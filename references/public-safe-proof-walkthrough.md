@@ -6,13 +6,14 @@ It is a reviewer aid, not a new execution mode.
 
 ## Claim
 
-Ravenclaw can produce and validate a local, dry-run, public-safe governance trace:
+Ravenclaw can produce and validate a local, dry-run, public-safe current
+lifecycle/review-bundle path:
 
 ```text
-scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary
+runtime projection -> policy decision -> execution contract -> scoped execution ticket -> execution receipt -> evidence contract -> review bundle
 ```
 
-The newer SCLite lifecycle fixture expresses the same direction as a hash-linked contract chain:
+SCLite verifies the lifecycle portion as a hash-linked contract chain:
 
 ```text
 intent_contract -> policy_decision -> execution_contract -> execution_ticket -> execution_receipt -> evidence_contract -> artifact_chain_manifest
@@ -20,10 +21,9 @@ intent_contract -> policy_decision -> execution_contract -> execution_ticket -> 
 
 ## What to inspect
 
-Start with these committed fixtures and references:
+Start with these current generators, supporting fixtures and references:
 
-- `examples/security-contract-proof/` — legacy v0.1 proof trace fixture.
-- `examples/contract-lifecycle-v0.2/` — SCLite v0.2 lifecycle-chain fixture.
+- `bin/demo-bundle` and `engine/public_demo_bundle.py` — current generated lifecycle/review proof.
 - `examples/replayable-truth-runtime/` — offline replayability/truth fixture.
 - `examples/scope-fidelity-report/` — public-safe scope fidelity examples.
 - `references/execution-receipt-v0.1.md` — receipt semantics and non-claims.
@@ -36,9 +36,10 @@ Start with these committed fixtures and references:
 After installing dev/test dependencies from `INSTALL.md`, run:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python scripts/validate_security_contract_fixtures.py examples/security-contract-proof
-sclite validate-chain examples/contract-lifecycle-v0.2/artifact_chain_manifest.json
-sclite verify-lifecycle examples/contract-lifecycle-v0.2/artifact_chain_manifest.json
+PYTHONDONTWRITEBYTECODE=1 bin/demo-bundle --output-dir demo-output --print-summary
+sclite validate-chain demo-output/artifact_chain_manifest.json
+sclite verify-lifecycle demo-output/artifact_chain_manifest.json
+sclite review demo-output/review_bundle --format summary --fail-on review
 python scripts/run_security_contract_validation.py --include-pytest
 ```
 
@@ -52,7 +53,7 @@ python scripts/build_public_snapshot_manifest.py /tmp/ravenclaw-public-snapshot-
 
 Expected outcomes:
 
-- fixture validation passes;
+- generated review-bundle validation passes;
 - SCLite lifecycle validation passes;
 - residue audit has `blockers=0`;
 - validation receipt reports `status: passed`;
@@ -84,4 +85,6 @@ A reviewer should be able to answer:
 5. What evidence summary was produced?
 6. What was deliberately excluded from the public artifact?
 
-If those questions are not answerable from the fixture and validation receipt, the proof path needs improvement before stronger public claims are made.
+If those questions are not answerable from the generated review bundle and
+validation receipt, the proof path needs improvement before stronger public
+claims are made.

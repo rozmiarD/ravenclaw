@@ -14,24 +14,25 @@ A future OpenClaw carrier must preserve this authority sequence:
 
 1. Show scope before action.
 2. Show structured policy decision.
-3. Show prepared execution spec as proposal, not execution authority.
-4. Show approved execution spec as the execution-engine boundary.
+3. Show the execution contract as a bounded proposal, not execution authority.
+4. Show the scoped execution ticket as the carrier-visible authority boundary.
 5. Show runner-supervision state.
 6. Show dry-run/live truth from the receipt.
 7. Show evidence review and non-claims.
 8. Require operator confirmation for sensitive actions.
 
-The prepared spec must never be shown as if it were approved. Chat/model prose
-must never become executable command authority.
+The execution contract must never be shown as if it were a valid ticket.
+Ravenclaw may retain an internal approved-spec execution gate behind the
+ticket check; chat/model prose must never become executable command authority.
 
 ## Artifact mapping
 
 | UX step | Required artifact | Authority boundary |
 | --- | --- | --- |
-| Show scope before action | `scope/input` | Operator scope |
+| Show scope before action | `IntentContract` | Operator scope |
 | Show policy decision | `PolicyDecision` | Ravenclaw policy/auditor |
-| Show prepared spec as proposal | `PreparedExecutionSpec` | Proposal only |
-| Show approved spec as authority | `ApprovedExecutionSpec` | Execution-engine input |
+| Show bounded proposal | `ExecutionContract` | Proposal only |
+| Show carrier-visible authority | scoped `ExecutionTicket` | Bound authority before execution-engine input |
 | Show runner-supervision state | GovEngine supervision plan/lease/receipt | GovEngine runner-supervision |
 | Show dry-run/live truth | `ExecutionReceipt` | Receipt truth label |
 | Show evidence review and non-claims | GovEngine evidence qualification/review result | Evidence review, not live-vulnerability proof |
@@ -43,7 +44,7 @@ Pause future adapter work if any of these are ambiguous:
 
 - scope;
 - policy decision;
-- prepared-vs-approved spec boundary;
+- execution-contract/scoped-ticket boundary;
 - command authority;
 - redaction;
 - dry-run/live truth;

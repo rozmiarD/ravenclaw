@@ -55,7 +55,7 @@
       "additionalProperties": false
     },
     "validated_trace": {
-      "const": "scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary"
+      "const": "runtime projection -> policy decision -> execution contract -> scoped execution ticket -> execution receipt -> evidence contract -> review bundle"
     },
     "checks_requested": {
       "type": "array",

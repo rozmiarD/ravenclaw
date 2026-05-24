@@ -57,12 +57,12 @@ def test_carrier_readiness_packet_template_contains_required_packet_fields() -> 
 def test_carrier_readiness_packet_template_requires_contract_inventory() -> None:
     text = _text()
     required_contracts = [
-        'Scope/input',
+        'IntentContract',
         'PolicyDecision',
-        'PreparedExecutionSpec',
-        'ApprovedExecutionSpec',
+        'ExecutionContract',
+        'ExecutionTicket',
         'ExecutionReceipt',
-        'EvidenceBundle',
+        'EvidenceContract',
         'Validation receipt',
         'Public snapshot manifest',
         'Proof-of-value scorecard',
@@ -78,7 +78,7 @@ def test_carrier_readiness_packet_template_requires_validation_and_stop_conditio
     required_stop_conditions = [
         'scope ambiguity',
         'missing policy decision',
-        'missing approved execution spec',
+        'missing scoped execution ticket or ticket/contract binding',
         'unredacted secret/operator state risk',
         'command authority ambiguity',
         'dry-run/live truth ambiguity',

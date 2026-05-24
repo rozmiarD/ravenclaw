@@ -98,7 +98,7 @@ Required answers:
 
 - What creates the proposed action/spec?
 - What policy/auditor decision is required?
-- What produces the approved execution spec?
+- What produces the execution contract and scoped execution ticket?
 - What, if anything, reaches Ravenclaw's execution engine?
 - Which commands/tools are impossible from this carrier by design?
 
@@ -116,12 +116,12 @@ List the Security Contract Layer artifacts consumed and emitted.
 
 | Artifact | Consumed | Emitted | Schema/reference | Notes |
 | --- | --- | --- | --- | --- |
-| Scope/input | `[ ]` | `[ ]` | `examples/security-contract-proof/input_scope.json` | |
-| `PolicyDecision` | `[ ]` | `[ ]` | `schemas/policy_decision.v0.1.schema.json` | |
-| `PreparedExecutionSpec` / redacted prepared spec | `[ ]` | `[ ]` | `govengine.contracts.execution` | |
-| `ApprovedExecutionSpec` | `[ ]` | `[ ]` | `schemas/approved_execution_spec.v0.1.schema.json` | |
-| `ExecutionReceipt` | `[ ]` | `[ ]` | `schemas/execution_receipt.v0.1.schema.json` | |
-| `EvidenceBundle` | `[ ]` | `[ ]` | `schemas/evidence_bundle.v0.1.schema.json` | |
+| `IntentContract` | `[ ]` | `[ ]` | `schemas/intent_contract.v0.2.schema.json`, generated `demo-output/intent_contract.json` | Generated current lifecycle artifact; not a carrier implementation. |
+| `PolicyDecision` | `[ ]` | `[ ]` | `schemas/policy_decision.v0.2.schema.json` | |
+| `ExecutionContract` | `[ ]` | `[ ]` | `schemas/execution_contract.v0.2.schema.json` | Proposal/bounds; not executable authority alone. |
+| scoped `ExecutionTicket` | `[ ]` | `[ ]` | `schemas/execution_ticket.v0.3.schema.json` | Must bind exactly to the execution contract. |
+| `ExecutionReceipt` | `[ ]` | `[ ]` | `schemas/execution_receipt.v0.2.schema.json` | |
+| `EvidenceContract` | `[ ]` | `[ ]` | `schemas/evidence_contract.v0.2.schema.json` | |
 | Validation receipt | `[ ]` | `[ ]` | `schemas/security_contract_validation_receipt.v0.1.schema.json` | |
 | Public snapshot manifest | `[ ]` | `[ ]` | `schemas/public_snapshot_manifest.v0.1.schema.json` | |
 | Proof-of-value scorecard | `[ ]` | `[ ]` | `schemas/proof_of_value_scorecard.v0.1.schema.json` | |
@@ -200,7 +200,7 @@ Required stop conditions:
 
 - scope ambiguity;
 - missing policy decision;
-- missing approved execution spec;
+- missing scoped execution ticket or ticket/contract binding;
 - unredacted secret/operator state risk;
 - command authority ambiguity;
 - dry-run/live truth ambiguity;

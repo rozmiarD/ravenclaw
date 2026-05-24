@@ -1,5 +1,11 @@
 # RAVENCLAW — CHANGELOG.md
 
+## 0.18.0 / 2026-05-24
+
+- Updated the public helper package chain to `govengine>=0.11.0a0,<0.12` and `sclite-core>=0.8.0a0,<0.9`.
+- Kept current lifecycle artifact projection Ravenclaw-owned after GovEngine removed its host-shaped adapter and SCLite retired the superseded proof-trace product path.
+- Aligned public validation, readiness documents, and snapshot coverage on the current execution-contract/scoped-ticket/review-bundle boundary while leaving concrete security execution host-owned.
+
 ## 0.17.0 / 2026-05-23
 
 - Updated the package chain to `govengine>=0.10.2a0,<0.11` and `sclite-core>=0.7.0a0,<0.8`.

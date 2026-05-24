@@ -36,11 +36,11 @@ Schema version:
 
 The default runner covers:
 
-- committed legacy Security Contract proof fixture validation;
+- generated current lifecycle/review-bundle proof validation;
 - current lifecycle/review-bundle public demo smoke from a disposable public snapshot;
 - current Ravenclaw/GovEngine/SCLite demo scenario with versions taken from the modules actually executed;
 - temporary public snapshot assembly;
-- snapshot-local fixture validation;
+- snapshot-local supporting fixture validation;
 - public snapshot residue audit.
 
 With `--include-pytest`, it also runs focused Security Contract/public snapshot pytest checks from a disposable public snapshot.
@@ -79,11 +79,10 @@ This makes the receipt useful as evidence of validation without implying permiss
 
 A `passed` receipt means all checks that actually ran completed with return code `0`.
 
-`validated_trace` names the retained v0.1 compatibility fixture validated by
-`fixture_validation`; it is not a claim that the active demo emits that trace.
-The current scoped-ticket lifecycle/review-bundle path is covered by
-`demo_bundle_smoke` and `demo_scenario_package_chain` when demo-runtime checks
-are enabled.
+`validated_trace` names the current scoped-ticket lifecycle/review-bundle path
+covered by `demo_bundle_smoke` and `demo_scenario_package_chain` when
+demo-runtime checks are enabled. Legacy proof fixtures are not part of the
+current receipt surface.
 
 A `failed` receipt may be partial: the runner stops after the first failed check and emits the checks completed up to that point.
 

@@ -29,8 +29,12 @@ Schema file:
 
 ## CLI usage
 
+The command below exercises the retained static scope-fidelity helper with
+local public-safe arguments; it does not define Ravenclaw's current generated
+lifecycle/review proof path.
+
 ```bash
-python scripts/build_scope_fidelity_report.py --spec examples/security-contract-proof/approved_execution_spec.json
+python scripts/build_scope_fidelity_report.py --target https://example.com --arg https://example.com/login --target-in-scope
 ```
 
 The CLI reads only local JSON and emits a schema-validated `scope_fidelity_report`. It accepts prepared/approved-spec-like objects containing `target`, `normalized_args` or `args`, and `execution_plan` or `tool_chain`.

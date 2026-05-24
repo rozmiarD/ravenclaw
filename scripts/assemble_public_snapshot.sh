@@ -94,7 +94,6 @@ copy_path scripts/bootstrap_public_demo.sh
 copy_path scripts/run_demo_scenario.py
 cp "$ROOT/scripts/prepare_public_examples.md" "$OUT/scripts/prepare_public_examples.md"
 copy_path scripts/audit_public_snapshot_residue.py
-copy_path scripts/validate_security_contract_fixtures.py
 copy_path scripts/validate_clean_public_install.py
 copy_path scripts/validate_public_install.py
 copy_path scripts/run_security_contract_validation.py
@@ -106,8 +105,6 @@ copy_path scripts/list_public_validation_surfaces.py
 copy_path scripts/build_public_snapshot_manifest.py
 copy_path scripts/build_proof_of_value_scorecard.py
 copy_path scripts/validate_proof_of_value_scorecard.py
-copy_path examples/security-contract-proof
-copy_path examples/contract-lifecycle-v0.2
 copy_path examples/replayable-truth-runtime
 copy_path examples/scope-fidelity-report
 copy_path examples/proof-of-value-scorecard

@@ -25,22 +25,20 @@ import run_pytest_slice as pytest_slices  # type: ignore
 RECEIPT_ARTIFACT_TYPE = 'security_contract_validation_receipt'
 RECEIPT_SCHEMA_VERSION = 'v0.1'
 RECEIPT_SCHEMA_REF = 'schemas/security_contract_validation_receipt.v0.1.schema.json'
-VALIDATED_TRACE = 'scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary'
+VALIDATED_TRACE = 'runtime projection -> policy decision -> execution contract -> scoped execution ticket -> execution receipt -> evidence contract -> review bundle'
 
 GITHUB_ACTIONS_PYTEST_SLICES = list(pytest_slices.SLICE_ORDER)
 
 FOCUSED_PYTEST_TARGETS = [
-    'engine/tests/test_security_contract_fixtures.py',
     'engine/tests/test_public_demo_bundle.py',
-    'engine/tests/test_security_contract_layer_schemas.py',
     'engine/tests/test_scope_fidelity_report.py',
-    'tests/test_public_snapshot_security_contract_fixtures.py',
     'tests/test_public_snapshot_residue_audit.py',
     'tests/test_replayable_truth_fixture.py',
     'tests/test_scope_fidelity_fixtures.py',
     'tests/test_scope_fidelity_cli.py',
     'tests/test_public_validation_surface_index.py',
     'tests/test_public_snapshot_manifest.py',
+    'tests/test_public_snapshot_current_lifecycle_review.py',
     'tests/test_demo_scenario.py',
     'tests/test_reviewer_validation_guide.py',
     'tests/test_proof_of_value_framing.py',
@@ -130,15 +128,6 @@ def _run_check(check: ValidationCheck) -> CheckReceipt:
     )
 
 
-def _fixture_check() -> ValidationCheck:
-    return ValidationCheck(
-        check_id='fixture_validation',
-        description='Validate committed Security Contract proof fixtures against schemas, invariants, and sanitization rules.',
-        command=[sys.executable, 'scripts/validate_security_contract_fixtures.py', 'examples/security-contract-proof'],
-        cwd=ROOT,
-    )
-
-
 def _public_validation_surface_index_check() -> ValidationCheck:
     return ValidationCheck(
         check_id='public_validation_surface_index',
@@ -186,15 +175,6 @@ def _demo_scenario_package_chain_check(snapshot_dir: Path, output_dir: Path) -> 
             'DEMO_SCENARIO_OUTPUT': str(output_dir),
             'PYTHON_BIN': sys.executable,
         },
-    )
-
-
-def _snapshot_fixture_check(snapshot_dir: Path) -> ValidationCheck:
-    return ValidationCheck(
-        check_id='snapshot_fixture_validation',
-        description='Validate the Security Contract proof fixtures copied into the assembled public snapshot.',
-        command=[sys.executable, 'scripts/validate_security_contract_fixtures.py', 'examples/security-contract-proof'],
-        cwd=snapshot_dir,
     )
 
 
@@ -301,12 +281,10 @@ def list_check_ids(
     include_demo_runtime: bool = True,
 ) -> List[str]:
     ids = [
-        'fixture_validation',
         'public_validation_surface_index',
         'demo_bundle_smoke',
         'assemble_public_snapshot',
         'demo_scenario_package_chain',
-        'snapshot_fixture_validation',
         'snapshot_residue_audit',
         'snapshot_replayable_truth_fixture',
         'snapshot_scope_fidelity_fixture',
@@ -396,10 +374,8 @@ def run_validation(
         tmp_path = Path(tmp)
         snapshot_dir = tmp_path / 'public-snapshot'
         checks = [
-            _fixture_check(),
             _public_validation_surface_index_check(),
             _assemble_snapshot_check(snapshot_dir),
-            _snapshot_fixture_check(snapshot_dir),
             _snapshot_residue_check(snapshot_dir),
             _snapshot_replayable_truth_fixture_check(snapshot_dir),
             _snapshot_scope_fidelity_fixture_check(snapshot_dir),

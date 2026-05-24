@@ -37,8 +37,8 @@ SCLite owns:
 
 ```text
 Ravenclaw source/reference runtime
-  -> govengine>=0.10.2a0,<0.11
-  -> sclite-core>=0.7.0a0,<0.8
+  -> govengine>=0.11.0a0,<0.12
+  -> sclite-core>=0.8.0a0,<0.9
 ```
 
 ## Profile non-claims
@@ -55,7 +55,7 @@ This profile boundary does not:
 
 ## Adapter-readiness gate
 
-OpenClaw remains the first future carrier candidate. The current 0.17 boundary
+OpenClaw remains the first future carrier candidate. The current 0.18 boundary
 requires an adapter-readiness packet, not adapter implementation. The active
 packet is:
 

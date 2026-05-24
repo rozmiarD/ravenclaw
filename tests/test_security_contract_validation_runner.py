@@ -17,12 +17,10 @@ import run_security_contract_validation as runner  # type: ignore
 def test_security_contract_validation_runner_lists_core_checks() -> None:
     ids = runner.list_check_ids(include_pytest=False)
     assert ids == [
-        'fixture_validation',
         'public_validation_surface_index',
         'demo_bundle_smoke',
         'assemble_public_snapshot',
         'demo_scenario_package_chain',
-        'snapshot_fixture_validation',
         'snapshot_residue_audit',
         'snapshot_replayable_truth_fixture',
         'snapshot_scope_fidelity_fixture',
@@ -36,12 +34,14 @@ def test_security_contract_validation_runner_can_include_focused_pytest() -> Non
     ids = runner.list_check_ids(include_pytest=True)
     assert ids[-1] == 'focused_pytest'
     assert 'tests/test_public_snapshot_manifest.py' in runner.FOCUSED_PYTEST_TARGETS
+    assert 'tests/test_public_snapshot_current_lifecycle_review.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_demo_scenario.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_reviewer_validation_guide.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_proof_of_value_framing.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_proof_of_value_scorecard.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_proof_of_value_scorecard_fixture.py' in runner.FOCUSED_PYTEST_TARGETS
-    assert 'engine/tests/test_security_contract_fixtures.py' in runner.FOCUSED_PYTEST_TARGETS
+    assert 'engine/tests/test_security_contract_fixtures.py' not in runner.FOCUSED_PYTEST_TARGETS
+    assert 'tests/test_public_snapshot_security_contract_fixtures.py' not in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_public_snapshot_residue_audit.py' in runner.FOCUSED_PYTEST_TARGETS
     assert 'tests/test_replayable_truth_fixture.py' in runner.FOCUSED_PYTEST_TARGETS
 
@@ -71,14 +71,14 @@ def test_security_contract_validation_runner_can_include_github_actions_matrix()
 
 def test_security_contract_validation_receipt_marks_public_safe_scope() -> None:
     check = runner.CheckReceipt(
-        check_id='fixture_validation',
-        description='fixture check',
+        check_id='current_review_bundle_demo',
+        description='current review bundle check',
         status='passed',
-        command=['python', 'scripts/validate_security_contract_fixtures.py'],
+        command=['bin/demo-bundle', '--output-dir', '/tmp/review-bundle'],
         cwd_label='.',
         returncode=0,
         duration_seconds=0.01,
-        stdout_excerpt='security_contract_fixtures_ok:...',
+        stdout_excerpt='review_bundle:pass:...',
         stderr_excerpt='',
     )
     receipt = runner._build_receipt([check], include_pytest=False)
@@ -92,7 +92,7 @@ def test_security_contract_validation_receipt_marks_public_safe_scope() -> None:
         'protocol_adapter_work': False,
         'public_push': False,
     }
-    assert receipt['checks_passed'] == ['fixture_validation']
+    assert receipt['checks_passed'] == ['current_review_bundle_demo']
     assert receipt['checks_failed'] == []
     runner.validate_receipt_schema(receipt)
 
@@ -100,10 +100,10 @@ def test_security_contract_validation_receipt_marks_public_safe_scope() -> None:
 
 def test_security_contract_validation_receipt_schema_rejects_live_target_claim() -> None:
     check = runner.CheckReceipt(
-        check_id='fixture_validation',
-        description='fixture check',
+        check_id='current_review_bundle_demo',
+        description='current review bundle check',
         status='passed',
-        command=['python', 'scripts/validate_security_contract_fixtures.py'],
+        command=['bin/demo-bundle', '--output-dir', '/tmp/review-bundle'],
         cwd_label='.',
         returncode=0,
         duration_seconds=0.01,
@@ -144,7 +144,7 @@ def test_security_contract_validation_runner_list_checks_cli() -> None:
         check=True,
     )
     lines = proc.stdout.strip().splitlines()
-    assert lines[0] == 'fixture_validation'
+    assert lines[0] == 'public_validation_surface_index'
     assert lines[-2:] == ['focused_pytest', 'github_actions_pytest_matrix']
 
 

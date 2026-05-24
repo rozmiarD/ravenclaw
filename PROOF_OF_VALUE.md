@@ -26,8 +26,8 @@ Ravenclaw's current public proof surfaces are designed around those questions.
 
 | Signal | Public evidence | What it supports | What it does not claim |
 | --- | --- | --- | --- |
-| Governance-first execution | `SECURITY_CONTRACT_LAYER.md`, `schemas/*.v0.1.schema.json`, `references/*v0.1.md` | The system models policy and execution as explicit contracts, not informal prompt intent. | Does not prove every live policy or deployment configuration is correct. |
-| Dry-run proof trace | `examples/security-contract-proof/`, `scripts/validate_security_contract_fixtures.py` | A reviewer can inspect a complete local proof path from scope/input to evidence summary. | Does not claim live vulnerability evidence. |
+| Governance-first execution | `SECURITY_CONTRACT_LAYER.md`, `schemas/policy_decision.v0.2.schema.json`, `schemas/execution_ticket.v0.3.schema.json` | The system models policy and execution as explicit contracts, not informal prompt intent. | Does not prove every live policy or deployment configuration is correct. |
+| Current lifecycle/review proof | `bin/demo-bundle`, `engine/public_demo_bundle.py` | A reviewer can generate and inspect a current scoped-ticket lifecycle and canonical SCLite review bundle locally. | Does not claim live vulnerability evidence. |
 | Validation receipt | `scripts/run_security_contract_validation.py`, `schemas/security_contract_validation_receipt.v0.1.schema.json` | Local proof checks can be repeated and summarized in a machine-readable receipt. | Does not authorize publication or live target testing. |
 | CI parity | `.github/workflows/pytest.yml`, `scripts/run_pytest_slice.py` | Public CI behavior can be reproduced locally before push. | Does not replace post-push GitHub Actions status. |
 | Snapshot reviewability | `scripts/assemble_public_snapshot.sh`, `scripts/build_public_snapshot_manifest.py`, `REVIEWER_VALIDATION_GUIDE.md` | A public snapshot can be checked for validation-surface completeness and review boundaries. | Does not prove the snapshot is the full live operator workspace. |
@@ -84,7 +84,7 @@ Start with:
 2. `VALIDATION.md`
 3. `QUALITY_SIGNALS.md`
 4. `SECURITY_CONTRACT_LAYER.md`
-5. `examples/security-contract-proof/`
+5. `bin/demo-bundle`
 6. `examples/replayable-truth-runtime/`
 7. `examples/scope-fidelity-report/`
 

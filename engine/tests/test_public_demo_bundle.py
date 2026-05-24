@@ -10,7 +10,6 @@ if ENGINE_DIR not in sys.path:
 
 import public_demo_bundle as pdb  # type: ignore
 import run_pipeline  # type: ignore
-import security_contract_layer as compatibility_layer  # type: ignore
 
 
 def test_run_pipeline_uses_sample_scope_fallback_in_demo_mode(monkeypatch) -> None:
@@ -93,52 +92,6 @@ def test_build_bundle_markdown_mentions_generated_files() -> None:
     assert 'artifact_chain_manifest.json' in text
     assert 'review_bundle/verification_receipt.json' in text
     assert 'intent -> policy decision -> execution contract -> scoped execution ticket' in text
-
-
-def test_legacy_compatibility_trace_redacts_public_sensitive_values() -> None:
-    pipeline_data = {
-        'settings': {'runtime_mode': 'demo'},
-        'policy_gate': {'pass': True, 'reason': 'ok'},
-        'auditor': {'owner_gate': False, 'constraints': {'aggression': 3}},
-        'prepared_execution_spec': {
-            'spec_version': '2026-03-18.prepared.v1',
-            'target': 'https://example.com',
-            'target_host': 'example.com',
-            'target_in_scope': True,
-            'action_type': 'single_probe',
-            'resolved_tool': 'curl',
-            'normalized_args': ['-H', 'X-Bug-Bounty: secret', '-b', 'session=abc', '-o', str(Path.home() / 'private.txt')],
-            'execution_plan': [{'tool': 'curl', 'role': 'probe', 'args': ['-H', 'X-Test-Account-Email: secret@example.com', '-b', 'session=abc']}],
-            'scope_facts': {'target': 'https://example.com', 'target_host': 'example.com', 'target_in_scope': True},
-            'compiler': {'semantic_loss_policy': {'policy_response': 'proceed'}},
-        },
-        'approved_execution_spec': {
-            'spec_version': '2026-03-18.approved.v1',
-            'target': 'https://example.com',
-            'target_host': 'example.com',
-            'target_in_scope': True,
-            'resolved_tool': 'curl',
-            'normalized_args': ['-H', 'X-Bug-Bounty: secret', '-b', 'session=abc', '-o', str(Path.home() / 'private.txt')],
-            'execution_plan': [{'tool': 'curl', 'args': ['https://example.com']}],
-            'scope_facts': {'target': 'https://example.com', 'target_host': 'example.com', 'target_in_scope': True},
-            'approval': {'decision': 'approve', 'reason': 'ok', 'reason_code': 'approve_in_scope', 'constraints': {}, 'approval_source': 'auditor', 'owner_override_applied': False, 'approval_transform_chain': []},
-            'execution_truth': {'artifact_type': 'approved_execution_spec', 'resolved_tool': 'curl', 'normalized_args': ['-H', 'X-Bug-Bounty: secret'], 'execution_plan': [], 'command_preview': [], 'command_input_summary': {'preview_source': 'none', 'target_delivery_mode': 'argv', 'tool': 'curl', 'stdin_present': False}, 'execution_input_summaries': [], 'target_host_match_status': 'exact', 'request_shape_hygiene_status': 'clean'},
-        },
-        'engine': {'status': 'dry-run', 'returncode': 0, 'reason': 'mock_execution_adapter', 'execution_source': 'mock_adapter', 'stdout': 'secret output', 'stderr': '', 'planned_commands': [['curl', '-o', str(Path.home() / 'private.txt')]], 'executed_commands': [], 'compiled_action': {'compiler_tool_choice': 'curl'}, 'command_input_summary': {'target_delivery_mode': 'argv'}},
-        'success_criteria': {'status': 'not_provided', 'met': False, 'evidence': []},
-        'final_status': 'warning',
-        'reason_code': 'pipeline_warning',
-    }
-    artifacts = compatibility_layer.build_proof_trace_artifacts(pipeline_data)
-    approved_text = str(artifacts['approved_execution_spec.json'])
-    receipt = artifacts['execution_receipt.json']
-    assert 'secret' not in approved_text
-    assert str(Path.home()) not in approved_text
-    assert receipt['stdout_present'] is True
-    assert 'planned_commands' not in receipt
-    assert artifacts['policy_decision.json']['decision'] == 'allow_prepare'
-    assert artifacts['evidence_bundle.json']['artifact_type'] == 'evidence_bundle'
-    assert artifacts['evidence_bundle.json']['public_safety']['raw_live_evidence_included'] is False
 
 
 def test_build_current_lifecycle_artifacts_redacts_and_links_public_chain(tmp_path: Path) -> None:

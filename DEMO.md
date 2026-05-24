@@ -18,9 +18,9 @@ Show that Ravenclaw is structured around:
 - evidence-oriented summaries
 - operator-facing visibility
 
-The current maturity target is a public-safe contract proof trace:
+The current public-safe proof path is the lifecycle/review bundle:
 
-`scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary`
+`runtime projection -> policy decision -> execution contract -> scoped execution ticket -> execution receipt -> evidence contract -> review bundle`
 
 ## Official demo path
 

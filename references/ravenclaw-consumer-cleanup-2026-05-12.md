@@ -7,7 +7,7 @@ Post-`govengine==0.1.5` consumer review. This note is historical; later cleanup 
 ## Reviewed seams
 
 - `govengine.security_profile` direct imports, after retiring the former `engine/govengine_security_profile.py` wrapper
-- `govengine.sclite_adapter` direct imports, after retiring the former `engine/scl_ravenclaw_adapter.py` alias
+- the former `govengine.sclite_adapter` direct-import phase, superseded when Ravenclaw took ownership of current lifecycle projection
 - `engine/security_contract_layer.py`
 - `engine/govengine_control_gate_adapter.py`
 - `scripts/validate_public_install.py`
@@ -30,7 +30,7 @@ These remain host/runtime-owned and should not be moved into GovEngine now:
 
 ### Historical compatibility posture
 
-- `engine/scl_ravenclaw_adapter.py` was originally kept as a compatibility alias to GovEngine's SCLite adapter while public imports/tests still referenced the Ravenclaw path. It has since been retired; active code imports `govengine.sclite_adapter` directly.
+- `engine/scl_ravenclaw_adapter.py` was originally kept as a compatibility alias to GovEngine's SCLite adapter while public imports/tests still referenced the Ravenclaw path. It has since been retired; active code now uses Ravenclaw-owned current lifecycle projection in `engine/sclite_lifecycle_projection.py`, and GovEngine no longer owns the host-shaped adapter.
 - `engine/govengine_security_profile.py` has since been retired. The current package floor expects `govengine.security_profile`, and Ravenclaw public validation/tests import that facade directly instead of preserving an older-environment fallback.
 - `engine/govengine_control_gate_adapter.py` remains appropriate because it assembles Ravenclaw host artifacts/context into GovEngine gate inputs without moving host policy/state ownership into GovEngine. The adapter now requires the published GovEngine gate/signing ports rather than returning a compatibility unavailable state.
 - `engine/govengine_trust_demo.py` remains Ravenclaw-owned host projection glue: it exercises GovEngine signer/verifier ports in public demo artifacts while keeping PKI, CA, KMS, and key-store ownership out of GovEngine and Ravenclaw.

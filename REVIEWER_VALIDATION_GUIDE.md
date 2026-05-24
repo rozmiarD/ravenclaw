@@ -95,9 +95,9 @@ Expected receipt result:
 - `schema_version: v0.1`
 - `status: passed`
 
-This validates the public-safe proof trace:
+This validates the current lifecycle/review-bundle proof path:
 
-`scope/input -> policy decision -> prepared execution spec -> approved execution spec -> dry-run execution receipt -> evidence summary`
+`runtime projection -> policy decision -> execution contract -> scoped execution ticket -> execution receipt -> evidence contract -> review bundle`
 
 ## 5. Run the reviewer demo scenario
 
@@ -128,8 +128,8 @@ This scenario is still local/demo-safe. It does not authorize live target testin
 Primary proof/evidence files:
 
 - `references/public-safe-proof-walkthrough.md`
-- `examples/security-contract-proof/`
-- `examples/contract-lifecycle-v0.2/`
+- generated `demo-output/review_bundle/`
+- `engine/public_demo_bundle.py`
 - `examples/replayable-truth-runtime/`
 - `examples/scope-fidelity-report/`
 - `schemas/*.v0.1.schema.json`

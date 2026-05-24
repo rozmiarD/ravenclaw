@@ -100,9 +100,12 @@ If examples are included, they should be:
 - structurally illustrative
 - not copied blindly from live state
 
-The Security Contract Layer proof fixture is intentionally publishable when present:
-- `examples/security-contract-proof/`
-- validator: `scripts/validate_security_contract_fixtures.py`
+The current lifecycle/review proof path is intentionally publishable:
+- generator: `bin/demo-bundle`
+- validator: `sclite review demo-output/review_bundle --format summary --fail-on review`
+
+The retired `examples/security-contract-proof/` path is no longer part of the
+current source or snapshot claim.
 
 ### 6. Validate the snapshot
 
@@ -116,10 +119,12 @@ pytest -q
 
 If the public demo path is meant to be advertised immediately, also walk through `DEMO.md` inside the assembled snapshot.
 
-If the Security Contract Layer proof fixture is included, also run inside the snapshot without writing bytecode into the publish tree:
+Generate and review the current proof path inside the snapshot without writing
+bytecode into the publish tree:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python scripts/validate_security_contract_fixtures.py examples/security-contract-proof
+PYTHONDONTWRITEBYTECODE=1 bin/demo-bundle --output-dir demo-output --print-summary
+sclite review demo-output/review_bundle --format summary --fail-on review
 ```
 
 Then run the residue audit against the exact snapshot:
@@ -237,9 +242,9 @@ The safest current release posture is:
 
 ## PyPI release procedure
 
-Ravenclaw's current PyPI helper package line is `ravenclaw-security==0.17.0`,
-importing as `ravenclaw`, and depending on `govengine>=0.10.2a0,<0.11` and
-`sclite-core>=0.7.0a0,<0.8`. It is intentionally pre-1.0 and packages the
+Ravenclaw's current public helper package candidate is `ravenclaw-security==0.18.0`,
+importing as `ravenclaw`, and depending on `govengine>=0.11.0a0,<0.12` and
+`sclite-core>=0.8.0a0,<0.9`. It is intentionally pre-1.0 and packages the
 public profile/readiness helper API, not the complete source runtime runner.
 
 Before uploading:
@@ -272,7 +277,7 @@ python -m twine check dist/*
 
 ```bash
 python -m venv /tmp/ravenclaw-wheel-venv
-/tmp/ravenclaw-wheel-venv/bin/python -m pip install dist/ravenclaw_security-0.17.0-py3-none-any.whl
+/tmp/ravenclaw-wheel-venv/bin/python -m pip install dist/ravenclaw_security-0.18.0-py3-none-any.whl
 /tmp/ravenclaw-wheel-venv/bin/python -m pip check
 /tmp/ravenclaw-wheel-venv/bin/python - <<'PY'
 import importlib.metadata as metadata

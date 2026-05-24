@@ -123,6 +123,14 @@ def forbidden_claim_errors(paths: Iterable[str]) -> list[str]:
     return errors
 
 
+def active_readiness_legacy_path_errors(text_by_path: Mapping[str, str]) -> list[str]:
+    errors: list[str] = []
+    for path, text in text_by_path.items():
+        if 'examples/security-contract-proof/' in text:
+            errors.append(f'{path}:legacy_proof_fixture_advertised_in_active_readiness_doc')
+    return errors
+
+
 def collect_errors() -> list[str]:
     errors: list[str] = []
     project = _pyproject()
@@ -152,20 +160,20 @@ def collect_errors() -> list[str]:
 
     _require(errors, 'README.md', readme, f'Source: Ravenclaw {version}')
     _require(errors, 'README.md', readme, f'ravenclaw-security=={version}')
-    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.10.2-alpha')
-    _require(errors, 'README.md', readme, 'Dependency: SCLite >=0.7.0a0')
+    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.11.0-alpha')
+    _require(errors, 'README.md', readme, 'Dependency: SCLite >=0.8.0a0')
     _require(errors, 'INSTALL.md', _read('INSTALL.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'narrow public profile/readiness package')
     _require(errors, 'PUBLIC_STATUS.md', public_status, f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'full runtime remains source/reference')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw_security-{version}-py3-none-any.whl')
-    _require(errors, 'VALIDATION.md', validation, 'GovEngine `0.10.2-alpha`')
+    _require(errors, 'VALIDATION.md', validation, 'GovEngine `0.11.0-alpha`')
     _require(
         errors,
         'references/ravenclaw-security-profile-boundary.md',
         _read('references/ravenclaw-security-profile-boundary.md'),
-        'current 0.17 boundary',
+        'current 0.18 boundary',
     )
     _require(
         errors,
@@ -174,16 +182,44 @@ def collect_errors() -> list[str]:
         'Historical record:',
     )
     security_contract = _read('engine/security_contract_layer.py')
+    lifecycle_projection = _read('engine/sclite_lifecycle_projection.py')
     public_demo = _read('engine/public_demo_bundle.py')
+    run_pipeline = _read('engine/run_pipeline.py')
+    validation_surfaces = _read('scripts/list_public_validation_surfaces.py')
+    security_contract_docs = _read('SECURITY_CONTRACT_LAYER.md')
+    docs_map = _read('DOCS_MAP.md')
+    active_readiness_packet = _read('references/openclaw-adapter-readiness-packet-2026-05-20.md')
+    adapter_contract_map = _read('references/openclaw-adapter-contract-map.md')
+    scope_fidelity_reference = _read('references/scope-fidelity-report-v0.1.md')
     demo_scenario = _read('scripts/run_demo_scenario.py')
     _require(errors, 'VALIDATION.md', validation, 'canonical `review_bundle/`')
     _require(errors, 'engine/security_contract_layer.py', security_contract, 'def build_current_lifecycle_artifacts(')
+    _require(errors, 'engine/sclite_lifecycle_projection.py', lifecycle_projection, 'def build_current_lifecycle_artifacts(')
     _require(errors, 'engine/public_demo_bundle.py', public_demo, 'materialize_review_bundle')
+    _require(errors, 'engine/run_pipeline.py', run_pipeline, 'from security_contract_layer import build_current_lifecycle_artifacts')
+    _require(errors, 'SECURITY_CONTRACT_LAYER.md', security_contract_docs, "Ravenclaw-owned local/public-safe current validation receipt")
+    _require(errors, 'DOCS_MAP.md', docs_map, 'current scoped-ticket lifecycle')
+    _require(errors, 'references/openclaw-adapter-readiness-packet-2026-05-20.md', active_readiness_packet, 'generated `demo-output/intent_contract.json`')
+    _require(errors, 'references/openclaw-adapter-contract-map.md', adapter_contract_map, 'generated `demo-output/intent_contract.json`')
     _require(errors, 'scripts/run_demo_scenario.py', demo_scenario, "'version_source': 'executed_import_modules'")
     if 'from sclite.artifacts import *' in security_contract:
         errors.append('engine/security_contract_layer.py:wildcard_legacy_import')
+    if 'govengine.sclite_adapter' in security_contract or 'govengine.sclite_adapter' in lifecycle_projection:
+        errors.append('engine/security_contract_layer.py:govengine_host_projection_dependency')
+    if 'build_proof_trace_artifacts' in security_contract:
+        errors.append('engine/security_contract_layer.py:legacy_proof_api_retained')
     if 'build_proof_trace_artifacts' in public_demo:
         errors.append('engine/public_demo_bundle.py:legacy_proof_in_active_demo')
+    if "'id': 'security_contract_fixture'" in validation_surfaces:
+        errors.append('scripts/list_public_validation_surfaces.py:legacy_proof_advertised_as_current_surface')
+    if "'id': 'sclite_v02_lifecycle_chain'" in validation_surfaces:
+        errors.append('scripts/list_public_validation_surfaces.py:version_named_lifecycle_advertised_as_current_surface')
+    errors.extend(active_readiness_legacy_path_errors({
+        'DOCS_MAP.md': docs_map,
+        'references/openclaw-adapter-readiness-packet-2026-05-20.md': active_readiness_packet,
+        'references/openclaw-adapter-contract-map.md': adapter_contract_map,
+        'references/scope-fidelity-report-v0.1.md': scope_fidelity_reference,
+    }))
     if 'metadata.version' in demo_scenario:
         errors.append('scripts/run_demo_scenario.py:distribution_metadata_used_for_executed_source_truth')
     _require(errors, 'engine/tool_registry.yaml', _read('engine/tool_registry.yaml'), 'planner_profiles_env: GOVENGINE_TOOL_PROFILES')

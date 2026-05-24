@@ -49,11 +49,12 @@ def test_public_snapshot_manifest_maps_validation_surfaces_to_present_paths(tmp_
     assert manifest['summary']['file_count'] > 0
     paths = {file['path'] for file in manifest['files']}
     assert {
-        'examples/security-contract-proof',
+        'engine/public_demo_bundle.py',
         'scripts/run_security_contract_validation.py',
         'scripts/list_public_validation_surfaces.py',
         'scripts/build_public_snapshot_manifest.py',
     } <= paths
+    assert 'examples/security-contract-proof' not in paths
 
     for file in manifest['files']:
         assert file['path']

@@ -3,8 +3,8 @@
 Current baseline:
 
 ```text
-Ravenclaw: ravenclaw-security==0.17.0
-Package chain: Ravenclaw -> govengine>=0.10.2a0,<0.11 -> sclite-core>=0.7.0a0,<0.8
+Ravenclaw: ravenclaw-security==0.18.0
+Package chain: Ravenclaw -> govengine>=0.11.0a0,<0.12 -> sclite-core>=0.8.0a0,<0.9
 Maturity: alpha public helper/profile package; full runtime remains source/reference
 ```
 
@@ -38,6 +38,9 @@ GovEngine boundary health: healthy. GovEngine owns deterministic contracts and
 validators. Ravenclaw owns security runtime behavior, Logdash, state files,
 queue mutation, concrete execution, findings, and operator UX. SCLite owns
 lifecycle, proof, artifact-chain, review, validation, and integrity artifacts.
+Ravenclaw also owns projection of its host/runtime payloads into current
+lifecycle artifacts; that projection is no longer a GovEngine host-shaped
+adapter and it does not reintroduce SCLite's retired proof-trace product path.
 
 ## Already Covered By GovEngine
 
@@ -169,7 +172,7 @@ reconsidered after Tecrax proves the same need:
 
 ## GovEngine Impact
 
-This roadmap does not require a GovEngine code patch. GovEngine 0.10 alpha
+This roadmap does not require a new GovEngine host projection. GovEngine 0.11 alpha
 already has the relevant public surfaces:
 
 - runtime shell;

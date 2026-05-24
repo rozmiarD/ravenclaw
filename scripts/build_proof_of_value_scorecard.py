@@ -34,22 +34,22 @@ DIMENSIONS: list[dict[str, Any]] = [
     {
         'id': 'policy_decision_clarity',
         'title': 'Policy decision clarity',
-        'evidence_paths': ['schemas/policy_decision.v0.1.schema.json', 'references/policy-decision-v0.1.md', 'examples/security-contract-proof/policy_decision.json'],
-        'claim': 'Approval/rejection semantics are structured and inspectable in the public proof trace.',
+        'evidence_paths': ['schemas/policy_decision.v0.2.schema.json', 'engine/public_demo_bundle.py', 'SECURITY_CONTRACT_LAYER.md'],
+        'claim': 'Approval/rejection semantics are structured and inspectable in the current lifecycle/review-bundle path.',
         'non_claim': 'Does not prove every live policy configuration is correct.',
     },
     {
         'id': 'execution_spec_accountability',
         'title': 'Execution spec accountability',
-        'evidence_paths': ['schemas/approved_execution_spec.v0.1.schema.json', 'references/approved-execution-spec-v0.1.md', 'examples/security-contract-proof/approved_execution_spec.json'],
-        'claim': 'The approved execution spec can be reviewed without trusting free-form model text.',
+        'evidence_paths': ['schemas/execution_contract.v0.2.schema.json', 'schemas/execution_ticket.v0.3.schema.json', 'engine/public_demo_bundle.py'],
+        'claim': 'The execution contract and scoped ticket can be reviewed without trusting free-form model text.',
         'non_claim': 'Does not authorize live command execution.',
     },
     {
         'id': 'dry_run_evidence_separation',
         'title': 'Dry-run/evidence separation',
-        'evidence_paths': ['schemas/execution_receipt.v0.1.schema.json', 'schemas/evidence_bundle.v0.1.schema.json', 'examples/security-contract-proof/evidence_bundle.json'],
-        'claim': 'Dry-run receipts and public evidence bundles explicitly separate illustrative proof from live evidence.',
+        'evidence_paths': ['schemas/execution_receipt.v0.2.schema.json', 'schemas/evidence_contract.v0.2.schema.json', 'engine/public_demo_bundle.py'],
+        'claim': 'Current lifecycle receipts and evidence contracts explicitly separate illustrative proof from live evidence.',
         'non_claim': 'Does not claim live vulnerability evidence.',
     },
     {
