@@ -37,7 +37,9 @@ jobs:
           python -m pip install "govengine @ git+https://github.com/rozmiarD/GovEngine.git@main"
           python -m pip install -e '.[dev]'
       - name: Validate public truth
-        run: python scripts/validate_public_truth.py
+        run: |
+          python scripts/validate_public_truth.py
+          python scripts/validate_reviewer_path.py
       - name: Run pytest slice
         env:
           RAVENCLAW_WORKSPACE: ${{ github.workspace }}
@@ -68,6 +70,7 @@ jobs:
       - name: Validate public truth and boundaries
         run: |
           python scripts/validate_public_truth.py
+          python scripts/validate_reviewer_path.py
           python scripts/validate_extraction_roadmap.py
           python scripts/validate_govengine_helper_boundary.py
       - name: Run public helper smoke tests

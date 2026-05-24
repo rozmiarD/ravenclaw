@@ -122,6 +122,7 @@ The summary records:
 - reviewer commands for independently checking the generated artifact-chain manifest.
 
 This scenario is still local/demo-safe. It does not authorize live target testing or adapter implementation.
+The demo signing/trust metadata is not PKI, production identity proof, or key-management support.
 
 ## 6. Read the evidence trail
 

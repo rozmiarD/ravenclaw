@@ -21,6 +21,7 @@ import ravenclaw  # noqa: E402
 import ravenclaw_security_profile as security_profile  # noqa: E402
 import validate_extraction_roadmap as extraction_roadmap  # noqa: E402
 import validate_govengine_helper_boundary as govengine_helper_boundary  # noqa: E402
+import validate_reviewer_path as reviewer_path  # noqa: E402
 import validate_runtime_state_truth as runtime_state_truth  # noqa: E402
 
 
@@ -249,6 +250,7 @@ def collect_errors() -> list[str]:
     errors.extend(forbidden_claim_errors(PUBLIC_TRUTH_DOCS))
     errors.extend(f'extraction_roadmap:{error}' for error in extraction_roadmap.collect_errors())
     errors.extend(f'govengine_helper_boundary:{error}' for error in govengine_helper_boundary.collect_errors())
+    errors.extend(f'reviewer_path:{error}' for error in reviewer_path.collect_errors())
     errors.extend(f'runtime_state_truth:{error}' for error in runtime_state_truth.collect_errors())
 
     for path in PUBLIC_TRUTH_DOCS:

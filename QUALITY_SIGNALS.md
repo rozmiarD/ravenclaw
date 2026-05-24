@@ -19,9 +19,13 @@ The repository includes a public GitHub Actions workflow:
 
 Current truth:
 - runs on push and pull request
-- uses Python 3.11
-- installs the minimal test dependencies
-- runs `pytest -q`
+- runs the six matrixed pytest slices:
+  `contracts_policy`, `auto_campaign`, `runtime_core`, `runtime_runner`,
+  `logdash`, and `misc_public`
+- runs public truth validation, including reviewer-path truth validation
+- runs public helper smoke checks on newer supported Python versions
+- runs package dry-run checks with build, `twine check`, wheel install, and
+  `pip check`
 
 This is a real verification surface, not a placeholder badge-only claim.
 
@@ -56,6 +60,7 @@ Ravenclaw consumes reusable package surfaces instead of carrying every contract 
 - `govengine>=0.11.0a0,<0.12`
 
 The public install validator checks that the active environment resolves that package chain, imports the expected modules, verifies the GovEngine public surface registry, and validates the published `govengine.security_profile` facade directly.
+The current published helper package checked by this layer is `ravenclaw-security==0.18.0`; the full runtime remains source/reference-owned.
 
 Concrete entry points:
 - `scripts/validate_public_install.py`
