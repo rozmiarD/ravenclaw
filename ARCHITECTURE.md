@@ -163,7 +163,9 @@ Turns raw output into structured findings and governs escalation.
 
 Main files:
 - `engine/analysis.py`
-- `govengine.contracts.evidence_policy`
+- `engine/security_signal_contract.py`
+- `engine/security_analysis_contract.py`
+- `engine/security_evidence_policy.py`
 - `engine/vuln_qualification.py`
 - `engine/proof_protocols.py`
 - `engine/auto_campaign_qualification.py`

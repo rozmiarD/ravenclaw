@@ -7,7 +7,7 @@ ENGINE_DIR = str(Path(__file__).resolve().parents[1])
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-from govengine.contracts.signal import build_signal_contract, signal_contract_signal_positive  # type: ignore
+from security_signal_contract import build_signal_contract, signal_contract_signal_positive  # type: ignore
 
 
 def test_weak_actionable_signal_bridge_marks_signal_positive_but_not_high_signal() -> None:

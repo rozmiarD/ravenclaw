@@ -54,12 +54,18 @@ runtime/Logdash imports outside `engine/govengine_security_helpers.py`, so the
 host-owned narrowing point cannot silently omit part of the upstream-declared
 surface. It also rejects reintroducing host-owned action/tooling helpers,
 `govengine.policy.core`, `govengine.tool_registry`, or `govengine.policy.gateway`
-into that seam: the active action/tooling and policy/scope decisions now belong
-to Ravenclaw-local `engine/security_*` modules, including
+or `govengine.contracts.signal`, `govengine.contracts.analysis`, or
+`govengine.contracts.evidence_policy` into that seam: the active
+action/tooling, policy/scope, and security review decisions now belong to
+Ravenclaw-local `engine/security_*` modules, including
 `engine/security_policy_gateway.py`, `engine/security_tool_registry.py`,
 `engine/security_policy_core.py`, `engine/security_capability_recipes.py`, and
-`engine/security_semantic_loss_policy.py`, and use Ravenclaw-owned scope/tool
-state. The
+`engine/security_semantic_loss_policy.py`, plus
+`engine/security_signal_contract.py`, `engine/security_analysis_contract.py`,
+and `engine/security_evidence_policy.py`, and use Ravenclaw-owned scope/tool
+and qualification state. Neutral receipt-bounded review remains projected
+separately through `engine/govengine_review_projection.py` and
+`govengine.review`. The
 package/runtime boundary validator checks that the published
 `ravenclaw-security` wheel remains a narrow public helper package while the
 full runtime, `engine/`, Logdash, demo, and validation workflows remain

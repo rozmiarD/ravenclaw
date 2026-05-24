@@ -24,6 +24,9 @@ HOST_OWNED_OPTIONAL_REPLACEMENTS = {
     'govengine.semantic_loss_policy': ENGINE / 'security_semantic_loss_policy.py',
     'govengine.policy.core': ENGINE / 'security_policy_core.py',
     'govengine.policy.gateway': ENGINE / 'security_policy_gateway.py',
+    'govengine.contracts.signal': ENGINE / 'security_signal_contract.py',
+    'govengine.contracts.analysis': ENGINE / 'security_analysis_contract.py',
+    'govengine.contracts.evidence_policy': ENGINE / 'security_evidence_policy.py',
 }
 
 

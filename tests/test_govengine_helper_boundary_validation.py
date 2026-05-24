@@ -88,3 +88,19 @@ def test_govengine_helper_boundary_rejects_reintroduced_host_owned_action_toolin
         'engine/govengine_security_helpers.py:reintroduced_host_owned_import:govengine.tool_registry',
         'engine/govengine_security_helpers.py:reintroduced_host_owned_import:govengine.policy.core',
     ]
+
+
+def test_govengine_helper_boundary_rejects_reintroduced_host_owned_review_helpers() -> None:
+    validator = _load_validator()
+
+    errors = validator._wrapper_migration_errors(
+        'from govengine.contracts.signal import build_signal_contract\n'
+        'from govengine.contracts.analysis import build_analysis_contract\n'
+        'from govengine.contracts.evidence_policy import can_be_confirmed\n',
+    )
+
+    assert errors == [
+        'engine/govengine_security_helpers.py:reintroduced_host_owned_import:govengine.contracts.signal',
+        'engine/govengine_security_helpers.py:reintroduced_host_owned_import:govengine.contracts.analysis',
+        'engine/govengine_security_helpers.py:reintroduced_host_owned_import:govengine.contracts.evidence_policy',
+    ]

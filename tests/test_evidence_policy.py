@@ -1,4 +1,13 @@
-from govengine.contracts.evidence_policy import can_be_confirmed
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+ENGINE_DIR = str(Path(__file__).resolve().parents[1] / 'engine')
+if ENGINE_DIR not in sys.path:
+    sys.path.insert(0, ENGINE_DIR)
+
+from security_evidence_policy import can_be_confirmed
 
 
 def test_confirmed_requires_repro_and_controls():

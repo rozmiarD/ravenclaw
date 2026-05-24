@@ -1,4 +1,13 @@
-from govengine.contracts.signal import build_signal_contract
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+ENGINE_DIR = str(Path(__file__).resolve().parents[1] / 'engine')
+if ENGINE_DIR not in sys.path:
+    sys.path.insert(0, ENGINE_DIR)
+
+from security_signal_contract import build_signal_contract
 
 
 def test_signal_contract_carries_governance_blocked_qualification_disposition() -> None:

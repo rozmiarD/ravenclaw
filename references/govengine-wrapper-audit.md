@@ -17,9 +17,9 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | `engine/security_policy_core.py` | `govengine.policy.core` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active security tool/pattern/auth policy over its whitelist and tool registry. |
 | `engine/security_policy_gateway.py` | `govengine.policy.gateway` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns executed security scope/policy decisions and obtains scope truth from `engine/campaign_utils.py`. |
 | `engine/execution_contracts.py` | `govengine.contracts.execution` | removed | Ravenclaw active callers and tests import execution contract helpers from GovEngine directly. |
-| `engine/signal_contract.py` | `govengine.contracts.signal` | removed; contained consumption | Active runtime callers consume this optional contract helper through the checked Ravenclaw seam; whether it should become neutral is not decided by this routing change. |
-| `engine/analysis_contract.py` | `govengine.contracts.analysis` | removed; contained consumption | Active runtime callers consume this optional contract helper through the checked Ravenclaw seam; whether it should become neutral is not decided by this routing change. |
-| `engine/evidence_policy.py` | `govengine.contracts.evidence_policy` | removed; contained consumption | Active runtime callers consume this optional contract helper through the checked Ravenclaw seam; whether it should become neutral is not decided by this routing change. |
+| `engine/security_signal_contract.py` | `govengine.contracts.signal` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active finding/workflow/adaptation signal semantics; these are not neutral receipt-bounded review. |
+| `engine/security_analysis_contract.py` | `govengine.contracts.analysis` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active security action/success/semantic-loss analysis interpretation. |
+| `engine/security_evidence_policy.py` | `govengine.contracts.evidence_policy` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns confirmation policy over false-positive guards, control comparison, and reproduction evidence. |
 | `engine/scl_ravenclaw_adapter.py` | `govengine.sclite_adapter` | removed | Ravenclaw uses `engine/security_contract_layer.py` as the host-owned current lifecycle projection over GovEngine/SCLite primitives; active runtime and demo callers do not publish directly through the neutral-kernel dependency. |
 | `engine/govengine_boundary_profile.py` | `govengine.kernel_boundary_report` | keep required host check; no unavailable fallback | Ravenclaw validates the GovEngine boundary report and profile non-claims during public install validation. |
 | `engine/govengine_state_control_projection.py` | `govengine.runtime_shell` | keep host adapter | Ravenclaw owns projection from Logdash/runtime state into GovEngine `GovControlAction`, `GovQueueSnapshot`, and `GovRuntimeSnapshot` shapes while keeping UI, storage, process control, and campaign semantics host-owned. |
@@ -53,7 +53,10 @@ In addition, `scripts/validate_govengine_helper_boundary.py` must derive the
 optional module allowlist from GovEngine's public `security_profile_helpers`
 registry and reject active runtime/Logdash imports of any registered optional
 module outside `engine/govengine_security_helpers.py`. It must also reject
-reintroduction of host-owned action/tooling modules, `govengine.policy.core`,
-`govengine.tool_registry`, or `govengine.policy.gateway` into that seam after
-Ravenclaw moved the active security behavior to local `engine/security_*`
-modules. Review-contract helpers are still a separate decision.
+reintroduction of host-owned action/tooling, policy/scope, or review-security
+modules, including `govengine.policy.core`, `govengine.tool_registry`,
+`govengine.policy.gateway`, `govengine.contracts.signal`,
+`govengine.contracts.analysis`, and `govengine.contracts.evidence_policy`, into
+that seam after Ravenclaw moved active security behavior to local
+`engine/security_*` modules. Neutral `govengine.review` remains a distinct
+projection contract.

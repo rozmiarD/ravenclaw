@@ -21,6 +21,12 @@
   `engine/security_*` modules while retaining GovEngine's optional
   action/tooling and policy helpers as upstream compatibility only; focused
   tests and helper-boundary validation now guard the split.
+- Returned active signal, analysis, and confirmation-policy behavior to
+  Ravenclaw-owned `engine/security_signal_contract.py`,
+  `engine/security_analysis_contract.py`, and
+  `engine/security_evidence_policy.py`, while keeping neutral
+  `govengine.review` projection separate and GovEngine's optional helper
+  facade compatibility-only.
 
 ## 0.18.0 / 2026-05-24
 

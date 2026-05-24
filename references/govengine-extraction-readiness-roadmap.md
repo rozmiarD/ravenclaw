@@ -49,9 +49,13 @@ action/tooling helper group to Ravenclaw-owned modules:
 `engine/security_tool_registry.py`, `engine/security_action_schema.py`,
 `engine/security_action_validators.py`, `engine/security_action_compiler.py`,
 `engine/security_capability_recipes.py`, and
-`engine/security_semantic_loss_policy.py`. The published GovEngine optional
-helpers remain compatibility surfaces for now; this result does not decide
-review-contract helper ownership.
+`engine/security_semantic_loss_policy.py`. The remaining active
+security-review interpretation is also Ravenclaw-owned through
+`engine/security_signal_contract.py`, `engine/security_analysis_contract.py`,
+and `engine/security_evidence_policy.py`: finding/workflow signals,
+security-semantic analysis, and confirmation policy are not the neutral
+receipt-bounded contract modeled by `govengine.review`. The published
+GovEngine optional helpers remain compatibility surfaces for now.
 
 ## Already Covered By GovEngine
 
@@ -75,6 +79,7 @@ adapters and prevent drift.
 | Runtime task handoff fields | `engine/runtime_task_schema.py`, `engine/govengine_planning_projection.py` | task contract, activation/depth/priority hints | Use existing GovEngine API; add GovEngine fields only after a second profile needs them. | medium | already covered by GovEngine; maintain projection adapter |
 | Admission decision and blocked reason record | `engine/runtime_admission_policy.py`, `engine/runtime_execution_gate.py`, `engine/govengine_admission_projection.py` | admission result, blockers, explainability | Keep Ravenclaw policy logic; project redacted neutral decisions. | medium | already covered by GovEngine; maintain projection adapter |
 | Security action/tooling helpers | `engine/security_action_*`, `engine/security_tool_registry.py`, `engine/security_policy_core.py`, `engine/security_capability_recipes.py`, `engine/security_semantic_loss_policy.py`, `engine/security_policy_gateway.py` | security action vocabulary, tool registry, recipe lowering, action validation, semantic-loss and policy gate behavior | Keep active implementation in Ravenclaw; GovEngine optional helpers stay compatibility-only until a later package/API narrowing wave. | low | host-owned in Ravenclaw; upstream compatibility retained |
+| Security review-contract helpers | `engine/security_signal_contract.py`, `engine/security_analysis_contract.py`, `engine/security_evidence_policy.py`, `engine/govengine_review_projection.py` | finding/workflow signal, security-semantic analysis, confirmation policy versus neutral receipt review projection | Keep active security interpretation in Ravenclaw; retain only the separate neutral `govengine.review` projection and upstream optional compatibility facade. | low | host-owned in Ravenclaw; upstream compatibility retained |
 | Runtime-owned artifact descriptor | `STATE_FILES.md`, `engine/paths.py`, `engine/runtime_persist_services.py`, `logdash/services.py` | descriptor of host-owned state artifact, retention, source, public/private status | Extract later as a contract only if Tecrax proves the same need. | medium | defer until Tecrax proves need |
 | Host gate reason-code registry | `engine/runtime_admission_policy.py`, `engine/runtime_execution_gate.py`, `engine/runtime_effective_decision.py` | portable reason-code catalog and severity mapping | Extract later only as an optional neutral registry if duplication appears across profiles. | medium | extract later as contract |
 | Replay/evaluation summary | `engine/evaluation_metrics.py`, `engine/evaluation_replay.py`, `QUALITY_SIGNALS.md` | replay result and governance-quality metrics | Wait for another domain profile; current metrics are security-shaped. | medium | defer until Tecrax proves need |
@@ -142,6 +147,11 @@ Immediate low-risk work:
    `engine/security_policy_gateway.py`, keep the active security action/tooling
    group in local `engine/security_*` modules, and reject runtime
    reintroduction of the corresponding upstream optional helper modules.
+6. Keep active signal/analysis/confirmation behavior in
+   `engine/security_signal_contract.py`, `engine/security_analysis_contract.py`,
+   and `engine/security_evidence_policy.py`; use
+   `engine/govengine_review_projection.py` only for neutral receipt-bounded
+   review projection.
 
 Medium-term work:
 
@@ -222,8 +232,9 @@ The migration burden is mostly test discipline:
 ## Final Recommendation
 
 Extract now: no new GovEngine extraction. Ravenclaw has taken host ownership of
-the active security action/tooling and policy/scope implementation while
-retaining the published GovEngine optional compatibility surface.
+the active security action/tooling, policy/scope, and security review
+interpretation implementation while retaining the published GovEngine optional
+compatibility surface.
 
 Use existing GovEngine API now: state/control projections, planning projection,
 admission projection, runner-supervision projection, and review projection.

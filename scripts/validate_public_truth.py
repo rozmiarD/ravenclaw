@@ -151,12 +151,20 @@ def host_owned_gateway_doc_errors(text_by_path: Mapping[str, str]) -> list[str]:
             errors.append('ARCHITECTURE.md:upstream_gateway_listed_as_active_main_file')
         if path == 'ARCHITECTURE.md' and 'govengine.policy.core` / `govengine.tool_registry`' in text:
             errors.append('ARCHITECTURE.md:upstream_action_tooling_listed_as_active_main_file')
+        if path == 'ARCHITECTURE.md' and any(
+            f'- `govengine.contracts.{module}`' in text
+            for module in ('signal', 'analysis', 'evidence_policy')
+        ):
+            errors.append('ARCHITECTURE.md:upstream_security_review_helper_listed_as_active_main_file')
         if path in {'ARCHITECTURE.md', 'PUBLIC_STATUS.md', 'VALIDATION.md', 'references/govengine-wrapper-audit.md', 'references/ravenclaw-security-profile-boundary.md'}:
             for required_local in (
                 'engine/security_tool_registry.py',
                 'engine/security_policy_core.py',
                 'engine/security_capability_recipes.py',
                 'engine/security_semantic_loss_policy.py',
+                'engine/security_signal_contract.py',
+                'engine/security_analysis_contract.py',
+                'engine/security_evidence_policy.py',
             ):
                 if required_local not in text:
                     errors.append(f'{path}:missing_host_owned_action_tooling_claim:{required_local}')

@@ -45,6 +45,9 @@ REQUIRED_HOST_OWNED_SECURITY_HELPERS = (
     'engine/security_capability_recipes.py',
     'engine/security_semantic_loss_policy.py',
     'engine/security_policy_gateway.py',
+    'engine/security_signal_contract.py',
+    'engine/security_analysis_contract.py',
+    'engine/security_evidence_policy.py',
     'upstream compatibility retained',
 )
 

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-"""Local compatibility import point for security-profile helper symbols.
+"""Local import point for security-profile helper symbols.
 
-Ravenclaw owns the active security action/tooling and policy/scope behavior
-below. Remaining review-contract imports still come from GovEngine's optional
-compatibility surface until they are evaluated against neutral review APIs.
+Ravenclaw owns active security action/tooling, policy/scope, and
+signal/analysis/confirmation behavior. GovEngine's optional matching helpers
+remain package compatibility surfaces; neutral evidence review is consumed
+separately through the GovEngine review projection.
 """
 
 from security_action_compiler import compile_action_spec  # noqa: F401
@@ -24,9 +25,9 @@ from security_capability_recipes import (  # noqa: F401
     resolve_contextual_planner_profiles,
     suggest_capabilities_for_task_family,
 )
-from govengine.contracts.analysis import *  # noqa: F401,F403
-from govengine.contracts.evidence_policy import can_be_confirmed  # noqa: F401
-from govengine.contracts.signal import *  # noqa: F401,F403
+from security_analysis_contract import *  # noqa: F401,F403
+from security_evidence_policy import can_be_confirmed  # noqa: F401
+from security_signal_contract import *  # noqa: F401,F403
 from security_policy_core import *  # noqa: F401,F403
 from security_semantic_loss_policy import semantic_loss_penalty, semantic_loss_runtime_gate  # noqa: F401
 from security_tool_registry import *  # noqa: F401,F403
