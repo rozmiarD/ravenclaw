@@ -372,6 +372,13 @@ imports of optional GovEngine security-profile helpers through
 runtime semantics behind those calls; this is a narrowing point, not a new
 GovEngine extraction.
 
+Current containment hardening: the validator now derives its covered optional
+module set from GovEngine's public `security_profile_helpers` registry, and
+active runtime/Logdash uses of that registered surface route through the
+Ravenclaw-owned seam. This closes an observability gap; it does not yet decide
+which helper groups should later be re-owned by Ravenclaw or retained as
+GovEngine compatibility.
+
 ## `0.18.x` — Package/runtime readiness checkpoint
 
 Intent:

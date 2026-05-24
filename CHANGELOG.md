@@ -7,6 +7,11 @@
 - Added a public-safe OpenClaw fixture-presenter example and validator that
   preserve redaction, command-authority, rollback/stop, and not-implemented
   adapter boundaries.
+- Completed the current GovEngine optional-helper containment slice: active
+  runtime/Logdash imports for every module registered in
+  `security_profile_helpers` now route through the Ravenclaw-owned
+  `engine/govengine_security_helpers.py` seam, and its validator derives the
+  checked module set from GovEngine's public registry.
 
 ## 0.18.0 / 2026-05-24
 

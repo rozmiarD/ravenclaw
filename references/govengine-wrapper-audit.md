@@ -8,18 +8,18 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 
 | Module | Upstream surface | Status | Rationale |
 | --- | --- | --- | --- |
-| `engine/action_schema.py` | `govengine.action_schema` | removed | Ravenclaw active callers and tests import action schema constants from GovEngine directly. |
-| `engine/action_validators.py` | `govengine.action_validators` | removed | Ravenclaw active callers and tests import validators from GovEngine directly. |
-| `engine/action_compiler.py` | `govengine.action_compiler` | removed | Ravenclaw active callers and tests import the compiler from GovEngine directly. |
-| `engine/capability_recipes.py` | `govengine.capability_recipes` | removed | Ravenclaw active callers and tests import capability helpers from GovEngine directly. |
-| `engine/tool_registry.py` | `govengine.tool_registry` | removed | Ravenclaw active callers and tests import tool-registry helpers from GovEngine directly; mutable state tests monkeypatch the GovEngine module itself. |
-| `engine/semantic_loss_policy.py` | `govengine.semantic_loss_policy` | removed | Ravenclaw active callers and tests import semantic-loss helpers from GovEngine directly. |
-| `engine/policy_core.py` | `govengine.policy.core` | removed | Ravenclaw active callers and tests import runtime policy helpers from GovEngine directly. |
-| `engine/policy_gateway.py` | `govengine.policy.gateway` | removed | Ravenclaw active callers and tests import policy gateway helpers from GovEngine directly. |
+| `engine/action_schema.py` | `govengine.action_schema` | removed; contained consumption | Active runtime callers consume this optional helper through `engine/govengine_security_helpers.py`; focused tests may import upstream directly. |
+| `engine/action_validators.py` | `govengine.action_validators` | removed; contained consumption | Active runtime callers consume this optional helper through the checked Ravenclaw seam; focused tests may import upstream directly. |
+| `engine/action_compiler.py` | `govengine.action_compiler` | removed; contained consumption | Active runtime callers consume this optional helper through the checked Ravenclaw seam; focused tests may import upstream directly. |
+| `engine/capability_recipes.py` | `govengine.capability_recipes` | removed; contained consumption | Active runtime callers consume this optional helper through the checked Ravenclaw seam; focused tests may import upstream directly. |
+| `engine/tool_registry.py` | `govengine.tool_registry` | removed; contained consumption | Active runtime/Logdash callers consume this optional stateful helper through the checked Ravenclaw seam; ownership remains a later migration decision. |
+| `engine/semantic_loss_policy.py` | `govengine.semantic_loss_policy` | removed; contained consumption | Active runtime callers consume this optional helper through the checked Ravenclaw seam; focused tests may import upstream directly. |
+| `engine/policy_core.py` | `govengine.policy.core` | removed; contained consumption | Active runtime callers consume this optional policy helper through the checked Ravenclaw seam; ownership remains a later migration decision. |
+| `engine/policy_gateway.py` | `govengine.policy.gateway` | removed; contained consumption | Active runtime callers consume this optional policy helper through the checked Ravenclaw seam; ownership remains a later migration decision. |
 | `engine/execution_contracts.py` | `govengine.contracts.execution` | removed | Ravenclaw active callers and tests import execution contract helpers from GovEngine directly. |
-| `engine/signal_contract.py` | `govengine.contracts.signal` | removed | Ravenclaw active callers and tests import signal contract helpers from GovEngine directly. |
-| `engine/analysis_contract.py` | `govengine.contracts.analysis` | removed | Ravenclaw active callers and tests import analysis contract helpers from GovEngine directly. |
-| `engine/evidence_policy.py` | `govengine.contracts.evidence_policy` | removed | Ravenclaw active callers and tests import confirmation-evidence helpers from GovEngine directly. |
+| `engine/signal_contract.py` | `govengine.contracts.signal` | removed; contained consumption | Active runtime callers consume this optional contract helper through the checked Ravenclaw seam; whether it should become neutral is not decided by this routing change. |
+| `engine/analysis_contract.py` | `govengine.contracts.analysis` | removed; contained consumption | Active runtime callers consume this optional contract helper through the checked Ravenclaw seam; whether it should become neutral is not decided by this routing change. |
+| `engine/evidence_policy.py` | `govengine.contracts.evidence_policy` | removed; contained consumption | Active runtime callers consume this optional contract helper through the checked Ravenclaw seam; whether it should become neutral is not decided by this routing change. |
 | `engine/scl_ravenclaw_adapter.py` | `govengine.sclite_adapter` | removed | Ravenclaw uses `engine/security_contract_layer.py` as the host-owned current lifecycle projection over GovEngine/SCLite primitives; active runtime and demo callers do not publish directly through the neutral-kernel dependency. |
 | `engine/govengine_boundary_profile.py` | `govengine.kernel_boundary_report` | keep required host check; no unavailable fallback | Ravenclaw validates the GovEngine boundary report and profile non-claims during public install validation. |
 | `engine/govengine_state_control_projection.py` | `govengine.runtime_shell` | keep host adapter | Ravenclaw owns projection from Logdash/runtime state into GovEngine `GovControlAction`, `GovQueueSnapshot`, and `GovRuntimeSnapshot` shapes while keeping UI, storage, process control, and campaign semantics host-owned. |
@@ -48,3 +48,10 @@ For the active package chain, public install validation must fail if
 `govengine_boundary_profile.status` is not `passed`. The boundary-profile module
 imports `govengine.kernel_boundary_report` directly, so a missing report is an
 import/validation failure rather than a tolerated readiness state.
+
+In addition, `scripts/validate_govengine_helper_boundary.py` must derive the
+optional module allowlist from GovEngine's public `security_profile_helpers`
+registry and reject active runtime/Logdash imports of any registered optional
+module outside `engine/govengine_security_helpers.py`. This containment is a
+migration checkpoint, not evidence that those helper responsibilities belong
+permanently in GovEngine.

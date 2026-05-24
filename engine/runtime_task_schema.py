@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from govengine.action_schema import (
+from govengine_security_helpers import (  # type: ignore
     ACTION_TYPE_TO_CAPABILITY,
     ACTION_TYPE_TO_EXPERIMENT_SHAPE,
     DEFAULT_ACTION_TYPE,

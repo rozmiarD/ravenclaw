@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from govengine.semantic_loss_policy import semantic_loss_penalty
-from govengine_security_helpers import signal_contract_promising, success_outcome_status  # type: ignore
+from govengine_security_helpers import semantic_loss_penalty, signal_contract_promising, success_outcome_status  # type: ignore
 
 
 def _score_from_scale(value: Any, mapping: Dict[str, float], *, default: float = 0.0) -> float:

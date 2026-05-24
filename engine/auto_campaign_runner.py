@@ -110,7 +110,7 @@ import auto_campaign_reporting as acr  # type: ignore
 import auto_campaign_state as acst  # type: ignore
 import vuln_qualification as vq  # type: ignore
 import auto_campaign_controls as acc  # type: ignore
-import govengine.contracts.evidence_policy as evp  # type: ignore
+from govengine_security_helpers import can_be_confirmed  # type: ignore
 OPENCLAW = "openclaw"
 RUN_PIPE = str(ep("run_pipeline.py"))
 OUT_PATH = str(REPORTS_DIR / "auto-campaign-latest.json")
@@ -1365,7 +1365,7 @@ def _build_runtime_execution_deps(*, qualification_mode: str, qualification_prom
         attack_family_fn=attack_family,
         repeated_consistency_ok_fn=repeated_consistency_ok,
         qualify_fn=lambda payload: vq.qualify(payload).as_dict(),
-        can_be_confirmed_fn=lambda qual: evp.can_be_confirmed(qual, require_repro_pass=True),
+        can_be_confirmed_fn=lambda qual: can_be_confirmed(qual, require_repro_pass=True),
         compute_promising_fn=lambda qual, summary_text, classification: compute_promising(qual, summary_text, classification, qualification_mode, qualification_promising_threshold),
         finding_lifecycle_fn=finding_lifecycle,
         adaptive_aggression_fn=adaptive_aggression,
@@ -1794,7 +1794,7 @@ def _build_runtime_session_bundle_inputs(*, apply_post_run_actions_fn: Callable[
         attack_family_fn=attack_family,
         repeated_consistency_ok_fn=repeated_consistency_ok,
         qualify_fn=lambda payload: vq.qualify(payload).as_dict(),
-        can_be_confirmed_fn=lambda qual: evp.can_be_confirmed(qual, require_repro_pass=True),
+        can_be_confirmed_fn=lambda qual: can_be_confirmed(qual, require_repro_pass=True),
         compute_promising_fn=lambda qual, summary_text, classification: compute_promising(qual, summary_text, classification, qualification_mode, qualification_promising_threshold),
         finding_lifecycle_fn=finding_lifecycle,
         adaptive_aggression_fn=adaptive_aggression,

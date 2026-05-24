@@ -48,10 +48,11 @@ python scripts/validate_openclaw_fixture_presenter.py
 
 The runtime-state validator compares the state manifest, canonical path
 helpers, `STATE_FILES.md`, and the GovEngine state/control projection map. The
-GovEngine helper-boundary validator rejects new direct runtime imports of
-optional GovEngine security-profile helpers outside
-`engine/govengine_security_helpers.py`, so the host-owned narrowing point stays
-visible. The package/runtime boundary validator checks that the published
+GovEngine helper-boundary validator obtains the optional helper module set from
+GovEngine's public `security_profile_helpers` registry and rejects direct
+runtime/Logdash imports outside `engine/govengine_security_helpers.py`, so the
+host-owned narrowing point cannot silently omit part of the upstream-declared
+surface. The package/runtime boundary validator checks that the published
 `ravenclaw-security` wheel remains a narrow public helper package while the
 full runtime, `engine/`, Logdash, demo, and validation workflows remain
 source/reference-owned. The OpenClaw fixture-presenter validator checks the

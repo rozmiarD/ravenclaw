@@ -6,19 +6,15 @@ import sys
 from pathlib import Path
 from typing import Iterable
 
+from govengine.security_profile import security_profile_module_names
+
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE = ROOT / 'engine'
 LOGDASH = ROOT / 'logdash'
 WRAPPER = ENGINE / 'govengine_security_helpers.py'
 
-OPTIONAL_HELPER_MODULES = (
-    'govengine.contracts.analysis',
-    'govengine.contracts.signal',
-    'govengine.policy',
-    'govengine.scope',
-    'govengine.tool_registry',
-)
+OPTIONAL_HELPER_MODULES = security_profile_module_names()
 
 
 def _is_optional_helper_module(module_name: str) -> bool:

@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 
 from campaign_utils import extract_host_from_url  # type: ignore
 from govengine.contracts.execution import apply_request_decoration_to_args
-from govengine.action_compiler import compile_action_spec
+from govengine_security_helpers import compile_action_spec  # type: ignore
 from paths import wp  # type: ignore
 
 

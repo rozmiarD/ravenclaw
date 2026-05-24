@@ -9,7 +9,7 @@ from typing import Any, Dict, List
 from .schema import validate_blueprint
 from .identity import build_planner_identity
 
-from govengine.capability_recipes import suggest_capabilities_for_task_family
+from govengine_security_helpers import suggest_capabilities_for_task_family  # type: ignore
 
 try:
     from runtime_task_schema import normalize_runtime_task_v2  # type: ignore

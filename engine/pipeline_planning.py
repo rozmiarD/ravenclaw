@@ -4,15 +4,19 @@ import json
 from typing import Any, Callable, Dict, List
 from urllib.parse import urlparse
 
-from govengine.action_schema import ACTION_TYPE_TO_CAPABILITY, ACTION_TYPE_TO_EXPERIMENT_SHAPE, ALLOWED_EXPERIMENT_SHAPES
-from govengine.capability_recipes import (
+from govengine_security_helpers import (  # type: ignore
+    ACTION_TYPE_TO_CAPABILITY,
+    ACTION_TYPE_TO_EXPERIMENT_SHAPE,
+    ALLOWED_EXPERIMENT_SHAPES,
     can_resolve_tool_from_capability,
     get_preferred_tools_for_task_family as recipe_preferred_tools,
     list_candidate_tools_for_capability,
+    get_runtime_allowed_tools,
+    get_runtime_brain_allowed_tools,
+    get_capability_catalog,
+    get_tool_catalog,
 )
 from campaign_utils import extract_host_from_url  # type: ignore
-from govengine_security_helpers import get_runtime_allowed_tools, get_runtime_brain_allowed_tools  # type: ignore
-from govengine_security_helpers import get_capability_catalog, get_tool_catalog
 
 
 

@@ -51,3 +51,12 @@ def test_govengine_helper_boundary_rejects_direct_logdash_import() -> None:
     )
 
     assert errors == ['logdash/fixture_api.py:direct_optional_helper_import:govengine.tool_registry']
+
+
+def test_govengine_helper_boundary_covers_full_registered_optional_surface() -> None:
+    validator = _load_validator()
+
+    assert validator._is_optional_helper_module('govengine.action_compiler')
+    assert validator._is_optional_helper_module('govengine.capability_recipes')
+    assert validator._is_optional_helper_module('govengine.semantic_loss_policy')
+    assert validator._is_optional_helper_module('govengine.contracts.evidence_policy')

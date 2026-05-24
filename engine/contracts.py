@@ -3,11 +3,18 @@ from __future__ import annotations
 import copy
 from typing import Any, Dict, Iterable, List, Tuple
 
-from govengine.capability_recipes import can_resolve_tool_from_capability
-from govengine.action_schema import ACTION_TYPES, DEFAULT_ACTION_TYPE, ACTION_TYPE_TO_CAPABILITY
-from govengine.action_validators import validate_action_contract_v2, validate_probe_recipe
-from govengine_security_helpers import get_runtime_brain_allowed_tools, normalize_tool  # type: ignore
-from govengine_security_helpers import get_capability_catalog, get_planner_visible_tools
+from govengine_security_helpers import (  # type: ignore
+    ACTION_TYPES,
+    ACTION_TYPE_TO_CAPABILITY,
+    DEFAULT_ACTION_TYPE,
+    can_resolve_tool_from_capability,
+    get_capability_catalog,
+    get_planner_visible_tools,
+    get_runtime_brain_allowed_tools,
+    normalize_tool,
+    validate_action_contract_v2,
+    validate_probe_recipe,
+)
 
 ALLOWED_BRAIN_ALIGNMENT = {'aligned', 'override', 'unknown', 'partial'}
 ALLOWED_REDUNDANCY_RISK = {'low', 'medium', 'high', 'unknown', ''}
