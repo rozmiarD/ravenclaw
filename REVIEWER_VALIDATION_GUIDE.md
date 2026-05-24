@@ -11,10 +11,12 @@ If you only have a few minutes after installing dev dependencies:
 ```bash
 ./scripts/bootstrap_public_demo.sh scenario
 python scripts/validate_public_install.py --dev
+python scripts/validate_package_runtime_boundary.py
+python scripts/validate_openclaw_fixture_presenter.py
 python scripts/list_public_validation_surfaces.py --format json --check
 ```
 
-This gives you a generated Ravenclaw/GovEngine/SCLite scenario, confirms the active package chain, and lists the public validation surfaces without requiring live targets. For broader confidence, continue with the full guide below.
+This gives you a generated Ravenclaw/GovEngine/SCLite scenario, confirms the active package chain, checks the package/runtime boundary, validates the OpenClaw fixture-presenter example, and lists the public validation surfaces without requiring live targets. For broader confidence, continue with the full guide below.
 
 ## 1. Start with repo truth
 
@@ -52,6 +54,34 @@ What this supports:
 
 What it does not prove:
 - live deployment readiness, exhaustive security assurance, complete architecture stability, or readiness of a future package release.
+
+Package/runtime boundary checkpoint:
+
+```bash
+python scripts/validate_package_runtime_boundary.py
+```
+
+Expected result:
+
+```text
+package_runtime_boundary_ok:ravenclaw-security==0.18.0:packages=ravenclaw
+```
+
+OpenClaw fixture-presenter checkpoint:
+
+```bash
+python scripts/validate_openclaw_fixture_presenter.py
+```
+
+Expected result:
+
+```text
+openclaw_fixture_presenter_ok:adapter_status=not_implemented:fixture_mode=presenter_only
+```
+
+These checks preserve the current package/runtime boundary and fixture-review
+posture: the PyPI helper package is narrow, the full runtime remains
+source/reference-owned, and the OpenClaw-shaped fixture is not an adapter.
 
 ## 3. Inspect validation surfaces and snapshot files
 
@@ -163,6 +193,7 @@ Passing the above checks does **not** mean:
 - Live target testing is authorized.
 - The public snapshot contains private operator state.
 - Protocol adapters such as OpenClaw, MCP, or A2A are complete.
+- The OpenClaw fixture presenter is a real OpenClaw Skill/plugin.
 - Demo evidence is live vulnerability evidence.
 - Demo signing/trust metadata is PKI, production identity proof, or key-management support.
 

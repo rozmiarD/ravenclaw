@@ -412,6 +412,13 @@ Current decision: keep the public distribution as the bounded
 pass the install, state-path, residue, and public-safety checks without operator
 overlay assumptions.
 
+Current checkpoint hardening: package/runtime truth is guarded by
+`scripts/validate_package_runtime_boundary.py`, and the OpenClaw
+fixture-presenter review harness is guarded by
+`scripts/validate_openclaw_fixture_presenter.py` plus committed fixture data
+under `examples/openclaw-fixture-presenter/`. This is review hardening, not
+carrier implementation.
+
 ## Future `1.0` bar
 
 Ravenclaw should not claim `1.0` maturity until all of the following are true:

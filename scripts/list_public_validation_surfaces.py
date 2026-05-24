@@ -37,6 +37,14 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'non_claim': 'Does not prove production deployment readiness or validate private operator overlays.',
     },
     {
+        'id': 'package_runtime_boundary',
+        'title': 'Package/runtime boundary validation',
+        'command': 'python scripts/validate_package_runtime_boundary.py',
+        'paths': ['scripts/validate_package_runtime_boundary.py', 'pyproject.toml', 'ravenclaw', 'README.md', 'INSTALL.md', 'PUBLIC_STATUS.md', 'VALIDATION.md', 'VERSION_ROADMAP.md', 'PUBLISHING.md'],
+        'claim': 'Checks that the PyPI distribution remains the narrow ravenclaw-security helper package while the full runtime, Logdash, engine, demo, and validation workflows remain source/reference-owned.',
+        'non_claim': 'Does not build or publish a full Ravenclaw runtime package.',
+    },
+    {
         'id': 'ravenclaw_security_profile_boundary',
         'title': 'Ravenclaw security profile boundary',
         'command': 'python -m pytest -q engine/tests/test_ravenclaw_security_profile.py',
@@ -51,6 +59,14 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'paths': ['engine/openclaw_adapter_readiness.py', 'engine/tests/test_openclaw_adapter_readiness.py', 'references/openclaw-redaction-output-matrix.md', 'references/openclaw-approval-ux-sketch.md', 'references/openclaw-command-authority-and-rollback-tests.md', 'references/openclaw-adapter-readiness-packet-2026-05-20.md'],
         'claim': 'Validates docs/contracts-only OpenClaw redaction/output, approval-UX, command-authority, and rollback/stop boundaries before any adapter implementation.',
         'non_claim': 'Does not exercise an OpenClaw runtime, implement a carrier, or authorize live target execution.',
+    },
+    {
+        'id': 'openclaw_fixture_presenter',
+        'title': 'OpenClaw fixture presenter review',
+        'command': 'python scripts/validate_openclaw_fixture_presenter.py',
+        'paths': ['scripts/validate_openclaw_fixture_presenter.py', 'examples/openclaw-fixture-presenter/carrier_input.json', 'examples/openclaw-fixture-presenter/presenter_packet.json', 'ravenclaw/openclaw_readiness.py', 'engine/tests/test_openclaw_adapter_readiness.py', 'references/openclaw-adapter-readiness-packet-2026-05-20.md'],
+        'claim': 'Validates a public-safe OpenClaw-shaped fixture presenter packet with deterministic redaction, command-authority blocking, rollback/stop propagation, and explicit not-implemented adapter status.',
+        'non_claim': 'Does not register an OpenClaw Skill/plugin, send carrier messages, execute commands, or implement MCP/A2A.',
     },
     {
         'id': 'repo_pytest',

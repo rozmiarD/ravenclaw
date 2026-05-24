@@ -37,17 +37,23 @@ REQUIRED_REVIEWER_PATHS = (
     "scripts/bootstrap_public_demo.sh",
     "scripts/validate_public_install.py",
     "scripts/validate_clean_public_install.py",
+    "scripts/validate_package_runtime_boundary.py",
+    "scripts/validate_openclaw_fixture_presenter.py",
     "scripts/list_public_validation_surfaces.py",
     "scripts/build_public_snapshot_manifest.py",
     "scripts/run_security_contract_validation.py",
     "scripts/run_pytest_slice.py",
     "bin/demo-bundle",
+    "examples/openclaw-fixture-presenter/carrier_input.json",
+    "examples/openclaw-fixture-presenter/presenter_packet.json",
     ".github/workflows/pytest.yml",
 )
 
 REQUIRED_REVIEWER_COMMANDS = (
     "./scripts/bootstrap_public_demo.sh scenario",
     "python scripts/validate_public_install.py --dev",
+    "python scripts/validate_package_runtime_boundary.py",
+    "python scripts/validate_openclaw_fixture_presenter.py",
     "python scripts/list_public_validation_surfaces.py --format json --check",
     "python scripts/run_security_contract_validation.py --include-pytest",
     "python scripts/build_public_snapshot_manifest.py . --format reviewer-report --check",
@@ -133,6 +139,7 @@ def required_text_errors(text_by_path: Mapping[str, str]) -> list[str]:
             "public helper smoke",
             "package dry-run",
             "ravenclaw-security==0.18.0",
+            "package/runtime boundary",
         ),
         "PUBLIC_STATUS.md": (
             f"ravenclaw-security=={version}",

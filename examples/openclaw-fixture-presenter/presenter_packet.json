@@ -1,0 +1,77 @@
+{
+  "accepted_input_fields": [
+    "approved_spec_ref",
+    "evidence_review_ref",
+    "execution_truth_label",
+    "policy_decision",
+    "policy_decision_status",
+    "prepared_spec_ref",
+    "reason_code",
+    "runner_receipt_ref",
+    "runner_supervision_status",
+    "scope_ref",
+    "stop_signal",
+    "validation_receipt_ref"
+  ],
+  "adapter_status": "not_implemented",
+  "artifact_type": "openclaw_fixture_presenter_packet",
+  "authority_decision": {
+    "non_claims": [
+      "does_not_authorize_live_target_execution",
+      "does_not_turn_chat_text_into_command_authority",
+      "does_not_publish_private_operator_state",
+      "does_not_claim_live_vulnerability_discovery_from_dry_run",
+      "does_not_implement_openclaw_mcp_or_a2a_adapter"
+    ],
+    "status": "ready_for_ravenclaw_execution_engine",
+    "stop_reasons": []
+  },
+  "failed_checks": [
+    "sensitive_fields_redacted"
+  ],
+  "fixture_mode": "presenter_only",
+  "non_claims": [
+    "does_not_authorize_live_target_execution",
+    "does_not_turn_chat_text_into_command_authority",
+    "does_not_publish_private_operator_state",
+    "does_not_claim_live_vulnerability_discovery_from_dry_run",
+    "does_not_implement_openclaw_mcp_or_a2a_adapter"
+  ],
+  "public_summary": {
+    "approved_spec_ref": "approved:fixture:demo-web",
+    "evidence_review_ref": "review:fixture:demo-web",
+    "execution_truth_label": "dry_run",
+    "non_claims": [
+      "does_not_authorize_live_target_execution",
+      "does_not_turn_chat_text_into_command_authority",
+      "does_not_publish_private_operator_state",
+      "does_not_claim_live_vulnerability_discovery_from_dry_run",
+      "does_not_implement_openclaw_mcp_or_a2a_adapter"
+    ],
+    "policy_decision_status": "approved",
+    "prepared_spec_ref": "prepared:fixture:demo-web",
+    "reason_code": "fixture_review_only",
+    "runner_receipt_ref": "receipt:fixture:dry-run",
+    "scope_ref": "scope:fixture:demo-web",
+    "validation_receipt_ref": "validation:fixture:demo-web"
+  },
+  "redacted_input_fields": [
+    "raw_stdout",
+    "tokens"
+  ],
+  "schema_version": "v0.1",
+  "status": "blocked",
+  "stop_signal_decision": {
+    "failed_checks": [],
+    "non_claims": [
+      "does_not_authorize_live_target_execution",
+      "does_not_turn_chat_text_into_command_authority",
+      "does_not_publish_private_operator_state",
+      "does_not_claim_live_vulnerability_discovery_from_dry_run",
+      "does_not_implement_openclaw_mcp_or_a2a_adapter"
+    ],
+    "state": "pause_requested",
+    "status": "propagated"
+  },
+  "target_carrier": "openclaw"
+}

@@ -62,9 +62,21 @@ Ravenclaw consumes reusable package surfaces instead of carrying every contract 
 The public install validator checks that the active environment resolves that package chain, imports the expected modules, verifies the GovEngine public surface registry, and validates the published `govengine.security_profile` facade directly.
 The current published helper package checked by this layer is `ravenclaw-security==0.18.0`; the full runtime remains source/reference-owned.
 
+The package/runtime boundary is also checked directly by
+`scripts/validate_package_runtime_boundary.py`, which keeps the published
+helper package from silently becoming a full-runtime claim. OpenClaw
+fixture-presenter review is checked by
+`scripts/validate_openclaw_fixture_presenter.py`; it validates a public-safe
+carrier-shaped fixture packet while preserving `adapter_status:
+not_implemented`.
+
 Concrete entry points:
 - `scripts/validate_public_install.py`
+- `scripts/validate_package_runtime_boundary.py`
+- `scripts/validate_openclaw_fixture_presenter.py`
 - `tests/test_public_install_validation.py`
+- `tests/test_package_runtime_boundary_validation.py`
+- `tests/test_openclaw_fixture_presenter_validation.py`
 - `engine/tests/test_govengine_security_profile.py`
 
 This matters because package-boundary drift is tested directly rather than assumed from docs.

@@ -1,0 +1,20 @@
+{
+  "approved_spec_ref": "approved:fixture:demo-web",
+  "evidence_review_ref": "review:fixture:demo-web",
+  "execution_truth_label": "dry_run",
+  "policy_decision": "approved",
+  "policy_decision_status": "approved",
+  "prepared_spec_ref": "prepared:fixture:demo-web",
+  "raw_stdout": "synthetic raw stdout that must not appear in presenter output",
+  "reason_code": "fixture_review_only",
+  "runner_receipt_ref": "receipt:fixture:dry-run",
+  "runner_supervision_status": "ready",
+  "scope_ref": "scope:fixture:demo-web",
+  "stop_signal": {
+    "operator_visible": true,
+    "reason_code": "fixture_pause_review",
+    "state": "pause_requested"
+  },
+  "tokens": "synthetic-token-that-must-be-redacted",
+  "validation_receipt_ref": "validation:fixture:demo-web"
+}

@@ -42,6 +42,8 @@ Persisted runtime state truth is checked separately with:
 ```bash
 python scripts/validate_runtime_state_truth.py
 python scripts/validate_govengine_helper_boundary.py
+python scripts/validate_package_runtime_boundary.py
+python scripts/validate_openclaw_fixture_presenter.py
 ```
 
 The runtime-state validator compares the state manifest, canonical path
@@ -49,7 +51,14 @@ helpers, `STATE_FILES.md`, and the GovEngine state/control projection map. The
 GovEngine helper-boundary validator rejects new direct runtime imports of
 optional GovEngine security-profile helpers outside
 `engine/govengine_security_helpers.py`, so the host-owned narrowing point stays
-visible. Neither validator reads live targets, mutates state, or starts Logdash.
+visible. The package/runtime boundary validator checks that the published
+`ravenclaw-security` wheel remains a narrow public helper package while the
+full runtime, `engine/`, Logdash, demo, and validation workflows remain
+source/reference-owned. The OpenClaw fixture-presenter validator checks the
+committed public-safe fixture packet under
+`examples/openclaw-fixture-presenter/` without registering a carrier adapter.
+None of these validators reads live targets, mutates state, sends carrier
+messages, or starts Logdash.
 
 ## Install validation
 
@@ -96,6 +105,42 @@ is scoped to the install under validation rather than the operator machine's
 global Python environment.
 
 With the current GovEngine `0.11.0-alpha` source/package line, Ravenclaw's source dependency baseline is `govengine>=0.11.0a0,<0.12` and `sclite-core>=0.8.0a0,<0.9`. Public install validation also requires Ravenclaw's boundary-profile readiness through `engine/govengine_boundary_profile.py`. That check validates `govengine.kernel_boundary_report`, the Ravenclaw profile contract, the public surface index, and the expected non-claims around live execution and carrier-adapter ownership. Ravenclaw's focused state/control projection tests validate the GovEngine runtime-shell surface for host control actions, queue snapshots, and runtime snapshots; focused planning projection tests validate the GovEngine planning-contract surface for redacted planner/runtime task handoffs; focused admission projection tests validate the GovEngine admission-policy surface for redacted go/no-go, policy, approval, and audit records; focused runner-supervision projection tests validate approved-spec runner requests, supervision plans, leases, and receipts; focused review projection tests validate receipt-bounded evidence claims and review results; focused security-profile tests validate that Ravenclaw is documented as a security runtime/profile over GovEngine + SCLite while OpenClaw remains at readiness-packet status; focused OpenClaw readiness tests validate redaction/output, approval-UX, command-authority, and rollback/stop boundaries before any carrier implementation.
+
+## Package/runtime boundary and fixture presenter
+
+The current PyPI package line is intentionally narrow:
+`ravenclaw-security==0.18.0` packages the public helper/profile/readiness API
+under `ravenclaw/`. It is not the full source/runtime package. To mechanically
+check that package/runtime boundary, run:
+
+```bash
+python scripts/validate_package_runtime_boundary.py
+```
+
+Expected result:
+
+```text
+package_runtime_boundary_ok:ravenclaw-security==0.18.0:packages=ravenclaw
+```
+
+For the OpenClaw fixture-presenter review harness, run:
+
+```bash
+python scripts/validate_openclaw_fixture_presenter.py
+```
+
+Expected result:
+
+```text
+openclaw_fixture_presenter_ok:adapter_status=not_implemented:fixture_mode=presenter_only
+```
+
+This validates `examples/openclaw-fixture-presenter/carrier_input.json`
+against `examples/openclaw-fixture-presenter/presenter_packet.json`. The
+fixture proves deterministic redaction and command-authority boundaries against
+carrier-shaped data only. It does not implement an OpenClaw Skill/plugin, send
+messages, register tools, run commands, or make OpenClaw/MCP/A2A adapter
+claims.
 
 ## Public validation surface index
 

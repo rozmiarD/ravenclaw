@@ -1,5 +1,13 @@
 # RAVENCLAW — CHANGELOG.md
 
+## Unreleased
+
+- Added package/runtime boundary validation so the `ravenclaw-security` helper
+  package cannot silently drift into a full-runtime claim.
+- Added a public-safe OpenClaw fixture-presenter example and validator that
+  preserve redaction, command-authority, rollback/stop, and not-implemented
+  adapter boundaries.
+
 ## 0.18.0 / 2026-05-24
 
 - Published the narrow public helper package as `ravenclaw-security==0.18.0` on PyPI; the full runtime remains source/reference-owned.

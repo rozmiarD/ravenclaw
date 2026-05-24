@@ -36,8 +36,10 @@ def test_public_validation_surface_index_lists_core_surfaces() -> None:
     assert {
         'public_validation_surface_index',
         'public_install_validation',
+        'package_runtime_boundary',
         'ravenclaw_security_profile_boundary',
         'openclaw_readiness_contracts',
+        'openclaw_fixture_presenter',
         'repo_pytest',
         'github_actions_pytest_matrix',
         'current_review_bundle_demo',

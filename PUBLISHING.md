@@ -255,7 +255,9 @@ Before uploading:
 2. Run focused package tests:
 
 ```bash
-python -m pytest -q tests/test_ravenclaw_package.py engine/tests/test_ravenclaw_security_profile.py engine/tests/test_openclaw_adapter_readiness.py
+python scripts/validate_package_runtime_boundary.py
+python scripts/validate_openclaw_fixture_presenter.py
+python -m pytest -q tests/test_ravenclaw_package.py tests/test_package_runtime_boundary_validation.py tests/test_openclaw_fixture_presenter_validation.py engine/tests/test_ravenclaw_security_profile.py engine/tests/test_openclaw_adapter_readiness.py
 ```
 
 3. Run public install validation and the structural Security Contract receipt:

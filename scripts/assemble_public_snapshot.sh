@@ -38,6 +38,7 @@ prune_snapshot_noise() {
 # Core code
 copy_path engine
 copy_path logdash
+copy_path ravenclaw
 copy_path tests
 copy_path references
 copy_path schemas
@@ -96,6 +97,8 @@ cp "$ROOT/scripts/prepare_public_examples.md" "$OUT/scripts/prepare_public_examp
 copy_path scripts/audit_public_snapshot_residue.py
 copy_path scripts/validate_clean_public_install.py
 copy_path scripts/validate_public_install.py
+copy_path scripts/validate_package_runtime_boundary.py
+copy_path scripts/validate_openclaw_fixture_presenter.py
 copy_path scripts/run_security_contract_validation.py
 copy_path scripts/validate_replayable_truth_fixture.py
 copy_path scripts/validate_scope_fidelity_fixtures.py
@@ -109,6 +112,7 @@ copy_path examples/replayable-truth-runtime
 copy_path examples/scope-fidelity-report
 copy_path examples/proof-of-value-scorecard
 copy_path examples/demo-scenario
+copy_path examples/openclaw-fixture-presenter
 
 cat > "$OUT/examples/campaign_registry/example-registry-entry.md" <<'EOF'
 # Example campaign registry entry

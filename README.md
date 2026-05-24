@@ -50,6 +50,11 @@ Ravenclaw security-profile and OpenClaw readiness contract helpers. The full
 runtime, demo, Logdash, and validation surfaces remain source/reference
 repository workflows in this package line.
 
+The package/runtime boundary is mechanically checked by
+`scripts/validate_package_runtime_boundary.py`. The OpenClaw fixture-presenter
+review harness is checked by `scripts/validate_openclaw_fixture_presenter.py`
+against committed public-safe fixture data; it is not an OpenClaw adapter.
+
 ## Safe quickstart
 
 The current official public-safe path is local and dry-run oriented.

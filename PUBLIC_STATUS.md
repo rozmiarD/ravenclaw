@@ -30,6 +30,7 @@ These areas are real and important, but should still be treated as actively evol
 - Ravenclaw-owned lifecycle artifact projection into current SCLite review artifacts; GovEngine does not own host-shaped projection and SCLite no longer exposes the retired proof-trace product path as current
 - the current runtime consolidation seam through `engine/govengine_security_helpers.py`, which keeps optional GovEngine security-helper use local and reviewable while Ravenclaw keeps the security semantics
 - adapter/carrier ideas such as an OpenClaw Skill, MCP Policy Gateway, and A2A security metadata profile; these should follow stable contract proof rather than lead it. The docs/contracts-only OpenClaw boundary is mapped in `references/openclaw-adapter-contract-map.md`; future carrier gates are listed in `references/carrier-readiness-checklist.md`, and proposal packets should use `references/carrier-readiness-packet-template.md`.
+- the OpenClaw fixture-presenter example under `examples/openclaw-fixture-presenter/`, which is a review harness for redaction and command-authority boundaries, not an implemented adapter.
 
 In other words, the system is real, but not every surface should be read as frozen.
 
