@@ -7,7 +7,7 @@ ENGINE_DIR = Path(__file__).resolve().parents[1]
 if str(ENGINE_DIR) not in sys.path:
     sys.path.insert(0, str(ENGINE_DIR))
 
-from govengine import tool_registry as gov_registry
+import security_tool_registry as gov_registry
 
 
 def test_tool_registry_state_monkeypatch_compatibility(tmp_path: Path, monkeypatch) -> None:

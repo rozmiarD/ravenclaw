@@ -43,11 +43,15 @@ lifecycle artifacts; that projection is no longer a GovEngine host-shaped
 adapter and it does not reintroduce SCLite's retired proof-trace product path.
 
 Current ownership result: after containing the optional helper surface,
-Ravenclaw returned the executed policy/scope gateway to
-`engine/security_policy_gateway.py`, backed by its existing host-owned scope
-state. The published `govengine.policy.gateway` remains a compatibility
-surface for now; this result does not yet decide ownership of action/tooling
-or review-contract helpers.
+Ravenclaw returned the executed policy/scope gateway and the coupled
+action/tooling helper group to Ravenclaw-owned modules:
+`engine/security_policy_gateway.py`, `engine/security_policy_core.py`,
+`engine/security_tool_registry.py`, `engine/security_action_schema.py`,
+`engine/security_action_validators.py`, `engine/security_action_compiler.py`,
+`engine/security_capability_recipes.py`, and
+`engine/security_semantic_loss_policy.py`. The published GovEngine optional
+helpers remain compatibility surfaces for now; this result does not decide
+review-contract helper ownership.
 
 ## Already Covered By GovEngine
 
@@ -70,6 +74,7 @@ adapters and prevent drift.
 | Runtime state/control projection | `engine/govengine_state_control_projection.py`, `STATE_FILES.md`, `references/runtime-state-control-govengine-map.md` | control action, runtime snapshot, queue snapshot | Use existing GovEngine API; do not extract state storage. | low | already covered by GovEngine; maintain projection adapter |
 | Runtime task handoff fields | `engine/runtime_task_schema.py`, `engine/govengine_planning_projection.py` | task contract, activation/depth/priority hints | Use existing GovEngine API; add GovEngine fields only after a second profile needs them. | medium | already covered by GovEngine; maintain projection adapter |
 | Admission decision and blocked reason record | `engine/runtime_admission_policy.py`, `engine/runtime_execution_gate.py`, `engine/govengine_admission_projection.py` | admission result, blockers, explainability | Keep Ravenclaw policy logic; project redacted neutral decisions. | medium | already covered by GovEngine; maintain projection adapter |
+| Security action/tooling helpers | `engine/security_action_*`, `engine/security_tool_registry.py`, `engine/security_policy_core.py`, `engine/security_capability_recipes.py`, `engine/security_semantic_loss_policy.py`, `engine/security_policy_gateway.py` | security action vocabulary, tool registry, recipe lowering, action validation, semantic-loss and policy gate behavior | Keep active implementation in Ravenclaw; GovEngine optional helpers stay compatibility-only until a later package/API narrowing wave. | low | host-owned in Ravenclaw; upstream compatibility retained |
 | Runtime-owned artifact descriptor | `STATE_FILES.md`, `engine/paths.py`, `engine/runtime_persist_services.py`, `logdash/services.py` | descriptor of host-owned state artifact, retention, source, public/private status | Extract later as a contract only if Tecrax proves the same need. | medium | defer until Tecrax proves need |
 | Host gate reason-code registry | `engine/runtime_admission_policy.py`, `engine/runtime_execution_gate.py`, `engine/runtime_effective_decision.py` | portable reason-code catalog and severity mapping | Extract later only as an optional neutral registry if duplication appears across profiles. | medium | extract later as contract |
 | Replay/evaluation summary | `engine/evaluation_metrics.py`, `engine/evaluation_replay.py`, `QUALITY_SIGNALS.md` | replay result and governance-quality metrics | Wait for another domain profile; current metrics are security-shaped. | medium | defer until Tecrax proves need |
@@ -87,6 +92,7 @@ Allowed extraction statuses for this roadmap:
 - `defer until Tecrax proves need`
 - `keep implementation in Ravenclaw`
 - `keep in Ravenclaw`
+- `host-owned in Ravenclaw; upstream compatibility retained`
 
 ## Boundary Analysis
 
@@ -133,8 +139,9 @@ Immediate low-risk work:
 4. Add negative tests when adapters touch raw targets, commands, credentials,
    storage paths, carrier payloads, or live-execution flags.
 5. Keep the active security scope/policy decision in
-   `engine/security_policy_gateway.py` and reject runtime reintroduction of
-   `govengine.policy.gateway`.
+   `engine/security_policy_gateway.py`, keep the active security action/tooling
+   group in local `engine/security_*` modules, and reject runtime
+   reintroduction of the corresponding upstream optional helper modules.
 
 Medium-term work:
 
@@ -214,7 +221,9 @@ The migration burden is mostly test discipline:
 
 ## Final Recommendation
 
-Extract now: validation and documentation hardening only.
+Extract now: no new GovEngine extraction. Ravenclaw has taken host ownership of
+the active security action/tooling and policy/scope implementation while
+retaining the published GovEngine optional compatibility surface.
 
 Use existing GovEngine API now: state/control projections, planning projection,
 admission projection, runner-supervision projection, and review projection.

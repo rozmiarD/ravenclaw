@@ -8,7 +8,7 @@ if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
 import security_policy_gateway as pg
-from govengine.action_compiler import compile_action_spec
+from security_action_compiler import compile_action_spec
 from contracts import validate_action_spec  # type: ignore
 from security_policy_gateway import evaluate_action_spec
 

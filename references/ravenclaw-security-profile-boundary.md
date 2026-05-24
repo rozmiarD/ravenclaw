@@ -21,17 +21,23 @@ Ravenclaw owns:
 - host-side projection adapters into GovEngine contracts.
 - the active security policy/scope gateway in
   `engine/security_policy_gateway.py`, using Ravenclaw scope state.
+- active security action/tooling helpers in `engine/security_action_*`,
+  `engine/security_tool_registry.py`, `engine/security_policy_core.py`,
+  `engine/security_capability_recipes.py`, and
+  `engine/security_semantic_loss_policy.py`.
 
 GovEngine owns reusable governed-runtime mechanics:
 
 - kernel boundary report and public surface registry;
 - runtime shell, planning, admission, runner supervision, and evidence-review
   validators;
-- optional `govengine.security_profile` helper facade.
+- optional `govengine.security_profile` helper facade for the current published
+  compatibility line.
 
-`govengine.policy.gateway` remains part of that optional published
-compatibility facade, but Ravenclaw no longer uses it as its active runtime
-decision gateway.
+`govengine.action_*`, `govengine.tool_registry`, `govengine.policy.core`,
+`govengine.semantic_loss_policy`, and `govengine.policy.gateway` remain part of
+that optional published compatibility facade, but Ravenclaw no longer uses them
+as active runtime authority.
 
 SCLite owns:
 

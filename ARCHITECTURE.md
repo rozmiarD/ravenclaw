@@ -124,8 +124,12 @@ Runtime enforcement primitives and tool/scope/auth rules.
 Main files:
 - `engine/security_policy_gateway.py`
 - `engine/campaign_utils.py`
-- `govengine.policy.core` / `govengine.tool_registry` (contained compatibility
-  helpers pending separate ownership migration)
+- `engine/security_policy_core.py`
+- `engine/security_tool_registry.py`
+- `engine/security_action_compiler.py`
+- `engine/security_action_validators.py`
+- `engine/security_capability_recipes.py`
+- `engine/security_semantic_loss_policy.py`
 - `policy.yaml`
 - `whitelist.yaml`
 - `campaign.md`

@@ -18,6 +18,7 @@ ALLOWED_STATUSES = (
     'defer until Tecrax proves need',
     'keep implementation in Ravenclaw',
     'keep in Ravenclaw',
+    'host-owned in Ravenclaw; upstream compatibility retained',
 )
 
 REQUIRED_ADAPTER_LINES = (
@@ -34,6 +35,17 @@ REQUIRED_KEEP_TERMS = (
     'engine/auto_campaign_runner.py',
     'engine/vuln_qualification.py',
     'finding taxonomy',
+)
+
+REQUIRED_HOST_OWNED_SECURITY_HELPERS = (
+    'engine/security_action_compiler.py',
+    'engine/security_action_validators.py',
+    'engine/security_tool_registry.py',
+    'engine/security_policy_core.py',
+    'engine/security_capability_recipes.py',
+    'engine/security_semantic_loss_policy.py',
+    'engine/security_policy_gateway.py',
+    'upstream compatibility retained',
 )
 
 REQUIRED_DEFER_TERMS = (
@@ -121,6 +133,8 @@ def collect_errors() -> list[str]:
     _require(errors, text, 'Ravenclaw should maintain projection')
 
     for term in REQUIRED_KEEP_TERMS:
+        _require(errors, text, term)
+    for term in REQUIRED_HOST_OWNED_SECURITY_HELPERS:
         _require(errors, text, term)
     for term in REQUIRED_DEFER_TERMS:
         _require(errors, text, term)

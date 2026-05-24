@@ -72,3 +72,19 @@ def test_govengine_helper_boundary_rejects_reintroduced_host_owned_gateway() -> 
     assert errors == [
         'engine/govengine_security_helpers.py:reintroduced_host_owned_import:govengine.policy.gateway',
     ]
+
+
+def test_govengine_helper_boundary_rejects_reintroduced_host_owned_action_tooling() -> None:
+    validator = _load_validator()
+
+    errors = validator._wrapper_migration_errors(
+        'from govengine.action_compiler import compile_action_spec\n'
+        'from govengine.tool_registry import get_tool_catalog\n'
+        'from govengine.policy.core import get_runtime_allowed_tools\n',
+    )
+
+    assert errors == [
+        'engine/govengine_security_helpers.py:reintroduced_host_owned_import:govengine.action_compiler',
+        'engine/govengine_security_helpers.py:reintroduced_host_owned_import:govengine.tool_registry',
+        'engine/govengine_security_helpers.py:reintroduced_host_owned_import:govengine.policy.core',
+    ]

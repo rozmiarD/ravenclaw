@@ -8,14 +8,14 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 
 | Module | Upstream surface | Status | Rationale |
 | --- | --- | --- | --- |
-| `engine/action_schema.py` | `govengine.action_schema` | removed; contained consumption | Active runtime callers consume this optional helper through `engine/govengine_security_helpers.py`; focused tests may import upstream directly. |
-| `engine/action_validators.py` | `govengine.action_validators` | removed; contained consumption | Active runtime callers consume this optional helper through the checked Ravenclaw seam; focused tests may import upstream directly. |
-| `engine/action_compiler.py` | `govengine.action_compiler` | removed; contained consumption | Active runtime callers consume this optional helper through the checked Ravenclaw seam; focused tests may import upstream directly. |
-| `engine/capability_recipes.py` | `govengine.capability_recipes` | removed; contained consumption | Active runtime callers consume this optional helper through the checked Ravenclaw seam; focused tests may import upstream directly. |
-| `engine/tool_registry.py` | `govengine.tool_registry` | removed; contained consumption | Active runtime/Logdash callers consume this optional stateful helper through the checked Ravenclaw seam; ownership remains a later migration decision. |
-| `engine/semantic_loss_policy.py` | `govengine.semantic_loss_policy` | removed; contained consumption | Active runtime callers consume this optional helper through the checked Ravenclaw seam; focused tests may import upstream directly. |
-| `engine/policy_core.py` | `govengine.policy.core` | removed; contained consumption | Active runtime callers consume this optional policy helper through the checked Ravenclaw seam; ownership remains a later migration decision. |
-| `engine/security_policy_gateway.py` | `govengine.policy.gateway` | host-owned active replacement; upstream compatibility retained | Ravenclaw now owns executed security scope/policy decisions and obtains scope truth from `engine/campaign_utils.py`; remaining action/tool dependencies still pass through the checked compatibility seam. |
+| `engine/security_action_schema.py` | `govengine.action_schema` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active security action vocabulary while GovEngine keeps the published optional compatibility facade. |
+| `engine/security_action_validators.py` | `govengine.action_validators` | host-owned active replacement; upstream compatibility retained | Ravenclaw validates active security action contracts against its local capability/tool catalog. |
+| `engine/security_action_compiler.py` | `govengine.action_compiler` | host-owned active replacement; upstream compatibility retained | Ravenclaw compiles security action specs through local tool/recipe/policy semantics. |
+| `engine/security_capability_recipes.py` | `govengine.capability_recipes` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns the active security capability recipe book and profile expansion rules. |
+| `engine/security_tool_registry.py` | `govengine.tool_registry` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active tool catalog state, planner-visible profile selection, and local registry persistence. |
+| `engine/security_semantic_loss_policy.py` | `govengine.semantic_loss_policy` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active semantic-loss policy for security action lowering. |
+| `engine/security_policy_core.py` | `govengine.policy.core` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active security tool/pattern/auth policy over its whitelist and tool registry. |
+| `engine/security_policy_gateway.py` | `govengine.policy.gateway` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns executed security scope/policy decisions and obtains scope truth from `engine/campaign_utils.py`. |
 | `engine/execution_contracts.py` | `govengine.contracts.execution` | removed | Ravenclaw active callers and tests import execution contract helpers from GovEngine directly. |
 | `engine/signal_contract.py` | `govengine.contracts.signal` | removed; contained consumption | Active runtime callers consume this optional contract helper through the checked Ravenclaw seam; whether it should become neutral is not decided by this routing change. |
 | `engine/analysis_contract.py` | `govengine.contracts.analysis` | removed; contained consumption | Active runtime callers consume this optional contract helper through the checked Ravenclaw seam; whether it should become neutral is not decided by this routing change. |
@@ -52,8 +52,8 @@ import/validation failure rather than a tolerated readiness state.
 In addition, `scripts/validate_govengine_helper_boundary.py` must derive the
 optional module allowlist from GovEngine's public `security_profile_helpers`
 registry and reject active runtime/Logdash imports of any registered optional
-module outside `engine/govengine_security_helpers.py`. This containment is a
-migration checkpoint, not evidence that those helper responsibilities belong
-permanently in GovEngine. It must also reject reintroduction of
-`govengine.policy.gateway` into that seam after Ravenclaw moved the active
-security scope/policy decision to `engine/security_policy_gateway.py`.
+module outside `engine/govengine_security_helpers.py`. It must also reject
+reintroduction of host-owned action/tooling modules, `govengine.policy.core`,
+`govengine.tool_registry`, or `govengine.policy.gateway` into that seam after
+Ravenclaw moved the active security behavior to local `engine/security_*`
+modules. Review-contract helpers are still a separate decision.

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-"""Ravenclaw-owned security policy gateway over contained GovEngine helpers.
+"""Ravenclaw-owned security policy gateway over local security helpers.
 
 Scope loading and the allow/deny decision belong to the security runtime. The
-remaining action/tool helper imports are consumed through the checked
-compatibility seam until their ownership is decided separately.
+action/tool helper functions are kept behind the same compatibility import seam
+for callers, but their active implementation is Ravenclaw-owned.
 """
 
 import re

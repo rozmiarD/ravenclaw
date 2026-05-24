@@ -52,9 +52,14 @@ GovEngine helper-boundary validator obtains the optional helper module set from
 GovEngine's public `security_profile_helpers` registry and rejects direct
 runtime/Logdash imports outside `engine/govengine_security_helpers.py`, so the
 host-owned narrowing point cannot silently omit part of the upstream-declared
-surface. It also rejects reintroducing `govengine.policy.gateway` into that
-seam: the active policy/scope decision now belongs to
-`engine/security_policy_gateway.py` and uses Ravenclaw-owned scope state. The
+surface. It also rejects reintroducing host-owned action/tooling helpers,
+`govengine.policy.core`, `govengine.tool_registry`, or `govengine.policy.gateway`
+into that seam: the active action/tooling and policy/scope decisions now belong
+to Ravenclaw-local `engine/security_*` modules, including
+`engine/security_policy_gateway.py`, `engine/security_tool_registry.py`,
+`engine/security_policy_core.py`, `engine/security_capability_recipes.py`, and
+`engine/security_semantic_loss_policy.py`, and use Ravenclaw-owned scope/tool
+state. The
 package/runtime boundary validator checks that the published
 `ravenclaw-security` wheel remains a narrow public helper package while the
 full runtime, `engine/`, Logdash, demo, and validation workflows remain

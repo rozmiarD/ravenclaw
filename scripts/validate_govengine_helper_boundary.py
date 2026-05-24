@@ -16,6 +16,13 @@ WRAPPER = ENGINE / 'govengine_security_helpers.py'
 
 OPTIONAL_HELPER_MODULES = security_profile_module_names()
 HOST_OWNED_OPTIONAL_REPLACEMENTS = {
+    'govengine.action_schema': ENGINE / 'security_action_schema.py',
+    'govengine.action_validators': ENGINE / 'security_action_validators.py',
+    'govengine.action_compiler': ENGINE / 'security_action_compiler.py',
+    'govengine.capability_recipes': ENGINE / 'security_capability_recipes.py',
+    'govengine.tool_registry': ENGINE / 'security_tool_registry.py',
+    'govengine.semantic_loss_policy': ENGINE / 'security_semantic_loss_policy.py',
+    'govengine.policy.core': ENGINE / 'security_policy_core.py',
     'govengine.policy.gateway': ENGINE / 'security_policy_gateway.py',
 }
 

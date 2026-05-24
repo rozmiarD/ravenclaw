@@ -17,6 +17,10 @@
   retaining GovEngine's optional gateway only as upstream compatibility; the
   helper-boundary validator now rejects reintroduction of that upstream gate
   into the runtime seam.
+- Moved the active security action/tooling helper group to Ravenclaw-owned
+  `engine/security_*` modules while retaining GovEngine's optional
+  action/tooling and policy helpers as upstream compatibility only; focused
+  tests and helper-boundary validation now guard the split.
 
 ## 0.18.0 / 2026-05-24
 

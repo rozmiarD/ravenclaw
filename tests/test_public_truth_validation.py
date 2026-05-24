@@ -80,4 +80,22 @@ def test_public_truth_validator_rejects_upstream_gateway_as_active_architecture(
     assert errors == [
         'ARCHITECTURE.md:missing_host_owned_gateway_claim:`engine/security_policy_gateway.py`',
         'ARCHITECTURE.md:upstream_gateway_listed_as_active_main_file',
+        'ARCHITECTURE.md:missing_host_owned_action_tooling_claim:engine/security_tool_registry.py',
+        'ARCHITECTURE.md:missing_host_owned_action_tooling_claim:engine/security_policy_core.py',
+        'ARCHITECTURE.md:missing_host_owned_action_tooling_claim:engine/security_capability_recipes.py',
+        'ARCHITECTURE.md:missing_host_owned_action_tooling_claim:engine/security_semantic_loss_policy.py',
     ]
+
+
+def test_public_truth_validator_rejects_upstream_action_tooling_as_active_architecture() -> None:
+    validator = _load_validator()
+
+    errors = validator.host_owned_gateway_doc_errors({
+        'ARCHITECTURE.md': (
+            'Main files:\n'
+            '- `engine/security_policy_gateway.py`\n'
+            '- `govengine.policy.core` / `govengine.tool_registry`\n'
+        ),
+    })
+
+    assert 'ARCHITECTURE.md:upstream_action_tooling_listed_as_active_main_file' in errors

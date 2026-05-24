@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-"""Local compatibility import point for GovEngine security-profile helpers.
+"""Local compatibility import point for security-profile helper symbols.
 
-Ravenclaw still consumes several optional GovEngine helpers while security
-profile behavior is narrowed. Runtime modules import them from here so that
-future ownership moves remain visible and mechanically checkable.
+Ravenclaw owns the active security action/tooling and policy/scope behavior
+below. Remaining review-contract imports still come from GovEngine's optional
+compatibility surface until they are evaluated against neutral review APIs.
 """
 
-from govengine.action_compiler import compile_action_spec  # noqa: F401
-from govengine.action_schema import (  # noqa: F401
+from security_action_compiler import compile_action_spec  # noqa: F401
+from security_action_schema import (  # noqa: F401
     ACTION_TYPES,
     ACTION_TYPE_TO_CAPABILITY,
     ACTION_TYPE_TO_EXPERIMENT_SHAPE,
@@ -16,8 +16,8 @@ from govengine.action_schema import (  # noqa: F401
     DEFAULT_ACTION_TYPE,
     DEFAULT_CAPABILITY,
 )
-from govengine.action_validators import validate_action_contract_v2, validate_probe_recipe  # noqa: F401
-from govengine.capability_recipes import (  # noqa: F401
+from security_action_validators import validate_action_contract_v2, validate_probe_recipe  # noqa: F401
+from security_capability_recipes import (  # noqa: F401
     can_resolve_tool_from_capability,
     get_preferred_tools_for_task_family,
     list_candidate_tools_for_capability,
@@ -27,10 +27,10 @@ from govengine.capability_recipes import (  # noqa: F401
 from govengine.contracts.analysis import *  # noqa: F401,F403
 from govengine.contracts.evidence_policy import can_be_confirmed  # noqa: F401
 from govengine.contracts.signal import *  # noqa: F401,F403
-from govengine.policy.core import *  # noqa: F401,F403
-from govengine.semantic_loss_policy import semantic_loss_penalty, semantic_loss_runtime_gate  # noqa: F401
-from govengine.tool_registry import *  # noqa: F401,F403
+from security_policy_core import *  # noqa: F401,F403
+from security_semantic_loss_policy import semantic_loss_penalty, semantic_loss_runtime_gate  # noqa: F401
+from security_tool_registry import *  # noqa: F401,F403
 
 # The executed policy gateway is Ravenclaw-owned because it consumes host scope
-# state; remaining optional helper symbols above stay visible through this seam.
+# state.
 from security_policy_gateway import evaluate_action_spec  # noqa: F401,E402

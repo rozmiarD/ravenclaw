@@ -7,7 +7,7 @@ ENGINE_DIR = str(Path(__file__).resolve().parents[1])
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-from govengine.action_compiler import compile_action_spec
+from security_action_compiler import compile_action_spec
 
 
 def test_compile_action_spec_preserves_differential_probe_semantics() -> None:

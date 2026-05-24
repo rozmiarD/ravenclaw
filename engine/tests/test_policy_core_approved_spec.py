@@ -7,7 +7,7 @@ ENGINE_DIR = str(Path(__file__).resolve().parents[1])
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-from govengine.policy.core import get_approved_spec_allowed_tools, get_runtime_allowed_tools  # type: ignore
+from security_policy_core import get_approved_spec_allowed_tools, get_runtime_allowed_tools  # type: ignore
 
 
 def test_approved_spec_allowed_tools_excludes_operator_shell_tools() -> None:

@@ -365,27 +365,19 @@ Definition of done:
 - public docs do not overclaim full PyPI runtime readiness, carrier
   implementation, or live target authority.
 
-Current status: the first `0.17.x` consolidation slice routes active runtime
-imports of optional GovEngine security-profile helpers through
-`engine/govengine_security_helpers.py` and validates that boundary with
-`scripts/validate_govengine_helper_boundary.py`. Ravenclaw still owns the
-runtime semantics behind those calls; this is a narrowing point, not a new
-GovEngine extraction.
+Current status: Ravenclaw has completed the first consumer-first narrowing
+sequence for GovEngine's optional `security_profile_helpers` surface. Active
+security policy/scope decisions run through `engine/security_policy_gateway.py`,
+and active action/tooling helpers run through Ravenclaw-local
+`engine/security_action_*`, `engine/security_tool_registry.py`,
+`engine/security_policy_core.py`, `engine/security_capability_recipes.py`, and
+`engine/security_semantic_loss_policy.py` modules. The helper-boundary validator
+rejects reintroducing those upstream optional modules into Ravenclaw runtime
+authority. GovEngine keeps the published compatibility facade for the current
+dependency line; this is not a GovEngine API removal or a package release.
 
-Current containment hardening: the validator now derives its covered optional
-module set from GovEngine's public `security_profile_helpers` registry, and
-active runtime/Logdash uses of that registered surface route through the
-Ravenclaw-owned seam. This closes an observability gap; it does not yet decide
-which helper groups should later be re-owned by Ravenclaw or retained as
-GovEngine compatibility.
-
-Current ownership-narrowing slice: Ravenclaw now executes the security
-policy/scope gate in `engine/security_policy_gateway.py`, using its existing
-host-owned `engine/campaign_utils.py` scope truth. The optional upstream
-`govengine.policy.gateway` remains compatibility API for the published
-dependency line, but it is no longer the active Ravenclaw runtime decision
-path. Action/tooling and review-contract helper ownership remain separate
-follow-up decisions.
+Review-contract helper ownership remains a separate follow-up decision against
+neutral `govengine.review`.
 
 ## `0.18.x` — Package/runtime readiness checkpoint
 

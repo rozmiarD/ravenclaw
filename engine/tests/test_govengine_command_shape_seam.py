@@ -11,7 +11,7 @@ if str(ENGINE_DIR) not in sys.path:
 
 from campaign_utils import extract_host_from_url, host_in_scope  # type: ignore
 from executor import ExecutionEngine  # type: ignore
-from govengine.policy.core import contains_tool_restricted_patterns, get_approved_spec_allowed_tools, normalize_tool  # type: ignore
+from security_policy_core import contains_tool_restricted_patterns, get_approved_spec_allowed_tools, normalize_tool  # type: ignore
 from govengine.execution.command_shape import (
     arg_target_observations,
     enforce_scope,
