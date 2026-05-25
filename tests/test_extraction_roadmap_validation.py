@@ -28,7 +28,7 @@ def test_extraction_roadmap_validator_passes() -> None:
         check=True,
     )
 
-    assert proc.stdout.strip() == 'extraction_roadmap_ok:ravenclaw-security==0.18.0'
+    assert proc.stdout.strip() == 'extraction_roadmap_ok:ravenclaw-security==0.18.1'
 
 
 def test_extraction_roadmap_rejects_unknown_status() -> None:

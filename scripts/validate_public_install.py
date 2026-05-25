@@ -22,7 +22,7 @@ if str(ENGINE_DIR) not in sys.path:
 REQUIRED_RUNTIME = [
     ('PyYAML', 'yaml', 'PyYAML>=6,<7'),
     ('sclite-core', 'sclite', 'sclite-core>=0.8.0a0,<0.9'),
-    ('govengine', 'govengine', 'govengine>=0.11.0a0,<0.13'),
+    ('govengine', 'govengine', 'govengine>=0.12.0a0,<0.13'),
 ]
 
 REQUIRED_DEV = [
@@ -78,7 +78,7 @@ def check_govengine_surface_registry() -> dict[str, Any]:
         'runtime_contract_proofs',
         'controlled_execution_core',
     ]
-    tolerated_legacy_optional = ['security_profile_helpers']
+    retired_surfaces = ['security_profile_helpers']
     try:
         from govengine import public_surface_index  # type: ignore
     except Exception as exc:  # pragma: no cover - defensive diagnostic path
@@ -95,11 +95,8 @@ def check_govengine_surface_registry() -> dict[str, Any]:
         optional = {str(surface.name): bool(surface.optional_profile) for surface in surfaces}
         missing_required = [name for name in required if name not in actual]
         required_optional = [name for name in required if optional.get(name)]
-        tolerated_present = [
-            name for name in tolerated_legacy_optional
-            if name in actual and optional.get(name) is True
-        ]
-        passed = not missing_required and not required_optional
+        retired_present = [name for name in retired_surfaces if name in actual]
+        passed = not missing_required and not required_optional and not retired_present
         return {
             'status': 'passed' if passed else 'failed',
             'required': required,
@@ -107,8 +104,8 @@ def check_govengine_surface_registry() -> dict[str, Any]:
             'optional_profile': optional,
             'missing_required': missing_required,
             'required_optional': required_optional,
-            'tolerated_legacy_optional': tolerated_present,
-            'error': None if passed else 'GovEngine neutral public surface registry missing required surfaces',
+            'retired_surfaces_present': retired_present,
+            'error': None if passed else 'GovEngine neutral public surface registry mismatch',
         }
     except Exception as exc:  # pragma: no cover - defensive diagnostic path
         return {

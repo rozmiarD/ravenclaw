@@ -24,7 +24,7 @@ discovery.
 
 Ready today:
 
-- Ravenclaw public `main` consumes the transitional range `govengine>=0.11.0a0,<0.13` and
+- Ravenclaw public `main` consumes the package range `govengine>=0.12.0a0,<0.13` and
   `sclite-core>=0.8.0a0,<0.9`;
 - GovEngine surfaces validated by Ravenclaw include runtime shell, planning,
   admission, runner supervision, evidence review, the Domain Profile SDK, and

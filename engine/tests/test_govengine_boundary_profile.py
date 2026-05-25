@@ -39,7 +39,6 @@ def _report() -> dict:
             {'name': 'domain_profile_sdk'},
             {'name': 'runtime_contract_proofs'},
             {'name': 'controlled_execution_core'},
-            {'name': 'security_profile_helpers'},
         ],
     }
 
@@ -51,7 +50,7 @@ def test_boundary_report_evaluation_accepts_govengine_report_shape() -> None:
     assert status['profile_names'] == ['ravenclaw']
     assert status['required_surface_names'] == list(boundary_profile.EXPECTED_SURFACES)
     assert 'security_profile_helpers' not in status['required_surface_names']
-    assert status['tolerated_legacy_optional_surfaces'] == ['security_profile_helpers']
+    assert status['retired_optional_surfaces_present'] == []
     assert status['failed_checks'] == []
     assert json.loads(json.dumps(status)) == status
 
@@ -75,4 +74,16 @@ def test_published_govengine_boundary_report_is_required() -> None:
     assert status['profile_names'] == ['ravenclaw']
     assert status['required_surface_names'] == list(boundary_profile.EXPECTED_SURFACES)
     assert 'security_profile_helpers' not in status['required_surface_names']
+    assert status['retired_optional_surfaces_present'] == []
     assert status['failed_checks'] == []
+
+
+def test_boundary_report_evaluation_rejects_retired_security_surface() -> None:
+    report = _report()
+    report['surfaces'].append({'name': 'security_profile_helpers'})
+
+    status = boundary_profile.evaluate_boundary_report(report, source='fixture')
+
+    assert status['status'] == 'failed'
+    assert status['retired_optional_surfaces_present'] == ['security_profile_helpers']
+    assert status['failed_checks'] == ['retired_surfaces_absent']

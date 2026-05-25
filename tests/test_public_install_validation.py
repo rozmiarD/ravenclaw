@@ -38,7 +38,7 @@ def test_public_install_validation_runtime_json() -> None:
     assert 'security_profile_helpers' not in data['govengine_surface_registry']['required']
     assert data['govengine_surface_registry']['missing_required'] == []
     assert data['govengine_surface_registry']['required_optional'] == []
-    assert data['govengine_surface_registry']['tolerated_legacy_optional'] in ([], ['security_profile_helpers'])
+    assert data['govengine_surface_registry']['retired_surfaces_present'] == []
     assert 'govengine_security_profile' not in data
     assert data['govengine_boundary_profile']['status'] == 'passed'
     assert data['govengine_boundary_profile']['available'] is True

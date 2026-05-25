@@ -17,7 +17,7 @@ EXPECTED_SURFACES = (
     'controlled_execution_core',
 )
 
-TOLERATED_LEGACY_OPTIONAL_SURFACES = (
+RETIRED_OPTIONAL_SURFACES = (
     'security_profile_helpers',
 )
 
@@ -40,12 +40,13 @@ def evaluate_boundary_report(report: Mapping[str, Any], *, source: str) -> dict[
     surface_names = [str(surface.get('name')) for surface in surfaces if isinstance(surface, Mapping)]
     forbidden = [str(item) for item in boundary.get('forbidden_profile_ownership', [])] if isinstance(boundary, Mapping) else []
 
-    tolerated_legacy = [name for name in surface_names if name in TOLERATED_LEGACY_OPTIONAL_SURFACES]
+    retired_present = [name for name in surface_names if name in RETIRED_OPTIONAL_SURFACES]
     checks = {
         'artifact_type': report.get('artifact_type') == 'govengine_boundary_report',
         'ravenclaw_profile_present': 'ravenclaw' in profile_names,
         'required_surfaces_present': all(name in surface_names for name in EXPECTED_SURFACES),
-        'required_surfaces_are_neutral': all(name not in TOLERATED_LEGACY_OPTIONAL_SURFACES for name in EXPECTED_SURFACES),
+        'required_surfaces_are_neutral': all(name not in RETIRED_OPTIONAL_SURFACES for name in EXPECTED_SURFACES),
+        'retired_surfaces_absent': not retired_present,
         'live_execution_forbidden': 'live_execution_authority' in forbidden,
         'carrier_adapter_forbidden': 'carrier_adapter_ownership' in forbidden,
     }
@@ -56,7 +57,7 @@ def evaluate_boundary_report(report: Mapping[str, Any], *, source: str) -> dict[
         'profile_names': profile_names,
         'surface_names': surface_names,
         'required_surface_names': list(EXPECTED_SURFACES),
-        'tolerated_legacy_optional_surfaces': tolerated_legacy,
+        'retired_optional_surfaces_present': retired_present,
         'checks': checks,
         'failed_checks': failed,
         'summary': report.get('summary') if isinstance(report.get('summary'), Mapping) else {},

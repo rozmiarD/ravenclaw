@@ -124,7 +124,7 @@ def run_demo_scenario(*, output_dir: str = 'demo-output/demo-scenario') -> Dict[
         'govengine': {
             'boundary_source': boundary_status['source'],
             'required_surfaces': boundary_status['required_surface_names'],
-            'tolerated_legacy_optional_surfaces': boundary_status['tolerated_legacy_optional_surfaces'],
+            'retired_optional_surfaces_present': boundary_status['retired_optional_surfaces_present'],
         },
         'ravenclaw_security_profile': {
             'profile': security_profile_status['profile_name'],

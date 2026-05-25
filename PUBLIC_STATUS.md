@@ -26,11 +26,11 @@ These areas are real and important, but should still be treated as actively evol
 - some planner-to-runtime semantics that have recently been hardened but are still being refined
 - public onboarding, quickstart, and demo ergonomics
 - public proof presentation and trust documentation, including demo signing/trust-port evidence, even though the underlying validation surfaces are now more explicit
-- the current published public helper package, `ravenclaw-security==0.18.0`, which packages narrow public profile/readiness APIs while the full runtime remains a source/reference workflow
+- the current published public helper package, `ravenclaw-security==0.18.1`, which packages narrow public profile/readiness APIs while the full runtime remains a source/reference workflow
 - Ravenclaw-owned lifecycle artifact projection into current SCLite review artifacts; GovEngine does not own host-shaped projection and SCLite no longer exposes the retired proof-trace product path as current
 - the current security helper ownership line: Ravenclaw executes security policy/scope decisions through `engine/security_policy_gateway.py` and owns active action/tooling helpers through local `engine/security_action_*`, `engine/security_tool_registry.py`, `engine/security_policy_core.py`, `engine/security_capability_recipes.py`, and `engine/security_semantic_loss_policy.py` modules
 - Ravenclaw owns active security signal, analysis, and confirmation-policy behavior through `engine/security_signal_contract.py`, `engine/security_analysis_contract.py`, and `engine/security_evidence_policy.py`; the separate `engine/govengine_review_projection.py` consumes neutral receipt-bounded `govengine.review` contracts
-- GovEngine's retired `security_profile_helpers` modules may still be visible only when resolving the published `0.11.0a0` compatibility baseline; the local `0.12.0a0` candidate removes them, and neither line makes them Ravenclaw runtime authority
+- Ravenclaw depends on the published neutral-only GovEngine `0.12.0a0` line; retired `security_profile_helpers` modules are no longer part of the required upstream package surface, and Ravenclaw owns the active security runtime authority locally
 - adapter/carrier ideas such as an OpenClaw Skill, MCP Policy Gateway, and A2A security metadata profile; these should follow stable contract proof rather than lead it. The docs/contracts-only OpenClaw boundary is mapped in `references/openclaw-adapter-contract-map.md`; future carrier gates are listed in `references/carrier-readiness-checklist.md`, and proposal packets should use `references/carrier-readiness-packet-template.md`.
 - the OpenClaw fixture-presenter example under `examples/openclaw-fixture-presenter/`, which is a review harness for redaction and command-authority boundaries, not an implemented adapter.
 
@@ -52,8 +52,8 @@ Public readers should evaluate Ravenclaw from the intentionally published surfac
 
 Ravenclaw does **not** currently promise:
 - an easy consumer install experience
-- a complete PyPI-published Ravenclaw runtime runner; `ravenclaw-security==0.18.0` is a narrow public profile/readiness package published on PyPI, while the full runtime remains source/reference
-- a fully stable package/distribution shape beyond the documented `0.18.0` helper APIs
+- a complete PyPI-published Ravenclaw runtime runner; `ravenclaw-security==0.18.1` is a narrow public profile/readiness package published on PyPI, while the full runtime remains source/reference
+- a fully stable package/distribution shape beyond the documented `0.18.1` helper APIs
 - that every internal subsystem is final
 - that the public checkout equals the operator's full live environment
 - that public docs already cover every advanced runtime seam equally well

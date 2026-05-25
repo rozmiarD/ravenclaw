@@ -64,7 +64,7 @@ python scripts/validate_package_runtime_boundary.py
 Expected result:
 
 ```text
-package_runtime_boundary_ok:ravenclaw-security==0.18.0:packages=ravenclaw
+package_runtime_boundary_ok:ravenclaw-security==0.18.1:packages=ravenclaw
 ```
 
 OpenClaw fixture-presenter checkpoint:

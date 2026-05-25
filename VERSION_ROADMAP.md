@@ -4,14 +4,14 @@
 
 This file defines Ravenclaw's version roadmap after the GovEngine/SCLite package-chain stabilization.
 
-Current published public helper package version: `0.18.0`.
+Current published public helper package version: `0.18.1`.
 Current dependency baseline:
 
 ```text
-Ravenclaw -> govengine>=0.11.0a0,<0.13 -> sclite-core>=0.8.0a0,<0.9
+Ravenclaw -> govengine>=0.12.0a0,<0.13 -> sclite-core>=0.8.0a0,<0.9
 ```
 
-Use this as a milestone map, not as a promise that every milestone will become a full PyPI/runtime release. The current published public helper package is `ravenclaw-security==0.18.0`, carrying public profile/readiness helpers under the `ravenclaw` import package; Ravenclaw remains a source/reference security runtime until install, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
+Use this as a milestone map, not as a promise that every milestone will become a full PyPI/runtime release. The current published public helper package is `ravenclaw-security==0.18.1`, carrying public profile/readiness helpers under the `ravenclaw` import package; Ravenclaw remains a source/reference security runtime until install, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
 
 ## Architecture direction
 
@@ -145,7 +145,7 @@ Intent:
 
 Current baseline:
 
-- Ravenclaw consumes `govengine>=0.11.0a0,<0.13` and `sclite-core>=0.8.0a0,<0.9`;
+- Ravenclaw consumes `govengine>=0.12.0a0,<0.13` and `sclite-core>=0.8.0a0,<0.9`;
 - public install validation and Security Contract validation pass;
 - GovEngine/SCLite ticket and receipt-bounded-evidence surfaces are integrated into the public proof chain.
 - GovEngine 0.11 alpha kernel/profile boundary, runtime-shell, planning-contract, admission-policy, runner-supervision, evidence-review, Domain Profile SDK, and runtime contract proof validation is required by public install validation and focused projection tests.
@@ -342,8 +342,8 @@ Planned work:
 - keep projection adapters where Ravenclaw owns host semantics, and remove
   wrapper layers that only duplicate direct GovEngine/SCLite package surfaces;
 - keep security-profile meaning, demo narration, and readiness UX
-  Ravenclaw-owned; tolerate GovEngine `security_profile_helpers` only as a
-  published legacy compatibility surface when present;
+  Ravenclaw-owned; reject GovEngine `security_profile_helpers` as a retired
+  upstream surface in the current package line;
 - keep Logdash state/control truth aligned with persisted runtime-state docs and
   machine checks;
 - keep public helper-package claims narrow while source/runtime install and
@@ -384,10 +384,9 @@ and `engine/security_evidence_policy.py`, while
 `engine/govengine_review_projection.py` retains the separate neutral
 `govengine.review` projection. The helper-boundary validator rejects
 reintroducing those upstream optional modules into Ravenclaw runtime authority.
-Published GovEngine `0.11.0a0` may still expose that tolerated compatibility
-facade, while the locally validated `0.12.0a0` candidate removes it. Ravenclaw
-treats neither as active runtime authority; moving the minimum dependency to
-`0.12.0a0` remains a later publication-sync release.
+Published GovEngine `0.12.0a0` removes that compatibility facade. Ravenclaw
+now requires the neutral-only 0.12 line and keeps security helper authority
+host-owned.
 
 ## `0.18.x` — Package/runtime readiness checkpoint
 

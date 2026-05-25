@@ -199,7 +199,7 @@ def collect_errors() -> list[str]:
 
     _require(errors, 'README.md', readme, f'Source: Ravenclaw {version}')
     _require(errors, 'README.md', readme, f'ravenclaw-security=={version}')
-    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.11.0-alpha')
+    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.12.0-alpha')
     _require(errors, 'README.md', readme, 'Dependency: SCLite >=0.8.0a0')
     _require(errors, 'INSTALL.md', _read('INSTALL.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'narrow public profile/readiness package')
@@ -207,7 +207,7 @@ def collect_errors() -> list[str]:
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'full runtime remains source/reference')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw_security-{version}-py3-none-any.whl')
-    _require(errors, 'VALIDATION.md', validation, 'neutral-only `0.12.0a0` candidate')
+    _require(errors, 'VALIDATION.md', validation, 'published neutral-only GovEngine `0.12.0a0` package')
     _require(
         errors,
         'references/ravenclaw-security-profile-boundary.md',
@@ -240,7 +240,7 @@ def collect_errors() -> list[str]:
         'references/ravenclaw-security-profile-boundary.md': _read('references/ravenclaw-security-profile-boundary.md'),
     }))
     _require(errors, 'VALIDATION.md', validation, 'canonical `review_bundle/`')
-    _require(errors, 'VALIDATION.md', validation, 'tolerated legacy optional surface')
+    _require(errors, 'VALIDATION.md', validation, 'rejects the retired `security_profile_helpers` upstream surface')
     _require(errors, 'engine/security_contract_layer.py', security_contract, 'def build_current_lifecycle_artifacts(')
     _require(errors, 'engine/sclite_lifecycle_projection.py', lifecycle_projection, 'def build_current_lifecycle_artifacts(')
     _require(errors, 'engine/public_demo_bundle.py', public_demo, 'materialize_review_bundle')

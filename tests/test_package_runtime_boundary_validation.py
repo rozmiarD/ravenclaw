@@ -28,7 +28,7 @@ def test_package_runtime_boundary_validator_passes() -> None:
         check=True,
     )
 
-    assert proc.stdout.strip() == 'package_runtime_boundary_ok:ravenclaw-security==0.18.0:packages=ravenclaw'
+    assert proc.stdout.strip() == 'package_runtime_boundary_ok:ravenclaw-security==0.18.1:packages=ravenclaw'
 
 
 def test_package_runtime_boundary_rejects_runtime_package_inclusion() -> None:
@@ -51,14 +51,14 @@ def test_package_runtime_boundary_rejects_full_runtime_overclaim() -> None:
     errors = validator.document_errors(
         {
             'README.md': (
-                'The current published public helper package is `ravenclaw-security==0.18.0`.\n'
+                'The current published public helper package is `ravenclaw-security==0.18.1`.\n'
                 'ravenclaw-security includes the full runtime.\n'
-                'govengine>=0.11.0a0,<0.13\n'
+                'govengine>=0.12.0a0,<0.13\n'
                 'sclite-core>=0.8.0a0,<0.9\n'
             )
         },
-        '0.18.0',
-        'govengine>=0.11.0a0,<0.13',
+        '0.18.1',
+        'govengine>=0.12.0a0,<0.13',
         'sclite-core>=0.8.0a0,<0.9',
     )
 
