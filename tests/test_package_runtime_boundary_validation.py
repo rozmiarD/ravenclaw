@@ -53,12 +53,12 @@ def test_package_runtime_boundary_rejects_full_runtime_overclaim() -> None:
             'README.md': (
                 'The current published public helper package is `ravenclaw-security==0.18.0`.\n'
                 'ravenclaw-security includes the full runtime.\n'
-                'govengine>=0.11.0a0,<0.12\n'
+                'govengine>=0.11.0a0,<0.13\n'
                 'sclite-core>=0.8.0a0,<0.9\n'
             )
         },
         '0.18.0',
-        'govengine>=0.11.0a0,<0.12',
+        'govengine>=0.11.0a0,<0.13',
         'sclite-core>=0.8.0a0,<0.9',
     )
 

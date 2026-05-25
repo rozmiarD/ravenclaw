@@ -41,7 +41,7 @@ Its core design claim is narrower:
 In short, Ravenclaw optimizes for useful actions that stay within policy, scope, and review boundaries.
 
 Ravenclaw now consumes **GovEngine** for reusable governed-runtime kernel mechanics and **SCLite** for contract lifecycle artifacts.
-The current source dependency baseline is `govengine>=0.11.0a0,<0.12` and `sclite-core>=0.8.0a0,<0.9`.
+The current transitional source dependency baseline is `govengine>=0.11.0a0,<0.13` and `sclite-core>=0.8.0a0,<0.9`: it accepts the published GovEngine `0.11.0a0` line and the locally validated neutral-only `0.12.0a0` candidate without making a publication claim.
 
 The current reusable direction is a small **Security Contract Layer** backed by Ravenclaw Runtime artifacts: intent and scope binding, policy decisions, execution contracts, scoped execution tickets, execution receipts, evidence contracts, review bundles, and runtime truth. Ravenclaw owns the host-side lifecycle projection; SCLite owns lifecycle/review integrity and GovEngine owns neutral governed-runtime contracts. OpenClaw, MCP, and A2A are potential later carriers for these contracts, not new protocols Ravenclaw is trying to own.
 

@@ -28,7 +28,7 @@ def test_public_truth_validator_passes() -> None:
         check=True,
     )
 
-    assert proc.stdout.strip().startswith('public_truth_ok:ravenclaw-security==0.18.0:govengine>=0.11.0a0,<0.12:')
+    assert proc.stdout.strip().startswith('public_truth_ok:ravenclaw-security==0.18.0:govengine>=0.11.0a0,<0.13:')
 
 
 def test_public_truth_validator_negative_case_catches_stale_current_govengine_dependency() -> None:
@@ -36,7 +36,7 @@ def test_public_truth_validator_negative_case_catches_stale_current_govengine_de
 
     errors = validator.stale_current_dependency_errors(
         {'README.md': 'Current dependency baseline: Ravenclaw -> govengine>=0.7.0,<0.8'},
-        'govengine>=0.11.0a0,<0.12',
+        'govengine>=0.11.0a0,<0.13',
     )
 
     assert errors == [

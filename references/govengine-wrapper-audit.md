@@ -1,6 +1,6 @@
 # GovEngine Wrapper Audit
 
-Ravenclaw consumes GovEngine as the package `govengine>=0.11.0a0,<0.12` alongside `sclite-core>=0.8.0a0,<0.9`.
+Ravenclaw consumes GovEngine through the transitional range `govengine>=0.11.0a0,<0.13` alongside `sclite-core>=0.8.0a0,<0.9`. Published `0.11.0a0` may expose old compatibility residue; the validated `0.12.0a0` candidate removes it.
 This file records which `engine/` modules are compatibility wrappers over
 GovEngine and which host-side seams remain Ravenclaw-owned.
 
@@ -8,18 +8,18 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 
 | Module | Upstream surface | Status | Rationale |
 | --- | --- | --- | --- |
-| `engine/security_action_schema.py` | `govengine.action_schema` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active security action vocabulary while GovEngine keeps the published optional compatibility facade. |
-| `engine/security_action_validators.py` | `govengine.action_validators` | host-owned active replacement; upstream compatibility retained | Ravenclaw validates active security action contracts against its local capability/tool catalog. |
-| `engine/security_action_compiler.py` | `govengine.action_compiler` | host-owned active replacement; upstream compatibility retained | Ravenclaw compiles security action specs through local tool/recipe/policy semantics. |
-| `engine/security_capability_recipes.py` | `govengine.capability_recipes` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns the active security capability recipe book and profile expansion rules. |
-| `engine/security_tool_registry.py` | `govengine.tool_registry` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active tool catalog state, planner-visible profile selection, and local registry persistence. |
-| `engine/security_semantic_loss_policy.py` | `govengine.semantic_loss_policy` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active semantic-loss policy for security action lowering. |
-| `engine/security_policy_core.py` | `govengine.policy.core` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active security tool/pattern/auth policy over its whitelist and tool registry. |
-| `engine/security_policy_gateway.py` | `govengine.policy.gateway` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns executed security scope/policy decisions and obtains scope truth from `engine/campaign_utils.py`. |
+| `engine/security_action_schema.py` | `govengine.action_schema` | host-owned active replacement; retired in 0.12 candidate | Ravenclaw owns active security action vocabulary; the GovEngine candidate removes the upstream optional copy. |
+| `engine/security_action_validators.py` | `govengine.action_validators` | host-owned active replacement; retired in 0.12 candidate | Ravenclaw validates active security action contracts against its local capability/tool catalog. |
+| `engine/security_action_compiler.py` | `govengine.action_compiler` | host-owned active replacement; retired in 0.12 candidate | Ravenclaw compiles security action specs through local tool/recipe/policy semantics. |
+| `engine/security_capability_recipes.py` | `govengine.capability_recipes` | host-owned active replacement; retired in 0.12 candidate | Ravenclaw owns the active security capability recipe book and profile expansion rules. |
+| `engine/security_tool_registry.py` | `govengine.tool_registry` | host-owned active replacement; retired in 0.12 candidate | Ravenclaw owns active tool catalog state, planner-visible profile selection, and local registry persistence. |
+| `engine/security_semantic_loss_policy.py` | `govengine.semantic_loss_policy` | host-owned active replacement; retired in 0.12 candidate | Ravenclaw owns active semantic-loss policy for security action lowering. |
+| `engine/security_policy_core.py` | `govengine.policy.core` | host-owned active replacement; retired in 0.12 candidate | Ravenclaw owns active security tool/pattern/auth policy over its whitelist and tool registry. |
+| `engine/security_policy_gateway.py` | `govengine.policy.gateway` | host-owned active replacement; retired in 0.12 candidate | Ravenclaw owns executed security scope/policy decisions and obtains scope truth from `engine/campaign_utils.py`. |
 | `engine/execution_contracts.py` | `govengine.contracts.execution` | removed | Ravenclaw active callers and tests import execution contract helpers from GovEngine directly. |
-| `engine/security_signal_contract.py` | `govengine.contracts.signal` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active finding/workflow/adaptation signal semantics; these are not neutral receipt-bounded review. |
-| `engine/security_analysis_contract.py` | `govengine.contracts.analysis` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns active security action/success/semantic-loss analysis interpretation. |
-| `engine/security_evidence_policy.py` | `govengine.contracts.evidence_policy` | host-owned active replacement; upstream compatibility retained | Ravenclaw owns confirmation policy over false-positive guards, control comparison, and reproduction evidence. |
+| `engine/security_signal_contract.py` | `govengine.contracts.signal` | host-owned active replacement; retired in 0.12 candidate | Ravenclaw owns active finding/workflow/adaptation signal semantics; these are not neutral receipt-bounded review. |
+| `engine/security_analysis_contract.py` | `govengine.contracts.analysis` | host-owned active replacement; retired in 0.12 candidate | Ravenclaw owns active security action/success/semantic-loss analysis interpretation. |
+| `engine/security_evidence_policy.py` | `govengine.contracts.evidence_policy` | host-owned active replacement; retired in 0.12 candidate | Ravenclaw owns confirmation policy over false-positive guards, control comparison, and reproduction evidence. |
 | `engine/scl_ravenclaw_adapter.py` | `govengine.sclite_adapter` | removed | Ravenclaw uses `engine/security_contract_layer.py` as the host-owned current lifecycle projection over GovEngine/SCLite primitives; active runtime and demo callers do not publish directly through the neutral-kernel dependency. |
 | `engine/govengine_boundary_profile.py` | `govengine.kernel_boundary_report` | keep required host check; no unavailable fallback | Ravenclaw validates the GovEngine boundary report and profile non-claims during public install validation. |
 | `engine/govengine_state_control_projection.py` | `govengine.runtime_shell` | keep host adapter | Ravenclaw owns projection from Logdash/runtime state into GovEngine `GovControlAction`, `GovQueueSnapshot`, and `GovRuntimeSnapshot` shapes while keeping UI, storage, process control, and campaign semantics host-owned. |

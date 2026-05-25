@@ -207,7 +207,7 @@ def collect_errors() -> list[str]:
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'full runtime remains source/reference')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw_security-{version}-py3-none-any.whl')
-    _require(errors, 'VALIDATION.md', validation, 'GovEngine `0.11.0-alpha`')
+    _require(errors, 'VALIDATION.md', validation, 'neutral-only `0.12.0a0` candidate')
     _require(
         errors,
         'references/ravenclaw-security-profile-boundary.md',

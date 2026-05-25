@@ -85,7 +85,7 @@ def test_reviewer_path_validator_catches_missing_required_command() -> None:
         "VALIDATION.md": "For a shorter reviewer-oriented path, see `REVIEWER_VALIDATION_GUIDE.md`.",
         "QUALITY_SIGNALS.md": ".github/workflows/pytest.yml matrixed pytest slices public truth validation public helper smoke package dry-run ravenclaw-security==0.18.0",
         "PUBLIC_STATUS.md": "ravenclaw-security==0.18.0 narrow public profile/readiness package full runtime remains source/reference",
-        "README.md": "ravenclaw-security==0.18.0 govengine>=0.11.0a0,<0.12 sclite-core>=0.8.0a0,<0.9",
+        "README.md": "ravenclaw-security==0.18.0 govengine>=0.11.0a0,<0.13 sclite-core>=0.8.0a0,<0.9",
     })
 
     assert any(

@@ -20,7 +20,7 @@ Required:
 Runtime Python dependencies:
 - `PyYAML>=6,<7`
 - `sclite-core>=0.8.0a0,<0.9` (PyPI distribution; Python import package `sclite`)
-- `govengine>=0.11.0a0,<0.12`
+- `govengine>=0.11.0a0,<0.13` (transitional range accepting published `0.11.0a0` and the validated local `0.12.0a0` candidate)
 
 Dev/test dependencies:
 - `pytest>=8,<9` for tests and `--include-pytest` validation receipts
@@ -97,7 +97,7 @@ If editable install is not suitable in your environment, install the same explic
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install PyYAML "sclite-core>=0.8.0a0,<0.9" "govengine>=0.11.0a0,<0.12"
+pip install PyYAML "sclite-core>=0.8.0a0,<0.9" "govengine>=0.11.0a0,<0.13"
 python scripts/validate_public_install.py
 ```
 
@@ -105,7 +105,7 @@ For the equivalent explicit dev/test dependency set:
 
 ```bash
 pip install PyYAML "Flask>=3,<4" "pytest>=8,<9" \
-  "sclite-core>=0.8.0a0,<0.9" "govengine>=0.11.0a0,<0.12"
+  "sclite-core>=0.8.0a0,<0.9" "govengine>=0.11.0a0,<0.13"
 python scripts/validate_public_install.py --dev
 ```
 

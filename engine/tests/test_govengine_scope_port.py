@@ -12,7 +12,7 @@ if str(ENGINE_DIR) not in sys.path:
 from campaign_utils import extract_host_from_url, host_in_scope  # type: ignore
 from executor import ExecutionEngine  # type: ignore
 from govengine.execution.command_shape import enforce_scope, extract_hosts_from_text
-from govengine.scope import FunctionalScopePort, GovScopePort
+from govengine.scope_ports import FunctionalScopePort, GovScopePort
 from security_policy_core import normalize_tool  # type: ignore
 
 

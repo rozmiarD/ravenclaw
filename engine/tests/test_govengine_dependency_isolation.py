@@ -21,20 +21,15 @@ def _govengine_source_dir() -> Path:
 STANDALONE_MODULES = [
     'govengine',
     'govengine.context',
-    'govengine.scope',
+    'govengine.scope_ports',
     'govengine.state_store',
-    'govengine.action_schema',
-    'govengine.action_validators',
-    'govengine.semantic_loss_policy',
-    'govengine.capability_recipes',
-    'govengine.action_compiler',
-    'govengine.tool_registry',
-    'govengine.contracts.analysis',
-    'govengine.contracts.evidence_policy',
     'govengine.contracts.execution',
-    'govengine.contracts.signal',
-    'govengine.policy.core',
-    'govengine.policy.gateway',
+    'govengine.profiles',
+    'govengine.contract_proofs',
+    'govengine.review',
+    'govengine.planning',
+    'govengine.admission',
+    'govengine.runtime_shell',
     'govengine.execution.approved_spec',
     'govengine.execution.command_shape',
     'govengine.execution.runner',
@@ -91,3 +86,28 @@ def test_retired_ravenclaw_action_compat_modules_are_absent() -> None:
             assert exc.name == module_name
         else:  # pragma: no cover
             raise AssertionError(f'{module_name} compatibility alias should be retired')
+
+
+def test_retired_govengine_security_modules_are_not_required() -> None:
+    retired_modules = (
+        'govengine.security_profile',
+        'govengine.scope',
+        'govengine.action_schema',
+        'govengine.action_validators',
+        'govengine.action_compiler',
+        'govengine.capability_recipes',
+        'govengine.tool_registry',
+        'govengine.semantic_loss_policy',
+        'govengine.policy.core',
+        'govengine.policy.gateway',
+        'govengine.contracts.signal',
+        'govengine.contracts.analysis',
+        'govengine.contracts.evidence_policy',
+    )
+    for module_name in retired_modules:
+        try:
+            __import__(module_name)
+        except ModuleNotFoundError:
+            continue
+        else:  # GovEngine 0.11 still exposes tolerated compatibility residue.
+            assert module_name not in STANDALONE_MODULES

@@ -25,7 +25,7 @@ classifiers = [
 dependencies = [
   "PyYAML>=6,<7",
   "sclite-core>=0.8.0a0,<0.9",
-  "govengine>=0.11.0a0,<0.12",
+  "govengine>=0.11.0a0,<0.13",
 ]
 
 [project.urls]

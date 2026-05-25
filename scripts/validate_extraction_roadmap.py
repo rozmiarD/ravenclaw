@@ -18,7 +18,7 @@ ALLOWED_STATUSES = (
     'defer until Tecrax proves need',
     'keep implementation in Ravenclaw',
     'keep in Ravenclaw',
-    'host-owned in Ravenclaw; upstream compatibility retained',
+    'host-owned in Ravenclaw; removed in GovEngine 0.12 candidate',
 )
 
 REQUIRED_ADAPTER_LINES = (
@@ -48,7 +48,7 @@ REQUIRED_HOST_OWNED_SECURITY_HELPERS = (
     'engine/security_signal_contract.py',
     'engine/security_analysis_contract.py',
     'engine/security_evidence_policy.py',
-    'upstream compatibility retained',
+    'removed in GovEngine 0.12 candidate',
 )
 
 REQUIRED_DEFER_TERMS = (

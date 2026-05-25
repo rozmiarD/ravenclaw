@@ -5,7 +5,11 @@
 - Decoupled Ravenclaw public validation, demo summaries, and security-profile
   truth from the retired optional `govengine.security_profile` facade; the
   published `security_profile_helpers` surface is now tolerated only as legacy
-  compatibility on the `govengine>=0.11.0a0,<0.12` line.
+  compatibility when resolving the `govengine==0.11.0a0` baseline.
+- Widens the transitional GovEngine validation range to
+  `govengine>=0.11.0a0,<0.13`, preserving published `0.11.0a0` installation
+  while allowing clean validation against the neutral-only `0.12.0a0`
+  candidate before a separate publication-sync release.
 - Added package/runtime boundary validation so the `ravenclaw-security` helper
   package cannot silently drift into a full-runtime claim.
 - Added a public-safe OpenClaw fixture-presenter example and validator that
