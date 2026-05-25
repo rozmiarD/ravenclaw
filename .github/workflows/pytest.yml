@@ -93,7 +93,7 @@ jobs:
             tests/test_openclaw_fixture_presenter_validation.py \
             tests/test_extraction_roadmap_validation.py \
             tests/test_govengine_helper_boundary_validation.py \
-            engine/tests/test_govengine_security_profile.py
+            engine/tests/test_govengine_security_profile_retired.py
 
   package-dry-run:
     runs-on: ubuntu-latest
