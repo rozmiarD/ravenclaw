@@ -35,7 +35,6 @@ EXPECTED_GOVENGINE_SURFACES = (
     'domain_profile_sdk',
     'runtime_contract_proofs',
     'controlled_execution_core',
-    'security_profile_helpers',
 )
 
 CURRENT_DEPENDENCY_DOCS = (
@@ -232,6 +231,7 @@ def collect_errors() -> list[str]:
     adapter_contract_map = _read('references/openclaw-adapter-contract-map.md')
     scope_fidelity_reference = _read('references/scope-fidelity-report-v0.1.md')
     demo_scenario = _read('scripts/run_demo_scenario.py')
+    public_install = _read('scripts/validate_public_install.py')
     errors.extend(host_owned_gateway_doc_errors({
         'ARCHITECTURE.md': _read('ARCHITECTURE.md'),
         'PUBLIC_STATUS.md': public_status,
@@ -240,6 +240,7 @@ def collect_errors() -> list[str]:
         'references/ravenclaw-security-profile-boundary.md': _read('references/ravenclaw-security-profile-boundary.md'),
     }))
     _require(errors, 'VALIDATION.md', validation, 'canonical `review_bundle/`')
+    _require(errors, 'VALIDATION.md', validation, 'tolerated legacy optional surface')
     _require(errors, 'engine/security_contract_layer.py', security_contract, 'def build_current_lifecycle_artifacts(')
     _require(errors, 'engine/sclite_lifecycle_projection.py', lifecycle_projection, 'def build_current_lifecycle_artifacts(')
     _require(errors, 'engine/public_demo_bundle.py', public_demo, 'materialize_review_bundle')
@@ -249,6 +250,11 @@ def collect_errors() -> list[str]:
     _require(errors, 'references/openclaw-adapter-readiness-packet-2026-05-20.md', active_readiness_packet, 'generated `demo-output/intent_contract.json`')
     _require(errors, 'references/openclaw-adapter-contract-map.md', adapter_contract_map, 'generated `demo-output/intent_contract.json`')
     _require(errors, 'scripts/run_demo_scenario.py', demo_scenario, "'version_source': 'executed_import_modules'")
+    _require(errors, 'scripts/run_demo_scenario.py', demo_scenario, 'govengine_boundary_source')
+    if 'check_govengine_security_profile' in public_install:
+        errors.append('scripts/validate_public_install.py:retired_govengine_security_profile_check_retained')
+    if 'from govengine.security_profile' in demo_scenario or 'from govengine.security_profile' in public_install:
+        errors.append('scripts:retired_govengine_security_profile_import_retained')
     if 'from sclite.artifacts import *' in security_contract:
         errors.append('engine/security_contract_layer.py:wildcard_legacy_import')
     if 'govengine.sclite_adapter' in security_contract or 'govengine.sclite_adapter' in lifecycle_projection:

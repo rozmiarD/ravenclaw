@@ -27,7 +27,7 @@ GovEngine and which host-side seams remain Ravenclaw-owned.
 | `engine/govengine_admission_projection.py` | `govengine.admission` | keep host adapter | Ravenclaw owns projection from runtime admission/execution-gate decisions into redacted GovEngine admission, policy, approval, and audit records while keeping security policy semantics, approval workflow, and audit storage host-owned. |
 | `engine/govengine_runner_supervision_projection.py` | `govengine.execution.supervision` | keep host adapter | Ravenclaw owns projection from approved-spec runner boundaries into GovEngine supervision plans, leases, and receipts while keeping concrete tool adapters and live backend authority host-owned. |
 | `engine/govengine_review_projection.py` | `govengine.review` | keep host adapter | Ravenclaw owns projection from receipt-bounded evidence review into GovEngine requirement, claim, qualification, and review-result shapes while keeping finding taxonomy and SCLite review-bundle verdicts outside GovEngine. |
-| `engine/govengine_security_profile.py` | `govengine.security_profile` | removed | Public validation and tests import the published GovEngine facade directly; no Ravenclaw host logic remained. |
+| `engine/govengine_security_profile.py` | `govengine.security_profile` | removed | Public validation and tests no longer import or require the retired optional GovEngine facade; Ravenclaw owns the active security-profile manifest. |
 | `engine/govengine_control_gate_adapter.py` | `govengine.core`, `govengine.execution.gate`, `govengine.sclite_contracts`, `govengine.signing`, `govengine.state_index` | keep host adapter; no missing-GovEngine fallback | Ravenclaw owns host runner/profile selection while GovEngine owns reusable gate and signing objects. |
 | `engine/govengine_trust_demo.py` | `govengine.signing` demo ports | keep host demo helper; no local signing fallback | Public validation expects GovEngine demo ports from the published package; Ravenclaw only projects the demo trust result into public-safe artifacts. |
 
@@ -49,11 +49,11 @@ For the active package chain, public install validation must fail if
 imports `govengine.kernel_boundary_report` directly, so a missing report is an
 import/validation failure rather than a tolerated readiness state.
 
-In addition, `scripts/validate_govengine_helper_boundary.py` must derive the
-optional module allowlist from GovEngine's public `security_profile_helpers`
-registry and reject active runtime/Logdash imports of any registered optional
-module outside `engine/govengine_security_helpers.py`. It must also reject
-reintroduction of host-owned action/tooling, policy/scope, or review-security
+In addition, `scripts/validate_govengine_helper_boundary.py` must use
+Ravenclaw's static retired-helper denylist and reject active runtime/Logdash
+imports of those optional legacy modules outside
+`engine/govengine_security_helpers.py`. It must also reject reintroduction of
+host-owned action/tooling, policy/scope, or review-security
 modules, including `govengine.policy.core`, `govengine.tool_registry`,
 `govengine.policy.gateway`, `govengine.contracts.signal`,
 `govengine.contracts.analysis`, and `govengine.contracts.evidence_policy`, into

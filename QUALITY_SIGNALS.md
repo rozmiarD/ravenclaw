@@ -59,7 +59,7 @@ Ravenclaw consumes reusable package surfaces instead of carrying every contract 
 - `sclite-core>=0.8.0a0,<0.9`
 - `govengine>=0.11.0a0,<0.12`
 
-The public install validator checks that the active environment resolves that package chain, imports the expected modules, verifies the GovEngine public surface registry, and validates the published `govengine.security_profile` facade directly.
+The public install validator checks that the active environment resolves that package chain, imports the expected modules, verifies the GovEngine public surface registry, and validates the GovEngine boundary report plus Ravenclaw security-profile manifest without importing or requiring `govengine.security_profile`.
 The current published helper package checked by this layer is `ravenclaw-security==0.18.0`; the full runtime remains source/reference-owned.
 
 The package/runtime boundary is also checked directly by
@@ -77,7 +77,7 @@ Concrete entry points:
 - `tests/test_public_install_validation.py`
 - `tests/test_package_runtime_boundary_validation.py`
 - `tests/test_openclaw_fixture_presenter_validation.py`
-- `engine/tests/test_govengine_security_profile.py`
+- `engine/tests/test_govengine_security_profile_retired.py`
 
 This matters because package-boundary drift is tested directly rather than assumed from docs.
 
@@ -141,7 +141,7 @@ Taken together, these signals support the following public claims:
 - important runtime and UI truth surfaces are tested
 - the public repo is being separated from private operator state through explicit publication boundaries
 - governance and operator-visibility behavior are treated as real correctness concerns
-- the public dependency chain through GovEngine and SCLite is validated as an install/import surface, including the GovEngine security-profile facade
+- the public dependency chain through GovEngine and SCLite is validated as an install/import surface, with active security-profile semantics owned by Ravenclaw
 - the SCLite-backed Security Contract Layer is grounded in Ravenclaw Runtime artifacts, not protocol-first marketing
 - the Replayable Truth Runtime proof path can evaluate preserved decisions without live target execution by default
 - the Scope Fidelity report can deterministically classify target-binding/request-shape drift without executing against live targets

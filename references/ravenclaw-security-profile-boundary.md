@@ -34,8 +34,9 @@ GovEngine owns reusable governed-runtime mechanics:
 - kernel boundary report and public surface registry;
 - runtime shell, planning, admission, runner supervision, and evidence-review
   validators;
-- optional `govengine.security_profile` helper facade for the current published
-  compatibility line.
+- neutral boundary/runtime proof surfaces. The retired optional
+  `govengine.security_profile` helper facade is tolerated on the current
+  published compatibility line but is not Ravenclaw runtime authority.
 
 `govengine.action_*`, `govengine.tool_registry`, `govengine.policy.core`,
 `govengine.semantic_loss_policy`, `govengine.policy.gateway`,

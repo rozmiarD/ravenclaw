@@ -74,7 +74,7 @@ For the shortest package-chain demo:
 ./scripts/bootstrap_public_demo.sh scenario
 ```
 
-This generates the normal demo bundle, validates the SCLite v0.2 lifecycle artifacts, verifies the artifact-chain manifest, and records the GovEngine `security_profile` helper boundary in `demo-output/demo-scenario/demo_scenario_summary.json` and `.md`. In demo mode, the generated execution ticket also carries deterministic GovEngine signer/verifier-port metadata bound to the execution-contract digest. That is a public-safe fixture trust example, not PKI, CA, KMS, key-store, or production identity proof.
+This generates the normal demo bundle, validates the SCLite v0.2 lifecycle artifacts, verifies the artifact-chain manifest, and records the GovEngine boundary report plus Ravenclaw security-profile status in `demo-output/demo-scenario/demo_scenario_summary.json` and `.md`. In demo mode, the generated execution ticket also carries deterministic GovEngine signer/verifier-port metadata bound to the execution-contract digest. That is a public-safe fixture trust example, not PKI, CA, KMS, key-store, or production identity proof.
 
 Use `RAVENCLAW_WORKSPACE=/path/to/ravenclaw` when running from a non-default checkout, and `DEMO_SCENARIO_OUTPUT_DIR=/tmp/ravenclaw-demo-scenario` to choose an output directory.
 

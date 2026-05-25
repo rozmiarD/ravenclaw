@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-"""Local import point for security-profile helper symbols.
+"""Local import point for retired optional helper symbols.
 
 Ravenclaw owns active security action/tooling, policy/scope, and
-signal/analysis/confirmation behavior. GovEngine's optional matching helpers
-remain package compatibility surfaces; neutral evidence review is consumed
-separately through the GovEngine review projection.
+signal/analysis/confirmation behavior. GovEngine's matching optional legacy
+helpers remain package compatibility surfaces; neutral evidence review is
+consumed separately through the GovEngine review projection.
 """
 
 from security_action_compiler import compile_action_spec  # noqa: F401

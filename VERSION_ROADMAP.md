@@ -341,9 +341,9 @@ Planned work:
   planning, admission, runner-supervision, and review projections;
 - keep projection adapters where Ravenclaw owns host semantics, and remove
   wrapper layers that only duplicate direct GovEngine/SCLite package surfaces;
-- narrow Ravenclaw dependence on GovEngine `security_profile_helpers` when the
-  behavior is security-profile meaning, demo narration, or readiness UX that
-  Ravenclaw can own directly;
+- keep security-profile meaning, demo narration, and readiness UX
+  Ravenclaw-owned; tolerate GovEngine `security_profile_helpers` only as a
+  published legacy compatibility surface when present;
 - keep Logdash state/control truth aligned with persisted runtime-state docs and
   machine checks;
 - keep public helper-package claims narrow while source/runtime install and
@@ -370,7 +370,9 @@ Definition of done:
   implementation, or live target authority.
 
 Current status: Ravenclaw has completed the first consumer-first narrowing
-sequence for GovEngine's optional `security_profile_helpers` surface. Active
+sequence for GovEngine's optional legacy `security_profile_helpers` surface and
+no longer imports or requires the retired optional security-profile facade.
+Active
 security policy/scope decisions run through `engine/security_policy_gateway.py`,
 and active action/tooling helpers run through Ravenclaw-local
 `engine/security_action_*`, `engine/security_tool_registry.py`,
@@ -382,8 +384,10 @@ and `engine/security_evidence_policy.py`, while
 `engine/govengine_review_projection.py` retains the separate neutral
 `govengine.review` projection. The helper-boundary validator rejects
 reintroducing those upstream optional modules into Ravenclaw runtime authority.
-GovEngine keeps the published compatibility facade for the current dependency
-line; this is not a GovEngine API removal or a package release.
+GovEngine may keep the published compatibility facade for the current
+dependency line, but Ravenclaw treats it as tolerated legacy compatibility, not
+as active package-chain truth. This is not a GovEngine API removal or a package
+release.
 
 ## `0.18.x` — Package/runtime readiness checkpoint
 

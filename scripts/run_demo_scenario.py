@@ -16,7 +16,8 @@ if str(ENGINE_DIR) not in sys.path:
 
 import public_demo_bundle  # type: ignore
 from govengine import __version__ as govengine_version  # type: ignore
-from govengine.security_profile import assert_security_profile_boundary, security_profile_index  # type: ignore
+import govengine_boundary_profile  # type: ignore
+import ravenclaw_security_profile  # type: ignore
 from sclite import __version__ as sclite_version  # type: ignore
 from sclite.bundles import review_bundle  # type: ignore
 from sclite.artifacts import validate_artifact  # type: ignore
@@ -80,9 +81,9 @@ def run_demo_scenario(*, output_dir: str = 'demo-output/demo-scenario') -> Dict[
     """Generate and verify the reviewer-facing Ravenclaw/GovEngine/SCLite demo.
 
     The demo intentionally stays local and dry-run only. It shows that Ravenclaw
-    can produce a public-safe contract trace, GovEngine exposes the reusable
-    security-profile helper boundary, and SCLite validates/hash-links the
-    lifecycle artifacts.
+    can produce a public-safe contract trace, Ravenclaw owns the security
+    profile semantics, GovEngine exposes neutral boundary/proof surfaces, and
+    SCLite validates/hash-links the lifecycle artifacts.
     """
 
     result = public_demo_bundle.generate_bundle(output_dir=output_dir)
@@ -95,12 +96,17 @@ def run_demo_scenario(*, output_dir: str = 'demo-output/demo-scenario') -> Dict[
 
     chain_result = verify_artifact_chain_manifest(_load_json(out_dir / 'artifact_chain_manifest.json'), root=out_dir)
     review_record = review_bundle(out_dir / 'review_bundle')
-    assert_security_profile_boundary()
-    profile = security_profile_index()
+    boundary_status = govengine_boundary_profile.ravenclaw_boundary_status()
+    security_profile_status = ravenclaw_security_profile.ravenclaw_security_profile_status(root=ROOT)
 
     scenario_summary = {
         'demo': 'ravenclaw_demo_scenario',
-        'status': 'passed' if chain_result.get('status') == 'passed' and review_record.get('verdict') == 'pass' else 'failed',
+        'status': 'passed' if (
+            chain_result.get('status') == 'passed'
+            and review_record.get('verdict') == 'pass'
+            and boundary_status.get('status') == 'passed'
+            and security_profile_status.get('status') == 'passed'
+        ) else 'failed',
         'workspace_root': str(ROOT),
         'output_dir': str(out_dir),
         'trace': DEMO_SCENARIO_TRACE,
@@ -116,9 +122,14 @@ def run_demo_scenario(*, output_dir: str = 'demo-output/demo-scenario') -> Dict[
             'sclite-core': sclite_version,
         },
         'govengine': {
-            'entrypoint': profile['entrypoint'],
-            'surface': profile['surface']['name'],
-            'groups': [group['name'] for group in profile['groups']],
+            'boundary_source': boundary_status['source'],
+            'required_surfaces': boundary_status['required_surface_names'],
+            'tolerated_legacy_optional_surfaces': boundary_status['tolerated_legacy_optional_surfaces'],
+        },
+        'ravenclaw_security_profile': {
+            'profile': security_profile_status['profile_name'],
+            'domain': security_profile_status['profile_domain'],
+            'status': security_profile_status['status'],
         },
         'sclite': {
             'validated_lifecycle_files': lifecycle_files,
@@ -150,7 +161,8 @@ def build_demo_scenario_markdown(summary: Dict[str, Any]) -> str:
         f"- execution_adapter: `{summary['ravenclaw']['execution_adapter']}`",
         f"- govengine_version: `{summary.get('package_chain', {}).get('govengine', '')}`",
         f"- sclite_core_version: `{summary.get('package_chain', {}).get('sclite-core', '')}`",
-        f"- govengine_surface: `{summary['govengine']['surface']}`",
+        f"- govengine_boundary_source: `{summary['govengine']['boundary_source']}`",
+        f"- ravenclaw_security_profile: `{summary['ravenclaw_security_profile']['profile']}`",
         f"- sclite_chain_status: `{summary['sclite']['artifact_chain_status']}`",
         f"- sclite_review_bundle_verdict: `{summary['sclite']['review_bundle_verdict']}`",
         '',
@@ -166,9 +178,9 @@ def build_demo_scenario_markdown(summary: Dict[str, Any]) -> str:
         '',
         *[f"- `{name}` -> `{path}`" for name, path in sorted(summary.get('artifact_paths', {}).items())],
         '',
-        '## GovEngine groups',
+        '## GovEngine required neutral surfaces',
         '',
-        *[f"- `{name}`" for name in summary['govengine']['groups']],
+        *[f"- `{name}`" for name in summary['govengine']['required_surfaces']],
         '',
         '## SCLite checked entries',
         '',

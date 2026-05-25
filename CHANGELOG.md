@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Decoupled Ravenclaw public validation, demo summaries, and security-profile
+  truth from the retired optional `govengine.security_profile` facade; the
+  published `security_profile_helpers` surface is now tolerated only as legacy
+  compatibility on the `govengine>=0.11.0a0,<0.12` line.
 - Added package/runtime boundary validation so the `ravenclaw-security` helper
   package cannot silently drift into a full-runtime claim.
 - Added a public-safe OpenClaw fixture-presenter example and validator that
@@ -10,8 +14,9 @@
 - Completed the current GovEngine optional-helper containment slice: active
   runtime/Logdash imports for every module registered in
   `security_profile_helpers` now route through the Ravenclaw-owned
-  `engine/govengine_security_helpers.py` seam, and its validator derives the
-  checked module set from GovEngine's public registry.
+  `engine/govengine_security_helpers.py` seam, and its validator checks
+  Ravenclaw's static retired-helper denylist rather than importing the retired
+  optional GovEngine facade.
 - Returned the executed security policy/scope gate to Ravenclaw through
   `engine/security_policy_gateway.py`, backed by Ravenclaw scope state, while
   retaining GovEngine's optional gateway only as upstream compatibility; the

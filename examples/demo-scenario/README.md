@@ -3,7 +3,7 @@
 This is the public-safe, market-legible demo path for the current package chain:
 
 ```text
-Ravenclaw reference runtime -> GovEngine security-profile helpers -> SCLite lifecycle validation
+Ravenclaw reference runtime -> GovEngine neutral boundary surfaces -> SCLite lifecycle validation
 ```
 
 Run it from a local checkout:
@@ -25,7 +25,7 @@ The demo generates `demo_scenario_summary.json` and `demo_scenario_summary.md` n
 ## What it proves
 
 - Ravenclaw can produce the local/demo-safe proof trace.
-- GovEngine exposes the optional `govengine.security_profile` boundary for security-oriented helper discovery.
+- GovEngine exposes neutral boundary/runtime proof surfaces; Ravenclaw owns the active security-profile semantics.
 - SCLite validates every lifecycle artifact and verifies the hash-linked artifact-chain manifest.
 - Execution remains dry-run/mock; no live target scanning occurs.
 

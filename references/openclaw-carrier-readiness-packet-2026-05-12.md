@@ -40,7 +40,7 @@ Ready today:
 
 - public proof trace exists and is validated locally;
 - Ravenclaw demo scenario records Ravenclaw -> GovEngine -> SCLite package-chain truth;
-- GovEngine exposes `security_profile_helpers` separately from neutral core surfaces;
+- GovEngine neutral core surfaces are distinct from optional legacy security-profile helper compatibility;
 - SCLite validates v0.2 lifecycle chains and semantic lifecycle links;
 - compact OODA control decisions can now be projected into receipt/evidence artifacts without raw telemetry.
 

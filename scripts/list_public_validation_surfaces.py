@@ -33,7 +33,7 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'title': 'Public install validation',
         'command': 'python scripts/validate_clean_public_install.py --venv /tmp/ravenclaw-clean-public-install --dev',
         'paths': ['scripts/validate_clean_public_install.py', 'scripts/validate_public_install.py', 'INSTALL.md', 'VALIDATION.md', 'engine/ravenclaw_security_profile.py'],
-        'claim': 'Checks that the active Python environment resolves Ravenclaw public runtime and dev/test dependencies from the package chain, exposes the expected GovEngine public surface registry, and validates the GovEngine security-profile facade plus Ravenclaw boundary-profile and security-profile readiness.',
+        'claim': 'Checks that the active Python environment resolves Ravenclaw public runtime and dev/test dependencies from the package chain, exposes the expected GovEngine public surface registry, and validates the GovEngine boundary report plus Ravenclaw security-profile readiness without requiring the retired optional GovEngine security-profile facade.',
         'non_claim': 'Does not prove production deployment readiness or validate private operator overlays.',
     },
     {
@@ -137,7 +137,7 @@ VALIDATION_SURFACES: list[dict[str, Any]] = [
         'title': 'Ravenclaw/GovEngine/SCLite demo scenario',
         'command': './scripts/bootstrap_public_demo.sh scenario',
         'paths': ['scripts/run_demo_scenario.py', 'examples/demo-scenario', 'DEMO.md', 'VALIDATION.md', 'REVIEWER_VALIDATION_GUIDE.md'],
-        'claim': 'Generates a local dry-run scenario summary that records Ravenclaw demo output, GovEngine security-profile boundary metadata, and SCLite lifecycle-chain verification.',
+        'claim': 'Generates a local dry-run scenario summary that records Ravenclaw demo output, GovEngine boundary-report metadata, Ravenclaw security-profile status, and SCLite lifecycle-chain verification.',
         'non_claim': 'Does not authorize live target testing, adapter implementation, production deployment, or raw/private evidence publication.',
     },
 

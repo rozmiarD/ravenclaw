@@ -50,7 +50,7 @@ done
 What this supports:
 - broad regression confidence across public runtime, policy, Logdash, and proof surfaces;
 - package-chain readiness for `sclite-core` and `govengine`;
-- visibility into the GovEngine public surface registry, security-profile facade, and Ravenclaw boundary-profile check.
+- visibility into the GovEngine public surface registry, GovEngine boundary report, and Ravenclaw security-profile check.
 
 What it does not prove:
 - live deployment readiness, exhaustive security assurance, complete architecture stability, or readiness of a future package release.
@@ -146,7 +146,7 @@ The summary records:
 
 - Ravenclaw demo runtime mode and dry-run/mock execution adapter;
 - active `govengine` and `sclite-core` package versions;
-- GovEngine `security_profile_helpers` groups;
+- GovEngine required neutral boundary surfaces and Ravenclaw security-profile status;
 - demo execution-ticket signing/trust metadata bound to the execution-contract digest, when inspecting generated lifecycle artifacts;
 - SCLite lifecycle files checked by the scenario;
 - reviewer commands for independently checking the generated artifact-chain manifest.

@@ -23,6 +23,9 @@ REQUIRED_GOVENGINE_SURFACES = (
     'domain_profile_sdk',
     'runtime_contract_proofs',
     'controlled_execution_core',
+)
+
+TOLERATED_LEGACY_GOVENGINE_SURFACES = (
     'security_profile_helpers',
 )
 
@@ -53,7 +56,6 @@ EXTERNAL_AUTHORITIES = {
         'admission',
         'execution.supervision',
         'review',
-        'security_profile',
     ),
     'sclite': (
         'lifecycle_schema_validation',
@@ -98,6 +100,7 @@ def security_profile_manifest() -> dict[str, Any]:
             'sclite-core': '>=0.8.0a0,<0.9',
         },
         'required_govengine_surfaces': list(REQUIRED_GOVENGINE_SURFACES),
+        'tolerated_legacy_govengine_surfaces': list(TOLERATED_LEGACY_GOVENGINE_SURFACES),
         'owned_semantics': list(OWNED_SEMANTICS),
         'external_authorities': {key: list(value) for key, value in EXTERNAL_AUTHORITIES.items()},
         'adapter_readiness': {
@@ -137,6 +140,10 @@ def evaluate_security_profile_manifest(
         'package_chain': package_chain.get('govengine') == '>=0.11.0a0,<0.12'
         and package_chain.get('sclite-core') == '>=0.8.0a0,<0.9',
         'govengine_surfaces': list(manifest.get('required_govengine_surfaces', [])) == list(REQUIRED_GOVENGINE_SURFACES),
+        'govengine_surfaces_are_neutral': all(
+            surface not in TOLERATED_LEGACY_GOVENGINE_SURFACES
+            for surface in manifest.get('required_govengine_surfaces', [])
+        ),
         'ravenclaw_owned_semantics': set(OWNED_SEMANTICS).issubset(set(str(item) for item in manifest.get('owned_semantics', []))),
         'adapter_readiness_packet_only': adapter.get('status') == 'readiness_packet_only',
         'adapter_readiness_gates': list(adapter.get('required_gates', [])) == list(ADAPTER_READINESS_GATES),

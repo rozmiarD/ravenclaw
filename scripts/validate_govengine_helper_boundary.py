@@ -6,15 +6,27 @@ import sys
 from pathlib import Path
 from typing import Iterable
 
-from govengine.security_profile import security_profile_module_names
-
 
 ROOT = Path(__file__).resolve().parents[1]
 ENGINE = ROOT / 'engine'
 LOGDASH = ROOT / 'logdash'
 WRAPPER = ENGINE / 'govengine_security_helpers.py'
 
-OPTIONAL_HELPER_MODULES = security_profile_module_names()
+RETIRED_OPTIONAL_HELPER_MODULES = (
+    'govengine.security_profile',
+    'govengine.action_schema',
+    'govengine.action_validators',
+    'govengine.action_compiler',
+    'govengine.capability_recipes',
+    'govengine.tool_registry',
+    'govengine.semantic_loss_policy',
+    'govengine.policy.core',
+    'govengine.policy.gateway',
+    'govengine.scope',
+    'govengine.contracts.signal',
+    'govengine.contracts.analysis',
+    'govengine.contracts.evidence_policy',
+)
 HOST_OWNED_OPTIONAL_REPLACEMENTS = {
     'govengine.action_schema': ENGINE / 'security_action_schema.py',
     'govengine.action_validators': ENGINE / 'security_action_validators.py',
@@ -31,7 +43,7 @@ HOST_OWNED_OPTIONAL_REPLACEMENTS = {
 
 
 def _is_optional_helper_module(module_name: str) -> bool:
-    return any(module_name == prefix or module_name.startswith(prefix + '.') for prefix in OPTIONAL_HELPER_MODULES)
+    return any(module_name == prefix or module_name.startswith(prefix + '.') for prefix in RETIRED_OPTIONAL_HELPER_MODULES)
 
 
 def _source_errors(path: Path, text: str) -> list[str]:

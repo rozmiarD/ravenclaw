@@ -49,7 +49,9 @@ def test_boundary_report_evaluation_accepts_govengine_report_shape() -> None:
 
     assert status['status'] == 'passed'
     assert status['profile_names'] == ['ravenclaw']
-    assert status['surface_names'] == list(boundary_profile.EXPECTED_SURFACES)
+    assert status['required_surface_names'] == list(boundary_profile.EXPECTED_SURFACES)
+    assert 'security_profile_helpers' not in status['required_surface_names']
+    assert status['tolerated_legacy_optional_surfaces'] == ['security_profile_helpers']
     assert status['failed_checks'] == []
     assert json.loads(json.dumps(status)) == status
 
@@ -71,5 +73,6 @@ def test_published_govengine_boundary_report_is_required() -> None:
     assert status['status'] == 'passed'
     assert status['source'] == 'govengine.kernel_boundary_report'
     assert status['profile_names'] == ['ravenclaw']
-    assert status['surface_names'] == list(boundary_profile.EXPECTED_SURFACES)
+    assert status['required_surface_names'] == list(boundary_profile.EXPECTED_SURFACES)
+    assert 'security_profile_helpers' not in status['required_surface_names']
     assert status['failed_checks'] == []

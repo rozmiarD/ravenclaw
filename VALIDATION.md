@@ -48,11 +48,11 @@ python scripts/validate_openclaw_fixture_presenter.py
 
 The runtime-state validator compares the state manifest, canonical path
 helpers, `STATE_FILES.md`, and the GovEngine state/control projection map. The
-GovEngine helper-boundary validator obtains the optional helper module set from
-GovEngine's public `security_profile_helpers` registry and rejects direct
-runtime/Logdash imports outside `engine/govengine_security_helpers.py`, so the
-host-owned narrowing point cannot silently omit part of the upstream-declared
-surface. It also rejects reintroducing host-owned action/tooling helpers,
+GovEngine helper-boundary validator uses Ravenclaw's static retired-helper
+denylist and rejects direct runtime/Logdash imports outside
+`engine/govengine_security_helpers.py`, so the host-owned narrowing point
+cannot silently reintroduce old upstream helper authority. It also rejects
+reintroducing host-owned action/tooling helpers,
 `govengine.policy.core`, `govengine.tool_registry`, or `govengine.policy.gateway`
 or `govengine.contracts.signal`, `govengine.contracts.analysis`, or
 `govengine.contracts.evidence_policy` into that seam: the active
@@ -111,7 +111,7 @@ or, for dev/test installs:
 ravenclaw_public_install_validation:dev:passed
 ```
 
-This checks Python version, importability/version visibility for `PyYAML`, `govengine`, `sclite-core`, and — with `--dev` — `pytest` and `Flask`; verifies the GovEngine public surface registry expected by Ravenclaw (`artifact_governance_core`, `planning_contracts_core`, `admission_policy_core`, `evidence_review_core`, `domain_profile_sdk`, `runtime_contract_proofs`, `controlled_execution_core`, `security_profile_helpers`); validates the published `govengine.security_profile` facade directly; validates Ravenclaw's own security-profile manifest and OpenClaw readiness-packet boundary; then runs `python -m pip check`. The focused GovEngine seam tests cover the same package-boundary path. These checks do not prove production deployment readiness or validate private operator overlays.
+This checks Python version, importability/version visibility for `PyYAML`, `govengine`, `sclite-core`, and — with `--dev` — `pytest` and `Flask`; verifies the GovEngine public surface registry expected by Ravenclaw (`artifact_governance_core`, `planning_contracts_core`, `admission_policy_core`, `evidence_review_core`, `domain_profile_sdk`, `runtime_contract_proofs`, `controlled_execution_core`); treats `security_profile_helpers` as a tolerated legacy optional surface when present on the published `govengine>=0.11.0a0,<0.12` line; validates Ravenclaw's own security-profile manifest, GovEngine boundary report, and OpenClaw readiness-packet boundary; then runs `python -m pip check`. The focused GovEngine seam tests cover the same package-boundary path without importing or requiring `govengine.security_profile`. These checks do not prove production deployment readiness or validate private operator overlays.
 
 `scripts/validate_clean_public_install.py` is a wrapper around the same
 validation surface. It creates a new virtual environment, installs the chosen
@@ -119,7 +119,7 @@ package/source chain, and then runs `validate_public_install.py`, so `pip check`
 is scoped to the install under validation rather than the operator machine's
 global Python environment.
 
-With the current GovEngine `0.11.0-alpha` source/package line, Ravenclaw's source dependency baseline is `govengine>=0.11.0a0,<0.12` and `sclite-core>=0.8.0a0,<0.9`. Public install validation also requires Ravenclaw's boundary-profile readiness through `engine/govengine_boundary_profile.py`. That check validates `govengine.kernel_boundary_report`, the Ravenclaw profile contract, the public surface index, and the expected non-claims around live execution and carrier-adapter ownership. Ravenclaw's focused state/control projection tests validate the GovEngine runtime-shell surface for host control actions, queue snapshots, and runtime snapshots; focused planning projection tests validate the GovEngine planning-contract surface for redacted planner/runtime task handoffs; focused admission projection tests validate the GovEngine admission-policy surface for redacted go/no-go, policy, approval, and audit records; focused runner-supervision projection tests validate approved-spec runner requests, supervision plans, leases, and receipts; focused review projection tests validate receipt-bounded evidence claims and review results; focused security-profile tests validate that Ravenclaw is documented as a security runtime/profile over GovEngine + SCLite while OpenClaw remains at readiness-packet status; focused OpenClaw readiness tests validate redaction/output, approval-UX, command-authority, and rollback/stop boundaries before any carrier implementation.
+With the current GovEngine `0.11.0-alpha` source/package line, Ravenclaw's source dependency baseline is `govengine>=0.11.0a0,<0.12` and `sclite-core>=0.8.0a0,<0.9`. Public install validation also requires Ravenclaw's boundary-profile readiness through `engine/govengine_boundary_profile.py`. That check validates `govengine.kernel_boundary_report`, the Ravenclaw profile contract, the public surface index, and the expected non-claims around live execution and carrier-adapter ownership. Ravenclaw's focused state/control projection tests validate the GovEngine runtime-shell surface for host control actions, queue snapshots, and runtime snapshots; focused planning projection tests validate the GovEngine planning-contract surface for redacted planner/runtime task handoffs; focused admission projection tests validate the GovEngine admission-policy surface for redacted go/no-go, policy, approval, and audit records; focused runner-supervision projection tests validate approved-spec runner requests, supervision plans, leases, and receipts; focused review projection tests validate receipt-bounded evidence claims and review results; focused security-profile tests validate that Ravenclaw, not GovEngine's retired optional helper facade, owns the active security runtime/profile over GovEngine + SCLite while OpenClaw remains at readiness-packet status; focused OpenClaw readiness tests validate redaction/output, approval-UX, command-authority, and rollback/stop boundaries before any carrier implementation.
 
 ## Package/runtime boundary and fixture presenter
 
@@ -236,7 +236,7 @@ For the compact reviewer-facing Ravenclaw -> GovEngine -> SCLite scenario, run:
 ./scripts/bootstrap_public_demo.sh scenario
 ```
 
-This writes `demo-output/demo-scenario/demo_scenario_summary.json` and `.md`, validates generated SCLite lifecycle artifacts, verifies the artifact-chain manifest, and records the GovEngine `security_profile` boundary. Its version summary is taken from the GovEngine and SCLite modules actually executed in the scenario; distribution metadata resolution remains the job of the clean public-install gate. It remains local/demo-safe and dry-run/mock only.
+This writes `demo-output/demo-scenario/demo_scenario_summary.json` and `.md`, validates generated SCLite lifecycle artifacts, verifies the artifact-chain manifest, and records the GovEngine boundary report plus Ravenclaw security-profile status. Its version summary is taken from the GovEngine and SCLite modules actually executed in the scenario; distribution metadata resolution remains the job of the clean public-install gate. It remains local/demo-safe and dry-run/mock only.
 
 ## Current lifecycle/review-bundle validation
 

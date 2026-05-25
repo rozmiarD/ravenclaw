@@ -118,7 +118,7 @@ Reviewer-facing package-chain scenario:
 ./scripts/bootstrap_public_demo.sh scenario
 ```
 
-That scenario generates a local dry-run summary tying Ravenclaw demo artifacts to the GovEngine `security_profile` boundary and SCLite lifecycle-chain verification. In demo mode, Ravenclaw also records a deterministic GovEngine signing/trust-port example on the execution ticket, binding the ticket evidence to the execution-contract digest without claiming PKI, CA, KMS, key-store, or production identity ownership.
+That scenario generates a local dry-run summary tying Ravenclaw demo artifacts to the GovEngine boundary report, Ravenclaw security-profile status, and SCLite lifecycle-chain verification. In demo mode, Ravenclaw also records a deterministic GovEngine signing/trust-port example on the execution ticket, binding the ticket evidence to the execution-contract digest without claiming PKI, CA, KMS, key-store, or production identity ownership.
 
 For containerized public-demo bring-up, see `.devcontainer/` and `compose.demo.yaml`.
 

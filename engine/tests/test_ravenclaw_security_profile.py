@@ -21,6 +21,9 @@ def test_security_profile_manifest_is_json_safe_and_current() -> None:
     assert manifest['package_chain']['govengine'] == '>=0.11.0a0,<0.12'
     assert manifest['package_chain']['sclite-core'] == '>=0.8.0a0,<0.9'
     assert manifest['required_govengine_surfaces'] == list(profile.REQUIRED_GOVENGINE_SURFACES)
+    assert 'security_profile_helpers' not in manifest['required_govengine_surfaces']
+    assert manifest['tolerated_legacy_govengine_surfaces'] == ['security_profile_helpers']
+    assert 'security_profile' not in manifest['external_authorities']['govengine']
     assert json.loads(json.dumps(manifest)) == manifest
 
 

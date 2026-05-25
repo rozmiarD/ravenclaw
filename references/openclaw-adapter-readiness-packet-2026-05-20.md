@@ -32,9 +32,9 @@ Ready today:
 - Ravenclaw has host projection helpers for state/control, planning,
   admission, runner supervision, and evidence review;
 - SCLite remains the lifecycle/review-bundle validation authority;
-- public install validation checks the GovEngine surface registry,
-  `govengine.security_profile`, GovEngine boundary report, and Ravenclaw
-  security-profile manifest;
+- public install validation checks the GovEngine surface registry, GovEngine
+  boundary report, and Ravenclaw security-profile manifest without requiring
+  the retired optional `govengine.security_profile` facade;
 - the structural Security Contract validation profile passes without live
   target execution.
 

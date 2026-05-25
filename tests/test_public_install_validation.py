@@ -26,7 +26,7 @@ def test_public_install_validation_runtime_json() -> None:
     assert {'PyYAML', 'sclite-core', 'govengine'} <= distributions
     assert data['pip_check'] is None
     assert data['govengine_surface_registry']['status'] == 'passed'
-    assert data['govengine_surface_registry']['actual'] == [
+    assert data['govengine_surface_registry']['required'] == [
         'artifact_governance_core',
         'planning_contracts_core',
         'admission_policy_core',
@@ -34,18 +34,12 @@ def test_public_install_validation_runtime_json() -> None:
         'domain_profile_sdk',
         'runtime_contract_proofs',
         'controlled_execution_core',
-        'security_profile_helpers',
     ]
-    assert data['govengine_surface_registry']['optional_profile']['security_profile_helpers'] is True
-    assert data['govengine_security_profile']['status'] == 'passed'
-    assert data['govengine_security_profile']['source'] == 'govengine.security_profile'
-    assert data['govengine_security_profile']['actual_groups'] == [
-        'action_tooling',
-        'policy_scope',
-        'review_contracts',
-    ]
-    assert 'govengine.action_schema' in data['govengine_security_profile']['expected_modules']
-    assert data['govengine_security_profile']['surface']['name'] == 'security_profile_helpers'
+    assert 'security_profile_helpers' not in data['govengine_surface_registry']['required']
+    assert data['govengine_surface_registry']['missing_required'] == []
+    assert data['govengine_surface_registry']['required_optional'] == []
+    assert data['govengine_surface_registry']['tolerated_legacy_optional'] in ([], ['security_profile_helpers'])
+    assert 'govengine_security_profile' not in data
     assert data['govengine_boundary_profile']['status'] == 'passed'
     assert data['govengine_boundary_profile']['available'] is True
     assert data['govengine_boundary_profile']['source'] == 'govengine.kernel_boundary_report'
