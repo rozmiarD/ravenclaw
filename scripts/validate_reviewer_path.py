@@ -138,7 +138,7 @@ def required_text_errors(text_by_path: Mapping[str, str]) -> list[str]:
             "public truth validation",
             "public helper smoke",
             "package dry-run",
-            "ravenclaw-security==0.18.1",
+            "ravenclaw-security==0.18.2",
             "package/runtime boundary",
         ),
         "PUBLIC_STATUS.md": (

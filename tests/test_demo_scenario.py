@@ -21,7 +21,7 @@ def test_demo_scenario_markdown_surfaces_package_chain_truth() -> None:
                 'engine_status': 'dry-run',
                 'execution_adapter': 'mock',
             },
-            'package_chain': {'version_source': 'executed_import_modules', 'govengine': '0.12.0a0', 'sclite-core': '0.8.0a0'},
+            'package_chain': {'version_source': 'executed_import_modules', 'govengine': '0.12.1a1', 'sclite-core': '0.8.0b2'},
             'govengine': {
                 'boundary_source': 'govengine.kernel_boundary_report',
                 'required_surfaces': ['artifact_governance_core', 'controlled_execution_core'],
@@ -44,8 +44,8 @@ def test_demo_scenario_markdown_surfaces_package_chain_truth() -> None:
 
     assert '# Ravenclaw Demo Scenario Summary' in text
     assert 'execution_adapter: `mock`' in text
-    assert 'govengine_version: `0.12.0a0`' in text
-    assert 'sclite_core_version: `0.8.0a0`' in text
+    assert 'govengine_version: `0.12.1a1`' in text
+    assert 'sclite_core_version: `0.8.0b2`' in text
     assert 'govengine_boundary_source: `govengine.kernel_boundary_report`' in text
     assert 'ravenclaw_security_profile: `ravenclaw-security`' in text
     assert '`artifact_governance_core`' in text

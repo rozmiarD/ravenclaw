@@ -4,6 +4,17 @@
 
 - No changes yet.
 
+## 0.18.2 / 2026-05-26
+
+- Moves the public helper package chain to the guarded-runtime release line:
+  `govengine>=0.12.1a1,<0.13` and `sclite-core>=0.8.0b2,<0.9`.
+- Keeps Ravenclaw as the host-owned security runtime/profile over GovEngine and
+  SCLite; no OpenClaw/MCP/A2A adapter, live execution authority, or full PyPI
+  runtime package claim is added.
+- Preserves the narrow `ravenclaw-security` package boundary while consuming
+  the published SCLite guarded-strict verification and GovEngine replay-fresh
+  runtime gate line.
+
 ## 0.18.1 / 2026-05-25
 
 - Decoupled Ravenclaw public validation, demo summaries, and security-profile

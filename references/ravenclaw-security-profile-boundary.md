@@ -36,14 +36,14 @@ GovEngine owns reusable governed-runtime mechanics:
   validators;
 - neutral boundary/runtime proof surfaces. The retired optional
   `govengine.security_profile` helper facade existed on the published
-  `0.11.0a0` compatibility baseline, but the published `0.12.0a0` line
+  `0.11.0a0` compatibility baseline, but the published `0.12.1a1` line
   removes it and does not make it Ravenclaw runtime authority.
 
 `govengine.action_*`, `govengine.tool_registry`, `govengine.policy.core`,
 `govengine.semantic_loss_policy`, `govengine.policy.gateway`,
 `govengine.contracts.signal`, `govengine.contracts.analysis`, and
 `govengine.contracts.evidence_policy` are retired in the published
-`0.12.0a0` line.
+`0.12.1a1` line.
 Ravenclaw does not use them as active runtime authority. Neutral
 receipt-bounded `govengine.review` remains in use through
 `engine/govengine_review_projection.py`.
@@ -58,8 +58,8 @@ SCLite owns:
 
 ```text
 Ravenclaw source/reference runtime
-  -> govengine>=0.12.0a0,<0.13
-  -> sclite-core>=0.8.0a0,<0.9
+  -> govengine>=0.12.1a1,<0.13
+  -> sclite-core>=0.8.0b2,<0.9
 ```
 
 ## Profile non-claims

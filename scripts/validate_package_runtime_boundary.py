@@ -98,7 +98,7 @@ def document_errors(text_by_path: Mapping[str, str], version: str, govengine_dep
         ),
         'INSTALL.md': (
             f'pip install ravenclaw-security=={version}',
-            'The `0.18.1` wheel is intentionally a narrow public contract/profile package.',
+            'The `0.18.2` wheel is intentionally a narrow public contract/profile package.',
             'Use the repository install path above for the full source/reference runtime',
         ),
         'PUBLIC_STATUS.md': (
