@@ -26,7 +26,7 @@ These areas are real and important, but should still be treated as actively evol
 - some planner-to-runtime semantics that have recently been hardened but are still being refined
 - public onboarding, quickstart, and demo ergonomics
 - public proof presentation and trust documentation, including demo signing/trust-port evidence, even though the underlying validation surfaces are now more explicit
-- the current published public helper package, `ravenclaw-security==0.18.2`, which packages narrow public profile/readiness APIs while the full runtime remains a source/reference workflow
+- the current source public helper package, `ravenclaw-security==0.18.3`, which packages narrow public profile/readiness APIs while the full runtime remains a source/reference workflow
 - Ravenclaw-owned lifecycle artifact projection into current SCLite review artifacts; GovEngine does not own host-shaped projection and SCLite no longer exposes the retired proof-trace product path as current
 - the current security helper ownership line: Ravenclaw executes security policy/scope decisions through `engine/security_policy_gateway.py` and owns active action/tooling helpers through local `engine/security_action_*`, `engine/security_tool_registry.py`, `engine/security_policy_core.py`, `engine/security_capability_recipes.py`, and `engine/security_semantic_loss_policy.py` modules
 - Ravenclaw owns active security signal, analysis, and confirmation-policy behavior through `engine/security_signal_contract.py`, `engine/security_analysis_contract.py`, and `engine/security_evidence_policy.py`; the separate `engine/govengine_review_projection.py` consumes neutral receipt-bounded `govengine.review` contracts
@@ -52,7 +52,7 @@ Public readers should evaluate Ravenclaw from the intentionally published surfac
 
 Ravenclaw does **not** currently promise:
 - an easy consumer install experience
-- a complete PyPI-published Ravenclaw runtime runner; `ravenclaw-security==0.18.2` is a narrow public profile/readiness package published on PyPI, while the full runtime remains source/reference
+- a complete PyPI-published Ravenclaw runtime runner; `ravenclaw-security==0.18.3` is a narrow public profile/readiness package prepared in source, while the full runtime remains source/reference
 - a fully stable package/distribution shape beyond the documented `0.18.2` helper APIs
 - that every internal subsystem is final
 - that the public checkout equals the operator's full live environment

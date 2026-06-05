@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-- No changes yet.
+- Prepares the narrow public helper package for the SCLite 1.0.1 and
+  GovEngine 0.12.2 source chain with `govengine>=0.12.2a0,<0.13` and
+  `sclite-core>=1.0.1,<1.1`; PyPI publication remains gated on upstream
+  package publication and clean stack validation.
 
 ## 0.18.2 / 2026-05-26
 

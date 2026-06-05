@@ -13,8 +13,8 @@ The public trusted core should be read as these layers:
 - execution-contract shaping consumed from `govengine.contracts.execution` and related schema/reference surfaces;
 - execution-time enforcement in `engine/executor.py`;
 - dry-run/public-safe demo and proof fixtures under `examples/`;
-- reusable governed-runtime helpers consumed from the published `govengine>=0.12.1a1,<0.13` range;
-- contract lifecycle schemas, validators, and hash-chain verification consumed from `sclite-core>=0.8.0b2,<0.9`.
+- reusable governed-runtime helpers consumed from the published `govengine>=0.12.2a0,<0.13` range;
+- contract lifecycle schemas, validators, and hash-chain verification consumed from `sclite-core>=1.0.1,<1.1`.
 
 These layers must remain defensible even when:
 
@@ -64,7 +64,7 @@ Risk: Ravenclaw docs or validation assume local Git URL pins or unpublished help
 
 Control posture:
 
-- public Ravenclaw consumes the package ranges: `govengine>=0.12.1a1,<0.13` and `sclite-core>=0.8.0b2,<0.9`;
+- public Ravenclaw consumes the package ranges: `govengine>=0.12.2a0,<0.13` and `sclite-core>=1.0.1,<1.1`;
 - install validation checks package importability and `pip check`;
 - publication workflow requires clean install validation when dependency metadata changes.
 

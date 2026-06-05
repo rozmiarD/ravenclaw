@@ -19,8 +19,8 @@ Required:
 
 Runtime Python dependencies:
 - `PyYAML>=6,<7`
-- `sclite-core>=0.8.0b2,<0.9` (PyPI distribution; Python import package `sclite`)
-- `govengine>=0.12.1a1,<0.13` (published neutral-only GovEngine 0.12.1 alpha line)
+- `sclite-core>=1.0.1,<1.1` (PyPI distribution; Python import package `sclite`)
+- `govengine>=0.12.2a0,<0.13` (published neutral-only GovEngine 0.12.1 alpha line)
 
 Dev/test dependencies:
 - `pytest>=8,<9` for tests and `--include-pytest` validation receipts
@@ -54,7 +54,7 @@ PyPI package install for the public contract/profile helpers:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install ravenclaw-security==0.18.2
+pip install ravenclaw-security==0.18.3
 python - <<'PY'
 import ravenclaw
 from ravenclaw.security_profile import security_profile_manifest
@@ -97,7 +97,7 @@ If editable install is not suitable in your environment, install the same explic
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install PyYAML "sclite-core>=0.8.0b2,<0.9" "govengine>=0.12.1a1,<0.13"
+pip install PyYAML "sclite-core>=1.0.1,<1.1" "govengine>=0.12.2a0,<0.13"
 python scripts/validate_public_install.py
 ```
 
@@ -105,7 +105,7 @@ For the equivalent explicit dev/test dependency set:
 
 ```bash
 pip install PyYAML "Flask>=3,<4" "pytest>=8,<9" \
-  "sclite-core>=0.8.0b2,<0.9" "govengine>=0.12.1a1,<0.13"
+  "sclite-core>=1.0.1,<1.1" "govengine>=0.12.2a0,<0.13"
 python scripts/validate_public_install.py --dev
 ```
 

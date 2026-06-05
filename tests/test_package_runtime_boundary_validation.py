@@ -28,7 +28,7 @@ def test_package_runtime_boundary_validator_passes() -> None:
         check=True,
     )
 
-    assert proc.stdout.strip() == 'package_runtime_boundary_ok:ravenclaw-security==0.18.2:packages=ravenclaw'
+    assert proc.stdout.strip() == 'package_runtime_boundary_ok:ravenclaw-security==0.18.3:packages=ravenclaw'
 
 
 def test_package_runtime_boundary_rejects_runtime_package_inclusion() -> None:
@@ -51,15 +51,15 @@ def test_package_runtime_boundary_rejects_full_runtime_overclaim() -> None:
     errors = validator.document_errors(
         {
             'README.md': (
-                'The current published public helper package is `ravenclaw-security==0.18.2`.\n'
+                'The current published public helper package is `ravenclaw-security==0.18.3`.\n'
                 'ravenclaw-security includes the full runtime.\n'
-                'govengine>=0.12.1a1,<0.13\n'
-                'sclite-core>=0.8.0b2,<0.9\n'
+                'govengine>=0.12.2a0,<0.13\n'
+                'sclite-core>=1.0.1,<1.1\n'
             )
         },
-        '0.18.2',
-        'govengine>=0.12.1a1,<0.13',
-        'sclite-core>=0.8.0b2,<0.9',
+        '0.18.3',
+        'govengine>=0.12.2a0,<0.13',
+        'sclite-core>=1.0.1,<1.1',
     )
 
     assert 'README.md:forbidden_runtime_package_claim:ravenclaw-security includes the full runtime' in errors
