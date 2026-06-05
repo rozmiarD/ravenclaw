@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.sclite.dev/verification_result.v1.schema.json",
+  "title": "SCLite VerificationResult v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "schema_ref",
+    "profile",
+    "security_posture",
+    "status",
+    "artifact_chain",
+    "strict_lifecycle",
+    "kernel_guard",
+    "replay",
+    "public_identity",
+    "runtime_enforcement",
+    "entry_count",
+    "checked_entries",
+    "root_chain_digest",
+    "guard_profile",
+    "guard_root_tag",
+    "key_id"
+  ],
+  "properties": {
+    "artifact_type": { "const": "verification_result" },
+    "schema_version": { "const": "v1" },
+    "schema_ref": { "const": "schemas/verification_result.v1.schema.json" },
+    "profile": { "type": "string", "minLength": 1 },
+    "security_posture": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["pass", "fail"] },
+    "artifact_chain": { "enum": ["pass", "fail", "not_checked"] },
+    "strict_lifecycle": { "enum": ["pass", "fail", "not_checked", "not_applicable"] },
+    "kernel_guard": { "enum": ["pass", "fail", "not_checked"] },
+    "replay": { "enum": ["pass", "fail", "not_checked"] },
+    "public_identity": { "enum": ["not_claimed"] },
+    "runtime_enforcement": { "enum": ["not_claimed"] },
+    "entry_count": { "type": "integer", "minimum": 0 },
+    "checked_entries": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "root_chain_digest": { "type": "string", "minLength": 64 },
+    "guard_profile": { "type": "string", "minLength": 1 },
+    "guard_root_tag": { "type": "string", "minLength": 64 },
+    "key_id": { "type": "string", "minLength": 1 },
+    "failure_reason": { "type": "string" }
+  }
+}

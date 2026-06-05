@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.sclite.dev/kernel_guard_hmac_v1.schema.json",
+  "title": "SCLite Kernel Guard HMAC v1",
+  "type": "object",
+  "required": [
+    "artifact_type",
+    "schema_version",
+    "schema_ref",
+    "profile",
+    "algorithm",
+    "chain_id",
+    "key_id",
+    "entry_count",
+    "root_chain_digest",
+    "manifest_metadata_digest",
+    "entry_guards",
+    "first_tag",
+    "last_tag",
+    "root_tag"
+  ],
+  "properties": {
+    "artifact_type": { "const": "kernel_guard_manifest" },
+    "schema_version": { "const": "v0.1" },
+    "schema_ref": { "const": "schemas/kernel_guard_hmac_v1.schema.json" },
+    "profile": { "const": "kernel_guard_hmac_v1" },
+    "algorithm": { "const": "hmac-sha256" },
+    "chain_id": { "type": "string", "minLength": 1 },
+    "key_id": { "type": "string", "minLength": 1 },
+    "entry_count": { "type": "integer", "minimum": 0 },
+    "root_chain_digest": { "type": "string", "minLength": 64 },
+    "manifest_metadata_digest": { "type": "string", "minLength": 64 },
+    "first_tag": { "type": "string" },
+    "last_tag": { "type": "string" },
+    "root_tag": { "type": "string", "minLength": 64 },
+    "entry_guards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "profile",
+          "chain_id",
+          "seq",
+          "entry_count",
+          "role",
+          "path",
+          "required",
+          "artifact_digest",
+          "artifact_type",
+          "schema_ref",
+          "schema_version",
+          "canonicalization",
+          "algorithm",
+          "previous_tag",
+          "nonce",
+          "key_id",
+          "tag"
+        ],
+        "properties": {
+          "profile": { "const": "kernel_guard_hmac_v1.entry" },
+          "chain_id": { "type": "string", "minLength": 1 },
+          "seq": { "type": "integer", "minimum": 0 },
+          "entry_count": { "type": "integer", "minimum": 0 },
+          "role": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "artifact_digest": { "type": "string", "minLength": 64 },
+          "artifact_type": { "type": "string" },
+          "schema_ref": { "type": "string" },
+          "schema_version": { "type": "string" },
+          "canonicalization": { "type": "string" },
+          "algorithm": { "type": "string" },
+          "previous_tag": { "type": "string" },
+          "nonce": { "type": "string", "minLength": 1 },
+          "key_id": { "type": "string", "minLength": 1 },
+          "tag": { "type": "string", "minLength": 64 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
