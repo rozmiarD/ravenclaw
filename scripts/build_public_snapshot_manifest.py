@@ -108,7 +108,7 @@ def build_manifest(snapshot_root: Path = ROOT) -> dict[str, Any]:
 
 
 def validate_manifest_schema(manifest: Mapping[str, Any], root: Path = ROOT) -> None:
-    scl.validate_schema_ref(MANIFEST_SCHEMA_REF, manifest, root=root)
+    scl.validate_schema_ref(MANIFEST_SCHEMA_REF, manifest, root=root, allow_external_schema_refs=True)
 
 
 def _status_label(missing_paths: Sequence[str]) -> str:

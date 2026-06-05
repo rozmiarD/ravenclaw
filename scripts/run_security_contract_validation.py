@@ -272,7 +272,7 @@ ReceiptSchemaValidationError = scl.JsonSchemaValidationError
 
 
 def validate_receipt_schema(receipt: Mapping[str, Any]) -> None:
-    scl.validate_schema_ref(RECEIPT_SCHEMA_REF, receipt, root=ROOT)
+    scl.validate_schema_ref(RECEIPT_SCHEMA_REF, receipt, root=ROOT, allow_external_schema_refs=True)
 
 
 def list_check_ids(

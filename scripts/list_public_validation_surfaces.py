@@ -230,7 +230,7 @@ def missing_path_count(index: Mapping[str, Any]) -> int:
 
 
 def validate_index_schema(index: Mapping[str, Any], root: Path = ROOT) -> None:
-    scl.validate_schema_ref(INDEX_SCHEMA_REF, index, root=root)
+    scl.validate_schema_ref(INDEX_SCHEMA_REF, index, root=root, allow_external_schema_refs=True)
 
 
 def print_markdown(index: Mapping[str, Any]) -> None:

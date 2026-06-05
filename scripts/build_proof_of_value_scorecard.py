@@ -118,7 +118,7 @@ def build_scorecard(root: Path = ROOT) -> dict[str, Any]:
 
 
 def validate_scorecard_schema(scorecard: Mapping[str, Any], root: Path = ROOT) -> None:
-    scl.validate_schema_ref(SCORECARD_SCHEMA_REF, scorecard, root=root)
+    scl.validate_schema_ref(SCORECARD_SCHEMA_REF, scorecard, root=root, allow_external_schema_refs=True)
 
 
 def print_markdown(scorecard: Mapping[str, Any]) -> None:
