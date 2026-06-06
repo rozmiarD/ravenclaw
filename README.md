@@ -1,7 +1,7 @@
 # RAVENCLAW
 
 [![CI: pytest](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml/badge.svg)](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml)
-[![Source: Ravenclaw 0.18.3](https://img.shields.io/badge/source-Ravenclaw%200.18.3-blueviolet.svg)](pyproject.toml)
+[![Package: ravenclaw-security 0.18.3](https://img.shields.io/badge/package-ravenclaw--security%200.18.3-blueviolet.svg)](https://pypi.org/project/ravenclaw-security/0.18.3/)
 [![Python: 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
 [![Dependency: GovEngine >=0.12.2-alpha](https://img.shields.io/badge/dependency-GovEngine%20%3E%3D0.12.2--alpha-informational.svg)](https://github.com/rozmiarD/GovEngine)
 [![Dependency: SCLite >=1.0.1](https://img.shields.io/badge/dependency-SCLite%20%3E%3D1.0.1-informational.svg)](https://github.com/rozmiarD/SCLite)
@@ -41,7 +41,7 @@ Its core design claim is narrower:
 In short, Ravenclaw optimizes for useful actions that stay within policy, scope, and review boundaries.
 
 Ravenclaw now consumes **GovEngine** for reusable governed-runtime kernel mechanics and **SCLite** for contract lifecycle artifacts.
-The current public dependency baseline is `govengine>=0.12.2a0,<0.13` and `sclite-core>=1.0.1,<1.1`; it requires the source GovEngine `0.12.2a0` line and SCLite `1.0.1` line before publication.
+The current public dependency baseline is `govengine>=0.12.2a0,<0.13` and `sclite-core>=1.0.1,<1.1`; it consumes the published GovEngine `0.12.2a0` line and SCLite `1.0.1` line.
 
 The current reusable direction is a small **Security Contract Layer** backed by Ravenclaw Runtime artifacts: intent and scope binding, policy decisions, execution contracts, scoped execution tickets, execution receipts, evidence contracts, review bundles, and runtime truth. Ravenclaw owns the host-side lifecycle projection; SCLite owns lifecycle/review integrity and GovEngine owns neutral governed-runtime contracts. OpenClaw, MCP, and A2A are potential later carriers for these contracts, not new protocols Ravenclaw is trying to own.
 

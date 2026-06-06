@@ -1,11 +1,10 @@
 # RAVENCLAW — CHANGELOG.md
 
-## Unreleased
+## 0.18.3 / 2026-06-06
 
-- Prepares the narrow public helper package for the SCLite 1.0.1 and
-  GovEngine 0.12.2 source chain with `govengine>=0.12.2a0,<0.13` and
-  `sclite-core>=1.0.1,<1.1`; PyPI publication remains gated on upstream
-  package publication and clean stack validation.
+- Publishes the narrow public helper package for the SCLite 1.0.1 and
+  GovEngine 0.12.2 package chain with `govengine>=0.12.2a0,<0.13` and
+  `sclite-core>=1.0.1,<1.1`.
 
 ## 0.18.2 / 2026-05-26
 

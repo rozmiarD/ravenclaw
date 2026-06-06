@@ -197,7 +197,7 @@ def collect_errors() -> list[str]:
     workflow = _read('.github/workflows/pytest.yml')
     stack_workflow = _read('.github/workflows/stack-compatibility.yml')
 
-    _require(errors, 'README.md', readme, f'Source: Ravenclaw {version}')
+    _require(errors, 'README.md', readme, f'Package: ravenclaw-security {version}')
     _require(errors, 'README.md', readme, f'ravenclaw-security=={version}')
     _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.12.2-alpha')
     _require(errors, 'README.md', readme, 'Dependency: SCLite >=1.0.1')
@@ -207,7 +207,7 @@ def collect_errors() -> list[str]:
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'full runtime remains source/reference')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw_security-{version}-py3-none-any.whl')
-    _require(errors, 'VALIDATION.md', validation, 'source GovEngine `0.12.2a0` package')
+    _require(errors, 'VALIDATION.md', validation, 'published GovEngine `0.12.2a0` package')
     _require(
         errors,
         'references/ravenclaw-security-profile-boundary.md',

@@ -20,7 +20,7 @@ Required:
 Runtime Python dependencies:
 - `PyYAML>=6,<7`
 - `sclite-core>=1.0.1,<1.1` (PyPI distribution; Python import package `sclite`)
-- `govengine>=0.12.2a0,<0.13` (published neutral-only GovEngine 0.12.1 alpha line)
+- `govengine>=0.12.2a0,<0.13` (published neutral-only GovEngine 0.12.2 alpha line)
 
 Dev/test dependencies:
 - `pytest>=8,<9` for tests and `--include-pytest` validation receipts
