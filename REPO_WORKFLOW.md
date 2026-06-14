@@ -7,7 +7,7 @@ This is the canonical Git workflow for Ravenclaw public repository operations.
 All GitHub commits/tags pushed from this operator workspace must use:
 
 ```text
-0x505badc0de <32790662+rozmiarD@users.noreply.github.com>
+Krzysztof Probola <32790662+rozmiarD@users.noreply.github.com>
 ```
 
 This is an operator-workspace guardrail, not a requirement for external contributors. Contributors should use their own GitHub-associated commit identity.
@@ -22,11 +22,11 @@ git config --get user.email
 If either value differs, fix it before committing:
 
 ```bash
-git config user.name '0x505badc0de'
+git config user.name 'Krzysztof Probola'
 git config user.email '32790662+rozmiarD@users.noreply.github.com'
 ```
 
-Never rewrite already-published history to fix authorship, contribution graphs, cleanup, or cosmetics. This is a categorical transparency guardrail: no force-push, filter-branch/filter-repo, rebase of published branches, commit-date rewriting, or tag rewriting for already-published public history. Preserve history and add corrective commits instead.
+After the one-time 2026-06-09 authorship normalization on `rozmiarD/ravenclaw`, do not rewrite already-published history again to fix authorship, contribution graphs, cleanup, or cosmetics. Preserve history and add corrective commits instead.
 
 ## Public push model
 
@@ -38,7 +38,7 @@ For Ravenclaw public pushes:
 2. Apply only the bounded public delta.
 3. Validate at the right depth for the change.
 4. Run publication/residue checks before pushing.
-5. Confirm git identity is `0x505badc0de <32790662+rozmiarD@users.noreply.github.com>`.
+5. Confirm git identity is `Krzysztof Probola <32790662+rozmiarD@users.noreply.github.com>`.
 6. Push to `main` with a normal non-force push only; never rewrite published history.
 7. Delete temporary remote branches after merge/push unless the operator asked to keep them.
 

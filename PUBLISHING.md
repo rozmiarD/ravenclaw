@@ -15,7 +15,7 @@ git config --get user.email
 Required maintainer value for this publish tree:
 
 ```text
-0x505badc0de <32790662+rozmiarD@users.noreply.github.com>
+Krzysztof Probola <32790662+rozmiarD@users.noreply.github.com>
 ```
 
 External contributors should use their own GitHub-associated identity; this guardrail is not a contributor identity requirement.
@@ -23,11 +23,11 @@ External contributors should use their own GitHub-associated identity; this guar
 If a clean publish tree has a stale local config such as `OpenClaw <openclaw@local>`, fix it before committing:
 
 ```bash
-git config user.name '0x505badc0de'
+git config user.name 'Krzysztof Probola'
 git config user.email '32790662+rozmiarD@users.noreply.github.com'
 ```
 
-Never rewrite already-published history to fix authorship, contribution graphs, cleanup, or cosmetics. Preserve history and add corrective commits instead.
+After the one-time 2026-06-09 authorship normalization on `rozmiarD/ravenclaw`, do not rewrite already-published history again to fix authorship, contribution graphs, cleanup, or cosmetics. Preserve history and add corrective commits instead.
 
 ## Default rule
 
@@ -192,7 +192,7 @@ This is the canonical GitHub publication flow unless the operator explicitly ask
 1. Assemble a clean public snapshot.
 2. Validate the exact snapshot that is intended for publication.
 3. Create an isolated clean publish tree from that validated snapshot.
-4. Confirm git identity is `0x505badc0de <32790662+rozmiarD@users.noreply.github.com>`.
+4. Confirm git identity is `Krzysztof Probola <32790662+rozmiarD@users.noreply.github.com>`.
 5. Fetch the current `origin/main`.
 6. Apply only the bounded public-release delta on top of current `origin/main`.
 7. Re-run validation if the publish tree changed materially while rebasing or applying the delta.
