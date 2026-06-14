@@ -105,7 +105,7 @@ def stale_current_dependency_errors(text_by_path: Mapping[str, str], expected_go
     expected_fragment = expected_govengine.replace('govengine', '')
     stale = re.compile(
         r'(?i)(current|active|now|requires|consumes|dependency baseline|package chain|public install validation)'
-        r'.{0,160}govengine>=0\.(1|2|3|4|5|6|7)\.[^`\s,)]*',
+        r'.{0,160}govengine>=0\.(1[0-2]|[1-9])\.[^`\s,)]*',
         flags=re.DOTALL,
     )
     errors: list[str] = []
@@ -199,15 +199,15 @@ def collect_errors() -> list[str]:
 
     _require(errors, 'README.md', readme, f'Package: ravenclaw-security {version}')
     _require(errors, 'README.md', readme, f'ravenclaw-security=={version}')
-    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.12.2-alpha')
-    _require(errors, 'README.md', readme, 'Dependency: SCLite >=1.0.1')
+    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.13.0')
+    _require(errors, 'README.md', readme, 'Dependency: SCLite >=1.0.2')
     _require(errors, 'INSTALL.md', _read('INSTALL.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'narrow public profile/readiness package')
     _require(errors, 'PUBLIC_STATUS.md', public_status, f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'full runtime remains source/reference')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw_security-{version}-py3-none-any.whl')
-    _require(errors, 'VALIDATION.md', validation, 'published GovEngine `0.12.2a0` package')
+    _require(errors, 'VALIDATION.md', validation, 'published GovEngine `0.13.0` package')
     _require(
         errors,
         'references/ravenclaw-security-profile-boundary.md',

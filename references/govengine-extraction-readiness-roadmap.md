@@ -3,8 +3,8 @@
 Current baseline:
 
 ```text
-Ravenclaw: ravenclaw-security==0.18.3
-Package chain: Ravenclaw -> govengine>=0.12.2a0,<0.13 -> sclite-core>=1.0.1,<1.1
+Ravenclaw: ravenclaw-security==0.18.4
+Package chain: Ravenclaw -> govengine>=0.13.0,<0.14 -> sclite-core>=1.0.2,<1.1
 Maturity: alpha public helper/profile package; full runtime remains source/reference
 ```
 

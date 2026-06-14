@@ -28,7 +28,7 @@ def test_reviewer_path_validator_passes() -> None:
         check=True,
     )
 
-    assert proc.stdout.strip() == "reviewer_path_ok:ravenclaw-security==0.18.3"
+    assert proc.stdout.strip() == "reviewer_path_ok:ravenclaw-security==0.18.4"
 
 
 def test_reviewer_path_validator_catches_stale_pytest_q_ci_claim() -> None:
@@ -83,9 +83,9 @@ def test_reviewer_path_validator_catches_missing_required_command() -> None:
     errors = validator.required_text_errors({
         "REVIEWER_VALIDATION_GUIDE.md": "python scripts/validate_public_install.py --dev",
         "VALIDATION.md": "For a shorter reviewer-oriented path, see `REVIEWER_VALIDATION_GUIDE.md`.",
-        "QUALITY_SIGNALS.md": ".github/workflows/pytest.yml matrixed pytest slices public truth validation public helper smoke package dry-run ravenclaw-security==0.18.3",
-        "PUBLIC_STATUS.md": "ravenclaw-security==0.18.3 narrow public profile/readiness package full runtime remains source/reference",
-        "README.md": "ravenclaw-security==0.18.3 govengine>=0.12.2a0,<0.13 sclite-core>=1.0.1,<1.1",
+        "QUALITY_SIGNALS.md": ".github/workflows/pytest.yml matrixed pytest slices public truth validation public helper smoke package dry-run ravenclaw-security==0.18.4",
+        "PUBLIC_STATUS.md": "ravenclaw-security==0.18.4 narrow public profile/readiness package full runtime remains source/reference",
+        "README.md": "ravenclaw-security==0.18.4 govengine>=0.13.0,<0.14 sclite-core>=1.0.2,<1.1",
     })
 
     assert any(

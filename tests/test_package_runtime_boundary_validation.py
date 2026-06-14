@@ -28,7 +28,7 @@ def test_package_runtime_boundary_validator_passes() -> None:
         check=True,
     )
 
-    assert proc.stdout.strip() == 'package_runtime_boundary_ok:ravenclaw-security==0.18.3:packages=ravenclaw'
+    assert proc.stdout.strip() == 'package_runtime_boundary_ok:ravenclaw-security==0.18.4:packages=ravenclaw'
 
 
 def test_package_runtime_boundary_rejects_runtime_package_inclusion() -> None:
