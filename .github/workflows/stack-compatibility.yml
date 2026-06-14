@@ -53,7 +53,7 @@ jobs:
             engine/tests/test_govengine_planning_projection.py \
             engine/tests/test_govengine_review_projection.py \
             engine/tests/test_govengine_runner_supervision_projection.py \
-            engine/tests/test_govengine_security_profile.py \
+            engine/tests/test_govengine_security_profile_retired.py \
             engine/tests/test_govengine_state_control_projection.py
       - name: Run public integration slice
         env:
