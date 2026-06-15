@@ -34,6 +34,8 @@
     "artifact_chain": { "enum": ["pass", "fail", "not_checked"] },
     "strict_lifecycle": { "enum": ["pass", "fail", "not_checked", "not_applicable"] },
     "kernel_guard": { "enum": ["pass", "fail", "not_checked"] },
+    "ticket_use": { "enum": ["pass", "fail", "review"] },
+    "ticket_use_applicability": { "type": "string" },
     "replay": { "enum": ["pass", "fail", "not_checked"] },
     "public_identity": { "enum": ["not_claimed"] },
     "runtime_enforcement": { "enum": ["not_claimed"] },

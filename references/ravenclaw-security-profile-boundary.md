@@ -58,8 +58,8 @@ SCLite owns:
 
 ```text
 Ravenclaw source/reference runtime
-  -> govengine>=0.13.0,<0.14
-  -> sclite-core>=1.0.2,<1.1
+  -> govengine>=0.14.0,<0.15
+  -> sclite-core>=1.0.3,<1.1
 ```
 
 ## Profile non-claims

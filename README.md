@@ -3,8 +3,8 @@
 [![CI: pytest](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml/badge.svg)](https://github.com/rozmiarD/ravenclaw/actions/workflows/pytest.yml)
 [![Package: ravenclaw-security 0.18.4](https://img.shields.io/badge/package-ravenclaw--security%200.18.4-blueviolet.svg)](https://pypi.org/project/ravenclaw-security/0.18.4/)
 [![Python: 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
-[![Dependency: GovEngine >=0.13.0](https://img.shields.io/badge/dependency-GovEngine%20%3E%3D0.13.0-informational.svg)](https://github.com/rozmiarD/GovEngine)
-[![Dependency: SCLite >=1.0.2](https://img.shields.io/badge/dependency-SCLite%20%3E%3D1.0.2-informational.svg)](https://github.com/rozmiarD/SCLite)
+[![Dependency: GovEngine >=0.14.0](https://img.shields.io/badge/dependency-GovEngine%20%3E%3D0.14.0-informational.svg)](https://github.com/rozmiarD/GovEngine)
+[![Dependency: SCLite >=1.0.3](https://img.shields.io/badge/dependency-SCLite%20%3E%3D1.0.3-informational.svg)](https://github.com/rozmiarD/SCLite)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 **RAVENCLAW is a governance-first security research runtime for bounded, auditable security operations.**
@@ -41,7 +41,7 @@ Its core design claim is narrower:
 In short, Ravenclaw optimizes for useful actions that stay within policy, scope, and review boundaries.
 
 Ravenclaw now consumes **GovEngine** for reusable governed-runtime kernel mechanics and **SCLite** for contract lifecycle artifacts.
-The current public dependency baseline is `govengine>=0.13.0,<0.14` and `sclite-core>=1.0.2,<1.1`; it consumes the published GovEngine `0.13.0` line and SCLite `1.0.2` line.
+The current public dependency baseline is `govengine>=0.14.0,<0.15` and `sclite-core>=1.0.3,<1.1`; it consumes the published GovEngine `0.14.0` line and SCLite `1.0.3` line.
 
 The current reusable direction is a small **Security Contract Layer** backed by Ravenclaw Runtime artifacts: intent and scope binding, policy decisions, execution contracts, scoped execution tickets, execution receipts, evidence contracts, review bundles, and runtime truth. Ravenclaw owns the host-side lifecycle projection; SCLite owns lifecycle/review integrity and GovEngine owns neutral governed-runtime contracts. OpenClaw, MCP, and A2A are potential later carriers for these contracts, not new protocols Ravenclaw is trying to own.
 

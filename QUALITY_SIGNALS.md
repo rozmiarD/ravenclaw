@@ -56,8 +56,8 @@ The exact count will evolve, but the important signal is structural: this repo a
 ### 3. Public package-chain validation
 
 Ravenclaw consumes reusable package surfaces instead of carrying every contract helper in-tree:
-- `sclite-core>=1.0.2,<1.1`
-- `govengine>=0.13.0,<0.14` (published GovEngine 0.13.0 line)
+- `sclite-core>=1.0.3,<1.1`
+- `govengine>=0.14.0,<0.15` (published GovEngine 0.14.0 line)
 
 The public install validator checks that the active environment resolves that package chain, imports the expected modules, verifies the GovEngine public surface registry, and validates the GovEngine boundary report plus Ravenclaw security-profile manifest without importing or requiring `govengine.security_profile`.
 The current published helper package checked by this layer is `ravenclaw-security==0.18.4`; the full runtime remains source/reference-owned.

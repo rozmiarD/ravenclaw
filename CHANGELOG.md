@@ -2,9 +2,9 @@
 
 ## 0.18.4 / 2026-06-14
 
-- Publishes the narrow public helper package for the SCLite 1.0.2 and
-  GovEngine 0.13.0 package chain with `govengine>=0.13.0,<0.14` and
-  `sclite-core>=1.0.2,<1.1`.
+- Publishes the narrow public helper package for the SCLite 1.0.3 and
+  GovEngine 0.14.0 package chain with `govengine>=0.14.0,<0.15` and
+  `sclite-core>=1.0.3,<1.1`.
 
 ## 0.18.3 / 2026-06-06
 

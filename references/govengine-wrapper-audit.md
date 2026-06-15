@@ -1,6 +1,6 @@
 # GovEngine Wrapper Audit
 
-Ravenclaw consumes GovEngine through the published range `govengine>=0.13.0,<0.14` alongside `sclite-core>=1.0.2,<1.1`. Published `0.12.1a1` removes the old compatibility residue.
+Ravenclaw consumes GovEngine through the published range `govengine>=0.14.0,<0.15` alongside `sclite-core>=1.0.3,<1.1`. Published `0.12.1a1` removes the old compatibility residue.
 This file records which `engine/` modules are compatibility wrappers over
 GovEngine and which host-side seams remain Ravenclaw-owned.
 

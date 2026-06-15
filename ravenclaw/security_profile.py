@@ -96,8 +96,8 @@ def security_profile_manifest() -> dict[str, Any]:
         'package_chain': {
             'ravenclaw': '0.18.4',
             'ravenclaw_distribution': 'ravenclaw-security',
-            'govengine': '>=0.13.0,<0.14',
-            'sclite-core': '>=1.0.2,<1.1',
+            'govengine': '>=0.14.0,<0.15',
+            'sclite-core': '>=1.0.3,<1.1',
         },
         'required_govengine_surfaces': list(REQUIRED_GOVENGINE_SURFACES),
         'retired_govengine_surfaces': list(RETIRED_GOVENGINE_SURFACES),
@@ -137,8 +137,8 @@ def evaluate_security_profile_manifest(
         'schema_version': manifest.get('schema_version') == SCHEMA_VERSION,
         'profile_name': profile.get('name') == PROFILE_NAME,
         'profile_domain': profile.get('domain') == PROFILE_DOMAIN,
-        'package_chain': package_chain.get('govengine') == '>=0.13.0,<0.14'
-        and package_chain.get('sclite-core') == '>=1.0.2,<1.1',
+        'package_chain': package_chain.get('govengine') == '>=0.14.0,<0.15'
+        and package_chain.get('sclite-core') == '>=1.0.3,<1.1',
         'govengine_surfaces': list(manifest.get('required_govengine_surfaces', [])) == list(REQUIRED_GOVENGINE_SURFACES),
         'govengine_surfaces_are_neutral': all(
             surface not in RETIRED_GOVENGINE_SURFACES

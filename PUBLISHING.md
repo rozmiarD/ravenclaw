@@ -243,8 +243,8 @@ The safest current release posture is:
 ## PyPI release procedure
 
 Ravenclaw's current published public helper package is `ravenclaw-security==0.18.4`,
-importing as `ravenclaw`, and depending on `govengine>=0.13.0,<0.14` and
-`sclite-core>=1.0.2,<1.1`. It is intentionally pre-1.0 and packages the
+importing as `ravenclaw`, and depending on `govengine>=0.14.0,<0.15` and
+`sclite-core>=1.0.3,<1.1`. It is intentionally pre-1.0 and packages the
 public profile/readiness helper API, not the complete source runtime runner.
 
 Before uploading:

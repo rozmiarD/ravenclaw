@@ -199,15 +199,15 @@ def collect_errors() -> list[str]:
 
     _require(errors, 'README.md', readme, f'Package: ravenclaw-security {version}')
     _require(errors, 'README.md', readme, f'ravenclaw-security=={version}')
-    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.13.0')
-    _require(errors, 'README.md', readme, 'Dependency: SCLite >=1.0.2')
+    _require(errors, 'README.md', readme, 'Dependency: GovEngine >=0.14.0')
+    _require(errors, 'README.md', readme, 'Dependency: SCLite >=1.0.3')
     _require(errors, 'INSTALL.md', _read('INSTALL.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'narrow public profile/readiness package')
     _require(errors, 'PUBLIC_STATUS.md', public_status, f'ravenclaw-security=={version}')
     _require(errors, 'PUBLIC_STATUS.md', public_status, 'full runtime remains source/reference')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw-security=={version}')
     _require(errors, 'PUBLISHING.md', _read('PUBLISHING.md'), f'ravenclaw_security-{version}-py3-none-any.whl')
-    _require(errors, 'VALIDATION.md', validation, 'published GovEngine `0.13.0` package')
+    _require(errors, 'VALIDATION.md', validation, 'published GovEngine `0.14.0` package')
     _require(
         errors,
         'references/ravenclaw-security-profile-boundary.md',

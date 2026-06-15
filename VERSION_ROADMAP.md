@@ -8,7 +8,7 @@ Current published public helper package version: `0.18.2`.
 Current dependency baseline:
 
 ```text
-Ravenclaw -> govengine>=0.13.0,<0.14 -> sclite-core>=1.0.2,<1.1
+Ravenclaw -> govengine>=0.14.0,<0.15 -> sclite-core>=1.0.3,<1.1
 ```
 
 Use this as a milestone map, not as a promise that every milestone will become a full PyPI/runtime release. The current published public helper package is `ravenclaw-security==0.18.4`, carrying public profile/readiness helpers under the `ravenclaw` import package; Ravenclaw remains a source/reference security runtime until install, execution, Logdash, and public-safety boundaries are ready for a stronger distribution claim.
@@ -145,7 +145,7 @@ Intent:
 
 Current baseline:
 
-- Ravenclaw consumes `govengine>=0.13.0,<0.14` and `sclite-core>=1.0.2,<1.1`;
+- Ravenclaw consumes `govengine>=0.14.0,<0.15` and `sclite-core>=1.0.3,<1.1`;
 - public install validation and Security Contract validation pass;
 - GovEngine/SCLite ticket and receipt-bounded-evidence surfaces are integrated into the public proof chain.
 - GovEngine 0.11 alpha kernel/profile boundary, runtime-shell, planning-contract, admission-policy, runner-supervision, evidence-review, Domain Profile SDK, and runtime contract proof validation is required by public install validation and focused projection tests.
